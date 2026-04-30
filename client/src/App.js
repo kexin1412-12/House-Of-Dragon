@@ -247,9 +247,12 @@ export default function App() {
               >
                 <div className="card-thumb">
                   <video
-                    src={resolveVideoSrc(video.url)}
-                    preload="metadata"
+                    src={`${resolveVideoSrc(video.url)}#t=60`}
+                    preload="auto"
                     muted
+                    autoPlay
+                    loop
+                    playsInline
                   />
                   <div className="card-overlay">
                     <div className="card-play-btn">▶</div>
