@@ -495,65 +495,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setPerspectiveLoading(false);
   }
 
-  // ─── P0 · 动态人物卡（点击头像或姓名标签触发） ─────────────
-  // 复用 PerspectiveOverlay 的视觉容器，但语义不同：4 张卡片是
-  // 「当前身份 / 阵营 / 与主角关系（或主角自己的"立场"） / 最近事件」
-  const [characterCardChar, setCharacterCardChar] = useState(null);
-  const [characterCardData, setCharacterCardData] = useState(null);
-  const [characterCardLoading, setCharacterCardLoading] = useState(false);
-  const [characterCardError, setCharacterCardError] = useState(null);
-  const [characterCardSide, setCharacterCardSide] = useState('right');
-  const [characterCardBgTone, setCharacterCardBgTone] = useState('dark');
-  const characterCardSeqRef = useRef(0);
-
-  async function openCharacterCard(c) {
-    if (!c || !c.character_id) return;
-    const v = videoRef.current;
-    if (v && !v.paused) v.pause();
-    const t = v?.currentTime || 0;
-    setCharacterCardChar(c);
-    setCharacterCardData(null);
-    setCharacterCardError(null);
-    setCharacterCardLoading(true);
-    const cSide = sideOppositeOf(c?.bbox);
-    setCharacterCardSide(cSide);
-    setCharacterCardBgTone(toneFromLuminance(sampleSideLuminance(cSide)));
-    const seq = ++characterCardSeqRef.current;
-    try {
-      const resp = await fetch(`${API}/api/agent/character/card`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          videoId: aiKb,
-          t,
-          characterId: c.character_id,
-        }),
-      });
-      const data = await resp.json();
-      if (seq !== characterCardSeqRef.current) return;
-      if (!resp.ok) {
-        setCharacterCardError(data?.error || `HTTP ${resp.status}`);
-        if (data?.fallback) setCharacterCardData(data.fallback);
-      } else {
-        setCharacterCardData(data);
-      }
-    } catch (err) {
-      if (seq !== characterCardSeqRef.current) return;
-      setCharacterCardError(err.message);
-    } finally {
-      if (seq === characterCardSeqRef.current) setCharacterCardLoading(false);
-    }
-  }
-  function closeCharacterCard() {
-    characterCardSeqRef.current++;
-    setCharacterCardChar(null);
-    setCharacterCardData(null);
-    setCharacterCardError(null);
-    setCharacterCardLoading(false);
-  }
-
-  // 切视频时清掉人物卡
-  useEffect(() => { closeCharacterCard(); }, [playing.id]);
+  // 视频内的人物档案点击已下线 —— 改为在关系图里点头像调档案。
   // 「问她一句」: 关 perspective，开 roleplay
   function bridgePerspectiveToRoleplay() {
     const cast = perspectiveChar;
@@ -1668,7 +1610,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                   const visible = isFirstTime || isHovered;
 
                   // 1) 脸部 hover 热点（仅有 bbox 时；透明，不挡画面）
-                  //    点击 → 唤起动态人物卡（与姓名标签等价的入口）
+                  //    悬停 → 浮出姓名标签；不再有点击行为，档案改在关系图里看
                   const hotspot = hasBbox ? (
                     <div
                       key={`hot-${key}`}
@@ -1681,8 +1623,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                       }}
                       onMouseEnter={() => setAiHoveredCharId(c.character_id || c.display_name)}
                       onMouseLeave={() => setAiHoveredCharId(null)}
-                      onClick={() => c.character_id && openCharacterCard(c)}
-                      title={c.character_id ? `${c.display_name}（点击看人物卡）` : c.display_name}
+                      title={c.display_name}
                     />
                   ) : null;
 
@@ -1704,8 +1645,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                         style={labelStyle}
                         onMouseEnter={() => hasBbox && setAiHoveredCharId(c.character_id || c.display_name)}
                         onMouseLeave={() => hasBbox && setAiHoveredCharId(null)}
-                        onClick={() => c.character_id && openCharacterCard(c)}
-                        title={c.character_id ? `${c.display_name}（点击看人物卡）` : c.display_name}
+                        title={c.display_name}
                       >
                         <div className="tx-char-label-name">{c.display_name}</div>
                         {c.short_identity && (
@@ -1756,23 +1696,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                 side={perspectiveSide}
                 bgTone={perspectiveBgTone}
                 askLabelOverride="开始对话"
-              />
-            )}
-
-            {/* P0 · 动态人物卡 —— 点击头像或姓名标签唤起，复用 PerspectiveOverlay 容器 */}
-            {characterCardChar && (
-              <PerspectiveOverlay
-                character={characterCardChar}
-                data={characterCardData}
-                loading={characterCardLoading}
-                error={characterCardError}
-                onClose={closeCharacterCard}
-                onAskHer={closeCharacterCard}
-                side={characterCardSide}
-                bgTone={characterCardBgTone}
-                markerLabel="人物档案"
-                loadingText="正在调取人物档案 ……"
-                errorPrefix="人物档案暂时调不出"
               />
             )}
 

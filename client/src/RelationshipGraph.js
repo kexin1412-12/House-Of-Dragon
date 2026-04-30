@@ -440,6 +440,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const [error, setError] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
   const [focused, setFocused] = useState(null);
+  const [profileId, setProfileId] = useState(null);
   const viewportRef = useRef(null);
 
   // load tree once on first open
@@ -471,7 +472,10 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   }, [open]);
 
   // reset state when video changes (in case the demo bumps to a different show)
-  useEffect(() => { setHighlighted(null); setFocused(null); }, [videoId]);
+  useEffect(() => { setHighlighted(null); setFocused(null); setProfileId(null); }, [videoId]);
+
+  // close profile when the whole relationship graph drawer closes
+  useEffect(() => { if (!open) setProfileId(null); }, [open]);
 
   // Time-driven focus: poll currentTime every 600ms, look up the dominant
   // character for that moment, and update local state. Cheap binary search
@@ -545,11 +549,14 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   const onCharClick = useCallback((id) => {
     setHighlighted(prev => prev === id ? null : id);
+    setProfileId(id);
   }, []);
 
   const clearHighlight = useCallback((e) => {
     if (e.target === e.currentTarget) setHighlighted(null);
   }, []);
+
+  const closeProfile = useCallback(() => setProfileId(null), []);
 
   const activeConflicts = highlighted ? (conflictByChar.get(highlighted) || []) : [];
 
@@ -689,10 +696,77 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           </div>
 
           <footer className="rg-tree-legend">
-            <span className="rg-legend-hint">点击角色 → 显示该角色的剧情冲突线</span>
+            <span className="rg-legend-hint">点击角色 → 显示该角色的剧情冲突线 + 人物档案</span>
           </footer>
+
+          {/* 人物档案侧栏：点角色头像后从右侧浮入 */}
+          <ProfilePanel
+            character={tree?.characters?.find(c => c.character_id === profileId) || null}
+            onClose={closeProfile}
+          />
         </div>
       </div>
     </div>
+  );
+}
+
+// ─── Profile panel (slides in from the right edge of the tree card) ───
+function ProfilePanel({ character, onClose }) {
+  const open = !!character;
+  return (
+    <aside className={`rg-profile ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+      {character && (
+        <>
+          <button className="rg-profile-close" onClick={onClose} title="关闭档案">×</button>
+
+          <div className="rg-profile-portrait">
+            {character.portrait_url ? (
+              <img src={character.portrait_url} alt={character.display_name} />
+            ) : (
+              <div className="rg-profile-portrait-fallback">
+                {(character.display_name || '').slice(0, 1)}
+              </div>
+            )}
+            {!character.alive && <div className="rg-profile-dead-band">已殁</div>}
+          </div>
+
+          <div className="rg-profile-name-zh">{character.display_name}</div>
+          <div className="rg-profile-name-en">{character.name_en}</div>
+
+          <div className="rg-profile-house">
+            {character.epithet && <span className="rg-profile-epithet">{character.epithet}</span>}
+            {character.house && <span className="rg-profile-house-tag">House {character.house}</span>}
+          </div>
+
+          {character.short_identity && (
+            <div className="rg-profile-section">
+              <div className="rg-profile-section-label">身份</div>
+              <div className="rg-profile-section-body">{character.short_identity}</div>
+            </div>
+          )}
+
+          {character.companion && (
+            <div className="rg-profile-section">
+              <div className="rg-profile-section-label">龙伴</div>
+              <div className="rg-profile-companion">
+                {character.companion.portrait_url && (
+                  <img
+                    className="rg-profile-companion-portrait"
+                    src={character.companion.portrait_url}
+                    alt={character.companion.display_name}
+                  />
+                )}
+                <div>
+                  <div className="rg-profile-companion-name">{character.companion.display_name}</div>
+                  {character.companion.short_identity && (
+                    <div className="rg-profile-companion-identity">{character.companion.short_identity}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </aside>
   );
 }
