@@ -176,7 +176,7 @@ export default function App() {
           </div>
           <h1 className="hero-title">{'共谋者\nCo-Conspirator'}</h1>
           <p className="hero-desc">
-            让你看见导演藏在画面里的每一个秘密 —— 镜头语言 · 人物关系
+            视频不再是一条线，而是一个空间，共谋者是一个让任何长视频获得游戏级交互的 AI 原生产品——不再是「看戏的人」，而是「与戏共谋的人」
           </p>
           <div className="hero-genres">
             {GENRES.map(g => <span key={g}>{g}</span>)}
