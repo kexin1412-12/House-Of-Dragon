@@ -57,8 +57,7 @@ export default function App() {
     }
     if (list.length === 0) list = DEMO_VIDEOS;
     setVideos(list);
-    if (list.length > 0 && !featured) setFeatured(list[0]);
-  }, [featured]);
+  }, []);
 
   useEffect(() => { fetchVideos(); }, []);
 
@@ -118,7 +117,7 @@ export default function App() {
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const heroVideo = featured || videos[0];
+  const heroVideo = featured;
 
   return (
     <div className="app">
@@ -244,7 +243,7 @@ export default function App() {
               <div
                 key={video.id}
                 className={`video-card ${featured?.id === video.id ? 'active' : ''}`}
-                onClick={() => setPlaying(video)}
+                onClick={() => { setFeatured(video); setPlaying(video); }}
               >
                 <div className="card-thumb">
                   <video
@@ -280,7 +279,7 @@ export default function App() {
                   </button>
                   <button
                     className="card-play-small"
-                    onClick={e => { e.stopPropagation(); setPlaying(video); }}
+                    onClick={e => { e.stopPropagation(); setFeatured(video); setPlaying(video); }}
                   >
                     ▶ 播放
                   </button>
