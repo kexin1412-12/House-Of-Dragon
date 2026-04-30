@@ -192,7 +192,7 @@ export default function App() {
           </h1>
           {!heroVideo && (
             <p className="hero-desc">
-              让观众从「看戏的人」变成「与戏共谋的人」 —— 角色对谈 / 分支推演 / 平行视角
+              让你看见导演藏在画面里的每一个秘密 —— 镜头语言 · 人物关系
             </p>
           )}
           <div className="hero-actions">
@@ -201,11 +201,6 @@ export default function App() {
                 ▶&nbsp; 立即播放
               </button>
             ) : null}
-            {!heroVideo && (
-              <button className="btn-secondary" onClick={() => setShowUpload(true)}>
-                ↑ 上传视频
-              </button>
-            )}
           </div>
           <div className="hero-genres">
             {GENRES.map(g => <span key={g}>{g}</span>)}
