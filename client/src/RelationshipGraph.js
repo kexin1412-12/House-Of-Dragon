@@ -138,13 +138,14 @@ function Companion({ data }) {
   );
 }
 
-function CharacterNode({ char, position, highlighted, focused, dead, onClick }) {
+function CharacterNode({ char, position, highlighted, focused, dead, dimmed, onClick }) {
   const clipId = `rg-clip-${char.character_id}`;
   const cls = [
     'rg-node',
     highlighted ? 'is-highlighted' : '',
     focused ? 'is-focused' : '',
     dead ? 'is-dead' : '',
+    dimmed ? 'is-dimmed' : '',
   ].filter(Boolean).join(' ');
   return (
     <g
@@ -636,6 +637,18 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   const activeConflicts = highlighted ? (conflictByChar.get(highlighted) || []) : [];
 
+  // When a character is highlighted, the conflict line between them and a
+  // partner can pass behind unrelated portraits sitting in the middle. To
+  // keep the line readable we dim every node that isn't involved in the
+  // active conflicts, and re-render the involved nodes ABOVE the conflict
+  // edges so the line is occluded only by the two endpoints.
+  const involvedIds = useMemo(() => {
+    if (!highlighted) return null;
+    const set = new Set([highlighted]);
+    for (const e of activeConflicts) { set.add(e.from); set.add(e.to); }
+    return set;
+  }, [highlighted, activeConflicts]);
+
   return (
     <div className={`rg-root ${open ? 'is-viewing' : ''}`}>
       <div className="rg-cine-bar" />
@@ -740,6 +753,30 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                     })}
                 </g>
 
+                {/* Dimmed (bottom) node layer: characters NOT involved in
+                    the active conflict. Drawn before the conflict edges so
+                    the red line passes visibly OVER unrelated portraits. */}
+                <g className="rg-node-layer rg-node-layer-dim">
+                  {tree.characters
+                    .filter(c => involvedIds && !involvedIds.has(c.character_id))
+                    .map(c => {
+                      const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
+                      const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+                      return (
+                        <CharacterNode
+                          key={c.character_id}
+                          char={c}
+                          position={layout.positions[c.character_id]}
+                          highlighted={false}
+                          focused={focused === c.character_id}
+                          dead={dead}
+                          dimmed
+                          onClick={onCharClick}
+                        />
+                      );
+                    })}
+                </g>
+
                 {/* conflict overlay (only when a character is highlighted) */}
                 {highlighted && (
                   <g className="rg-conflict-layer">
@@ -754,26 +791,28 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                   </g>
                 )}
 
-                {/* portrait layer last so circles draw above edges */}
+                {/* Top node layer: highlighted character + their conflict
+                    partners. Drawn AFTER the conflict edges so the red line
+                    is only occluded by the actual endpoints. When nothing is
+                    highlighted, this layer carries every character. */}
                 <g className="rg-node-layer">
-                  {tree.characters.map(c => {
-                    // If we know when (in this video) the character's death
-                    // scene plays, use the time-based deadNow set; otherwise
-                    // fall back to the static "alive at end-of-S1" flag.
-                    const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
-                    const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
-                    return (
-                      <CharacterNode
-                        key={c.character_id}
-                        char={c}
-                        position={layout.positions[c.character_id]}
-                        highlighted={highlighted === c.character_id}
-                        focused={focused === c.character_id}
-                        dead={dead}
-                        onClick={onCharClick}
-                      />
-                    );
-                  })}
+                  {tree.characters
+                    .filter(c => !involvedIds || involvedIds.has(c.character_id))
+                    .map(c => {
+                      const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
+                      const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+                      return (
+                        <CharacterNode
+                          key={c.character_id}
+                          char={c}
+                          position={layout.positions[c.character_id]}
+                          highlighted={highlighted === c.character_id}
+                          focused={focused === c.character_id}
+                          dead={dead}
+                          onClick={onCharClick}
+                        />
+                      );
+                    })}
                 </g>
               </svg>
             )}

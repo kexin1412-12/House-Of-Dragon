@@ -254,6 +254,19 @@
 .rg-node.is-dead image { filter: grayscale(82%) brightness(0.75); }
 .rg-node.is-dead .rg-portrait-ring { stroke: rgba(212, 175, 55, 0.4); }
 
+/* Dimmed: a non-involved character while a conflict line is showing.
+   Drops opacity so the red conflict line drawn ABOVE this layer reads
+   clearly even when it passes geometrically over the portrait. */
+.rg-node.is-dimmed {
+  opacity: 0.22;
+  transition: opacity .25s ease;
+}
+.rg-node.is-dimmed image { filter: grayscale(45%) brightness(0.78); }
+.rg-node.is-dimmed .rg-portrait-ring { stroke: rgba(212, 175, 55, 0.18); }
+.rg-node:not(.is-dimmed) {
+  transition: opacity .25s ease;
+}
+
 .rg-name-zh {
   fill: #f1efe8;
   font-family: var(--rg-serif);
