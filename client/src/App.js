@@ -155,12 +155,17 @@ export default function App() {
       {/* Hero */}
       <section className="hero">
         <div className="hero-bg">
-          <div className="hero-poster-bg">
-            <div className="hero-poster-eyebrow">CO-CONSPIRATOR</div>
-            <div className="hero-poster-title">共谋者</div>
-            <div className="hero-poster-rule" />
-            <div className="hero-poster-show">HOUSE OF THE DRAGON · S01E05</div>
-          </div>
+          {heroVideo && (
+            <video
+              key={heroVideo.id}
+              src={`${VIDEO_CDN}${heroVideo.url}`}
+              muted
+              autoPlay
+              loop
+              playsInline
+              className="hero-video-bg"
+            />
+          )}
           <div className="hero-overlay" />
         </div>
         <div className="hero-content">
@@ -542,21 +547,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
 
   // 切视频时清掉人物卡
   useEffect(() => { closeCharacterCard(); }, [playing.id]);
-
-  // ★ 调试：每次切到一个 playing 都把要拼出来的 URL 写进 console
-  useEffect(() => {
-    const fullUrl = `${VIDEO_CDN}${playing.url}`;
-    console.warn('[VIDEO-DEBUG] playing changed:', {
-      'playing.id': playing.id,
-      'playing.url': playing.url,
-      'playing.filename': playing.filename,
-      VIDEO_CDN,
-      API,
-      fullUrl,
-      'process.env.REACT_APP_API_URL': process.env.REACT_APP_API_URL,
-      'process.env.REACT_APP_VIDEO_CDN': process.env.REACT_APP_VIDEO_CDN,
-    });
-  }, [playing.id, playing.url, playing.filename]);
   // 「问她一句」: 关 perspective，开 roleplay
   function bridgePerspectiveToRoleplay() {
     const cast = perspectiveChar;
@@ -1486,10 +1476,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
               key={playing.id}
               src={`${VIDEO_CDN}${playing.url}`}
               autoPlay
-              crossOrigin="anonymous"
               className="tx-player-video"
-              onLoadStart={(e) => console.warn('[VIDEO] loadStart src=', e.target.currentSrc, '| VIDEO_CDN=', VIDEO_CDN, '| playing.url=', playing.url, '| playing.filename=', playing.filename)}
-              onError={(e) => console.error('[VIDEO] error src=', e.target.currentSrc, '| code=', e.target.error?.code, '| msg=', e.target.error?.message)}
               onClick={() => {
                 // 角色对谈打开时不让画面 click 切换播放 —— overlay 自己处理"点空白关对话"
                 if (roleplayChar) return;
