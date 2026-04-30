@@ -5,10 +5,21 @@ import RelationshipGraph from './RelationshipGraph';
 import SeasonTimeline from './SeasonTimeline';
 import RoleplayDialogueDE from './RoleplayDialogueDE';
 import SymbolHotspots from './SymbolHotspots';
+import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 // 视频源 CDN：生产环境一般是 Cloudflare R2；不设时回落到本地 Express 的 /uploads
 const VIDEO_CDN = process.env.REACT_APP_VIDEO_CDN || API;
+
+// 把 video.url（来自 /api/videos）解析成最终 src：
+//   - 绝对 URL（http://... / https://...）→ 原样用
+//   - 相对路径（/uploads/...）→ 前面补 VIDEO_CDN
+// 这样不管后端返回相对还是绝对，前端都不会拼出 https://x/https://x/... 的破坏性结果
+function resolveVideoSrc(url) {
+  if (!url) return '';
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${VIDEO_CDN}${url}`;
+}
 
 const MOCK_RATINGS = ['9.8', '8.5', '9.1', '7.8', '9.3', '8.7', '9.0', '8.2'];
 const GENRES = ['ACTION', 'FANTASY', 'DRAMA'];
@@ -36,13 +47,17 @@ export default function App() {
   const fileInputRef = useRef(null);
 
   const fetchVideos = useCallback(async () => {
+    let list = [];
     try {
       const { data } = await axios.get(`${API}/api/videos`);
-      setVideos(data);
-      if (data.length > 0 && !featured) setFeatured(data[0]);
+      if (Array.isArray(data)) list = data;
     } catch {
-      // server not running
+      // 后端不可达（典型：Vercel 静态部署没有配置 REACT_APP_API_URL）
+      // 回落到打包进 bundle 的 demo 清单，让首页至少能播放展示视频
     }
+    if (list.length === 0) list = DEMO_VIDEOS;
+    setVideos(list);
+    if (list.length > 0 && !featured) setFeatured(list[0]);
   }, [featured]);
 
   useEffect(() => { fetchVideos(); }, []);
@@ -158,7 +173,7 @@ export default function App() {
           {heroVideo && (
             <video
               key={heroVideo.id}
-              src={`${VIDEO_CDN}${heroVideo.url}`}
+              src={resolveVideoSrc(heroVideo.url)}
               muted
               autoPlay
               loop
@@ -231,7 +246,7 @@ export default function App() {
               >
                 <div className="card-thumb">
                   <video
-                    src={`${VIDEO_CDN}${video.url}`}
+                    src={resolveVideoSrc(video.url)}
                     preload="metadata"
                     muted
                   />
@@ -1474,7 +1489,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             <video
               ref={videoRef}
               key={playing.id}
-              src={`${VIDEO_CDN}${playing.url}`}
+              src={resolveVideoSrc(playing.url)}
               autoPlay
               className="tx-player-video"
               onClick={() => {
