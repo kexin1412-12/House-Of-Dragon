@@ -3,6 +3,10 @@
 .env.local
 **/.env
 !**/.env.example
+*.key
+*.pem
+secrets.json
+credentials.json
 
 # --- Dependencies ---
 node_modules/
@@ -22,6 +26,13 @@ server/kb/frames/
 server/kb/characters/face_refs/
 # server/references — third-party books (Blood and Fire) + cached pages
 server/references/
+# Loose video files anywhere in the repo (uploads should never enter Git)
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi
+*.m4v
 
 # --- Backups & scratch ---
 *.backup-*.json
