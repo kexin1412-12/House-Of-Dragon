@@ -229,12 +229,14 @@ export default function App() {
                 className={`video-card ${featured?.id === video.id ? 'active' : ''}`}
                 onClick={() => setPlaying(video)}
               >
-                <div className="card-thumb">
-                  <video
-                    src={`${VIDEO_CDN}${video.url}`}
-                    preload="metadata"
-                    muted
-                  />
+                <div className="card-thumb card-thumb-poster">
+                  <div className="card-poster">
+                    <div className="card-poster-eyebrow">CO-CONSPIRATOR</div>
+                    <div className="card-poster-title">共谋者</div>
+                    <div className="card-poster-rule" />
+                    <div className="card-poster-sub">与剧中人共看一遍</div>
+                    <div className="card-poster-show">HOUSE OF THE DRAGON · S01E05</div>
+                  </div>
                   <div className="card-overlay">
                     <div className="card-play-btn">▶</div>
                   </div>
