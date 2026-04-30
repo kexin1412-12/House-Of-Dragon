@@ -287,7 +287,7 @@ function ParentBracketEdge({ parents, children, positions }) {
 }
 
 // ─── Conflict overlay ───────────────────────────────────────────────
-function ConflictEdge({ from, to, kind, relation, positions }) {
+function ConflictEdge({ from, to, kind, relation, positions, future }) {
   const a = positions[from];
   const b = positions[to];
   if (!a || !b) return null;
@@ -298,8 +298,13 @@ function ConflictEdge({ from, to, kind, relation, positions }) {
   const x2 = b.x - ux * PORTRAIT_R, y2 = b.y - uy * PORTRAIT_R;
   const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
   const style = CONFLICT_STYLE[kind] || CONFLICT_STYLE.enemy;
+  // future = the edge's triggering scene hasn't played yet. Click still
+  // reveals the edge so the user can see "this character will be tied to
+  // X later", but rendered with reduced opacity so it's clearly distinct
+  // from edges that have already played.
+  const cls = style.className + (future ? ' is-future' : '');
   return (
-    <g className={style.className}>
+    <g className={cls}>
       <line x1={x1} y1={y1} x2={x2} y2={y2} />
       {relation && (
         <g className="rg-conf-label" transform={`translate(${mx}, ${my})`}>
@@ -776,15 +781,14 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const involvedIds = useMemo(() => {
     if (!highlighted) return null;
     const set = new Set([highlighted]);
-    // Only count edges that are currently visible (their triggering scene
-    // has played); future-only edges shouldn't pull characters above the
-    // dim layer or claim a connection that hasn't happened yet.
+    // Click reveals every connection on this character — even ones whose
+    // scene hasn't played yet. The future-vs-now distinction is conveyed
+    // visually via ConflictEdge's `future` prop, not by hiding the edge.
     for (const e of activeConflicts) {
-      if (!edgeIsActive(e)) continue;
       set.add(e.from); set.add(e.to);
     }
     return set;
-  }, [highlighted, activeConflicts, edgeIsActive]);
+  }, [highlighted, activeConflicts]);
 
   return (
     <div className={`rg-root ${open ? 'is-viewing' : ''}`}>
@@ -915,16 +919,17 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                 </g>
 
                 {/* conflict overlay (only when a character is highlighted).
-                    Edges whose triggering scene hasn't played yet are
-                    filtered out so the click view stays spoiler-safe at
-                    early playback positions. */}
+                    All edges render so the user actually sees the character
+                    has connections — but edges whose triggering scene
+                    hasn't played yet pass `future` and CSS dims them. */}
                 {highlighted && (
                   <g className="rg-conflict-layer">
-                    {activeConflicts.filter(edgeIsActive).map((e, i) => (
+                    {activeConflicts.map((e, i) => (
                       <ConflictEdge
                         key={`conf-${i}`}
                         from={e.from} to={e.to}
                         kind={e.kind} relation={e.relation}
+                        future={!edgeIsActive(e)}
                         positions={layout.positions}
                       />
                     ))}
