@@ -138,7 +138,7 @@ function Companion({ data }) {
   );
 }
 
-function CharacterNode({ char, position, highlighted, focused, dead, dimmed, onClick }) {
+function CharacterNode({ char, position, highlighted, focused, dead, dimmed, portraitUrl, onClick }) {
   const clipId = `rg-clip-${char.character_id}`;
   const cls = [
     'rg-node',
@@ -147,6 +147,9 @@ function CharacterNode({ char, position, highlighted, focused, dead, dimmed, onC
     dead ? 'is-dead' : '',
     dimmed ? 'is-dimmed' : '',
   ].filter(Boolean).join(' ');
+  // portraitUrl override — used for time-driven actor swaps (young → adult).
+  // Falls back to whatever the static family-tree.json baked in.
+  const url = portraitUrl || char.portrait_url;
   return (
     <g
       className={cls}
@@ -159,9 +162,9 @@ function CharacterNode({ char, position, highlighted, focused, dead, dimmed, onC
         </clipPath>
       </defs>
       <circle className="rg-portrait-ring" r={PORTRAIT_R} />
-      {char.portrait_url ? (
+      {url ? (
         <image
-          href={char.portrait_url} xlinkHref={char.portrait_url}
+          href={url} xlinkHref={url}
           x={-(PORTRAIT_R - 2)} y={-(PORTRAIT_R - 2)}
           width={(PORTRAIT_R - 2) * 2} height={(PORTRAIT_R - 2) * 2}
           clipPath={`url(#${clipId})`} preserveAspectRatio="xMidYMid slice"
@@ -454,6 +457,14 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const [highlighted, setHighlighted] = useState(null);
   const [focused, setFocused] = useState(null);
   const [deadNow, setDeadNow] = useState(() => new Set());
+  // charId → active version name; only populated for chars whose actor
+  // changes mid-show (currently Rhaenyra/Alicent young↔adult). Falls back
+  // to the family-tree default portrait when missing.
+  const [versionsNow, setVersionsNow] = useState(() => new Map());
+  // "from|to" keys for conflict edges whose triggering scene has already
+  // played. Edges without a triggered_by_scene_id stay always-on and
+  // aren't tracked here.
+  const [activeEdges, setActiveEdges] = useState(() => new Set());
   const [profileId, setProfileId] = useState(null);
   const viewportRef = useRef(null);
 
@@ -504,10 +515,16 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      // Esc dismisses overlays in order: profile panel → conflict highlight → whole drawer
+      if (profileId) { setProfileId(null); setHighlighted(null); return; }
+      if (highlighted) { setHighlighted(null); return; }
+      setOpen(false);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
+  }, [open, profileId, highlighted]);
 
   // reset state when video changes (in case the demo bumps to a different show)
   useEffect(() => { setHighlighted(null); setFocused(null); setProfileId(null); }, [videoId]);
@@ -515,17 +532,40 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   // close profile when the whole relationship graph drawer closes
   useEffect(() => { if (!open) setProfileId(null); }, [open]);
 
-  // Time-driven polling: every 600 ms while the drawer is open, derive the
-  // focal character (binary search through scene-focus ranges) AND the set
-  // of characters whose death scene has already played (compare currentTime
-  // to char-events death_at). Both update only on actual change to avoid
-  // re-rendering the whole tree every tick.
+  // Time-driven polling: every 600 ms while the drawer is open, recompute
+  // four time-derived states (focal char, deaths-now, active version per
+  // char, visible-conflict edges) by comparing currentTime to the per-video
+  // char-events map. Each state updates only when its content actually
+  // changes, avoiding a full re-render of 18 portraits + 24 edges every
+  // tick.
   useEffect(() => {
     if (!open || !videoRef?.current) return;
     if (!focusList && !charEvents) return;
     let timer = 0;
     let lastHero = null;
     let lastDeadKey = '';
+    let lastVerKey = '';
+    let lastEdgeKey = '';
+
+    const versionSwaps = charEvents?.version_swaps || {};
+    const deaths = charEvents?.deaths || {};
+    const edgeAppears = charEvents?.edge_appears || {};
+
+    // Pre-compute, for each char with version_swaps, the "initial" version
+    // (the one not named in any swap entry). Falls back to the first key in
+    // portraits_by_version if everything's named.
+    const initialVersionByChar = {};
+    if (tree) {
+      for (const c of tree.characters) {
+        const swaps = versionSwaps[c.character_id];
+        if (!swaps) continue;
+        const all = Object.keys(c.portraits_by_version || {});
+        const swapped = new Set(Object.keys(swaps));
+        initialVersionByChar[c.character_id] =
+          all.find(v => !swapped.has(v)) || all[0] || c.actor_version || null;
+      }
+    }
+
     const tick = () => {
       const v = videoRef.current;
       if (v) {
@@ -547,26 +587,54 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           }
         }
 
-        if (charEvents) {
-          const next = new Set();
-          for (const id in charEvents) {
-            const ev = charEvents[id];
-            if (ev?.death_at != null && t >= ev.death_at) next.add(id);
+        // deaths
+        const deadSet = new Set();
+        for (const id in deaths) {
+          if (t >= deaths[id]) deadSet.add(id);
+        }
+        const deadKey = [...deadSet].sort().join(',');
+        if (deadKey !== lastDeadKey) {
+          lastDeadKey = deadKey;
+          setDeadNow(deadSet);
+        }
+
+        // active version per char
+        const versionMap = new Map();
+        for (const charId in versionSwaps) {
+          const swaps = versionSwaps[charId];
+          let active = initialVersionByChar[charId];
+          let bestT = -1;
+          for (const ver in swaps) {
+            const swapT = swaps[ver];
+            if (t >= swapT && swapT > bestT) {
+              bestT = swapT;
+              active = ver;
+            }
           }
-          // Set membership rarely changes (twice in the demo), so a sorted
-          // string key is cheap enough as a change detector.
-          const key = [...next].sort().join(',');
-          if (key !== lastDeadKey) {
-            lastDeadKey = key;
-            setDeadNow(next);
-          }
+          if (active) versionMap.set(charId, active);
+        }
+        const verKey = [...versionMap.entries()].map(([k, v]) => `${k}=${v}`).sort().join(',');
+        if (verKey !== lastVerKey) {
+          lastVerKey = verKey;
+          setVersionsNow(versionMap);
+        }
+
+        // active conflict edges (scene-triggered ones)
+        const edgeSet = new Set();
+        for (const key in edgeAppears) {
+          if (t >= edgeAppears[key]) edgeSet.add(key);
+        }
+        const edgeKey = [...edgeSet].sort().join('|');
+        if (edgeKey !== lastEdgeKey) {
+          lastEdgeKey = edgeKey;
+          setActiveEdges(edgeSet);
         }
       }
       timer = window.setTimeout(tick, 600);
     };
     tick();
     return () => clearTimeout(timer);
-  }, [open, focusList, charEvents, videoRef]);
+  }, [open, focusList, charEvents, videoRef, tree]);
 
   const layout = useMemo(() => tree ? computeLayout(tree) : null, [tree]);
   const parentGroups = useMemo(
@@ -583,6 +651,32 @@ export default function RelationshipGraph({ videoId, videoRef }) {
     }
     return m;
   }, [tree]);
+
+  // Per-character render state derived from currentTime (via deadNow /
+  // versionsNow). Keeping this in one map avoids duplicating the lookup
+  // inside the dim/highlight render loops below.
+  const charRender = useMemo(() => {
+    const m = new Map();
+    if (!tree) return m;
+    for (const c of tree.characters) {
+      const hasTimedDeath = charEvents?.deaths?.[c.character_id] != null;
+      const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+      const activeVer = versionsNow.get(c.character_id);
+      const portraitUrl = (activeVer && c.portraits_by_version?.[activeVer])
+        ? c.portraits_by_version[activeVer]
+        : c.portrait_url;
+      m.set(c.character_id, { dead, portraitUrl });
+    }
+    return m;
+  }, [tree, charEvents, deadNow, versionsNow]);
+
+  // True when an edge with a triggered_by_scene_id should render: either
+  // its scene has played or there's no time gate at all.
+  const edgeIsActive = useCallback((e) => {
+    const key = `${e.from}|${e.to}`;
+    if (charEvents?.edge_appears?.[key] == null) return true;
+    return activeEdges.has(key);
+  }, [charEvents, activeEdges]);
 
   const graphSize = layout ? { width: layout.width, height: layout.height } : { width: 0, height: 0 };
   const viewport = useViewport(graphSize, viewportRef);
@@ -629,11 +723,38 @@ export default function RelationshipGraph({ videoId, videoRef }) {
     setProfileId(id);
   }, []);
 
-  const clearHighlight = useCallback((e) => {
-    if (e.target === e.currentTarget) setHighlighted(null);
+  const closeProfile = useCallback(() => setProfileId(null), []);
+
+  // Click anywhere outside a character node (transparent SVG background, kin
+  // edge, viewport border, …) → drop both the conflict highlight and the
+  // profile panel. We use closest('.rg-node') so that clicks on epithet
+  // pills / portrait clip-paths inside the node still count as a node click.
+  const clearOverlays = useCallback((e) => {
+    if (e.target?.closest && !e.target.closest('.rg-node')) {
+      setHighlighted(null);
+      setProfileId(null);
+    }
   }, []);
 
-  const closeProfile = useCallback(() => setProfileId(null), []);
+  // Same dismiss-on-background behavior at the START of a drag — without it,
+  // the panel stays open while the user pans (because onClick only fires for
+  // a no-move release), which is the main reason "can't drag the graph" felt
+  // broken: the panel kept covering the right ~40% of the viewport.
+  const onViewportMouseDown = useCallback((e) => {
+    if (e.target?.closest && !e.target.closest('.rg-node')) {
+      setHighlighted(null);
+      setProfileId(null);
+    }
+    viewport.onMouseDown(e);
+  }, [viewport]);
+
+  const onViewportTouchStart = useCallback((e) => {
+    if (e.target?.closest && !e.target.closest('.rg-node')) {
+      setHighlighted(null);
+      setProfileId(null);
+    }
+    viewport.onTouchStart(e);
+  }, [viewport]);
 
   const activeConflicts = highlighted ? (conflictByChar.get(highlighted) || []) : [];
 
@@ -645,9 +766,15 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const involvedIds = useMemo(() => {
     if (!highlighted) return null;
     const set = new Set([highlighted]);
-    for (const e of activeConflicts) { set.add(e.from); set.add(e.to); }
+    // Only count edges that are currently visible (their triggering scene
+    // has played); future-only edges shouldn't pull characters above the
+    // dim layer or claim a connection that hasn't happened yet.
+    for (const e of activeConflicts) {
+      if (!edgeIsActive(e)) continue;
+      set.add(e.from); set.add(e.to);
+    }
     return set;
-  }, [highlighted, activeConflicts]);
+  }, [highlighted, activeConflicts, edgeIsActive]);
 
   return (
     <div className={`rg-root ${open ? 'is-viewing' : ''}`}>
@@ -697,15 +824,15 @@ export default function RelationshipGraph({ videoId, videoRef }) {
             className="rg-tree-viewport"
             ref={viewportRef}
             onWheel={viewport.onWheel}
-            onMouseDown={viewport.onMouseDown}
+            onMouseDown={onViewportMouseDown}
             onMouseMove={viewport.onMouseMove}
             onMouseUp={viewport.onMouseUp}
             onMouseLeave={viewport.onMouseUp}
-            onTouchStart={viewport.onTouchStart}
+            onTouchStart={onViewportTouchStart}
             onTouchMove={viewport.onTouchMove}
             onTouchEnd={viewport.onTouchEnd}
             onDoubleClick={onResetView}
-            onClick={clearHighlight}
+            onClick={clearOverlays}
           >
             {error && <div className="rg-error">关系图加载失败：{error}</div>}
             {tree && layout && (
@@ -760,8 +887,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                   {tree.characters
                     .filter(c => involvedIds && !involvedIds.has(c.character_id))
                     .map(c => {
-                      const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
-                      const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+                      const r = charRender.get(c.character_id) || {};
                       return (
                         <CharacterNode
                           key={c.character_id}
@@ -769,7 +895,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                           position={layout.positions[c.character_id]}
                           highlighted={false}
                           focused={focused === c.character_id}
-                          dead={dead}
+                          dead={r.dead}
+                          portraitUrl={r.portraitUrl}
                           dimmed
                           onClick={onCharClick}
                         />
@@ -777,10 +904,13 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                     })}
                 </g>
 
-                {/* conflict overlay (only when a character is highlighted) */}
+                {/* conflict overlay (only when a character is highlighted).
+                    Edges whose triggering scene hasn't played yet are
+                    filtered out so the click view stays spoiler-safe at
+                    early playback positions. */}
                 {highlighted && (
                   <g className="rg-conflict-layer">
-                    {activeConflicts.map((e, i) => (
+                    {activeConflicts.filter(edgeIsActive).map((e, i) => (
                       <ConflictEdge
                         key={`conf-${i}`}
                         from={e.from} to={e.to}
@@ -799,8 +929,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                   {tree.characters
                     .filter(c => !involvedIds || involvedIds.has(c.character_id))
                     .map(c => {
-                      const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
-                      const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+                      const r = charRender.get(c.character_id) || {};
                       return (
                         <CharacterNode
                           key={c.character_id}
@@ -808,7 +937,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
                           position={layout.positions[c.character_id]}
                           highlighted={highlighted === c.character_id}
                           focused={focused === c.character_id}
-                          dead={dead}
+                          dead={r.dead}
+                          portraitUrl={r.portraitUrl}
                           onClick={onCharClick}
                         />
                       );

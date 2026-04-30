@@ -15,6 +15,9 @@
       "house": "Royce",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/rhea_royce/default/fd_01_Rhea_Royce.png.png",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/rhea_royce/default/fd_01_Rhea_Royce.png.png"
+      },
       "alive": false,
       "generation": 0,
       "lineage_x": 0,
@@ -29,6 +32,9 @@
       "house": "Targaryen",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 1,
@@ -49,7 +55,10 @@
       "house": "Targaryen",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg",
-      "alive": true,
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg"
+      },
+      "alive": false,
       "generation": 0,
       "lineage_x": 2,
       "companion": null
@@ -63,6 +72,10 @@
       "house": "Hightower",
       "actor_version": "adult",
       "portrait_url": "/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png",
+      "portraits_by_version": {
+        "young": "/kb/characters/face_refs/alicent_hightower/young/wp_Emily_Carey.jpg",
+        "adult": "/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 3,
@@ -77,6 +90,9 @@
       "house": "Hightower",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 4,
@@ -91,6 +107,9 @@
       "house": "Strong",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/lyonel_strong/default/fd_01_Lyonel_Strong_TPATQ.jpg.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/lyonel_strong/default/fd_01_Lyonel_Strong_TPATQ.jpg.jpg"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 5,
@@ -105,6 +124,9 @@
       "house": "Velaryon",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/corlys_velaryon/default/fd_01_Corlys_Velaryon_S2.jpg.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/corlys_velaryon/default/fd_01_Corlys_Velaryon_S2.jpg.jpg"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 6,
@@ -125,6 +147,9 @@
       "house": "Targaryen",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 7,
@@ -145,6 +170,9 @@
       "house": null,
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/mysaria/default/fd_01_1x9_Mysaria.jpg.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/mysaria/default/fd_01_1x9_Mysaria.jpg.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 0,
@@ -159,6 +187,9 @@
       "house": "Cole",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/criston_cole/default/fd_01_Criston_Hand_of_the_King.jpg.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/criston_cole/default/fd_01_Criston_Hand_of_the_King.jpg.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 1,
@@ -173,6 +204,10 @@
       "house": "Targaryen",
       "actor_version": "adult",
       "portrait_url": "/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg",
+      "portraits_by_version": {
+        "young": "/kb/characters/face_refs/rhaenyra_targaryen/young/fd_02_RhaenyraTargaryenSoHN.PNG.png",
+        "adult": "/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 2,
@@ -193,6 +228,9 @@
       "house": "Targaryen",
       "actor_version": "adult",
       "portrait_url": "/kb/characters/face_refs/aegon_targaryen_ii/adult/fd_01_S2_Aegon_II_Targaryen_Infobox..jpg",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/aegon_targaryen_ii/adult/fd_01_S2_Aegon_II_Targaryen_Infobox..jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 3,
@@ -213,6 +251,9 @@
       "house": "Targaryen",
       "actor_version": "adult",
       "portrait_url": "/kb/characters/face_refs/helaena_targaryen/adult/fd_01_HelaenaASfASInfobox.PNG.png",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/helaena_targaryen/adult/fd_01_HelaenaASfASInfobox.PNG.png"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 4,
@@ -233,6 +274,9 @@
       "house": "Targaryen",
       "actor_version": "adult",
       "portrait_url": "/kb/characters/face_refs/aemond_targaryen/adult/fd_01_Aemond_Targaryen_S2.jpg.jpg",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/aemond_targaryen/adult/fd_01_Aemond_Targaryen_S2.jpg.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 5,
@@ -253,6 +297,9 @@
       "house": "Strong",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/harwin_strong/default/fd_01_Harwin_Strong_Official_Guide.j.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/harwin_strong/default/fd_01_Harwin_Strong_Official_Guide.j.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 6,
@@ -267,6 +314,9 @@
       "house": "Strong",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/larys_strong/default/fd_01_Larys_Strong_S2.jpg.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/larys_strong/default/fd_01_Larys_Strong_S2.jpg.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 7,
@@ -281,6 +331,9 @@
       "house": "Velaryon",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/laenor_velaryon/default/fd_01_Laenor_Velaryon_Official_Guide.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/laenor_velaryon/default/fd_01_Laenor_Velaryon_Official_Guide.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 8,
@@ -295,6 +348,9 @@
       "house": "Lonmouth",
       "actor_version": "default",
       "portrait_url": "/kb/characters/face_refs/joffrey_lonmouth/default/fd_01_Joffrey_Lonmouth_Official_Guid.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/joffrey_lonmouth/default/fd_01_Joffrey_Lonmouth_Official_Guid.jpg"
+      },
       "alive": false,
       "generation": 1,
       "lineage_x": 9,
@@ -418,168 +474,192 @@
       "to": "daemon_targaryen",
       "kind": "blood",
       "relation": "叔侄",
-      "summary": "戴蒙是雷尼拉的叔叔。两人之间存在超越正常血亲的张力。"
+      "summary": "戴蒙是雷尼拉的叔叔。两人之间存在超越正常血亲的张力。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "rhaenyra_targaryen",
       "to": "alicent_hightower",
       "kind": "enemy",
       "relation": "关系疏远",
-      "summary": "因身份与立场变化关系出现裂痕。"
+      "summary": "因身份与立场变化关系出现裂痕。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "daemon_targaryen",
       "to": "otto_hightower",
       "kind": "enemy",
       "relation": "政治对立",
-      "summary": "戴蒙视奥托为弱化王权的宫廷文官代表；奥托则视戴蒙为最大威胁。"
+      "summary": "戴蒙视奥托为弱化王权的宫廷文官代表；奥托则视戴蒙为最大威胁。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "rhaenys_targaryen",
       "to": "viserys_targaryen",
       "kind": "enemy",
       "relation": "表亲冷淡",
-      "summary": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。"
+      "summary": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。",
+      "triggered_by_scene_id": "s123"
     },
     {
       "from": "rhaenys_targaryen",
       "to": "rhaenyra_targaryen",
       "kind": "blood",
       "relation": "表姑侄",
-      "summary": "同样的\"被跳过\"是雷尼拉的镜子——蕾妮丝是同盟，也是警示。"
+      "summary": "同样的\"被跳过\"是雷尼拉的镜子——蕾妮丝是同盟，也是警示。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "corlys_velaryon",
       "to": "rhaenyra_targaryen",
       "kind": "ally",
       "relation": "关系紧张",
-      "summary": "失子之痛 + 战略分歧让同盟出现裂痕。"
+      "summary": "失子之痛 + 战略分歧让同盟出现裂痕。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "corlys_velaryon",
       "to": "daemon_targaryen",
       "kind": "ally",
       "relation": "政治盟友",
-      "summary": "阶梯列岛之战的并肩者；后又因联姻成姻亲。"
+      "summary": "阶梯列岛之战的并肩者；后又因联姻成姻亲。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "rhaenys_targaryen",
       "to": "daemon_targaryen",
       "kind": "blood",
       "relation": "表亲",
-      "summary": "同代坦格利安，对宫廷政治都看得透。"
+      "summary": "同代坦格利安，对宫廷政治都看得透。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "harwin_strong",
       "to": "rhaenyra_targaryen",
       "kind": "secret",
       "relation": "私情",
-      "summary": "雷尼拉三个儿子的生父（公开身份是公主与驸马劳琳诺的孩子）。"
+      "summary": "雷尼拉三个儿子的生父（公开身份是公主与驸马劳琳诺的孩子）。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "larys_strong",
       "to": "alicent_hightower",
       "kind": "ally",
       "relation": "政治附庸",
-      "summary": "靠为王后做\"脏活\"上位——耳目、纵火、刺杀。"
+      "summary": "靠为王后做\"脏活\"上位——耳目、纵火、刺杀。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "daemon_targaryen",
       "to": "mysaria",
       "kind": "secret",
       "relation": "情人",
-      "summary": "戴蒙最早的情妇与心腹耳目；后亦成下层人脉网络的入口。"
+      "summary": "戴蒙最早的情妇与心腹耳目；后亦成下层人脉网络的入口。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "criston_cole",
       "to": "rhaenyra_targaryen",
       "kind": "enemy",
       "relation": "敌对",
-      "summary": "雷妮拉拒绝私奔后克里斯顿在婚宴当众杀人——他与雷妮拉的私人忠诚关系在这一帧彻底反转。"
+      "summary": "雷妮拉拒绝私奔后克里斯顿在婚宴当众杀人——他与雷妮拉的私人忠诚关系在这一帧彻底反转。",
+      "triggered_by_scene_id": "s661"
     },
     {
       "from": "criston_cole",
       "to": "alicent_hightower",
       "kind": "ally",
       "relation": "政治盟友",
-      "summary": "克里斯顿黑化完成后转向海塔尔一侧——他对绿党的忠诚从这摊血开始计算。"
+      "summary": "克里斯顿黑化完成后转向海塔尔一侧——他对绿党的忠诚从这摊血开始计算。",
+      "triggered_by_scene_id": "s661"
     },
     {
       "from": "aegon_targaryen_ii",
       "to": "rhaenyra_targaryen",
       "kind": "enemy",
       "relation": "王位之争",
-      "summary": "继承权之争公开化；\"绿党\"与\"黑党\"分裂的核心冲突。"
+      "summary": "继承权之争公开化；\"绿党\"与\"黑党\"分裂的核心冲突。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "aemond_targaryen",
       "to": "rhaenyra_targaryen",
       "kind": "enemy",
       "relation": "政治对立",
-      "summary": "驯龙夺目事件后裂痕公开；他成为\"绿党\"阵营最锋利的剑。"
+      "summary": "驯龙夺目事件后裂痕公开；他成为\"绿党\"阵营最锋利的剑。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "helaena_targaryen",
       "to": "rhaenyra_targaryen",
       "kind": "blood",
       "relation": "同父异母",
-      "summary": "同一个父亲。"
+      "summary": "同一个父亲。",
+      "triggered_by_scene_id": null
     },
     {
       "from": "viserys_targaryen",
       "to": "otto_hightower",
       "kind": "enemy",
       "relation": "决裂",
-      "summary": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。"
+      "summary": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。",
+      "triggered_by_scene_id": "s109"
     },
     {
       "from": "viserys_targaryen",
       "to": "rhaenyra_targaryen",
       "kind": "enemy",
       "relation": "信任破裂",
-      "summary": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。"
+      "summary": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。",
+      "triggered_by_scene_id": "s146"
     },
     {
       "from": "alicent_hightower",
       "to": "rhaenyra_targaryen",
       "kind": "enemy",
       "relation": "公开对立",
-      "summary": "绿衣登场是阿莉森特把对雷妮拉父女轴线的告别公开化的瞬间——闺蜜→疏离→当众宣战。"
+      "summary": "绿衣登场是阿莉森特把对雷妮拉父女轴线的告别公开化的瞬间——闺蜜→疏离→当众宣战。",
+      "triggered_by_scene_id": "s454"
     },
     {
       "from": "daemon_targaryen",
       "to": "rhaenyra_targaryen",
       "kind": "secret",
       "relation": "暧昧",
-      "summary": "戴蒙在婚宴舞池贴近雷妮拉耳边低语——在最公开的场合制造最私密的接触，雷妮拉接受了'戴蒙永远在场'。"
+      "summary": "戴蒙在婚宴舞池贴近雷妮拉耳边低语——在最公开的场合制造最私密的接触，雷妮拉接受了'戴蒙永远在场'。",
+      "triggered_by_scene_id": "s509"
     },
     {
       "from": "viserys_targaryen",
       "to": "daemon_targaryen",
       "kind": "enemy",
       "relation": "兄弟不认",
-      "summary": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。"
+      "summary": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。",
+      "triggered_by_scene_id": "s550"
     },
     {
       "from": "criston_cole",
       "to": "joffrey_lonmouth",
       "kind": "enemy",
       "relation": "凶手",
-      "summary": "克里斯顿在婚宴上当众殴打致死乔弗里·朗茅斯。"
+      "summary": "克里斯顿在婚宴上当众殴打致死乔弗里·朗茅斯。",
+      "triggered_by_scene_id": "s661"
     },
     {
       "from": "criston_cole",
       "to": "laenor_velaryon",
       "kind": "enemy",
       "relation": "杀其情人",
-      "summary": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。"
+      "summary": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。",
+      "triggered_by_scene_id": "s661"
     },
     {
       "from": "daemon_targaryen",
       "to": "rhea_royce",
       "kind": "secret",
       "relation": "凶手",
-      "summary": "戴蒙在 Vale 用伪装坠马的方式谋杀合法妻子瑞亚·罗伊斯——蒙太奇拍法让暴行被遮蔽但已成既成事实。"
+      "summary": "戴蒙在 Vale 用伪装坠马的方式谋杀合法妻子瑞亚·罗伊斯——蒙太奇拍法让暴行被遮蔽但已成既成事实。",
+      "triggered_by_scene_id": "s10"
     }
   ]
 }

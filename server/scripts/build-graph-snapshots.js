@@ -191,6 +191,7 @@ function purgeStaleSnapshots() {
     if (f === '_family-tree.json') continue;
     if (f.startsWith('_scene-focus-')) continue;     // managed by buildSceneFocus
     if (f.startsWith('_char-events-')) continue;     // managed by buildCharEvents
+    if (f.startsWith('_profiles-')) continue;        // owned by the profile pipeline (separate skill)
     if (!f.endsWith('.json')) continue;
     fs.unlinkSync(path.join(SNAPSHOT_DIR, f));
     removed++;
@@ -208,8 +209,19 @@ function buildCharacterEntry(db, charId) {
   const card = charactersLib.lookupCharacter(db, charId, CURSOR);
   if (!card) return null;
   const version = card.current_actor?.version || null;
-  // copyFaceFile both returns the relative URL and copies the underlying
-  // file into client/public so the static bundle can serve it.
+  const defaultPortrait = copyFaceFile(charId, version);
+
+  // For chars whose actor changes mid-show (e.g. Rhaenyra young → adult),
+  // copy each version's first portrait too. Frontend swaps based on
+  // currentTime via _char-events-<videoId>.json#version_swaps.
+  const ch = charactersLib.findCharacter(db, charId);
+  const portraitsByVersion = {};
+  for (const av of ch?.actor_versions || []) {
+    if (!av.version || portraitsByVersion[av.version]) continue;
+    const url = copyFaceFile(charId, av.version);
+    if (url) portraitsByVersion[av.version] = url;
+  }
+
   return {
     character_id: charId,
     display_name: card.display_name,
@@ -218,7 +230,8 @@ function buildCharacterEntry(db, charId) {
     epithet: EPITHETS[charId] || null,
     house: card.house || null,
     actor_version: version,
-    portrait_url: copyFaceFile(charId, version),
+    portrait_url: defaultPortrait,
+    portraits_by_version: portraitsByVersion,
     alive: card.current?.alive !== false,
     generation: layout.generation,
     lineage_x: layout.lineage_x,
@@ -251,13 +264,17 @@ function buildEdges(db, characterIds) {
       kin.push(edge);
     } else {
       // Anything that is not blood/marriage backbone — political / emotional
-      // edges that drive the click-to-highlight overlay.
+      // edges that drive the click-to-highlight overlay. Carry the
+      // triggered_by_scene_id forward so the per-video char-events file can
+      // resolve it into a `appears_at` second mark; this gates the edge from
+      // showing before its scene plays in the recap.
       conflict.push({
         from: rel.source,
         to: rel.target,
         kind: active.relation_kind || 'enemy',  // null kind defaults to enemy
         relation: relZh,
         summary: active.summary_zh || active.summary || null,
+        triggered_by_scene_id: active.triggered_by_scene_id || null,
       });
     }
   }
@@ -382,31 +399,62 @@ function buildSceneFocus(videoId, eligibleIds) {
   return merged;
 }
 
-// Per-video character events keyed off scene_ids in the KB. Right now we
-// only resolve "death moments" (state entries flagged alive=false with a
-// triggered_by_scene_id pointing at a scene in this video). The frontend
-// uses death_at to gate the "已故" badge on currentTime — so the badge only
-// appears once the recap actually shows the death scene, instead of being
-// present from t=0 just because the character is dead by S01E10.
-function buildCharEvents(videoId, db, eligibleIds) {
+// Per-video, hand-tagged "this is when actor X swaps to a newer version of
+// the role" video seconds. Episode-equal partition (E06 = 5/10 of total
+// runtime ≈ 1794 s) is a placeholder — adjust per-video if the recap
+// doesn't follow show chronology evenly. Used to drive the time-jump
+// portrait swap (young Rhaenyra/Alicent → adult versions).
+const VIDEO_VERSION_SWAPS = {
+  'house_of_dragon_05': {
+    rhaenyra_targaryen: { adult: 1794 },
+    alicent_hightower:  { adult: 1794 },
+  },
+};
+
+// Per-video character events. Three time-gated mechanisms surface here:
+//   1) deaths      — character_id → seconds when their death scene plays
+//   2) version_swaps — character_id → { version_name → seconds }
+//   3) edge_appears — "from|to" → seconds when the conflict/secret/etc
+//                     line should start showing in the click overlay
+//
+// All resolved against scene_id → scene.start_time in the per-video KB.
+// Frontend uses currentTime + this map to gate the "已故" badge, swap
+// portraits at the time-jump, and hide future-only conflict edges before
+// their triggering scene plays.
+function buildCharEvents(videoId, db, eligibleIds, conflictEdges) {
   const kbFile = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
   if (!fs.existsSync(kbFile)) return null;
   const kb = JSON.parse(fs.readFileSync(kbFile, 'utf8'));
   const sceneById = new Map();
   for (const sc of kb.scenes || []) sceneById.set(sc.scene_id, sc);
+  const sceneTime = (sceneId) => {
+    const sc = sceneId ? sceneById.get(sceneId) : null;
+    return sc && typeof sc.start_time === 'number' ? sc.start_time : null;
+  };
+
   const eligible = new Set(eligibleIds);
-  const out = {};
+  const deaths = {};
   for (const ch of db.characters || []) {
     if (!eligible.has(ch.character_id)) continue;
     for (const entry of ch.state_timeline || []) {
       if (entry.alive !== false || !entry.triggered_by_scene_id) continue;
-      const sc = sceneById.get(entry.triggered_by_scene_id);
-      if (!sc || typeof sc.start_time !== 'number') continue;
-      out[ch.character_id] = { death_at: sc.start_time };
-      break;  // one death per character is enough
+      const t = sceneTime(entry.triggered_by_scene_id);
+      if (t == null) continue;
+      deaths[ch.character_id] = t;
+      break;
     }
   }
-  return out;
+
+  const version_swaps = VIDEO_VERSION_SWAPS[videoId] || {};
+
+  const edge_appears = {};
+  for (const e of conflictEdges || []) {
+    const t = sceneTime(e.triggered_by_scene_id);
+    if (t == null) continue;
+    edge_appears[`${e.from}|${e.to}`] = t;
+  }
+
+  return { deaths, version_swaps, edge_appears };
 }
 
 function main() {
@@ -453,8 +501,13 @@ function main() {
       fs.writeFileSync(path.join(SNAPSHOT_DIR, `_scene-focus-${vid}.json`), JSON.stringify(focus));
       focusFiles++;
     }
-    const events = buildCharEvents(vid, db, eligible);
-    if (events && Object.keys(events).length > 0) {
+    const events = buildCharEvents(vid, db, eligible, conflict_edges);
+    const hasEvents = events && (
+      Object.keys(events.deaths || {}).length > 0 ||
+      Object.keys(events.version_swaps || {}).length > 0 ||
+      Object.keys(events.edge_appears || {}).length > 0
+    );
+    if (hasEvents) {
       fs.writeFileSync(path.join(SNAPSHOT_DIR, `_char-events-${vid}.json`), JSON.stringify(events));
       eventFiles++;
     }

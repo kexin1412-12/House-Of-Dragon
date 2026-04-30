@@ -37,12 +37,24 @@
       "state_timeline": [
         {
           "from": "S01E01",
-          "to": "S01E05",
+          "to": "S01E07",
           "title_en": "King of the Seven Kingdoms",
           "title_zh": "七大王国之王",
           "political_role_zh": "王朝维系者，介于平衡各家族之间",
           "alive": true,
           "safe_summary_zh": "坦格利安王朝第五任国王，老国王杰赫里斯指定的继承人，被期待维系王朝百年和平。"
+        },
+        {
+          "from": "S01E08",
+          "to": null,
+          "title_zh": "已故国王",
+          "title_en": null,
+          "political_role_zh": null,
+          "alive": false,
+          "safe_summary_zh": "S01E08 在病榻上逝世；他临终前最后一句话被阿莉森特误读为指定阿伊耿继位，绿党据此政变。",
+          "triggered_by_scene_id": "s548",
+          "triggered_by_change": "death",
+          "evidence_zh": "韦赛里斯长期被麻风症折磨，剧中他在Driftmark争端裁决后病情加剧，于S01E08临终床畔留下'梦中之子'的遗言，被阿莉森特误听为指定 Aegon —— 这一帧后绿党加速准备政变。"
         }
       ]
     },
