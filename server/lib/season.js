@@ -186,7 +186,7 @@ function computeFactionState(showId, cursor, factionMembership) {
       ? '黑党明显占优'
       : greenPct > blackPct + 10
         ? '绿党明显占优'
-        : '势均力敌 / 暗流涌动',
+        : '势均力敌 / 形势胶着',
   };
 }
 

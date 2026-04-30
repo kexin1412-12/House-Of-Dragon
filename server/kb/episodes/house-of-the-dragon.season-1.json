@@ -13,7 +13,7 @@
 
   "arcs": [
     { "id": "succession", "label_zh": "继承之争", "ep_range": [1, 3],  "subtitle_zh": "雷妮拉成为继承人" },
-    { "id": "rupture",    "label_zh": "决裂之夜", "ep_range": [4, 5],  "subtitle_zh": "君临夜游 → 婚礼血案" },
+    { "id": "rupture",    "label_zh": "联姻与血案", "ep_range": [4, 5],  "subtitle_zh": "君临夜游 → 婚礼血案" },
     { "id": "rift",       "label_zh": "十年裂痕", "ep_range": [6, 8],  "subtitle_zh": "时间跳跃，国王走向死亡" },
     { "id": "war",        "label_zh": "血龙狂舞", "ep_range": [9, 10], "subtitle_zh": "绿党宫变 → 战火点燃" }
   ],
