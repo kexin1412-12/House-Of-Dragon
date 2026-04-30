@@ -1545,8 +1545,8 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             )}
 
             {/* 右边缘对谈入口：常驻金色小图标 → 弹出 cast picker
-                只在有可对谈角色 + 当前没在对谈时显示 */}
-            {!roleplayChar && roleplayCast.some(c => c.ready_for_episode && c.in_scene) && (
+                当前没在对谈时常驻显示；没人在场时 picker 显示空状态提示 */}
+            {!roleplayChar && (
               <>
                 <button
                   className={`tx-roleplay-edge-btn ${roleplayPickerOpen ? 'is-open' : ''}`}
@@ -1583,33 +1583,44 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div className="tx-roleplay-picker-meta">DRAMATIS PERSONAE · 与谁对话</div>
-                      <ul className="tx-roleplay-picker-list">
-                        {roleplayCast
-                          .filter(c => c.ready_for_episode && c.in_scene)
-                          .map(cast => (
-                            <li key={cast.character_id}>
-                              <button
-                                className="tx-roleplay-picker-item"
-                                onClick={() => {
-                                  setRoleplayPickerOpen(false);
-                                  openPerspective(cast, null);
-                                }}
-                              >
-                                <span
-                                  className="tx-roleplay-picker-name"
-                                  style={{ color: deCharColor(cast.character_id) }}
+                      {(() => {
+                        const available = roleplayCast.filter(c => c.ready_for_episode && c.in_scene);
+                        if (available.length === 0) {
+                          return (
+                            <div className="tx-roleplay-picker-empty">
+                              当前场景暂无可对谈的角色 ——
+                              等画面切到有 AI 角色档案的人物时，名单会自动出现。
+                            </div>
+                          );
+                        }
+                        return (
+                          <ul className="tx-roleplay-picker-list">
+                            {available.map(cast => (
+                              <li key={cast.character_id}>
+                                <button
+                                  className="tx-roleplay-picker-item"
+                                  onClick={() => {
+                                    setRoleplayPickerOpen(false);
+                                    openPerspective(cast, null);
+                                  }}
                                 >
-                                  {(cast.display_name || cast.character_id).toUpperCase()}
-                                </span>
-                                {cast.short_identity && (
-                                  <span className="tx-roleplay-picker-id">
-                                    — {cast.short_identity}
+                                  <span
+                                    className="tx-roleplay-picker-name"
+                                    style={{ color: deCharColor(cast.character_id) }}
+                                  >
+                                    {(cast.display_name || cast.character_id).toUpperCase()}
                                   </span>
-                                )}
-                              </button>
-                            </li>
-                          ))}
-                      </ul>
+                                  {cast.short_identity && (
+                                    <span className="tx-roleplay-picker-id">
+                                      — {cast.short_identity}
+                                    </span>
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        );
+                      })()}
                     </div>
                   </>
                 )}

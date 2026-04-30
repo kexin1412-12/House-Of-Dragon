@@ -1539,7 +1539,7 @@ body {
    计算：50% + (44px 自身 / 2) + 12px 间距 + (44px 关系图 / 2) = 50% + 56px。 */
 .tx-player-aichat-btn {
   position: absolute; right: 20px;
-  top: calc(50% + 56px);
+  top: calc(50% + 84px);   /* 4-icon 等距：timeline -84 / 关系图 -28 / 对谈 +28 / chat +84 */
   transform: translateY(-50%);
   width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
@@ -4060,8 +4060,8 @@ body {
    暗底 + blur + 白边 + 白色 SVG，hover 暖橙；区分只靠 SVG 形状 + 数字位置。 */
 .tx-roleplay-edge-btn {
   position: absolute;
-  right: 20px;             /* 与上下两枚 HUD 图标对齐 */
-  top: 50%;                /* 上(50%-56px) / 中(50%) / 下(50%+56px) 等距堆叠 */
+  right: 20px;             /* 与上下三枚 HUD 图标对齐 */
+  top: calc(50% + 28px);   /* 4-icon 等距：timeline -84 / 关系图 -28 / 对谈 +28 / chat +84 */
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
@@ -4109,6 +4109,16 @@ body {
 .tx-roleplay-edge-btn.is-open .tx-roleplay-edge-btn-label {
   opacity: 1;
   right: 60px;
+}
+
+/* picker 空状态：当前场景没角色时显示 */
+.tx-roleplay-picker-empty {
+  font-family: var(--de-font-body);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: rgba(216, 200, 168, 0.62);
+  padding: 8px 4px 4px;
+  font-style: italic;
 }
 
 /* picker scrim：透明，吃画面外点击就关闭 */

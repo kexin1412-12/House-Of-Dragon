@@ -57,7 +57,7 @@
 }
 .rg-hud-icon {
   position: absolute; right: 20px;
-  top: calc(50% - 56px);                     /* 与 chat 按钮对称：chat 在 +56，关系在 -56 */
+  top: calc(50% - 28px);                     /* 4-icon 等距：timeline -84 / 关系图 -28 / 对谈 +28 / chat +84 */
   transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;

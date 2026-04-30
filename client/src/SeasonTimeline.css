@@ -15,10 +15,10 @@
   z-index: 4; pointer-events: none;
 }
 
-/* 与 rg-hud-icon (-56) / chat (+56) 错开，时间轴在更上方 -112 */
+/* 4-icon 等距堆叠：上 -84 / -28 / +28 / 下 +84（间距 56px，对称于中线） */
 .st-hud-icon {
   position: absolute; right: 20px;
-  top: calc(50% - 168px);
+  top: calc(50% - 84px);
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.55);
