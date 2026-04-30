@@ -107,6 +107,26 @@ const TARGETS = [
       { version: 'adult', actor: 'Phia Saban', wikipedia: 'Phia Saban', fandom_page: 'Helaena_Targaryen' },
     ],
   },
+  // ── added so the family tree's Velaryon / Royce / Lonmouth nodes get
+  //    portraits instead of bare initial fallbacks ────────────────────
+  {
+    char_id: 'laenor_velaryon',
+    versions: [
+      { version: 'default', actor: 'John Macmillan', wikipedia: 'John Macmillan (actor)', fandom_page: 'Laenor_Velaryon' },
+    ],
+  },
+  {
+    char_id: 'rhea_royce',
+    versions: [
+      { version: 'default', actor: 'Rachel Redford', wikipedia: 'Rachel Redford', fandom_page: 'Rhea_Royce' },
+    ],
+  },
+  {
+    char_id: 'joffrey_lonmouth',
+    versions: [
+      { version: 'default', actor: 'Solly McLeod', wikipedia: 'Solly McLeod', fandom_page: 'Joffrey_Lonmouth' },
+    ],
+  },
 ];
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -237,11 +257,25 @@ async function processVersion(charId, ver) {
   return saved;
 }
 
+// Optional filter: `node ... --only laenor_velaryon,rhea_royce` to re-fetch
+// just specific characters (avoids touching existing files for the others
+// and steers clear of unnecessary HTTPS hits).
+function parseOnly(argv) {
+  const i = argv.indexOf('--only');
+  if (i === -1) return null;
+  const v = argv[i + 1];
+  if (!v) return null;
+  return new Set(v.split(',').map(s => s.trim()).filter(Boolean));
+}
+
 async function main() {
   fs.mkdirSync(REFS_ROOT, { recursive: true });
   console.log(`输出根目录: ${REFS_ROOT}\n`);
+  const only = parseOnly(process.argv);
+  if (only) console.log(`(filtered) only: ${[...only].join(', ')}\n`);
   let total = 0;
   for (const t of TARGETS) {
+    if (only && !only.has(t.char_id)) continue;
     for (const ver of t.versions) {
       total += await processVersion(t.char_id, ver);
     }

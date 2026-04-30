@@ -748,7 +748,14 @@
         "noble",
         "queer"
       ],
-      "actor_versions": [],
+      "actor_versions": [
+        {
+          "actor_name": "John Macmillan",
+          "version": "default",
+          "active_range": { "from": "S01E01", "to": null },
+          "face_group_id": "laenor_default"
+        }
+      ],
       "state_timeline": [
         {
           "from": "S01E01",
@@ -781,7 +788,14 @@
         "supporting",
         "queer"
       ],
-      "actor_versions": [],
+      "actor_versions": [
+        {
+          "actor_name": "Solly McLeod",
+          "version": "default",
+          "active_range": { "from": "S01E01", "to": null },
+          "face_group_id": "joffrey_default"
+        }
+      ],
       "state_timeline": [
         {
           "from": "S01E01",
@@ -813,7 +827,14 @@
       "tags": [
         "supporting"
       ],
-      "actor_versions": [],
+      "actor_versions": [
+        {
+          "actor_name": "Rachel Redford",
+          "version": "default",
+          "active_range": { "from": "S01E01", "to": null },
+          "face_group_id": "rhea_default"
+        }
+      ],
       "state_timeline": [
         {
           "from": "S01E01",

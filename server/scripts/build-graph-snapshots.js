@@ -13,9 +13,12 @@ const path = require('path');
 const charactersLib = require('../lib/characters');
 
 const SHOW_ID = 'house-of-the-dragon';
-// Cursor null = end-of-show "current" entry; matches the live route when no
-// videoId is passed. Demo is a full-season recap, so we want the final state.
-const CURSOR = null;
+// End-of-S1 cursor. The demo video is a full-season recap so we want the
+// final state surfaced (Joffrey/Rhea/Aemma already dead, Rhaenyra played by
+// the adult actor, etc.). lookupCharacter() deliberately returns
+// `current: null` when cursor is null — that's spoiler-safety for the live
+// per-episode flow, but the family-tree poster wants the canonical end view.
+const CURSOR = 'S01E10';
 
 const SERVER_DIR = path.join(__dirname, '..');
 const CLIENT_PUBLIC = path.join(SERVER_DIR, '..', 'client', 'public');
