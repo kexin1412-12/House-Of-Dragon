@@ -1,0 +1,576 @@
+{
+  "show_id": "house-of-the-dragon",
+  "cursor_used": null,
+  "title_zh": "《龙之家族》",
+  "title_en": "HOUSE OF THE DRAGON",
+  "subtitle_zh": "坦格利安家族",
+  "subtitle_en": "HOUSE TARGARYEN",
+  "characters": [
+    {
+      "character_id": "rhea_royce",
+      "display_name": "瑞亚·罗伊斯",
+      "name_en": "RHEA ROYCE",
+      "short_identity": "戴蒙·坦格利安的妻子，谷地青铜骑手",
+      "epithet": null,
+      "house": "Royce",
+      "actor_version": null,
+      "portrait_url": null,
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 0,
+      "companion": null
+    },
+    {
+      "character_id": "daemon_targaryen",
+      "display_name": "戴蒙·坦格利安",
+      "name_en": "DAEMON TARGARYEN",
+      "short_identity": "韦赛里斯国王之弟",
+      "epithet": "浪荡王子",
+      "house": "Targaryen",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 1,
+      "companion": {
+        "character_id": "caraxes",
+        "display_name": "凯拉克西斯",
+        "short_identity": "血翼，戴蒙的红龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/caraxes.png"
+      }
+    },
+    {
+      "character_id": "viserys_targaryen",
+      "display_name": "韦赛里斯一世·坦格利安",
+      "name_en": "VISERYS I TARGARYEN",
+      "short_identity": "坦格利安王朝第五任国王",
+      "epithet": "少壮王",
+      "house": "Targaryen",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 2,
+      "companion": null
+    },
+    {
+      "character_id": "alicent_hightower",
+      "display_name": "阿莉森特·海塔尔",
+      "name_en": "ALICENT HIGHTOWER",
+      "short_identity": "韦赛里斯一世之妻，奥托·海塔尔之女",
+      "epithet": null,
+      "house": "Hightower",
+      "actor_version": "adult",
+      "portrait_url": "/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 3,
+      "companion": null
+    },
+    {
+      "character_id": "otto_hightower",
+      "display_name": "奥托·海塔尔",
+      "name_en": "OTTO HIGHTOWER",
+      "short_identity": "前御前首相",
+      "epithet": null,
+      "house": "Hightower",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 4,
+      "companion": null
+    },
+    {
+      "character_id": "lyonel_strong",
+      "display_name": "莱昂诺·斯壮",
+      "name_en": "LYONEL STRONG",
+      "short_identity": "御前首相",
+      "epithet": null,
+      "house": "Strong",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/lyonel_strong/default/fd_01_Lyonel_Strong_TPATQ.jpg.jpg",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 5,
+      "companion": null
+    },
+    {
+      "character_id": "corlys_velaryon",
+      "display_name": "科利斯·瓦列利安",
+      "name_en": "CORLYS VELARYON",
+      "short_identity": "「海蛇」",
+      "epithet": "潮汐之主",
+      "house": "Velaryon",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/corlys_velaryon/default/fd_01_Corlys_Velaryon_S2.jpg.jpg",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 6,
+      "companion": {
+        "character_id": "seasmoke",
+        "display_name": "海雾",
+        "short_identity": "银灰色，劳琳诺的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/seasmoke.png"
+      }
+    },
+    {
+      "character_id": "rhaenys_targaryen",
+      "display_name": "蕾妮丝·坦格利安",
+      "name_en": "RHAENYS TARGARYEN",
+      "short_identity": "「无冕女王」",
+      "epithet": "无冕女王",
+      "house": "Targaryen",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg",
+      "alive": true,
+      "generation": 0,
+      "lineage_x": 7,
+      "companion": {
+        "character_id": "meleys",
+        "display_name": "梅蕾斯",
+        "short_identity": "红色女王，蕾妮丝的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/meleys.png"
+      }
+    },
+    {
+      "character_id": "mysaria",
+      "display_name": "米莎莉娅",
+      "name_en": "MYSARIA",
+      "short_identity": "「白虫」 戴蒙的旧情人",
+      "epithet": null,
+      "house": null,
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/mysaria/default/fd_01_1x9_Mysaria.jpg.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 0,
+      "companion": null
+    },
+    {
+      "character_id": "criston_cole",
+      "display_name": "克里斯顿·科尔",
+      "name_en": "CRISTON COLE",
+      "short_identity": "御林铁卫",
+      "epithet": null,
+      "house": "Cole",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/criston_cole/default/fd_01_Criston_Hand_of_the_King.jpg.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 1,
+      "companion": null
+    },
+    {
+      "character_id": "rhaenyra_targaryen",
+      "display_name": "雷尼拉·坦格利安",
+      "name_en": "RHAENYRA TARGARYEN",
+      "short_identity": "龙石岛公主，铁王座继承人",
+      "epithet": "王国之光",
+      "house": "Targaryen",
+      "actor_version": "adult",
+      "portrait_url": "/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 2,
+      "companion": {
+        "character_id": "syrax",
+        "display_name": "赛拉克丝",
+        "short_identity": "雷尼拉的金龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/syrax.png"
+      }
+    },
+    {
+      "character_id": "aegon_targaryen_ii",
+      "display_name": "伊耿二世·坦格利安",
+      "name_en": "AEGON II TARGARYEN",
+      "short_identity": "韦赛里斯与阿莉森特的长子",
+      "epithet": null,
+      "house": "Targaryen",
+      "actor_version": "adult",
+      "portrait_url": "/kb/characters/face_refs/aegon_targaryen_ii/adult/fd_01_S2_Aegon_II_Targaryen_Infobox..jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 3,
+      "companion": {
+        "character_id": "sunfyre",
+        "display_name": "阳焰",
+        "short_identity": "伊耿二世的金鳞龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/sunfyre.png"
+      }
+    },
+    {
+      "character_id": "helaena_targaryen",
+      "display_name": "海拉娜·坦格利安",
+      "name_en": "HELAENA TARGARYEN",
+      "short_identity": "韦赛里斯与阿莉森特之女",
+      "epithet": null,
+      "house": "Targaryen",
+      "actor_version": "adult",
+      "portrait_url": "/kb/characters/face_refs/helaena_targaryen/adult/fd_01_HelaenaASfASInfobox.PNG.png",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 4,
+      "companion": {
+        "character_id": "dreamfyre",
+        "display_name": "梦火",
+        "short_identity": "海拉娜的浅蓝龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/dreamfyre.png"
+      }
+    },
+    {
+      "character_id": "aemond_targaryen",
+      "display_name": "艾蒙德·坦格利安",
+      "name_en": "AEMOND TARGARYEN",
+      "short_identity": "韦赛里斯与阿莉森特的次子",
+      "epithet": "弑亲者",
+      "house": "Targaryen",
+      "actor_version": "adult",
+      "portrait_url": "/kb/characters/face_refs/aemond_targaryen/adult/fd_01_Aemond_Targaryen_S2.jpg.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 5,
+      "companion": {
+        "character_id": "vhagar",
+        "display_name": "瓦格哈尔",
+        "short_identity": "现存最年长、最大的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/vhagar.png"
+      }
+    },
+    {
+      "character_id": "harwin_strong",
+      "display_name": "哈尔温·斯壮",
+      "name_en": "HARWIN STRONG",
+      "short_identity": "「碎骨人」 莱昂诺·斯壮长子",
+      "epithet": null,
+      "house": "Strong",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/harwin_strong/default/fd_01_Harwin_Strong_Official_Guide.j.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 6,
+      "companion": null
+    },
+    {
+      "character_id": "larys_strong",
+      "display_name": "拉里斯·斯壮",
+      "name_en": "LARYS STRONG",
+      "short_identity": "莱昂诺的次子",
+      "epithet": null,
+      "house": "Strong",
+      "actor_version": "default",
+      "portrait_url": "/kb/characters/face_refs/larys_strong/default/fd_01_Larys_Strong_S2.jpg.jpg",
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 7,
+      "companion": null
+    },
+    {
+      "character_id": "laenor_velaryon",
+      "display_name": "莱诺·瓦列利安",
+      "name_en": "LAENOR VELARYON",
+      "short_identity": "潮头岛继承人，海蛇科利斯之子",
+      "epithet": null,
+      "house": "Velaryon",
+      "actor_version": null,
+      "portrait_url": null,
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 8,
+      "companion": null
+    },
+    {
+      "character_id": "joffrey_lonmouth",
+      "display_name": "乔弗里·朗茅斯",
+      "name_en": "JOFFREY LONMOUTH",
+      "short_identity": "莱诺·瓦列利安的情人，'骑士骑士'",
+      "epithet": null,
+      "house": "Lonmouth",
+      "actor_version": null,
+      "portrait_url": null,
+      "alive": true,
+      "generation": 1,
+      "lineage_x": 9,
+      "companion": null
+    }
+  ],
+  "kin_edges": [
+    {
+      "kind": "parent_child",
+      "label": "子女",
+      "relation_zh": "父女",
+      "from": "viserys_targaryen",
+      "to": "rhaenyra_targaryen"
+    },
+    {
+      "kind": "marriage",
+      "label": "夫妻",
+      "relation_zh": "夫妻对立",
+      "from": "alicent_hightower",
+      "to": "viserys_targaryen"
+    },
+    {
+      "kind": "parent_child",
+      "label": "子女",
+      "relation_zh": "父女",
+      "from": "otto_hightower",
+      "to": "alicent_hightower"
+    },
+    {
+      "kind": "sibling",
+      "label": "兄弟",
+      "relation_zh": "兄弟",
+      "from": "daemon_targaryen",
+      "to": "viserys_targaryen"
+    },
+    {
+      "kind": "marriage",
+      "label": "夫妻",
+      "relation_zh": "夫妻",
+      "from": "corlys_velaryon",
+      "to": "rhaenys_targaryen"
+    },
+    {
+      "kind": "parent_child",
+      "label": "子女",
+      "relation_zh": "父子",
+      "from": "lyonel_strong",
+      "to": "harwin_strong"
+    },
+    {
+      "kind": "parent_child",
+      "label": "子女",
+      "relation_zh": "父子",
+      "from": "lyonel_strong",
+      "to": "larys_strong"
+    },
+    {
+      "kind": "parent_couple",
+      "label": "子女",
+      "relation_zh": "母子",
+      "to": "aegon_targaryen_ii",
+      "parents": [
+        "alicent_hightower",
+        "viserys_targaryen"
+      ]
+    },
+    {
+      "kind": "parent_couple",
+      "label": "子女",
+      "relation_zh": "母子",
+      "to": "aemond_targaryen",
+      "parents": [
+        "alicent_hightower",
+        "viserys_targaryen"
+      ]
+    },
+    {
+      "kind": "parent_couple",
+      "label": "子女",
+      "relation_zh": "母女",
+      "to": "helaena_targaryen",
+      "parents": [
+        "alicent_hightower",
+        "viserys_targaryen"
+      ]
+    },
+    {
+      "kind": "marriage",
+      "label": "夫妻",
+      "relation_zh": "夫妻",
+      "from": "aegon_targaryen_ii",
+      "to": "helaena_targaryen"
+    },
+    {
+      "kind": "marriage",
+      "label": "夫妻",
+      "relation_zh": "夫妻决裂",
+      "from": "rhaenyra_targaryen",
+      "to": "laenor_velaryon"
+    },
+    {
+      "kind": "marriage",
+      "label": "夫妻",
+      "from": "daemon_targaryen",
+      "to": "rhaenyra_targaryen",
+      "relation_zh": "夫妻"
+    }
+  ],
+  "conflict_edges": [
+    {
+      "from": "rhaenyra_targaryen",
+      "to": "daemon_targaryen",
+      "kind": "blood",
+      "relation": "叔侄",
+      "summary": "戴蒙是雷尼拉的叔叔。两人之间存在超越正常血亲的张力。"
+    },
+    {
+      "from": "rhaenyra_targaryen",
+      "to": "alicent_hightower",
+      "kind": "enemy",
+      "relation": "关系疏远",
+      "summary": "因身份与立场变化关系出现裂痕。"
+    },
+    {
+      "from": "daemon_targaryen",
+      "to": "otto_hightower",
+      "kind": "enemy",
+      "relation": "政治对立",
+      "summary": "戴蒙视奥托为弱化王权的宫廷文官代表；奥托则视戴蒙为最大威胁。"
+    },
+    {
+      "from": "rhaenys_targaryen",
+      "to": "viserys_targaryen",
+      "kind": "enemy",
+      "relation": "表亲冷淡",
+      "summary": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。"
+    },
+    {
+      "from": "rhaenys_targaryen",
+      "to": "rhaenyra_targaryen",
+      "kind": "blood",
+      "relation": "表姑侄",
+      "summary": "同样的\"被跳过\"是雷尼拉的镜子——蕾妮丝是同盟，也是警示。"
+    },
+    {
+      "from": "corlys_velaryon",
+      "to": "rhaenyra_targaryen",
+      "kind": "ally",
+      "relation": "关系紧张",
+      "summary": "失子之痛 + 战略分歧让同盟出现裂痕。"
+    },
+    {
+      "from": "corlys_velaryon",
+      "to": "daemon_targaryen",
+      "kind": "ally",
+      "relation": "政治盟友",
+      "summary": "阶梯列岛之战的并肩者；后又因联姻成姻亲。"
+    },
+    {
+      "from": "rhaenys_targaryen",
+      "to": "daemon_targaryen",
+      "kind": "blood",
+      "relation": "表亲",
+      "summary": "同代坦格利安，对宫廷政治都看得透。"
+    },
+    {
+      "from": "harwin_strong",
+      "to": "rhaenyra_targaryen",
+      "kind": "secret",
+      "relation": "私情",
+      "summary": "雷尼拉三个儿子的生父（公开身份是公主与驸马劳琳诺的孩子）。"
+    },
+    {
+      "from": "larys_strong",
+      "to": "alicent_hightower",
+      "kind": "ally",
+      "relation": "政治附庸",
+      "summary": "靠为王后做\"脏活\"上位——耳目、纵火、刺杀。"
+    },
+    {
+      "from": "daemon_targaryen",
+      "to": "mysaria",
+      "kind": "secret",
+      "relation": "情人",
+      "summary": "戴蒙最早的情妇与心腹耳目；后亦成下层人脉网络的入口。"
+    },
+    {
+      "from": "criston_cole",
+      "to": "rhaenyra_targaryen",
+      "kind": "enemy",
+      "relation": "敌对",
+      "summary": "雷妮拉拒绝私奔后克里斯顿在婚宴当众杀人——他与雷妮拉的私人忠诚关系在这一帧彻底反转。"
+    },
+    {
+      "from": "criston_cole",
+      "to": "alicent_hightower",
+      "kind": "ally",
+      "relation": "政治盟友",
+      "summary": "克里斯顿黑化完成后转向海塔尔一侧——他对绿党的忠诚从这摊血开始计算。"
+    },
+    {
+      "from": "aegon_targaryen_ii",
+      "to": "rhaenyra_targaryen",
+      "kind": "enemy",
+      "relation": "王位之争",
+      "summary": "继承权之争公开化；\"绿党\"与\"黑党\"分裂的核心冲突。"
+    },
+    {
+      "from": "aemond_targaryen",
+      "to": "rhaenyra_targaryen",
+      "kind": "enemy",
+      "relation": "政治对立",
+      "summary": "驯龙夺目事件后裂痕公开；他成为\"绿党\"阵营最锋利的剑。"
+    },
+    {
+      "from": "helaena_targaryen",
+      "to": "rhaenyra_targaryen",
+      "kind": "blood",
+      "relation": "同父异母",
+      "summary": "同一个父亲。"
+    },
+    {
+      "from": "viserys_targaryen",
+      "to": "otto_hightower",
+      "kind": "enemy",
+      "relation": "决裂",
+      "summary": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。"
+    },
+    {
+      "from": "viserys_targaryen",
+      "to": "rhaenyra_targaryen",
+      "kind": "enemy",
+      "relation": "信任破裂",
+      "summary": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。"
+    },
+    {
+      "from": "alicent_hightower",
+      "to": "rhaenyra_targaryen",
+      "kind": "enemy",
+      "relation": "公开对立",
+      "summary": "绿衣登场是阿莉森特把对雷妮拉父女轴线的告别公开化的瞬间——闺蜜→疏离→当众宣战。"
+    },
+    {
+      "from": "daemon_targaryen",
+      "to": "rhaenyra_targaryen",
+      "kind": "secret",
+      "relation": "暧昧",
+      "summary": "戴蒙在婚宴舞池贴近雷妮拉耳边低语——在最公开的场合制造最私密的接触，雷妮拉接受了'戴蒙永远在场'。"
+    },
+    {
+      "from": "viserys_targaryen",
+      "to": "daemon_targaryen",
+      "kind": "enemy",
+      "relation": "兄弟不认",
+      "summary": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。"
+    },
+    {
+      "from": "criston_cole",
+      "to": "joffrey_lonmouth",
+      "kind": "enemy",
+      "relation": "凶手",
+      "summary": "克里斯顿在婚宴上当众殴打致死乔弗里·朗茅斯。"
+    },
+    {
+      "from": "criston_cole",
+      "to": "laenor_velaryon",
+      "kind": "enemy",
+      "relation": "凶手",
+      "summary": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。"
+    },
+    {
+      "from": "daemon_targaryen",
+      "to": "rhea_royce",
+      "kind": "secret",
+      "relation": "凶手",
+      "summary": "戴蒙在 Vale 用伪装坠马的方式谋杀合法妻子瑞亚·罗伊斯——蒙太奇拍法让暴行被遮蔽但已成既成事实。"
+    }
+  ]
+}

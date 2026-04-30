@@ -1,63 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;600&display=swap');
 
-/* ─── 命名空间根（颜色变量、字体等都收在这里） ─── */
+/* ─── Namespace root (color tokens, fonts) ───────────────────────── */
 .rg-root {
   --rg-ink: #e8e6df;
   --rg-ink-soft: #a9a69d;
   --rg-ink-dim: #6b6960;
   --rg-gold: #d4af37;
+  --rg-gold-soft: rgba(212, 175, 55, 0.55);
   --rg-scan: #6cb7ff;
 
-  /* 6 大视觉类型（用户决策 1） */
-  --rg-rel-blood:     #6b8db5;       /* 蓝：血亲 */
-  --rg-rel-marriage:  #d4af37;       /* 金：婚姻 */
-  --rg-rel-ally:      #4ade80;       /* 绿：盟友 */
-  --rg-rel-friend:    #86efac;       /* 浅绿：友人（虚线） */
-  --rg-rel-enemy:     #e63946;       /* 红：敌对 */
-  --rg-rel-secret:    #c084fc;       /* 紫：暗线（点线） */
-  --rg-rel-dragon:    #ff7848;       /* 火橙：龙骑士血誓 */
-  /* 兼容旧类名（其他组件可能仍引用，先保留） */
-  --rg-rel-kin:       var(--rg-rel-blood);
-  --rg-rel-spouse:    var(--rg-rel-marriage);
-  --rg-rel-rival:     var(--rg-rel-enemy);
-  --rg-rel-attend:    var(--rg-rel-ally);
-  --rg-rel-estranged: var(--rg-rel-enemy);
+  --rg-rel-blood:    #6b8db5;
+  --rg-rel-marriage: #d4af37;
+  --rg-rel-ally:     #4ade80;
+  --rg-rel-friend:   #ffb15a;
+  --rg-rel-enemy:    #ff5255;
+  --rg-rel-secret:   #c98aff;
 
-  --rg-serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+  /* yellow pill (family-tree kin label, matches reference posters) */
+  --rg-pill-bg:    #c79b3a;
+  --rg-pill-text:  #1a0d0a;
+  --rg-pill-edge:  #f5d177;
+
+  /* red epithet badge */
+  --rg-epi-bg:    #6e1417;
+  --rg-epi-text:  #ffe2c4;
+
+  --rg-serif:   'Noto Serif SC', 'Songti SC', 'STSong', serif;
   --rg-display: 'Cinzel', 'Trajan Pro', 'Times New Roman', serif;
 
   position: absolute;
   inset: 0;
-  pointer-events: none;     /* 默认不挡视频；只有内部交互元素再 enable */
-  z-index: 9;               /* 低于 .rp-overlay (10)，让现有人物卡 / 平行视角始终覆盖于其上 */
+  pointer-events: none;
+  z-index: 9;
   color: var(--rg-ink);
   font-family: var(--rg-serif);
 }
 .rg-root *, .rg-root *::before, .rg-root *::after { box-sizing: border-box; }
 .rg-root button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
 
-/* 电影黑边：右侧抽屉模式不再用（会切画面）。隐藏掉但保留钩子，后续如要恢复中央 modal 模式可一行回切。 */
 .rg-cine-bar { display: none; }
 
-/* ─── 顶部极简 HUD ─── */
-.rg-top-hud {
-  position: absolute; top: 0; left: 0; right: 0; z-index: 6;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 38px 28px 12px;        /* 黑边下面 */
-  font-family: var(--rg-display);
-  font-size: 11px; letter-spacing: .4em; color: var(--rg-ink-soft);
-  pointer-events: none;
-}
-.rg-top-hud-right { opacity: .72; }
-
-/* ─── 右侧 HUD 入口（与 .tx-player-aichat-btn 视觉统一） ─── */
+/* ─── HUD entry icon (right rail) ────────────────────────────────── */
 .rg-hud-edge {
   position: absolute; top: 0; right: 0; bottom: 0; width: 64px;
-  z-index: 4; pointer-events: none;          /* 整条不挡 AI 标签点击 */
+  z-index: 4; pointer-events: none;
 }
 .rg-hud-icon {
   position: absolute; right: 20px;
-  top: calc(50% - 28px);                     /* 4-icon 等距：timeline -84 / 关系图 -28 / 对谈 +28 / chat +84 */
+  top: calc(50% - 28px);
   transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -71,38 +61,45 @@
 }
 .rg-hud-icon:hover { background: rgba(232, 149, 77, 0.6); }
 .rg-hud-icon svg { width: 20px; height: 20px; color: currentColor; }
-
-/* 留 has-news 钩子但常态不动；将来要绑真实事件再开 */
 .rg-hud-icon.has-news { box-shadow: 0 0 0 1px rgba(212,175,55,.55), 0 0 18px rgba(212,175,55,.35); }
 
-/* ─── Focus Card 容器 ── 右侧抽屉，不挡画面正中央 ─── */
+/* ─── Full-screen overlay ────────────────────────────────────────── */
 .rg-focus-overlay {
   position: absolute; inset: 0; z-index: 7;
   pointer-events: none;
 }
 .rg-focus-overlay.open { pointer-events: auto; }
-/* 极淡的 scrim：只让右半边稍稍压一点，保证画面主体可见 */
+
 .rg-scrim {
   position: absolute; inset: 0;
-  background: transparent;     /* 关系图打开时不再压暗画面 */
+  background: radial-gradient(ellipse at center, rgba(20,5,5,0.78) 0%, rgba(0,0,0,0.92) 80%);
   opacity: 0; transition: opacity .35s ease;
 }
 .rg-focus-overlay.open .rg-scrim { opacity: 1; }
 
-.rg-focus-card {
-  position: absolute; top: 0; right: 0; bottom: 0;
-  width: 460px; max-width: 42vw;
-  background: transparent;
-  border-left: 0;
-  box-shadow: none;
-  transform: translateX(100%);
-  transition: transform .45s cubic-bezier(.2,.7,.2,1);
-  overflow: hidden;             /* clip scan-line 动画 */
+/* ─── Tree card: nearly-fullscreen, House Targaryen styling ─────── */
+.rg-tree-card {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 94vw; height: 90vh;
+  max-width: 1600px;
+  transform: translate(-50%, -50%) scale(0.96);
+  background:
+    radial-gradient(ellipse at top, rgba(80, 18, 18, 0.55) 0%, rgba(20, 8, 8, 0.92) 60%, #0a0606 100%),
+    #0a0606;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(60, 10, 10, 0.45) inset;
   display: flex; flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1);
 }
-.rg-focus-overlay.open .rg-focus-card { transform: translateX(0); }
+.rg-focus-overlay.open .rg-tree-card {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
 
-/* Witcher Senses 扫描线（key bump 重触发） */
+/* Witcher Senses scan line, key-bumped on open */
 .rg-scan-line {
   position: absolute; left: -2%; right: -2%; height: 80px; pointer-events: none;
   background: linear-gradient(180deg,
@@ -111,6 +108,7 @@
     rgba(108,183,255,0) 80%, transparent 100%);
   filter: blur(.4px); top: -80px; opacity: 0;
   animation: rg-scan 720ms cubic-bezier(.2,.7,.2,1) forwards;
+  z-index: 5;
 }
 @keyframes rg-scan {
   0%   { top: -80px; opacity: 0; }
@@ -120,126 +118,237 @@
 }
 
 .rg-close {
-  position: absolute; top: 12px; right: 14px;
-  width: 28px; height: 28px; border-radius: 50%;
+  position: absolute; top: 14px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   color: var(--rg-ink-soft);
   background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.06);
-  transition: all .25s ease; font-size: 14px; z-index: 5;
+  border: 1px solid rgba(255,255,255,.08);
+  font-size: 18px; z-index: 6;
+  transition: all .25s ease;
 }
 .rg-close:hover {
-  color: var(--rg-ink); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12);
-}
-
-.rg-card-header {
-  padding: 18px 28px 6px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-/* 透明背景下，所有文字都加一道浓黑投影/描边以保证可读性 */
-.rg-eyebrow {
-  font-family: var(--rg-display);
-  font-size: 11px; letter-spacing: .42em;
-  color: var(--rg-gold); opacity: .85;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.6);
-}
-.rg-hero-title {
-  margin: 6px 0 0;
-  font-family: var(--rg-serif); font-weight: 500; font-size: 22px; letter-spacing: .04em;
   color: var(--rg-ink);
-  text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.6);
-}
-.rg-hero-en {
-  font-family: var(--rg-display);
-  font-size: 13px; letter-spacing: .28em; color: var(--rg-ink-soft);
-  margin-left: 14px; font-weight: 400;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
-}
-.rg-hero-sub {
-  display: block;
-  margin-top: 6px;
-  font-family: var(--rg-serif); font-size: 12px; font-weight: 400;
-  letter-spacing: .04em; color: var(--rg-ink-soft);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
 }
 
-/* 加载 / 错误 / 空状态 */
-.rg-status {
+/* ─── Header (House Targaryen branding) ──────────────────────────── */
+.rg-tree-header {
+  position: relative; z-index: 3;
+  padding: 22px 56px 10px 36px;
+  text-align: center;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.rg-tree-title-zh {
+  font-family: var(--rg-serif);
+  font-size: 26px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--rg-ink);
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.25), 0 2px 6px rgba(0,0,0,0.85);
+}
+.rg-tree-subtitle-zh {
+  margin-left: 6px;
+  font-weight: 500; letter-spacing: 0.10em;
+  color: #f5d177;
+}
+.rg-tree-title-en {
+  font-family: var(--rg-display);
+  font-size: 18px; letter-spacing: 0.40em;
+  color: var(--rg-gold);
+  display: flex; gap: 18px; justify-content: center; align-items: baseline;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.rg-tree-subtitle-en { font-size: 13px; opacity: 0.78; letter-spacing: 0.34em; }
+
+/* ─── Zoom controls ─────────────────────────────────────────────── */
+.rg-zoom-controls {
+  position: absolute; top: 18px; left: 18px; z-index: 6;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.rg-zoom-controls button {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--rg-ink-soft);
+  font-size: 16px; line-height: 1;
+  transition: all .2s ease;
+  backdrop-filter: blur(4px);
+}
+.rg-zoom-controls button:hover {
+  background: rgba(212, 175, 55, 0.18);
+  color: var(--rg-gold);
+  border-color: var(--rg-gold);
+}
+
+/* ─── Tree viewport (pannable / zoomable) ──────────────────────── */
+.rg-tree-viewport {
+  position: relative; flex: 1; min-height: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;          /* keep browser from intercepting pinch */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.rg-tree-viewport:active { cursor: grabbing; }
+
+.rg-tree-svg {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: visiblePainted;     /* let clicks reach group nodes */
+  overflow: visible;
+}
+
+.rg-error {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--rg-serif); font-size: 13px; letter-spacing: .12em;
-  color: var(--rg-ink-soft); padding: 0 32px; text-align: center;
+  color: #e08a92; font-size: 13px; letter-spacing: .08em;
+  font-family: var(--rg-serif);
 }
-.rg-status-error { color: #e08a92; }
 
-/* ─── 关系图 SVG ── flex: 1 填满抽屉剩余高度 ─── */
-.rg-graph-wrap {
-  position: relative; flex: 1; min-height: 0;
-  padding: 8px 16px 16px;
-  overflow-y: auto;             /* 节点多时图谱可滚动，不被截断 */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(212,175,55,.35) transparent;
+/* ─── Footer / legend hint ─────────────────────────────────────── */
+.rg-tree-legend {
+  padding: 10px 36px 14px;
+  display: flex; justify-content: center;
+  font-family: var(--rg-serif); font-size: 11px; letter-spacing: 0.18em;
+  color: var(--rg-ink-soft);
 }
-.rg-graph-wrap::-webkit-scrollbar { width: 4px; }
-.rg-graph-wrap::-webkit-scrollbar-track { background: transparent; }
-.rg-graph-wrap::-webkit-scrollbar-thumb { background: rgba(212,175,55,.32); border-radius: 0; }
-.rg-graph-wrap svg { width: 100%; height: auto; display: block; }
+.rg-legend-hint::before { content: '∗  '; color: var(--rg-gold); }
 
+/* ─── SVG: nodes ──────────────────────────────────────────────── */
 .rg-node { cursor: pointer; }
-.rg-node .rg-node-bg {
-  fill: #161821; stroke: rgba(255,255,255,.18); stroke-width: 1;
-  transition: stroke .25s ease, filter .25s ease;
-}
-.rg-node:hover .rg-node-bg {
-  stroke: rgba(255,255,255,.55);
-  filter: drop-shadow(0 0 14px rgba(255,255,255,.18));
-}
-.rg-node-hero .rg-node-bg {
-  fill: #1a1d28; stroke: var(--rg-gold); stroke-width: 1.5;
-  filter: drop-shadow(0 0 18px rgba(212,175,55,.35));
-}
-.rg-node image { pointer-events: none; }   /* 让 click 落在 g 上 */
+.rg-node image { pointer-events: none; }
 
-/* 已去世：头像灰化 + 整体半透明 */
-.rg-node.is-dead { opacity: 0.42; filter: grayscale(85%); }
-.rg-node.is-dead .rg-node-bg { stroke: #6b6960; }
-.rg-node-dead {
+.rg-portrait-ring {
+  fill: #1a0a0a;
+  stroke: rgba(212, 175, 55, 0.85);
+  stroke-width: 1.6;
+  transition: stroke .25s ease, filter .25s ease, stroke-width .25s ease;
+}
+.rg-node:hover .rg-portrait-ring {
+  stroke: #f5d177;
+  filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.55));
+}
+.rg-node.is-highlighted .rg-portrait-ring {
+  stroke: #ffd966;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 22px rgba(255, 217, 102, 0.85));
+}
+.rg-node.is-dead { opacity: 0.55; }
+.rg-node.is-dead image { filter: grayscale(82%) brightness(0.75); }
+.rg-node.is-dead .rg-portrait-ring { stroke: rgba(212, 175, 55, 0.4); }
+
+.rg-name-zh {
+  fill: #f1efe8;
+  font-family: var(--rg-serif);
+  font-size: 13px; font-weight: 500; letter-spacing: .04em;
+  text-anchor: middle;
+  paint-order: stroke; stroke: #0a0606; stroke-width: 3; stroke-linejoin: round;
+}
+.rg-name-en {
+  fill: #c79b3a;
+  font-family: var(--rg-display);
+  font-size: 9px; letter-spacing: .26em;
+  text-anchor: middle; opacity: 0.86;
+  paint-order: stroke; stroke: #0a0606; stroke-width: 2.2; stroke-linejoin: round;
+}
+.rg-died {
   fill: #c8857a;
-  font-family: var(--rg-sans, system-ui, sans-serif);
-  font-size: 9px; letter-spacing: .18em; text-anchor: middle;
-  paint-order: stroke; stroke: #0a0b0f; stroke-width: 2.5; stroke-linejoin: round;
+  font-family: var(--rg-display);
+  font-size: 9px; letter-spacing: .22em;
+  text-anchor: middle;
+  paint-order: stroke; stroke: #0a0606; stroke-width: 2.5; stroke-linejoin: round;
 }
-/* 死亡角色的连线和关系标签也淡化 */
-.rg-edge.is-dead { opacity: 0.3; filter: grayscale(80%); }
-.rg-edge-label.is-dead { opacity: 0.35; }
-
-.rg-node-name {
-  fill: #f1efe8; font-family: var(--rg-serif); font-size: 13px;
-  text-anchor: middle; letter-spacing: .04em;
-  paint-order: stroke; stroke: #0a0b0f; stroke-width: 3; stroke-linejoin: round;
-}
-.rg-node-name-hero { font-size: 15px; font-weight: 500; }
-.rg-node-house {
-  fill: var(--rg-ink-soft); font-family: var(--rg-display);
-  font-size: 8.5px; text-anchor: middle; letter-spacing: .32em;
-  paint-order: stroke; stroke: #0a0b0f; stroke-width: 2.5; stroke-linejoin: round;
-}
-.rg-node-initial {
+.rg-initial {
   fill: var(--rg-ink); font-family: var(--rg-display);
-  font-size: 18px; text-anchor: middle; letter-spacing: .04em;
+  font-size: 22px; text-anchor: middle; letter-spacing: .04em;
 }
-.rg-node-hero .rg-node-initial { font-size: 24px; }
 
-/* ─── Companion attachment（龙等从属节点） ────────────────────────
-   不参与连线，不可点击；紧贴主节点（gap≤6px），尺寸约 35-42%。
-   极轻金色描边 + 整体 70% 不透明，从属于主节点而不是与之竞争注意力。 */
-.rg-companion { pointer-events: none; opacity: 1; }
+/* Red epithet badge above the portrait ("浪荡王子" / "王国之光" …) */
+.rg-epithet rect {
+  fill: var(--rg-epi-bg);
+  stroke: rgba(255, 220, 180, 0.35);
+  stroke-width: 0.8;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.75));
+}
+.rg-epithet text {
+  fill: var(--rg-epi-text);
+  font-family: var(--rg-serif);
+  font-size: 11px; font-weight: 500; letter-spacing: .04em;
+  text-anchor: middle;
+}
+
+/* ─── SVG: kin edges ──────────────────────────────────────────── */
+.rg-kin line {
+  stroke: rgba(245, 209, 119, 0.78);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  fill: none;
+}
+.rg-kin-marriage line { stroke: var(--rg-pill-edge); }
+.rg-kin-sibling line  { stroke: rgba(245, 209, 119, 0.65); stroke-width: 1.4; }
+.rg-kin-parent line   { stroke: rgba(245, 209, 119, 0.78); }
+.rg-kin-cross-gen line {
+  stroke: var(--rg-pill-edge);
+  stroke-dasharray: 6 4;     /* visually marks the cross-gen marriage */
+}
+
+/* Yellow rounded pill for kin labels */
+.rg-pill rect {
+  fill: var(--rg-pill-bg);
+  stroke: var(--rg-pill-edge);
+  stroke-width: 0.8;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+}
+.rg-pill text {
+  fill: var(--rg-pill-text);
+  font-family: var(--rg-serif);
+  font-size: 12px; font-weight: 600; letter-spacing: .06em;
+}
+
+/* ─── SVG: conflict overlay (only on click) ───────────────────── */
+.rg-conf line {
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+.rg-conf-enemy  line { stroke: var(--rg-rel-enemy); }
+.rg-conf-ally   line { stroke: var(--rg-rel-ally); }
+.rg-conf-friend line { stroke: var(--rg-rel-friend); stroke-dasharray: 8 5; }
+.rg-conf-secret line { stroke: var(--rg-rel-secret); stroke-dasharray: 2 6; stroke-width: 2.4; }
+.rg-conf-blood  line { stroke: var(--rg-rel-blood); stroke-dasharray: 4 4; }
+
+.rg-conf-label rect {
+  fill: rgba(10, 6, 6, 0.92);
+  stroke: currentColor;
+  stroke-width: 0.8;
+}
+.rg-conf-label text {
+  font-family: var(--rg-serif);
+  font-size: 11px; font-weight: 500; letter-spacing: .06em;
+  paint-order: stroke; stroke: #0a0606; stroke-width: 2.4; stroke-linejoin: round;
+}
+.rg-conf-enemy  .rg-conf-label text,
+.rg-conf-enemy  .rg-conf-label rect { color: var(--rg-rel-enemy);  fill: var(--rg-rel-enemy); }
+.rg-conf-ally   .rg-conf-label text,
+.rg-conf-ally   .rg-conf-label rect { color: var(--rg-rel-ally);   fill: var(--rg-rel-ally); }
+.rg-conf-friend .rg-conf-label text,
+.rg-conf-friend .rg-conf-label rect { color: var(--rg-rel-friend); fill: var(--rg-rel-friend); }
+.rg-conf-secret .rg-conf-label text,
+.rg-conf-secret .rg-conf-label rect { color: var(--rg-rel-secret); fill: var(--rg-rel-secret); }
+.rg-conf-blood  .rg-conf-label text,
+.rg-conf-blood  .rg-conf-label rect { color: var(--rg-rel-blood);  fill: var(--rg-rel-blood); }
+.rg-conf .rg-conf-label rect { fill: rgba(10, 6, 6, 0.92); }
+.rg-conf .rg-conf-label text { fill: currentColor; }
+
+/* ─── Companion (dragon attached to its rider) ────────────────── */
+.rg-companion { pointer-events: none; }
 .rg-companion-bg {
   fill: #1a1410;
-  stroke: rgba(212, 175, 55, 0.4);    /* 30% 不透明金，不再红 */
-  stroke-width: 1;                     /* 1px，无 drop-shadow */
+  stroke: rgba(212, 175, 55, 0.5);
+  stroke-width: 1;
 }
-/* 龙首剪影（缺图兜底）—— 双角 + 头形 + 鼻孔点 */
 .rg-companion-glyph path {
   fill: none;
   stroke: rgba(212, 175, 55, 0.78);
@@ -254,81 +363,15 @@
 .rg-companion-name {
   fill: rgba(255, 220, 180, 0.65);
   font-family: var(--rg-serif);
-  font-size: 9px;
-  text-anchor: middle;
-  letter-spacing: .04em;
-  paint-order: stroke;
-  stroke: #0a0b0f;
-  stroke-width: 2;
-  stroke-linejoin: round;
-}
-.rg-companion-hero .rg-companion-name { font-size: 10px; }
-
-.rg-edge {
-  fill: none; stroke-width: 1.5; stroke-linecap: round; opacity: .92;
-  transition: stroke 700ms cubic-bezier(.4,0,.2,1), stroke-width 300ms ease;
-}
-.rg-edge.thick  { stroke-width: 2.4; }
-.rg-edge.dashed { stroke-dasharray: 5 5; }
-.rg-edge.dotted { stroke-dasharray: 1 4; stroke-linecap: round; }
-
-.rg-edge-label {
-  font-family: var(--rg-serif); font-size: 11px; letter-spacing: .06em; text-anchor: middle;
-  paint-order: stroke; stroke: #0a0b0f; stroke-width: 3; stroke-linejoin: round;
-  transition: fill 700ms cubic-bezier(.4,0,.2,1);
+  font-size: 9px; text-anchor: middle; letter-spacing: .04em;
+  paint-order: stroke; stroke: #0a0606; stroke-width: 2; stroke-linejoin: round;
 }
 
-/* 颜色映射 ── 6 大视觉类型 */
-.rg-edge.rel-blood       { stroke: var(--rg-rel-blood); }
-.rg-edge.rel-marriage    { stroke: var(--rg-rel-marriage); }
-.rg-edge.rel-ally        { stroke: var(--rg-rel-ally); }
-.rg-edge.rel-friend      { stroke: var(--rg-rel-friend); }
-.rg-edge.rel-enemy       { stroke: var(--rg-rel-enemy); }
-.rg-edge.rel-secret      { stroke: var(--rg-rel-secret); }
-.rg-edge.rel-dragon      {
-  stroke: var(--rg-rel-dragon);
-  filter: drop-shadow(0 0 4px rgba(255, 120, 72, 0.55));   /* 一道橙色火光 */
+/* ─── Compact viewport (mobile) ──────────────────────────────── */
+@media (max-width: 720px) {
+  .rg-tree-card { width: 100vw; height: 100vh; max-width: none; border: 0; }
+  .rg-tree-title-zh { font-size: 20px; }
+  .rg-tree-title-en { font-size: 14px; gap: 12px; }
+  .rg-tree-subtitle-en { font-size: 11px; }
+  .rg-zoom-controls { top: 12px; left: 12px; }
 }
-
-.rg-edge-label.rel-blood     { fill: var(--rg-rel-blood); }
-.rg-edge-label.rel-marriage  { fill: var(--rg-rel-marriage); }
-.rg-edge-label.rel-ally      { fill: var(--rg-rel-ally); }
-.rg-edge-label.rel-friend    { fill: var(--rg-rel-friend); }
-.rg-edge-label.rel-enemy     { fill: var(--rg-rel-enemy); }
-.rg-edge-label.rel-secret    { fill: var(--rg-rel-secret); }
-.rg-edge-label.rel-dragon    { fill: var(--rg-rel-dragon); }
-
-/* 婚姻关系节点：双环（在节点 bg 外加一圈金色细线） */
-.rg-node-marriage-ring {
-  stroke: var(--rg-rel-marriage);
-  stroke-width: 1;
-  opacity: .9;
-}
-
-/* ─── 图例 ─── */
-.rg-legend {
-  position: absolute; left: 36px; bottom: 36px; z-index: 6;
-  display: flex; flex-direction: column; gap: 6px;
-  font-family: var(--rg-serif); font-size: 11px; letter-spacing: .06em;
-  color: var(--rg-ink-soft);
-  opacity: 0; transition: opacity .4s ease; pointer-events: none;
-}
-.rg-root.is-viewing .rg-legend { opacity: .65; }
-.rg-legend-row { display: flex; align-items: center; gap: 8px; }
-.rg-swatch { width: 18px; height: 2px; display: inline-block; }
-.rg-swatch.rel-blood     { background: var(--rg-rel-blood); }
-.rg-swatch.rel-blood.thick { height: 3px; }
-.rg-swatch.rel-marriage  { background: var(--rg-rel-marriage); }
-.rg-swatch.rel-ally      { background: var(--rg-rel-ally); }
-.rg-swatch.rel-friend    { background: var(--rg-rel-friend); }
-.rg-swatch.rel-friend.dashed {
-  height: 0; background: transparent;
-  border-top: 1.6px dashed var(--rg-rel-friend);
-}
-.rg-swatch.rel-enemy     { background: var(--rg-rel-enemy); }
-.rg-swatch.rel-secret    { background: var(--rg-rel-secret); }
-.rg-swatch.rel-secret.dotted {
-  height: 0; background: transparent;
-  border-top: 1.6px dotted var(--rg-rel-secret);
-}
-.rg-swatch.rel-dragon    { background: var(--rg-rel-dragon); }
