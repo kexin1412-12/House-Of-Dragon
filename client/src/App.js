@@ -677,7 +677,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       aiClearLabelsTimerRef.current = setTimeout(() => {
         setAiOnScreenChars([]);
       }, 6000);
-    } catch { /* model slow / rate-limited / face_service down — 静默 */ }
+    } catch (err) {
+      // 静默对用户，但落到 console —— 之前因为跨域 canvas 污染 toDataURL
+      // 抛了 SecurityError，被吞掉之后调试没线索。
+      console.warn('[recognize] failed:', err?.message || err);
+    }
     finally { setAiRecognizing(false); }
   };
 
@@ -1308,6 +1312,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
               ref={videoRef}
               key={playing.id}
               src={resolveVideoSrc(playing.url)}
+              // 必须设 crossOrigin —— 否则跨域 CDN（R2）的帧被画进 canvas
+              // 后会污染 canvas，triggerRecognition 里的 toDataURL 直接抛
+              // SecurityError，「人物识别」按钮就静默失败了。R2 公共桶默认
+              // 回 Access-Control-Allow-Origin: *，配 anonymous 即可走通。
+              crossOrigin="anonymous"
               autoPlay
               className="tx-player-video"
               onClick={() => {
