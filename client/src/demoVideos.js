@@ -4,7 +4,7 @@
 const DEMO_VIDEOS = [
   {
     id: 'house_of_dragon_05.mp4',
-    name: 'house_of_dragon_05',
+    name: '龙之家族',
     filename: 'house_of_dragon_05.mp4',
     url: 'https://pub-df2ec71b6f1b4b8b9493812724efeed0.r2.dev/uploads/house_of_dragon_05.mp4',
     size: 453650565,
