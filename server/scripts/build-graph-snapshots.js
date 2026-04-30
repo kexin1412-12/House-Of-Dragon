@@ -100,12 +100,20 @@ const NAME_EN = {
   mysaria:            'MYSARIA',
 };
 
-// Show-canonical kin edges that the DB happens to be missing (the timeline
-// stops short of S01E10's wedding for these pairs). Treated as if they were
-// active marriage rows in the DB during edge construction.
+// Show-canonical kin edges that the DB happens to be missing. Each entry is
+// already in the final shape that ends up in kin_edges (kind="marriage" |
+// "parent_child" | "parent_couple"); injected after the DB-derived merge so
+// they don't compete with the auto-pairing logic.
 const KIN_OVERRIDES = [
-  // Daemon × Rhaenyra wed at the end of S1; DB only carries 叔侄 + 暧昧.
-  { source: 'daemon_targaryen', target: 'rhaenyra_targaryen', kind: 'marriage', label: '夫妻' },
+  // Daemon × Rhaenyra wed at end of S1; DB only carries 叔侄 + 暧昧.
+  { kind: 'marriage', from: 'daemon_targaryen', to: 'rhaenyra_targaryen', label: '夫妻' },
+  // Corlys + Rhaenys → Laenor: DB has no parent edges here at all.
+  {
+    kind: 'parent_couple',
+    parents: ['corlys_velaryon', 'rhaenys_targaryen'],
+    to: 'laenor_velaryon',
+    label: '子女',
+  },
 ];
 
 // Which kin edges to draw, derived from the relationship DB. The frontend
@@ -286,24 +294,28 @@ function buildEdges(db, characterIds) {
     }
   }
 
-  // Inject canonical-but-missing kin edges (e.g., Daemon × Rhaenyra wedding).
+  // Inject canonical-but-missing kin edges. Kept out of the auto-merge so
+  // each override goes in exactly as written.
   for (const ov of KIN_OVERRIDES) {
-    if (!charSet.has(ov.source) || !charSet.has(ov.target)) continue;
-    const dupe = mergedKin.some(e =>
-      (e.kind === ov.kind || (ov.kind === 'marriage' && e.kind === 'marriage')) &&
-      (
-        (e.from === ov.source && e.to === ov.target) ||
-        (e.from === ov.target && e.to === ov.source)
-      ),
-    );
-    if (dupe) continue;
-    mergedKin.push({
-      kind: ov.kind,
-      label: ov.label,
-      from: ov.source,
-      to: ov.target,
-      relation_zh: ov.label,
-    });
+    if (ov.kind === 'parent_couple') {
+      if (!ov.parents.every(p => charSet.has(p)) || !charSet.has(ov.to)) continue;
+      const dupe = mergedKin.some(e =>
+        e.kind === 'parent_couple' &&
+        e.to === ov.to &&
+        e.parents.length === ov.parents.length &&
+        e.parents.every(p => ov.parents.includes(p))
+      );
+      if (dupe) continue;
+      mergedKin.push({ kind: 'parent_couple', parents: ov.parents.slice().sort(), to: ov.to, label: ov.label });
+    } else {
+      if (!charSet.has(ov.from) || !charSet.has(ov.to)) continue;
+      const dupe = mergedKin.some(e =>
+        e.kind === ov.kind &&
+        ((e.from === ov.from && e.to === ov.to) || (e.from === ov.to && e.to === ov.from))
+      );
+      if (dupe) continue;
+      mergedKin.push({ kind: ov.kind, from: ov.from, to: ov.to, label: ov.label, relation_zh: ov.label });
+    }
   }
 
   // Drop redundant sibling bars when both siblings share a visible parent —

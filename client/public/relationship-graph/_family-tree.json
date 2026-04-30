@@ -397,10 +397,19 @@
     },
     {
       "kind": "marriage",
-      "label": "夫妻",
       "from": "daemon_targaryen",
       "to": "rhaenyra_targaryen",
+      "label": "夫妻",
       "relation_zh": "夫妻"
+    },
+    {
+      "kind": "parent_couple",
+      "parents": [
+        "corlys_velaryon",
+        "rhaenys_targaryen"
+      ],
+      "to": "laenor_velaryon",
+      "label": "子女"
     }
   ],
   "conflict_edges": [
@@ -562,7 +571,7 @@
       "from": "criston_cole",
       "to": "laenor_velaryon",
       "kind": "enemy",
-      "relation": "凶手",
+      "relation": "杀其情人",
       "summary": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。"
     },
     {
