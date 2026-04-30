@@ -67,6 +67,15 @@ const TASK_CONFIG = {
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
   },
 
+  // 关系图侧栏 · 详细人物档案：Gemini Flash 中文文学性 + 长上下文容纳全部 KB 数据
+  // 性能预算：单次 ~600-900 tok 输出，温和 temperature。openai 兜底。
+  character_profile: {
+    provider: process.env.AI_CHARPROFILE_PROVIDER || 'gemini',
+    model: process.env.AI_CHARPROFILE_MODEL || 'gemini-2.5-flash',
+    fallback: 'openai',
+    fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+  },
+
   // 字幕/语音转文本
   transcription: {
     provider: process.env.AI_TRANSCRIPTION_PROVIDER || 'openai',

@@ -2263,6 +2263,209 @@ ${factMaterial}
     }
   });
 
+  // ─── 关系图侧栏 · 详细人物档案（spoiler-safe，多源融合） ─────────
+  // 前端关系图点头像后，在右侧浮出。比 character/card 更"长读"——
+  // 取角色 DB（cursor-filtered）+ 当前 scene 事实 + 历史 state_timeline +
+  // 已有关系数据 + wiki lore（仅家族级，不剧透角色个人），让 LLM 写一篇
+  // 短解读：1 句定位 + 2-3 段分析 + 3-5 条剧情节点。严格不剧透 cursor 之后。
+  app.post('/api/agent/character/profile', async (req, res) => {
+    const { videoId, t, characterId } = req.body || {};
+    const kb = videoId ? loadKB(videoId) : null;
+    if (!kb || !characterId) {
+      return res.status(400).json({ error: 'videoId + characterId required' });
+    }
+    const cursorTime = normalizeTime(t);
+    const showId = kb.show_id || 'house-of-the-dragon';
+    const cursor = charactersLib.cursorAtTime(kb, cursorTime);
+    const db = getCharacterDb(showId);
+    if (!db) return res.status(503).json({ error: 'character db missing' });
+
+    const safeCard = charactersLib.lookupCharacter(db, characterId, cursor);
+    if (!safeCard) {
+      return res.status(404).json({ error: 'character not in db', character_id: characterId });
+    }
+
+    // 历史 state_timeline（cursor 之前的所有状态，用作"角色弧"原料）
+    const ch = (db.characters || []).find(c => c.character_id === characterId);
+    const pastStates = (ch?.state_timeline || []).filter(s => !s.from || s.from <= cursor);
+    const arcRaw = pastStates.map(s => ({
+      from: s.from,
+      to: s.to,
+      title: s.title_zh || s.title_en || null,
+      role: s.political_role_zh || null,
+      summary: s.safe_summary_zh || null,
+    }));
+
+    // 关系（cursor-filtered）：取 top 3 张力最强的（按 intensity_delta 绝对值或显示意义）
+    const allRels = charactersLib.lookupRelationships(db, characterId, cursor);
+    const relsWithNames = allRels.map(r => {
+      const other = charactersLib.findCharacter(db, r.with);
+      return {
+        ...r,
+        with_name: other?.display_name_zh || other?.canonical_name || r.with,
+      };
+    }).sort((a, b) => Math.abs(b.intensity_delta || 0) - Math.abs(a.intensity_delta || 0));
+    const topRels = relsWithNames.slice(0, 4);
+
+    // 当前场景事实（如果 KB 有）
+    const scene = currentScene(kb, cursorTime);
+    const recentFact = scene?.plot?.fact || null;
+    const recentEpisode = scene?.episode_marker || null;
+
+    // wiki lore（家族级，非角色级，不剧透）
+    let houseLore = null;
+    try {
+      const wikiPath = path.join(__dirname, 'references', 'wiki-gameofthrones.knowledge.json');
+      if (fs.existsSync(wikiPath)) {
+        const wiki = JSON.parse(fs.readFileSync(wikiPath, 'utf8'));
+        const houseLabel = `House ${safeCard.house}`;
+        const points = (wiki.knowledge_points || []).filter(p =>
+          p.title?.includes(safeCard.house) || p.source_entity === houseLabel
+        );
+        if (points.length) {
+          houseLore = points.slice(0, 2).map(p => p.summary).filter(Boolean).join(' ');
+        }
+      }
+    } catch (e) { /* wiki 缺失不阻断主流程 */ }
+
+    // ─── LLM 不可用时的 fallback：直接拼结构化数据 ───────────
+    if (!ai.isAvailable('character_profile')) {
+      return res.json({
+        character_id: characterId,
+        display_name: safeCard.display_name,
+        headline: safeCard.current?.title
+          ? `${safeCard.short_identity || safeCard.current.title}`
+          : (safeCard.short_identity || ''),
+        analysis: safeCard.current?.summary || '',
+        arc_so_far: arcRaw.map(a => a.summary).filter(Boolean),
+        book_note: null,
+        cursor_used: cursor,
+        source: 'fallback_no_llm',
+      });
+    }
+
+    // ─── LLM 调用 ─────────────────────────────────────────────
+    const system = `你是 HBO 政治剧《龙之家族》的"人物档案"写作 agent。任务：把已经按 cursor 过滤好的角色数据写成一段史官式克制的人物解读，配合关系图侧栏展示。
+
+═══ 数据是事实，不是创作素材 ═══
+我会给你这个角色截至「${cursor}」（含）为止的安全数据：身份、家族、past states、关系、近期事件、家族 lore。
+你的工作是**重新组织+解读**，不要编造材料里没有的事。
+材料缺失时写"暂未明朗"或类似克制表达，绝不补全。
+
+═══ 绝对不剧透 ═══
+**禁止**：cursor「${cursor}」之后才发生的剧情、未来死亡、未来阵营、未来婚事、龙舞、绿党/黑党正式分裂、阿莉森特/雷尼拉决裂等只在后续集才公开的事件。
+**允许**：cursor 当前及之前已经发生的事，包括人物预告（铺垫、动机、矛盾）。
+如果你怀疑某条信息是剧透，宁可不写。
+
+═══ 风格 ═══
+- 史官式克制（贴合 *Fire & Blood* 历史档案口吻），不是诗化旁白
+- 抓政治、家族、继承、矛盾、代价
+- 第三人称（"她"/"他"），不写"我"也不写"你"
+- 现代汉语，HBO 政治剧译制语气
+
+═══ 绝对禁止用词 ═══
+- 古风：执笔、卷宗、史册、羊皮纸、汝、吾、岂、毋、由是
+- 仙侠：苍生、天道、轮回、红尘、众生、宿命
+- 抒情套话：此刻、命运、改写历史、抉择、宿命、命运之门
+- "另一卷"、"书页"、"篇章" 这种自指式书面语
+
+═══ 输出严格 JSON ═══
+{
+  "headline": "（≤30 字，TA 当前的政治定位 / 家族角色 / 关键张力，一句点睛）",
+  "analysis": "（120-200 字，2-3 段，详细解读：身份、家族、动机、当前矛盾。可以引用 past states 显出"角色弧"。不剧透。）",
+  "arc_so_far": ["（≤25 字 · 关键节点 1）", "（≤25 字 · 节点 2）", "（≤25 字 · 节点 3）", "..."],
+  "book_note": "（≤40 字，可空。如果家族 lore 与 TA 直接相关，写一句"在《血与火》里 House X 是…"的背景注。无关时返回 null）"
+}
+
+arc_so_far：3-5 条，按时间顺序，每条是 cursor 之前一个真实发生过的剧情节点（来自 past states / recent_fact）。`;
+
+    const userPayload = {
+      cursor_used: cursor,
+      character: {
+        display_name: safeCard.display_name,
+        canonical_name: safeCard.canonical_name,
+        short_identity: safeCard.short_identity,
+        house: safeCard.house,
+        tags: safeCard.tags,
+        current: safeCard.current,
+      },
+      past_states: arcRaw,
+      relationships_top: topRels.map(r => ({
+        with: r.with_name,
+        relation: r.relation,
+        kind: r.relation_kind,
+        summary: r.summary,
+      })),
+      recent_event: recentFact ? {
+        episode: recentEpisode,
+        fact: recentFact,
+      } : null,
+      house_lore: houseLore,
+    };
+
+    try {
+      const result = await ai.chat({
+        task: 'character_profile',
+        system,
+        messages: [{
+          role: 'user',
+          content: '以下是该角色的安全数据（cursor-filtered），请写档案：\n\n' +
+            JSON.stringify(userPayload, null, 2),
+        }],
+        maxTokens: 900,
+        temperature: 0.55,
+      });
+      const txt = String(result?.text || '').trim();
+      // 抠 JSON
+      let parsed = null;
+      try {
+        const m = txt.match(/\{[\s\S]*\}/);
+        parsed = m ? JSON.parse(m[0]) : null;
+      } catch (_) { parsed = null; }
+      if (!parsed || typeof parsed !== 'object') {
+        return res.status(500).json({
+          error: 'llm returned non-JSON',
+          raw: txt.slice(0, 300),
+          fallback: {
+            character_id: characterId,
+            display_name: safeCard.display_name,
+            headline: safeCard.short_identity || '',
+            analysis: safeCard.current?.summary || '',
+            arc_so_far: arcRaw.map(a => a.summary).filter(Boolean),
+            book_note: null,
+            cursor_used: cursor,
+            source: 'fallback_parse_fail',
+          },
+        });
+      }
+      res.json({
+        character_id: characterId,
+        display_name: safeCard.display_name,
+        headline: parsed.headline || safeCard.short_identity || '',
+        analysis: parsed.analysis || (safeCard.current?.summary || ''),
+        arc_so_far: Array.isArray(parsed.arc_so_far) ? parsed.arc_so_far.slice(0, 5) : [],
+        book_note: parsed.book_note || null,
+        cursor_used: cursor,
+        source: 'llm',
+      });
+    } catch (err) {
+      console.error('[character/profile] error:', err.message);
+      return res.status(500).json({
+        error: err.message,
+        fallback: {
+          character_id: characterId,
+          display_name: safeCard.display_name,
+          headline: safeCard.short_identity || '',
+          analysis: safeCard.current?.summary || '',
+          arc_so_far: arcRaw.map(a => a.summary).filter(Boolean),
+          book_note: null,
+          cursor_used: cursor,
+          source: 'fallback_error',
+        },
+      });
+    }
+  });
+
   // ─── 共谋者 · 机制 B · 角色对谈入场前奏（context-driven）─────
   // 前端在用户刚进入与某角色对谈、还没发出第一句时，需要一个"为什么是 TA、
   // 为什么是这一刻"的浮层文案。绝不能是"{name} 此刻就在你面前 / 问问看"

@@ -7,6 +7,10 @@ import './RelationshipGraph.css';
 // server/scripts/build-graph-snapshots.js.
 const SNAPSHOT_BASE = process.env.PUBLIC_URL || '';
 const TREE_URL = `${SNAPSHOT_BASE}/relationship-graph/_family-tree.json`;
+// Backend endpoint: detailed spoiler-safe profile (LLM-composed, falls back to
+// structured KB data when LLM is unreachable). Vercel build w/o REACT_APP_API_URL
+// will simply 404 and the panel renders the static fallback only.
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 // Layout constants (svg "graph units" — pre-zoom). Tuned so 8-wide row 0 +
 // 10-wide row 1 fit at 1× without overlap.
@@ -728,6 +732,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           {/* 人物档案侧栏：点角色头像后从右侧浮入 */}
           <ProfilePanel
             character={tree?.characters?.find(c => c.character_id === profileId) || null}
+            videoId={videoId}
+            videoRef={videoRef}
             onClose={closeProfile}
           />
         </div>
@@ -737,8 +743,46 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 }
 
 // ─── Profile panel (slides in from the right edge of the tree card) ───
-function ProfilePanel({ character, onClose }) {
+// Static fields (portrait, name, house, companion) come from the family-tree
+// JSON immediately. The detailed analysis is loaded async from the backend
+// agent (/api/agent/character/profile) which fuses cursor-filtered KB +
+// scene fact + house lore. The agent is strictly spoiler-safe: only beats
+// at-or-before the current playback cursor are surfaced.
+function ProfilePanel({ character, videoId, videoRef, onClose }) {
   const open = !!character;
+  const [profile, setProfile] = useState(null);   // { headline, analysis, arc_so_far, book_note }
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const reqSeqRef = useRef(0);
+
+  useEffect(() => {
+    if (!character || !videoId) { setProfile(null); setError(null); return; }
+    const seq = ++reqSeqRef.current;
+    setLoading(true);
+    setError(null);
+    setProfile(null);
+    const t = videoRef?.current?.currentTime || 0;
+    axios.post(`${API}/api/agent/character/profile`, {
+      videoId,
+      t,
+      characterId: character.character_id,
+    }, { timeout: 25000 })
+      .then(r => {
+        if (seq !== reqSeqRef.current) return;
+        const d = r.data?.fallback || r.data;
+        setProfile(d || null);
+      })
+      .catch(err => {
+        if (seq !== reqSeqRef.current) return;
+        const fallback = err?.response?.data?.fallback;
+        if (fallback) setProfile(fallback);
+        else setError(err?.message || String(err));
+      })
+      .finally(() => {
+        if (seq === reqSeqRef.current) setLoading(false);
+      });
+  }, [character, videoId, videoRef]);
+
   return (
     <aside className={`rg-profile ${open ? 'is-open' : ''}`} aria-hidden={!open}>
       {character && (
@@ -764,10 +808,43 @@ function ProfilePanel({ character, onClose }) {
             {character.house && <span className="rg-profile-house-tag">House {character.house}</span>}
           </div>
 
+          {profile?.headline && (
+            <div className="rg-profile-headline">{profile.headline}</div>
+          )}
+
           {character.short_identity && (
             <div className="rg-profile-section">
               <div className="rg-profile-section-label">身份</div>
               <div className="rg-profile-section-body">{character.short_identity}</div>
+            </div>
+          )}
+
+          {(loading || profile?.analysis || error) && (
+            <div className="rg-profile-section">
+              <div className="rg-profile-section-label">深度解读</div>
+              {loading && <div className="rg-profile-skeleton" />}
+              {!loading && profile?.analysis && (
+                <div className="rg-profile-section-body rg-profile-analysis">{profile.analysis}</div>
+              )}
+              {!loading && !profile?.analysis && error && (
+                <div className="rg-profile-error">解读暂时调不出：{error}</div>
+              )}
+            </div>
+          )}
+
+          {!loading && profile?.arc_so_far?.length > 0 && (
+            <div className="rg-profile-section">
+              <div className="rg-profile-section-label">至今的剧情节点</div>
+              <ul className="rg-profile-arc">
+                {profile.arc_so_far.map((b, i) => <li key={i}>{b}</li>)}
+              </ul>
+            </div>
+          )}
+
+          {!loading && profile?.book_note && (
+            <div className="rg-profile-section">
+              <div className="rg-profile-section-label">血与火 · 背景</div>
+              <div className="rg-profile-section-body rg-profile-book-note">{profile.book_note}</div>
             </div>
           )}
 
