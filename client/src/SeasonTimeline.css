@@ -19,6 +19,7 @@
 .st-hud-icon {
   position: absolute; right: 20px;
   top: calc(50% - 84px);
+  transform: translateY(-50%);             /* 与 rg/roleplay/chat 同款基准：top 表示图标中心 y */
   width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   background: rgba(0, 0, 0, 0.55);
