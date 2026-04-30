@@ -316,58 +316,54 @@ body {
   display: block;
 }
 
-/* "共谋者" 封面：替换原视频缩略图 */
-.card-thumb-poster {
-  background:
-    radial-gradient(ellipse at 50% 35%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
-    linear-gradient(180deg, #1c1208 0%, #0c0805 100%);
-  overflow: hidden;
-}
-.card-poster {
+/* "共谋者" Hero 封面：替换原 hero-video-bg */
+.hero-poster-bg {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center;
-  padding: 0 16px;
+  padding: 0 32px;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", serif;
   color: #f0e3c2;
-  /* 暗角 + 浅噪点底纹 */
-  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.85);
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(212, 175, 55, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(127, 29, 29, 0.18) 0%, transparent 60%),
+    linear-gradient(180deg, #1a1108 0%, #0a0604 100%);
+  /* 暗角增强电影感 */
+  box-shadow: inset 0 0 220px rgba(0, 0, 0, 0.85);
 }
-.card-poster-eyebrow {
+.hero-poster-eyebrow {
   font-family: "SF Mono", Menlo, Consolas, monospace;
-  font-size: 9.5px;
-  letter-spacing: 0.42em;
-  color: rgba(212, 175, 55, 0.7);
-  margin-bottom: 10px;
-}
-.card-poster-title {
-  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif SC", "STSong", serif;
-  font-size: 38px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: #d4af37;
-  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35), 0 2px 0 rgba(0, 0, 0, 0.6);
-  line-height: 1;
-  padding-left: 0.18em; /* compensate letter-spacing 末位 */
-}
-.card-poster-rule {
-  width: 64px; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
-  margin: 12px auto 10px;
-}
-.card-poster-sub {
   font-size: 12px;
-  color: rgba(240, 227, 194, 0.78);
-  letter-spacing: 0.08em;
-  margin-bottom: 14px;
-  font-style: italic;
+  letter-spacing: 0.55em;
+  color: rgba(212, 175, 55, 0.78);
+  margin-bottom: 22px;
+  padding-left: 0.55em;
 }
-.card-poster-show {
+.hero-poster-title {
+  font-family: "Songti SC", "Source Han Serif SC", "Noto Serif SC", "STSong", serif;
+  font-size: clamp(72px, 11vw, 156px);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #d4af37;
+  text-shadow:
+    0 0 60px rgba(212, 175, 55, 0.35),
+    0 0 120px rgba(212, 175, 55, 0.18),
+    0 4px 0 rgba(0, 0, 0, 0.6);
+  line-height: 1;
+  padding-left: 0.22em;
+}
+.hero-poster-rule {
+  width: clamp(120px, 16vw, 200px); height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.7), transparent);
+  margin: 28px auto 22px;
+}
+.hero-poster-show {
   font-family: "SF Mono", Menlo, Consolas, monospace;
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  color: rgba(255, 255, 255, 0.42);
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  color: rgba(255, 255, 255, 0.55);
+  padding-left: 0.42em;
 }
 
 .card-overlay {
