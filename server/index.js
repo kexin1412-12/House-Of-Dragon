@@ -4,7 +4,56 @@ const multer = require('multer');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 const agent = require('./agent');
+
+// ─── faststart helpers ─────────────────────────────────────────────
+// HTML5 <video> 需要 mp4 的 moov 原子在文件开头才能流式播放。很多上传工具
+// 把 moov 放在文件末尾，导致浏览器拿不到索引就报 NotSupportedError。
+// 这里在上传完成后用 ffmpeg 跑一次 -movflags +faststart 重排（不重编码）。
+
+// 读文件前 ~512KB 看 moov 是否在 mdat 之前；是的话已经 faststart，可跳过
+function isAlreadyFaststart(filePath) {
+  try {
+    const fd = fs.openSync(filePath, 'r');
+    const buf = Buffer.alloc(524288);
+    const bytes = fs.readSync(fd, buf, 0, buf.length, 0);
+    fs.closeSync(fd);
+    const slice = buf.slice(0, bytes).toString('binary');
+    const moov = slice.indexOf('moov');
+    const mdat = slice.indexOf('mdat');
+    // moov 在前 512KB 内能找到，且早于 mdat（或 mdat 不在前 512KB → 也算 faststart）
+    return moov !== -1 && (mdat === -1 || moov < mdat);
+  } catch { return false; }
+}
+
+// ffmpeg -i input -c copy -movflags +faststart output —— 流复制，不重编码
+function ffmpegFaststart(filePath) {
+  return new Promise((resolve, reject) => {
+    const tmpPath = filePath + '.faststart.tmp';
+    const args = [
+      '-y', '-loglevel', 'error',
+      '-i', filePath,
+      '-c', 'copy',
+      '-movflags', '+faststart',
+      tmpPath,
+    ];
+    const p = spawn('ffmpeg', args);
+    let stderr = '';
+    p.stderr.on('data', d => { stderr += d.toString(); });
+    p.on('error', err => reject(err));
+    p.on('close', code => {
+      if (code !== 0) {
+        try { fs.unlinkSync(tmpPath); } catch {}
+        return reject(new Error(`ffmpeg exit ${code}: ${stderr.slice(0, 500)}`));
+      }
+      try {
+        fs.renameSync(tmpPath, filePath);
+        resolve();
+      } catch (err) { reject(err); }
+    });
+  });
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -66,16 +115,39 @@ app.get('/api/videos', (req, res) => {
   res.json(videos);
 });
 
-app.post('/api/upload', upload.single('video'), (req, res) => {
+app.post('/api/upload', upload.single('video'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const filePath = path.join(UPLOADS_DIR, req.file.filename);
+
+  // mp4 自动 faststart：保证浏览器能 HTTP 流式播放
+  // 仅对 .mp4 / .m4v 跑（其它容器格式 ffmpeg 不一定支持 +faststart）
+  let faststart = 'skipped';
+  let finalSize = req.file.size;
+  if (/\.(mp4|m4v)$/i.test(req.file.filename)) {
+    try {
+      if (isAlreadyFaststart(filePath)) {
+        faststart = 'already';
+      } else {
+        const t0 = Date.now();
+        await ffmpegFaststart(filePath);
+        finalSize = fs.statSync(filePath).size;
+        faststart = `done in ${((Date.now() - t0) / 1000).toFixed(1)}s`;
+      }
+    } catch (err) {
+      console.warn(`[upload] faststart failed for ${req.file.filename}:`, err.message);
+      faststart = `failed: ${err.message}`;
+    }
+  }
+
   const ts = parseInt(req.file.filename.split('-')[0]);
   res.json({
     id: req.file.filename,
     name: req.file.originalname.replace(/\.[^.]+$/, ''),
     filename: req.file.filename,
     url: `/uploads/${encodeURIComponent(req.file.filename)}`,
-    size: req.file.size,
+    size: finalSize,
     uploadedAt: new Date(ts).toISOString(),
+    faststart,
   });
 });
 
