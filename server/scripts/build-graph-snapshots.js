@@ -186,6 +186,7 @@ function purgeStaleSnapshots() {
   let removed = 0;
   for (const f of fs.readdirSync(SNAPSHOT_DIR)) {
     if (f === '_family-tree.json') continue;
+    if (f.startsWith('_scene-focus-')) continue;     // managed by buildSceneFocus
     if (!f.endsWith('.json')) continue;
     fs.unlinkSync(path.join(SNAPSHOT_DIR, f));
     removed++;
@@ -344,6 +345,39 @@ function buildEdges(db, characterIds) {
   return { kin_edges: filteredKin, conflict_edges: conflict };
 }
 
+// Scene-focus: per-video [{start, end, hero_id}] giving the dominant
+// on-screen character at each second of the demo video. Lets the front-end
+// auto-center the family tree on whoever is being shown right now.
+function buildSceneFocus(videoId, eligibleIds) {
+  const kbFile = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  if (!fs.existsSync(kbFile)) return null;
+  const kb = JSON.parse(fs.readFileSync(kbFile, 'utf8'));
+  const eligible = new Set(eligibleIds);
+  const raw = [];
+  for (const sc of kb.scenes || []) {
+    if (!Array.isArray(sc.characters) || sc.characters.length === 0) continue;
+    // Pick the character with most screen time in this scene that we know
+    // how to render in the family tree.
+    const top = sc.characters
+      .filter(c => c && c.id && eligible.has(c.id))
+      .sort((a, b) => (b.screen_time_s || 0) - (a.screen_time_s || 0))[0];
+    if (!top) continue;
+    raw.push({ start: sc.start_time, end: sc.end_time, hero_id: top.id });
+  }
+  // Merge consecutive scenes with the same hero so the file stays small
+  // (711 scenes → ~100s of merged ranges).
+  const merged = [];
+  for (const r of raw) {
+    const last = merged[merged.length - 1];
+    if (last && last.hero_id === r.hero_id && Math.abs(last.end - r.start) < 0.1) {
+      last.end = r.end;
+    } else {
+      merged.push({ ...r });
+    }
+  }
+  return merged;
+}
+
 function main() {
   fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
   const db = charactersLib.loadCharacterDb(SHOW_ID);
@@ -371,10 +405,26 @@ function main() {
 
   fs.writeFileSync(SNAPSHOT_FILE, JSON.stringify(out, null, 2));
 
+  // Build per-video scene-focus map for every KB we ship.
+  const eligible = characters.map(c => c.character_id);
+  const kbDir = path.join(SERVER_DIR, 'kb');
+  const videoIds = fs.readdirSync(kbDir)
+    .filter(f => f.endsWith('.json') && !f.includes('backup'))
+    .map(f => f.replace(/\.json$/, ''));
+  let focusFiles = 0;
+  for (const vid of videoIds) {
+    const focus = buildSceneFocus(vid, eligible);
+    if (!focus || focus.length === 0) continue;
+    const outPath = path.join(SNAPSHOT_DIR, `_scene-focus-${vid}.json`);
+    fs.writeFileSync(outPath, JSON.stringify(focus));
+    focusFiles++;
+  }
+
   const purged = purgeStaleSnapshots();
   const dragonCount = copyAllDragons();
 
   console.log(`✓ family tree: ${characters.length} characters, ${kin_edges.length} kin, ${conflict_edges.length} conflict → ${path.relative(process.cwd(), SNAPSHOT_FILE)}`);
+  console.log(`✓ ${focusFiles} scene-focus map(s) → client/public/relationship-graph/_scene-focus-*.json`);
   console.log(`✓ ${IMG_CACHE_BY_PATH.size} face portraits → client/public/kb/characters/face_refs/`);
   console.log(`✓ ${dragonCount} dragon portraits → client/public/kb/characters/dragon_refs/`);
   if (purged > 0) console.log(`✓ removed ${purged} stale per-hero snapshot file(s)`);

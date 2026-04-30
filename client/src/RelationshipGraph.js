@@ -134,11 +134,17 @@ function Companion({ data }) {
   );
 }
 
-function CharacterNode({ char, position, highlighted, onClick }) {
+function CharacterNode({ char, position, highlighted, focused, onClick }) {
   const clipId = `rg-clip-${char.character_id}`;
+  const cls = [
+    'rg-node',
+    highlighted ? 'is-highlighted' : '',
+    focused ? 'is-focused' : '',
+    char.alive ? '' : 'is-dead',
+  ].filter(Boolean).join(' ');
   return (
     <g
-      className={`rg-node ${highlighted ? 'is-highlighted' : ''} ${char.alive ? '' : 'is-dead'}`}
+      className={cls}
       transform={`translate(${position.x}, ${position.y})`}
       onClick={(e) => { e.stopPropagation(); onClick(char.character_id); }}
     >
@@ -318,6 +324,20 @@ function useViewport(graphSize, viewportRef) {
 
   useEffect(() => { fit(); }, [fit]);
 
+  // Pan-only: keep current scale, smoothly center the given graph point.
+  // Used by the time-driven focus to bring the on-screen character into view.
+  const centerOn = useCallback((gx, gy, targetScale) => {
+    const el = viewportRef.current;
+    if (!el || gx == null || gy == null) return;
+    const vw = el.clientWidth, vh = el.clientHeight;
+    setView(v => {
+      const s = targetScale != null
+        ? Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, targetScale))
+        : v.scale;
+      return { scale: s, tx: vw / 2 - gx * s, ty: vh / 2 - gy * s };
+    });
+  }, [viewportRef]);
+
   const onWheel = useCallback((e) => {
     if (!viewportRef.current) return;
     e.preventDefault();
@@ -403,7 +423,7 @@ function useViewport(graphSize, viewportRef) {
   }, [viewportRef]);
 
   return {
-    view, fit,
+    view, fit, centerOn,
     onWheel, onMouseDown, onMouseMove, onMouseUp,
     onTouchStart, onTouchMove, onTouchEnd,
     zoomIn: () => zoomBy(1.25), zoomOut: () => zoomBy(1 / 1.25),
@@ -411,13 +431,15 @@ function useViewport(graphSize, viewportRef) {
 }
 
 // ─── Main component ─────────────────────────────────────────────────
-export default function RelationshipGraph({ videoId }) {
+export default function RelationshipGraph({ videoId, videoRef }) {
   const [tree, setTree] = useState(null);
+  const [focusList, setFocusList] = useState(null);
   const [open, setOpen] = useState(false);
   const [hasNews, setHasNews] = useState(false);
   const [scanKey, setScanKey] = useState(0);
   const [error, setError] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
+  const [focused, setFocused] = useState(null);
   const viewportRef = useRef(null);
 
   // load tree once on first open
@@ -430,6 +452,17 @@ export default function RelationshipGraph({ videoId }) {
     return () => { cancelled = true; };
   }, [open, tree]);
 
+  // load scene-focus map keyed on videoId; fail-quiet if not present
+  useEffect(() => {
+    if (!videoId) { setFocusList(null); return; }
+    let cancelled = false;
+    const url = `${SNAPSHOT_BASE}/relationship-graph/_scene-focus-${encodeURIComponent(videoId.replace(/\.[^.]+$/, ''))}.json`;
+    axios.get(url, { timeout: 5000 })
+      .then(r => { if (!cancelled) setFocusList(r.data); })
+      .catch(() => { if (!cancelled) setFocusList(null); });
+    return () => { cancelled = true; };
+  }, [videoId]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
@@ -438,7 +471,41 @@ export default function RelationshipGraph({ videoId }) {
   }, [open]);
 
   // reset state when video changes (in case the demo bumps to a different show)
-  useEffect(() => { setHighlighted(null); }, [videoId]);
+  useEffect(() => { setHighlighted(null); setFocused(null); }, [videoId]);
+
+  // Time-driven focus: poll currentTime every 600ms, look up the dominant
+  // character for that moment, and update local state. Cheap binary search
+  // through the merged ranges keeps polling work negligible even at 458
+  // entries.
+  useEffect(() => {
+    if (!open || !focusList || !videoRef?.current) return;
+    let raf = 0;
+    let lastHero = null;
+    const tick = () => {
+      const v = videoRef.current;
+      if (v && !v.paused) {
+        const t = v.currentTime;
+        // Linear scan with start-cache would be enough; binary search just to
+        // be safe if the list ever grows.
+        let lo = 0, hi = focusList.length - 1, hit = null;
+        while (lo <= hi) {
+          const m = (lo + hi) >> 1;
+          const r = focusList[m];
+          if (t < r.start) hi = m - 1;
+          else if (t >= r.end) lo = m + 1;
+          else { hit = r; break; }
+        }
+        const heroId = hit ? hit.hero_id : null;
+        if (heroId !== lastHero) {
+          lastHero = heroId;
+          setFocused(heroId);
+        }
+      }
+      raf = window.setTimeout(tick, 600);
+    };
+    tick();
+    return () => clearTimeout(raf);
+  }, [open, focusList, videoRef]);
 
   const layout = useMemo(() => tree ? computeLayout(tree) : null, [tree]);
   const parentGroups = useMemo(
@@ -458,6 +525,15 @@ export default function RelationshipGraph({ videoId }) {
 
   const graphSize = layout ? { width: layout.width, height: layout.height } : { width: 0, height: 0 };
   const viewport = useViewport(graphSize, viewportRef);
+
+  // When the video moves to a new focal character, gently re-center the view
+  // on them. Only fires if the user isn't actively dragging.
+  useEffect(() => {
+    if (!open || !focused || !layout) return;
+    const pos = layout.positions[focused];
+    if (!pos) return;
+    viewport.centerOn(pos.x, pos.y);
+  }, [focused, layout, open, viewport]);
 
   const openFocus = useCallback(() => {
     setOpen(true);
@@ -603,6 +679,7 @@ export default function RelationshipGraph({ videoId }) {
                       char={c}
                       position={layout.positions[c.character_id]}
                       highlighted={highlighted === c.character_id}
+                      focused={focused === c.character_id}
                       onClick={onCharClick}
                     />
                   ))}

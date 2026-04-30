@@ -70,33 +70,35 @@
 }
 .rg-focus-overlay.open { pointer-events: auto; }
 
+/* No backdrop dim — keep the video readable underneath the drawer. */
 .rg-scrim {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at center, rgba(20,5,5,0.78) 0%, rgba(0,0,0,0.92) 80%);
-  opacity: 0; transition: opacity .35s ease;
+  background: transparent;
+  pointer-events: none;
 }
-.rg-focus-overlay.open .rg-scrim { opacity: 1; }
+.rg-focus-overlay.open .rg-scrim { pointer-events: none; }
 
-/* ─── Tree card: nearly-fullscreen, House Targaryen styling ─────── */
+/* ─── Tree drawer: right-side panel, transparent over the video ──── */
 .rg-tree-card {
   position: absolute;
-  left: 50%; top: 50%;
-  width: 94vw; height: 90vh;
-  max-width: 1600px;
-  transform: translate(-50%, -50%) scale(0.96);
+  top: 0; right: 0; bottom: 0;
+  width: 46vw;
+  max-width: 760px;
+  min-width: 420px;
   background:
-    radial-gradient(ellipse at top, rgba(80, 18, 18, 0.55) 0%, rgba(20, 8, 8, 0.92) 60%, #0a0606 100%),
-    #0a0606;
-  border: 1px solid rgba(212, 175, 55, 0.32);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(60, 10, 10, 0.45) inset;
+    linear-gradient(to left,
+      rgba(8, 4, 4, 0.62) 0%,
+      rgba(8, 4, 4, 0.42) 35%,
+      rgba(8, 4, 4, 0.18) 75%,
+      rgba(8, 4, 4, 0) 100%);
+  border-left: 1px solid rgba(212, 175, 55, 0.18);
   display: flex; flex-direction: column;
   overflow: hidden;
-  opacity: 0;
-  transition: opacity .35s ease, transform .45s cubic-bezier(.2,.7,.2,1);
+  transform: translateX(100%);
+  transition: transform .42s cubic-bezier(.2,.7,.2,1);
 }
 .rg-focus-overlay.open .rg-tree-card {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateX(0);
 }
 
 /* Witcher Senses scan line, key-bumped on open */
@@ -118,47 +120,50 @@
 }
 
 .rg-close {
-  position: absolute; top: 14px; right: 16px;
-  width: 32px; height: 32px; border-radius: 50%;
+  position: absolute; top: 14px; right: 14px;
+  width: 36px; height: 36px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: var(--rg-ink-soft);
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  font-size: 18px; z-index: 6;
-  transition: all .25s ease;
+  color: var(--rg-ink);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(212, 175, 55, 0.40);
+  font-size: 20px; line-height: 1; font-weight: 300;
+  z-index: 6;
+  transition: all .2s ease;
 }
 .rg-close:hover {
-  color: var(--rg-ink);
-  background: rgba(255,255,255,.08);
-  border-color: rgba(255,255,255,.18);
+  color: var(--rg-gold);
+  background: rgba(0, 0, 0, 0.75);
+  border-color: var(--rg-gold);
+  transform: rotate(90deg);
 }
 
-/* ─── Header (House Targaryen branding) ──────────────────────────── */
+/* ─── Header (compact, top of drawer) ────────────────────────────── */
 .rg-tree-header {
   position: relative; z-index: 3;
-  padding: 22px 56px 10px 36px;
-  text-align: center;
+  padding: 14px 60px 6px 28px;
   display: flex; flex-direction: column; gap: 2px;
 }
 .rg-tree-title-zh {
   font-family: var(--rg-serif);
-  font-size: 26px; font-weight: 600; letter-spacing: 0.08em;
+  font-size: 17px; font-weight: 600; letter-spacing: 0.06em;
   color: var(--rg-ink);
-  text-shadow: 0 0 12px rgba(212, 175, 55, 0.25), 0 2px 6px rgba(0,0,0,0.85);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.25), 0 1px 4px rgba(0,0,0,0.9);
 }
 .rg-tree-subtitle-zh {
   margin-left: 6px;
-  font-weight: 500; letter-spacing: 0.10em;
+  font-weight: 500; letter-spacing: 0.08em;
   color: #f5d177;
 }
 .rg-tree-title-en {
   font-family: var(--rg-display);
-  font-size: 18px; letter-spacing: 0.40em;
+  font-size: 11px; letter-spacing: 0.36em;
   color: var(--rg-gold);
-  display: flex; gap: 18px; justify-content: center; align-items: baseline;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  display: flex; gap: 14px; align-items: baseline;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.85);
 }
-.rg-tree-subtitle-en { font-size: 13px; opacity: 0.78; letter-spacing: 0.34em; }
+.rg-tree-subtitle-en { font-size: 9.5px; opacity: 0.72; letter-spacing: 0.30em; }
 
 /* ─── Zoom controls ─────────────────────────────────────────────── */
 .rg-zoom-controls {
@@ -233,6 +238,17 @@
   stroke: #ffd966;
   stroke-width: 3;
   filter: drop-shadow(0 0 22px rgba(255, 217, 102, 0.85));
+}
+/* Time-driven focus: pulses to draw the eye, but doesn't block interaction
+   like the click-highlight does. */
+.rg-node.is-focused .rg-portrait-ring {
+  stroke: #f5d177;
+  stroke-width: 2.6;
+  animation: rg-focus-pulse 2.4s ease-in-out infinite;
+}
+@keyframes rg-focus-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(245, 209, 119, 0.45)); }
+  50%      { filter: drop-shadow(0 0 22px rgba(245, 209, 119, 0.95)); }
 }
 .rg-node.is-dead { opacity: 0.55; }
 .rg-node.is-dead image { filter: grayscale(82%) brightness(0.75); }
