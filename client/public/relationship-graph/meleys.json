@@ -1,0 +1,38 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "meleys",
+    "display_name": "梅蕾斯",
+    "short_identity": "红色女王，蕾妮丝的龙",
+    "house": "dragon",
+    "actor_version": null,
+    "portrait_url": null,
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "rhaenys_targaryen",
+      "display_name": "蕾妮丝·坦格利安",
+      "short_identity": "「无冕女王」",
+      "house": "Targaryen",
+      "relation": "龙骑士",
+      "relation_en": null,
+      "relation_kind": null,
+      "summary": "rhaenys_targaryen 与 meleys 之间的龙骑士血誓。",
+      "portrait_url": "/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "meleys",
+        "display_name": "梅蕾斯",
+        "short_identity": "红色女王，蕾妮丝的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/meleys.png"
+      }
+    }
+  ]
+}

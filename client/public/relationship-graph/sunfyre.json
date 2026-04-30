@@ -1,0 +1,38 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "sunfyre",
+    "display_name": "阳焰",
+    "short_identity": "伊耿二世的金鳞龙",
+    "house": "dragon",
+    "actor_version": null,
+    "portrait_url": null,
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "aegon_targaryen_ii",
+      "display_name": "伊耿二世·坦格利安",
+      "short_identity": "韦赛里斯与阿莉森特的长子",
+      "house": "Targaryen",
+      "relation": "龙骑士",
+      "relation_en": null,
+      "relation_kind": null,
+      "summary": "aegon_targaryen_ii 与 sunfyre 之间的龙骑士血誓。",
+      "portrait_url": "/kb/characters/face_refs/aegon_targaryen_ii/adult/fd_01_S2_Aegon_II_Targaryen_Infobox..jpg",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": {
+        "character_id": "sunfyre",
+        "display_name": "阳焰",
+        "short_identity": "伊耿二世的金鳞龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/sunfyre.png"
+      }
+    }
+  ]
+}

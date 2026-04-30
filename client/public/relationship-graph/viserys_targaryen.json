@@ -1,0 +1,166 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "viserys_targaryen",
+    "display_name": "韦赛里斯一世·坦格利安",
+    "short_identity": "坦格利安王朝第五任国王",
+    "house": "Targaryen",
+    "actor_version": "default",
+    "portrait_url": "/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg",
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "rhaenyra_targaryen",
+      "display_name": "雷尼拉·坦格利安",
+      "short_identity": "龙石岛公主，铁王座继承人",
+      "house": "Targaryen",
+      "relation": "信任破裂",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。",
+      "portrait_url": "/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": {
+        "character_id": "syrax",
+        "display_name": "赛拉克丝",
+        "short_identity": "雷尼拉的金龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/syrax.png"
+      }
+    },
+    {
+      "with": "alicent_hightower",
+      "display_name": "阿莉森特·海塔尔",
+      "short_identity": "韦赛里斯一世之妻，奥托·海塔尔之女",
+      "house": "Hightower",
+      "relation": "夫妻对立",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "在雷妮拉婚宴上身穿海塔尔祖母绿独自迟到——王后用最公开的仪式当众告别国王轴线。",
+      "portrait_url": "/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": null
+    },
+    {
+      "with": "daemon_targaryen",
+      "display_name": "戴蒙·坦格利安",
+      "short_identity": "韦赛里斯国王之弟",
+      "house": "Targaryen",
+      "relation": "兄弟不认",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。",
+      "portrait_url": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "caraxes",
+        "display_name": "凯拉克西斯",
+        "short_identity": "血翼，戴蒙的红龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/caraxes.png"
+      }
+    },
+    {
+      "with": "rhaenys_targaryen",
+      "display_name": "蕾妮丝·坦格利安",
+      "short_identity": "「无冕女王」",
+      "house": "Targaryen",
+      "relation": "表亲冷淡",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。",
+      "portrait_url": "/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "meleys",
+        "display_name": "梅蕾斯",
+        "short_identity": "红色女王，蕾妮丝的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/meleys.png"
+      }
+    },
+    {
+      "with": "aegon_targaryen_ii",
+      "display_name": "伊耿二世·坦格利安",
+      "short_identity": "韦赛里斯与阿莉森特的长子",
+      "house": "Targaryen",
+      "relation": "父子",
+      "relation_en": null,
+      "relation_kind": "blood",
+      "summary": "韦赛里斯的长子，但父亲从未真正想立他为继承人。",
+      "portrait_url": "/kb/characters/face_refs/aegon_targaryen_ii/adult/fd_01_S2_Aegon_II_Targaryen_Infobox..jpg",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": {
+        "character_id": "sunfyre",
+        "display_name": "阳焰",
+        "short_identity": "伊耿二世的金鳞龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/sunfyre.png"
+      }
+    },
+    {
+      "with": "aemond_targaryen",
+      "display_name": "艾蒙德·坦格利安",
+      "short_identity": "韦赛里斯与阿莉森特的次子",
+      "house": "Targaryen",
+      "relation": "父子",
+      "relation_en": null,
+      "relation_kind": "blood",
+      "summary": "韦赛里斯的次子。",
+      "portrait_url": "/kb/characters/face_refs/aemond_targaryen/adult/fd_01_Aemond_Targaryen_S2.jpg.jpg",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": {
+        "character_id": "vhagar",
+        "display_name": "瓦格哈尔",
+        "short_identity": "现存最年长、最大的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/vhagar.png"
+      }
+    },
+    {
+      "with": "helaena_targaryen",
+      "display_name": "海拉娜·坦格利安",
+      "short_identity": "韦赛里斯与阿莉森特之女",
+      "house": "Targaryen",
+      "relation": "父女",
+      "relation_en": null,
+      "relation_kind": "blood",
+      "summary": "韦赛里斯的小女儿。",
+      "portrait_url": "/kb/characters/face_refs/helaena_targaryen/adult/fd_01_HelaenaASfASInfobox.PNG.png",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": {
+        "character_id": "dreamfyre",
+        "display_name": "梦火",
+        "short_identity": "海拉娜的浅蓝龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/dreamfyre.png"
+      }
+    },
+    {
+      "with": "otto_hightower",
+      "display_name": "奥托·海塔尔",
+      "short_identity": "前御前首相",
+      "house": "Hightower",
+      "relation": "决裂",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。",
+      "portrait_url": "/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png",
+      "actor_version": "default",
+      "alive": true,
+      "companion": null
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "otto_hightower",
+    "display_name": "奥托·海塔尔",
+    "short_identity": "前御前首相",
+    "house": "Hightower",
+    "actor_version": "default",
+    "portrait_url": "/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png",
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "alicent_hightower",
+      "display_name": "阿莉森特·海塔尔",
+      "short_identity": "韦赛里斯一世之妻，奥托·海塔尔之女",
+      "house": "Hightower",
+      "relation": "父女",
+      "relation_en": null,
+      "relation_kind": "blood",
+      "summary": "阿莉森特是奥托·海塔尔的女儿。",
+      "portrait_url": "/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png",
+      "actor_version": "adult",
+      "alive": true,
+      "companion": null
+    },
+    {
+      "with": "daemon_targaryen",
+      "display_name": "戴蒙·坦格利安",
+      "short_identity": "韦赛里斯国王之弟",
+      "house": "Targaryen",
+      "relation": "政治对立",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "戴蒙视奥托为弱化王权的宫廷文官代表；奥托则视戴蒙为最大威胁。",
+      "portrait_url": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "caraxes",
+        "display_name": "凯拉克西斯",
+        "short_identity": "血翼，戴蒙的红龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/caraxes.png"
+      }
+    },
+    {
+      "with": "viserys_targaryen",
+      "display_name": "韦赛里斯一世·坦格利安",
+      "short_identity": "坦格利安王朝第五任国王",
+      "house": "Targaryen",
+      "relation": "决裂",
+      "relation_en": null,
+      "relation_kind": "enemy",
+      "summary": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。",
+      "portrait_url": "/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg",
+      "actor_version": "default",
+      "alive": true,
+      "companion": null
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "mysaria",
+    "display_name": "米莎莉娅",
+    "short_identity": "「白虫」 戴蒙的旧情人",
+    "house": null,
+    "actor_version": "default",
+    "portrait_url": "/kb/characters/face_refs/mysaria/default/fd_01_1x9_Mysaria.jpg.jpg",
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "daemon_targaryen",
+      "display_name": "戴蒙·坦格利安",
+      "short_identity": "韦赛里斯国王之弟",
+      "house": "Targaryen",
+      "relation": "情人",
+      "relation_en": null,
+      "relation_kind": "secret",
+      "summary": "戴蒙最早的情妇与心腹耳目；后亦成下层人脉网络的入口。",
+      "portrait_url": "/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "caraxes",
+        "display_name": "凯拉克西斯",
+        "short_identity": "血翼，戴蒙的红龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/caraxes.png"
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "has_kb": false,
+  "has_character_db": true,
+  "cursor_used": null,
+  "hero": {
+    "character_id": "seasmoke",
+    "display_name": "海雾",
+    "short_identity": "银灰色，劳琳诺的龙",
+    "house": "dragon",
+    "actor_version": null,
+    "portrait_url": null,
+    "current_title": null,
+    "alive": true,
+    "companion": null
+  },
+  "edges": [
+    {
+      "with": "corlys_velaryon",
+      "display_name": "科利斯·瓦列利安",
+      "short_identity": "「海蛇」",
+      "house": "Velaryon",
+      "relation": "龙骑士",
+      "relation_en": null,
+      "relation_kind": null,
+      "summary": "原本是科利斯之子劳琳诺的龙，剧中没有直接登场太多——这里以瓦列利安家族关联呈现。",
+      "portrait_url": "/kb/characters/face_refs/corlys_velaryon/default/fd_01_Corlys_Velaryon_S2.jpg.jpg",
+      "actor_version": "default",
+      "alive": true,
+      "companion": {
+        "character_id": "seasmoke",
+        "display_name": "海雾",
+        "short_identity": "银灰色，劳琳诺的龙",
+        "bond_relation": "龙骑士",
+        "portrait_url": "/kb/characters/dragon_refs/seasmoke.png"
+      }
+    }
+  ]
+}
