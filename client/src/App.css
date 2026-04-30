@@ -150,38 +150,81 @@ body {
   height: min(calc(100vh - var(--nav-h)), 680px);
   min-height: 480px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
   padding: 0 5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 4rem;
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
+  z-index: 0;
   background:
     radial-gradient(ellipse 60% 80% at 80% 50%, rgba(30, 20, 10, 0.6) 0%, transparent 60%),
     linear-gradient(135deg, #0d1520 0%, #0f1018 40%, #180d0d 100%);
 }
 
-.hero-video-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  opacity: 0.62;
-  filter: brightness(1.15) saturate(1.05);
-}
-
-.hero-overlay {
-  position: absolute; inset: 0;
-  background:
-    linear-gradient(to right, rgba(13,14,20,0.92) 28%, rgba(13,14,20,0.35) 60%, rgba(13,14,20,0) 100%),
-    linear-gradient(to top, rgba(13,14,20,0.65) 0%, transparent 45%);
-}
-
 .hero-content {
   position: relative; z-index: 1;
   max-width: 580px;
+}
+
+.hero-preview {
+  position: relative; z-index: 1;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hero-preview:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245,166,35,0.35);
+  box-shadow: 0 36px 90px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,166,35,0.15);
+}
+.hero-preview video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-preview-mask {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 45%);
+  pointer-events: none;
+}
+.hero-preview-meta {
+  position: absolute; left: 1.1rem; bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+  pointer-events: none;
+}
+.hero-preview-pill {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  color: #0d0e14;
+  background: var(--accent);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.hero-preview-name {
+  font-size: 14px; font-weight: 600;
+  color: var(--text);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+}
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    height: auto;
+    min-height: 0;
+    padding-top: calc(var(--nav-h) + 1rem);
+  }
+  .hero-preview { max-width: 640px; margin: 0 auto; }
 }
 
 .hero-badge {

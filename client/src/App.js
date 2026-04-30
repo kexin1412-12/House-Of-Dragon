@@ -117,7 +117,7 @@ export default function App() {
     v.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const heroVideo = featured;
+  const heroPreview = featured || videos[0];
 
   return (
     <div className="app">
@@ -168,44 +168,37 @@ export default function App() {
 
       {/* Hero */}
       <section className="hero">
-        <div className="hero-bg">
-          {heroVideo && (
-            <video
-              key={heroVideo.id}
-              src={resolveVideoSrc(heroVideo.url)}
-              muted
-              autoPlay
-              loop
-              playsInline
-              className="hero-video-bg"
-            />
-          )}
-          <div className="hero-overlay" />
-        </div>
+        <div className="hero-bg" />
         <div className="hero-content">
           <div className="hero-badge">
             <span className="star">★</span>
             AI 原生 · 长视频获得游戏的交互层
           </div>
-          <h1 className="hero-title">
-            {heroVideo ? heroVideo.name : '共谋者\nCo-Conspirator'}
-          </h1>
-          {!heroVideo && (
-            <p className="hero-desc">
-              让你看见导演藏在画面里的每一个秘密 —— 镜头语言 · 人物关系
-            </p>
-          )}
-          <div className="hero-actions">
-            {heroVideo ? (
-              <button className="btn-primary" onClick={() => setPlaying(heroVideo)}>
-                ▶&nbsp; 立即播放
-              </button>
-            ) : null}
-          </div>
+          <h1 className="hero-title">{'共谋者\nCo-Conspirator'}</h1>
+          <p className="hero-desc">
+            让你看见导演藏在画面里的每一个秘密 —— 镜头语言 · 人物关系
+          </p>
           <div className="hero-genres">
             {GENRES.map(g => <span key={g}>{g}</span>)}
           </div>
         </div>
+        {heroPreview && (
+          <div
+            className="hero-preview"
+            onClick={() => { setFeatured(heroPreview); setPlaying(heroPreview); }}
+          >
+            <video
+              key={heroPreview.id}
+              src={`${resolveVideoSrc(heroPreview.url)}#t=60`}
+              autoPlay loop muted playsInline
+            />
+            <div className="hero-preview-mask" />
+            <div className="hero-preview-meta">
+              <span className="hero-preview-pill">▶ 正在播放</span>
+              <span className="hero-preview-name">{heroPreview.name}</span>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Video List */}
