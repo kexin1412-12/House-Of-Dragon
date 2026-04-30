@@ -304,25 +304,31 @@ function ConflictEdge({ from, to, kind, relation, positions }) {
 }
 
 // ─── Pan / zoom hook ────────────────────────────────────────────────
+// Initial / reset scale: a 1.0×-ish "comfortable read" view rather than
+// auto-fit-everything-in-drawer (which made portraits look like dots). The
+// graph is wider than the drawer at this zoom — that's intended; pan and
+// the time-driven focus pan reveal the rest.
+const HOME_SCALE = 0.9;
+
 function useViewport(graphSize, viewportRef) {
-  const [view, setView] = useState({ scale: 1, tx: 0, ty: 0 });
+  const [view, setView] = useState({ scale: HOME_SCALE, tx: 0, ty: 0 });
   const dragRef = useRef(null);
   const pinchRef = useRef(null);
 
-  // Initial fit when graph size or viewport changes (only first time per open).
-  const fit = useCallback(() => {
+  // "Home" view: comfortable scale, centered on a target graph point (or
+  // graph midpoint if none). Drives both the initial open and the ⟲ button.
+  const fit = useCallback((targetX, targetY) => {
     const el = viewportRef.current;
     if (!el || !graphSize.width) return;
     const { clientWidth: vw, clientHeight: vh } = el;
-    const sx = vw / graphSize.width;
-    const sy = vh / graphSize.height;
-    const scale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.min(sx, sy) * 0.95));
-    const tx = (vw - graphSize.width * scale) / 2;
-    const ty = (vh - graphSize.height * scale) / 2;
-    setView({ scale, tx, ty });
+    const cx = targetX != null ? targetX : graphSize.width / 2;
+    const cy = targetY != null ? targetY : graphSize.height / 2;
+    const scale = HOME_SCALE;
+    setView({ scale, tx: vw / 2 - cx * scale, ty: vh / 2 - cy * scale });
   }, [graphSize.width, graphSize.height, viewportRef]);
-
-  useEffect(() => { fit(); }, [fit]);
+  // No auto-fit-on-mount — the consumer decides when to home (typically on
+  // first open, with the focused character's position so we land on whoever
+  // the player is currently showing rather than the graph midpoint).
 
   // Pan-only: keep current scale, smoothly center the given graph point.
   // Used by the time-driven focus to bring the on-screen character into view.
@@ -530,14 +536,34 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const graphSize = layout ? { width: layout.width, height: layout.height } : { width: 0, height: 0 };
   const viewport = useViewport(graphSize, viewportRef);
 
-  // When the video moves to a new focal character, gently re-center the view
-  // on them. Only fires if the user isn't actively dragging.
+  const focusPos = focused && layout ? layout.positions[focused] : null;
+
+  // First-open homing: once the drawer opens and the tree is laid out, jump
+  // to the comfortable scale centered on the current focal character (or
+  // graph midpoint if focus hasn't resolved yet). Gated by a ref so we don't
+  // re-home when the user manually pans/zooms.
+  const homedRef = useRef(false);
   useEffect(() => {
-    if (!open || !focused || !layout) return;
-    const pos = layout.positions[focused];
-    if (!pos) return;
-    viewport.centerOn(pos.x, pos.y);
-  }, [focused, layout, open, viewport]);
+    if (!open) { homedRef.current = false; return; }
+    if (homedRef.current || !graphSize.width) return;
+    homedRef.current = true;
+    if (focusPos) viewport.fit(focusPos.x, focusPos.y);
+    else viewport.fit();
+  }, [open, graphSize.width, viewport, focusPos]);
+
+  // Time-driven focus change after the initial home: pan only (preserve the
+  // user's current scale so manual zoom isn't wiped each scene).
+  useEffect(() => {
+    if (!open || !focusPos) return;
+    if (!homedRef.current) return;        // first home will already cover this
+    viewport.centerOn(focusPos.x, focusPos.y);
+  }, [focusPos, open, viewport]);
+
+  // ⟲ button: re-home on the current focal character.
+  const onResetView = useCallback(() => {
+    if (focusPos) viewport.fit(focusPos.x, focusPos.y);
+    else viewport.fit();
+  }, [focusPos, viewport]);
 
   const openFocus = useCallback(() => {
     setOpen(true);
@@ -601,7 +627,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           <div className="rg-zoom-controls">
             <button onClick={viewport.zoomIn} title="放大">＋</button>
             <button onClick={viewport.zoomOut} title="缩小">−</button>
-            <button onClick={viewport.fit} title="适配">⟲</button>
+            <button onClick={onResetView} title="适配">⟲</button>
           </div>
 
           <div
@@ -615,7 +641,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
             onTouchStart={viewport.onTouchStart}
             onTouchMove={viewport.onTouchMove}
             onTouchEnd={viewport.onTouchEnd}
-            onDoubleClick={viewport.fit}
+            onDoubleClick={onResetView}
             onClick={clearHighlight}
           >
             {error && <div className="rg-error">关系图加载失败：{error}</div>}
