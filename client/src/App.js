@@ -191,20 +191,22 @@ export default function App() {
           <h1 className="hero-title">
             {heroVideo ? heroVideo.name : '共谋者\nCo-Conspirator'}
           </h1>
-          <p className="hero-desc">
-            {heroVideo
-              ? `${formatSize(heroVideo.size)} · 上传于 ${formatDate(heroVideo.uploadedAt)}`
-              : '让观众从「看戏的人」变成「与戏共谋的人」 —— 角色对谈 / 分支推演 / 平行视角'}
-          </p>
+          {!heroVideo && (
+            <p className="hero-desc">
+              让观众从「看戏的人」变成「与戏共谋的人」 —— 角色对谈 / 分支推演 / 平行视角
+            </p>
+          )}
           <div className="hero-actions">
             {heroVideo ? (
               <button className="btn-primary" onClick={() => setPlaying(heroVideo)}>
                 ▶&nbsp; 立即播放
               </button>
             ) : null}
-            <button className="btn-secondary" onClick={() => setShowUpload(true)}>
-              {heroVideo ? '☰ 收藏清单' : '↑ 上传视频'}
-            </button>
+            {!heroVideo && (
+              <button className="btn-secondary" onClick={() => setShowUpload(true)}>
+                ↑ 上传视频
+              </button>
+            )}
           </div>
           <div className="hero-genres">
             {GENRES.map(g => <span key={g}>{g}</span>)}
