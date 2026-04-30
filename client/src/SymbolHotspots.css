@@ -1,0 +1,181 @@
+/* Symbol Hotspot Overlay — 共谋者隐藏符号提示点 */
+
+/* Backdrop: click to dismiss tooltip */
+.sh-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 39;
+  cursor: default;
+}
+
+/* Pulsing dot on concrete bboxed symbols */
+.sh-dot {
+  position: absolute;
+  z-index: 40;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 210, 80, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 0 rgba(255, 210, 80, 0.6);
+  cursor: pointer;
+  animation: sh-fade-in 0.45s ease-out, sh-pulse 2s ease-in-out 0.45s infinite;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.sh-dot:hover,
+.sh-dot.is-active {
+  transform: translate(-50%, -50%) scale(1.35);
+  background: rgba(255, 230, 120, 1);
+  animation: none;
+  box-shadow: 0 0 8px 2px rgba(255, 210, 80, 0.7);
+}
+
+@keyframes sh-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 210, 80, 0.6); }
+  60%  { box-shadow: 0 0 0 8px rgba(255, 210, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 210, 80, 0); }
+}
+
+/* 入场淡入：从 0 透明 + 略放大,落到正常态——比突然 pop 出来温和 */
+@keyframes sh-fade-in {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes sh-fade-in-badge {
+  0%   { opacity: 0; transform: translateX(-12px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Corner pill badge for abstract / non-locatable symbols */
+.sh-badge {
+  position: absolute;
+  left: 12px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  background: rgba(20, 20, 20, 0.75);
+  border: 1px solid rgba(255, 210, 80, 0.55);
+  border-radius: 12px;
+  color: rgba(255, 210, 80, 0.9);
+  font-size: 11px;
+  font-family: 'SF Pro Text', system-ui, sans-serif;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.15s ease, border-color 0.15s ease;
+  animation: sh-fade-in-badge 0.4s ease-out;
+  white-space: nowrap;
+  /* 防止超出播放器顶部 */
+  max-width: calc(50% - 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sh-badge:hover,
+.sh-badge.is-active {
+  background: rgba(40, 35, 10, 0.88);
+  border-color: rgba(255, 210, 80, 0.9);
+}
+
+/* Tooltip card */
+.sh-tooltip {
+  position: absolute;
+  z-index: 45;
+  width: 280px;
+  max-width: calc(100% - 24px);
+  background: rgba(10, 10, 14, 0.93);
+  border: 1px solid rgba(255, 210, 80, 0.3);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #e8e3d8;
+  font-size: 12.5px;
+  line-height: 1.55;
+  font-family: 'SF Pro Text', 'PingFang SC', system-ui, sans-serif;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+}
+
+/* Corner variant anchors to bottom-left above badges */
+.sh-tooltip--corner {
+  position: absolute;
+  left: 12px;
+  bottom: 200px;
+  top: auto;
+  right: auto;
+}
+
+.sh-tooltip-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.sh-tooltip-id {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255, 210, 80, 0.9);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.sh-tooltip-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: rgba(200, 195, 185, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.sh-tooltip-close:hover {
+  color: #e8e3d8;
+}
+
+.sh-tooltip p {
+  margin: 0 0 7px;
+}
+
+.sh-tooltip p:last-child {
+  margin-bottom: 0;
+}
+
+.sh-tooltip-evidence {
+  font-size: 11.5px;
+  color: rgba(220, 215, 200, 0.75);
+  font-style: italic;
+  border-left: 2px solid rgba(255, 210, 80, 0.35);
+  padding-left: 7px;
+}
+
+.sh-tooltip-meaning {
+  font-size: 12.5px;
+  color: #ddd8c8;
+}
+
+.sh-tooltip-takeaway {
+  font-size: 12px;
+  color: rgba(255, 210, 80, 0.85);
+  font-style: italic;
+}
+
+.sh-tooltip-deep {
+  font-size: 11.5px;
+  color: rgba(190, 185, 175, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 7px;
+  margin-top: 4px;
+}

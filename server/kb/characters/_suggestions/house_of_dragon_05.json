@@ -1,0 +1,1161 @@
+{
+  "video_id": "house_of_dragon_05",
+  "episode": "S01E05",
+  "show_id": "house-of-the-dragon",
+  "generated_at": "2026-04-26T05:33:19.929Z",
+  "generated_by": "enrich_characters.js (gemini/gemini-2.5-flash)",
+  "reviews": [
+    {
+      "character_id": "otto_hightower",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "state_timeline[0].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Hand of the King",
+              "title_zh": "御前首相",
+              "political_role_zh": "国王最重要的政务顾问；同时通过其女向王座施加家族影响",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯朝的御前首相，主张以制度而非武力对抗戴蒙的威胁。"
+            },
+            "reason": "在S01E05中，奥托·海塔尔被韦赛里斯国王解除了御前首相的职务。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "N/A",
+            "suggested_value": "N/A",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "null",
+              "title_en": "Former Hand of the King",
+              "title_zh": "前御前首相",
+              "political_role_zh": "被解除职务的前御前首相，仍通过其女向王座施加家族影响",
+              "alive": true,
+              "safe_summary_zh": "被韦赛里斯国王解除御前首相职务，但仍是阿莉森特王后的父亲，继续在幕后施加影响。"
+            },
+            "reason": "奥托·海塔尔在S01E05中被解除御前首相职务后，其身份和政治角色发生了变化，需要新的时间线条目来反映。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "御前首相",
+            "suggested_value": "前御前首相",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "null",
+              "title_en": "Former Hand of the King",
+              "title_zh": "前御前首相",
+              "political_role_zh": "被解除职务的前御前首相，仍通过其女向王座施加家族影响",
+              "alive": true,
+              "safe_summary_zh": "被韦赛里斯国王解除御前首相职务，但仍是阿莉森特王后的父亲，继续在幕后施加影响。"
+            },
+            "reason": "在S01E05中，奥托·海塔尔被韦赛里斯国王解除了御前首相的职务，其短身份描述应更新以反映这一变化。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "rhaenys_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "short_identity_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "state_timeline[0].title_zh",
+            "change_type": "replace",
+            "current_value": "公主 / 海蛇之妻",
+            "suggested_value": "公主",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "null",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "曾被认为是 Jaehaerys 的最合理继承人，被议会跳过；现为科利斯之妻",
+              "alive": true,
+              "safe_summary_zh": "曾经的王位最有力竞争者，被大议会以性别理由排除。嫁给科利斯·瓦列利安。"
+            },
+            "reason": "在S01E05中，蕾妮丝的身份主要是公主，而“海蛇之妻”更多是她的婚姻状态而非正式头衔。为了保持title_zh字段的简洁和准确性，建议移除“海蛇之妻”部分。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[0].political_role_zh",
+            "change_type": "replace",
+            "current_value": "曾被认为是 Jaehaerys 的最合理继承人，被议会跳过；现为科利斯之妻",
+            "suggested_value": "曾被认为是杰赫里斯一世的最合理继承人，被议会跳过；现为科利斯·瓦列利安之妻",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "null",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "曾被认为是杰赫里斯一世的最合理继承人，被议会跳过；现为科利斯·瓦列利安之妻",
+              "alive": true,
+              "safe_summary_zh": "曾经的王位最有力竞争者，被大议会以性别理由排除。嫁给科利斯·瓦列利安。"
+            },
+            "reason": "为了中文翻译的准确性和一致性，将“Jaehaerys”翻译为“杰赫里斯一世”，将“科利斯”补充为全名“科利斯·瓦列利安”。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "helaena_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "character_id",
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "韦赛里斯之女",
+            "suggested_value": "韦赛里斯与阿莉森特之女",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "海拉娜是韦赛里斯一世和阿莉森特王后所生的女儿，明确指出母亲能提供更准确的身份信息。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "actor_versions[0].active_range.from",
+            "change_type": "replace",
+            "current_value": "S01E07",
+            "suggested_value": "S01E06",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "成年版海拉娜（Phia Saban饰演）首次出场是在S01E06，而非S01E07。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].from",
+            "change_type": "replace",
+            "current_value": "S01E07",
+            "suggested_value": "S01E06",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "海拉娜的成年时期（以及相关政治角色描述）应从S01E06开始，因为这是她成年演员首次登场。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "",
+            "suggested_value": "",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "韦赛里斯与阿莉森特之女",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯一世与阿莉森特王后的女儿，雷尼拉公主的同父异母妹妹。童年时期出场。"
+            },
+            "reason": "当前时间线缺少海拉娜童年时期的条目。她在S01E01至S01E05期间以儿童形象出现。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "daemon_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "state_timeline[1].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "国王之弟；被剥夺都城卫戍指挥权后转而经营龙石岛",
+              "alive": true,
+              "safe_summary_zh": "公开发言激怒国王后被解除军职。性格难以约束，行动常出乎宫廷预期。"
+            },
+            "reason": "戴蒙在本集（S01E05）中与雷妮拉公主在舞会上共舞，并试图亲吻她，之后又在婚礼上与雷妮拉互动，这些行为都符合他作为“王子”的身份，但他的政治角色和状态在本集结尾发生了变化，因此需要更新“to”字段。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "N/A",
+            "suggested_value": "N/A",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "null",
+              "title_en": "Prince Consort of the Stepstones",
+              "title_zh": "石阶列岛亲王",
+              "political_role_zh": "国王之弟；在雷妮拉公主的婚礼上，他与雷妮拉共舞并引发骚乱，随后离开君临。",
+              "alive": true,
+              "safe_summary_zh": "在雷妮拉的婚礼上，戴蒙的行为再次显示了他的不可预测性。他与雷妮拉的互动引发了混乱，并在婚礼结束后离开了君临，其政治角色和地位可能发生变化。"
+            },
+            "reason": "在S01E05的婚礼上，戴蒙与雷妮拉的互动以及随后的混乱，预示着他将进入一个新的状态。尽管他仍是王子，但他的行为和离开君临的举动，使得他之前的“经营龙石岛”的描述不再完全准确，需要一个新的状态来反映他在此集后的发展，特别是他与雷妮拉的关系以及他可能在石阶列岛的角色。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "韦赛里斯之弟",
+            "suggested_value": "韦赛里斯国王之弟",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "null",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "国王之弟；被剥夺都城卫戍指挥权后转而经营龙石岛",
+              "alive": true,
+              "safe_summary_zh": "公开发言激怒国王后被解除军职。性格难以约束，行动常出乎宫廷预期。"
+            },
+            "reason": "为了更明确地指出韦赛里斯的身份，添加“国王”一词，避免与剧中其他韦赛里斯（如未来的韦赛里斯二世）混淆，提高准确性。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "larys_strong",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].active_range.to",
+          "actor_versions[0].face_group_id",
+          "state_timeline[0].from",
+          "state_timeline[0].to",
+          "state_timeline[0].alive"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "「内八字」 莱昂诺的次子",
+            "suggested_value": "莱昂诺的次子",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Son of Lyonel Strong",
+              "title_zh": "莱昂诺的次子",
+              "political_role_zh": "御前首相莱昂诺的次子；身有残疾但以阴谋见长",
+              "alive": true,
+              "safe_summary_zh": "莱昂诺·斯壮的次子，瘸腿，沉默寡言，善于经营暗中关系。"
+            },
+            "reason": "「内八字」是他的绰号，但并非官方身份描述，且在S01E05中尚未被广泛提及或确立为主要身份标识，移除以保持身份描述的简洁和准确性。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[0].title_en",
+            "change_type": "replace",
+            "current_value": "Lord of Harrenhal (later)",
+            "suggested_value": "Son of Lyonel Strong",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Son of Lyonel Strong",
+              "title_zh": "斯壮家次子",
+              "political_role_zh": "御前首相莱昂诺的次子；身有残疾但以阴谋见长",
+              "alive": true,
+              "safe_summary_zh": "莱昂诺·斯壮的次子，瘸腿，沉默寡言，善于经营暗中关系。"
+            },
+            "reason": "在S01E05中，拉里斯·斯壮的身份仍是莱昂诺·斯壮的次子，尚未成为赫伦堡伯爵。括号中的“(later)”表明这是未来的事件，不应在当前时间线条目中出现，应在未来集数中添加新的时间线条目。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].political_role_zh",
+            "change_type": "replace",
+            "current_value": "御前首相莱昂诺的次子；身有残疾但以阴谋见长",
+            "suggested_value": "御前首相莱昂诺的次子",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Son of Lyonel Strong",
+              "title_zh": "斯壮家次子",
+              "political_role_zh": "御前首相莱昂诺的次子",
+              "alive": true,
+              "safe_summary_zh": "莱昂诺·斯壮的次子，瘸腿，沉默寡言，善于经营暗中关系。"
+            },
+            "reason": "“以阴谋见长”是角色特点，而非政治角色。在S01E05中，他的主要政治身份仍是御前首相莱昂诺的次子。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "lyonel_strong",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].face_group_id"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "御前首相 (奥托之后)",
+            "suggested_value": "御前首相",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "S01E06",
+              "title_en": "Hand of the King",
+              "title_zh": "御前首相",
+              "political_role_zh": "国王的首席顾问和代理人",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，作为御前首相辅佐国王韦赛里斯一世。"
+            },
+            "reason": "在S01E04结尾，奥托·海塔尔被解除御前首相职务。在S01E05中，莱昂诺·斯壮已正式担任御前首相，且在剧中被明确提及。因此，'奥托之后'的描述是多余且不必要的。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E04",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E04",
+              "title_en": "Master of Laws",
+              "title_zh": "司法大臣",
+              "political_role_zh": "赫伦堡领主；以法律和理性顾问国王",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，以学识与公正见长，曾任国王法律顾问。"
+            },
+            "reason": "莱昂诺·斯壮在S01E05之前一直担任司法大臣，但在S01E05中他已升任御前首相，因此司法大臣的任期应在S01E04结束。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].title_en",
+            "change_type": "replace",
+            "current_value": "Master of Laws / Hand",
+            "suggested_value": "Master of Laws",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E04",
+              "title_en": "Master of Laws",
+              "title_zh": "司法大臣",
+              "political_role_zh": "赫伦堡领主；以法律和理性顾问国王",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，以学识与公正见长，曾任国王法律顾问。"
+            },
+            "reason": "在S01E05之前，莱昂诺·斯壮的职位是司法大臣，而非御前首相。御前首相是他S01E05之后的新职位。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].title_zh",
+            "change_type": "replace",
+            "current_value": "司法大臣 / 御前首相",
+            "suggested_value": "司法大臣",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E04",
+              "title_en": "Master of Laws",
+              "title_zh": "司法大臣",
+              "political_role_zh": "赫伦堡领主；以法律和理性顾问国王",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，以学识与公正见长，曾任国王法律顾问。"
+            },
+            "reason": "在S01E05之前，莱昂诺·斯壮的职位是司法大臣，而非御前首相。御前首相是他S01E05之后的新职位。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "N/A",
+            "suggested_value": "N/A",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "S01E06",
+              "title_en": "Hand of the King",
+              "title_zh": "御前首相",
+              "political_role_zh": "国王的首席顾问和代理人",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，作为御前首相辅佐国王韦赛里斯一世。"
+            },
+            "reason": "在S01E04结尾，奥托·海塔尔被解除御前首相职务。在S01E05中，莱昂诺·斯壮已正式担任御前首相，并在本集中多次以该身份出现并履行职责。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "actor_versions[0].active_range.to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E06",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E06",
+              "title_en": "Master of Laws / Hand",
+              "title_zh": "司法大臣 / 御前首相",
+              "political_role_zh": "赫伦堡领主；以法律和理性顾问国王",
+              "alive": true,
+              "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，以学识与公正见长，曾任国王法律顾问。"
+            },
+            "reason": "莱昂诺·斯壮在S01E06中去世，因此其演员Gavin Spokes的活跃范围应更新至S01E06。",
+            "episode_scope": "S01E06",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "rhaenyra_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "韦赛里斯一世之女",
+            "suggested_value": "龙石岛公主，铁王座继承人",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E01",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+            },
+            "reason": "在S01E01中，雷尼拉被正式册封为铁王座继承人，因此她的短身份描述应反映这一重要地位。",
+            "episode_scope": "S01E01",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].to",
+            "change_type": "replace",
+            "current_value": "S01E01",
+            "suggested_value": "S01E01",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E01",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+            },
+            "reason": "第一个状态条目'to'字段应与'from'字段相同，表示该状态仅持续到S01E01结束，之后她的身份发生了变化。",
+            "episode_scope": "S01E01",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[1].from",
+            "change_type": "replace",
+            "current_value": "S01E01",
+            "suggested_value": "S01E02",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E01",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+            },
+            "reason": "雷尼拉在S01E01结尾被册封为继承人，但新的身份状态应从S01E02开始生效，因为S01E01大部分时间她仍是未被视为继承人的公主。",
+            "episode_scope": "S01E02",
+            "confidence": 0.85
+          },
+          {
+            "field_path": "state_timeline[1].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E01",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+            },
+            "reason": "在S01E06中，角色由Milly Alcock变为Emma D'Arcy，且剧情时间线有较大跳跃，雷尼拉的婚姻状况和政治局面发生显著变化，因此当前状态应在S01E05结束。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[1].safe_summary_zh",
+            "change_type": "replace",
+            "current_value": "由父王亲自册封为继承人，但需要让所有诸侯宣誓效忠。",
+            "suggested_value": "被父王册封为铁王座继承人，但其地位受到挑战，并被要求履行政治联姻的责任。",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E01",
+              "title_en": "Princess",
+              "title_zh": "公主",
+              "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+            },
+            "reason": "在S01E02-S01E05期间，雷尼拉的继承人地位持续受到挑战，且她被要求与兰诺·瓦列利安联姻，这些是她这一阶段的重要剧情点。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "viserys_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].face_group_id"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "七大王国之王",
+            "suggested_value": "坦格利安王朝第五任国王",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "King of the Seven Kingdoms",
+              "title_zh": "七大王国之王",
+              "political_role_zh": "王朝维系者，介于平衡各家族之间",
+              "alive": true,
+              "safe_summary_zh": "坦格利安王朝第五任国王，老国王杰赫里斯指定的继承人，被期待维系王朝百年和平。"
+            },
+            "reason": "short_identity_zh应更简洁地概括角色身份，而'七大王国之王'更适合作为title_zh。'坦格利安王朝第五任国王'更符合short_identity_zh的简洁性。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[0].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "King of the Seven Kingdoms",
+              "title_zh": "七大王国之王",
+              "political_role_zh": "王朝维系者，介于平衡各家族之间",
+              "alive": true,
+              "safe_summary_zh": "坦格利安王朝第五任国王，老国王杰赫里斯指定的继承人，被期待维系王朝百年和平。"
+            },
+            "reason": "在S01E05中，韦赛里斯国王的健康状况明显恶化，虽然他仍然在位，但其身体状况已经发生了显著变化，预示着一个阶段的结束。为了更精确地反映角色状态的时间线，应将此阶段的'to'字段更新为当前集数。",
+            "episode_scope": "S01E05",
+            "confidence": 0.85
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "N/A",
+            "suggested_value": "N/A",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "null",
+              "title_en": "King of the Seven Kingdoms (ailing)",
+              "title_zh": "七大王国之王（病重）",
+              "political_role_zh": "王朝维系者，身体状况日益衰弱",
+              "alive": true,
+              "safe_summary_zh": "坦格利安王朝第五任国王，在S01E05中身体状况急剧恶化，但仍努力维持王室稳定。"
+            },
+            "reason": "在S01E05中，韦赛里斯国王的健康状况急剧恶化，在婚礼上晕倒，这标志着他统治的一个新阶段，需要一个新的时间线条目来反映其身体状况的变化。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "alicent_hightower",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].active_range.to",
+          "actor_versions[0].face_group_id",
+          "actor_versions[1].actor_name",
+          "actor_versions[1].version",
+          "actor_versions[1].active_range.from",
+          "actor_versions[1].face_group_id",
+          "state_timeline[0].from",
+          "state_timeline[0].to",
+          "state_timeline[0].title_en",
+          "state_timeline[0].title_zh",
+          "state_timeline[0].political_role_zh",
+          "state_timeline[0].alive",
+          "state_timeline[0].safe_summary_zh",
+          "state_timeline[1].from",
+          "state_timeline[1].title_en",
+          "state_timeline[1].political_role_zh",
+          "state_timeline[1].alive",
+          "state_timeline[1].safe_summary_zh"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "奥托·海塔尔之女",
+            "suggested_value": "韦赛里斯一世之妻，奥托·海塔尔之女",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "在S01E02中已成为韦赛里斯一世的王后，其身份已发生显著变化，应在简短身份中体现。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[1].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "S01E06将有时间跳跃，演员会更换为成年版，因此当前状态的结束时间应明确为S01E05。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[1].title_zh",
+            "change_type": "replace",
+            "current_value": "王后",
+            "suggested_value": "王后 / 维斯特洛王后",
+            "suggested_entry": {
+              "from": "",
+              "to": "",
+              "title_en": "",
+              "title_zh": "",
+              "political_role_zh": "",
+              "alive": true,
+              "safe_summary_zh": ""
+            },
+            "reason": "“维斯特洛王后”是更完整且常见的称谓，可以补充。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "aegon_targaryen_ii",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "韦赛里斯长子",
+            "suggested_value": "韦赛里斯与阿莉森特的长子",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "S01E05",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的长子；母系希望他成为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯与阿莉森特之长子，年少放荡，对继承王位无兴趣。"
+            },
+            "reason": "在S01E05中，伊耿二世的身份已经明确为韦赛里斯与阿莉森特的长子，补充母亲信息能更准确地描述其身份。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "actor_versions[0].active_range.from",
+            "change_type": "replace",
+            "current_value": "S01E06",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "S01E05",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的长子；母系希望他成为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯与阿莉森特之长子，年少放荡，对继承王位无兴趣。"
+            },
+            "reason": "根据提供的剧照，成年版伊耿二世（由Tom Glynn-Carney饰演）已在S01E05中出镜。",
+            "episode_scope": "S01E05",
+            "confidence": 0.99
+          },
+          {
+            "field_path": "state_timeline[0].from",
+            "change_type": "replace",
+            "current_value": "S01E06",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E05",
+              "to": "S01E05",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的长子；母系希望他成为继承人",
+              "alive": true,
+              "safe_summary_zh": "韦赛里斯与阿莉森特之长子，年少放荡，对继承王位无兴趣。"
+            },
+            "reason": "根据提供的剧照，伊耿二世在S01E05中已经以王子身份出现。",
+            "episode_scope": "S01E05",
+            "confidence": 0.99
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "criston_cole",
+      "review": {
+        "confirmed_correct_fields": [
+          "character_id",
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "state_timeline[0].political_role_zh",
+            "change_type": "replace",
+            "current_value": "新晋御林铁卫；与公主关系微妙",
+            "suggested_value": "御林铁卫；与雷尼拉公主关系破裂",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "null",
+              "title_en": "Kingsguard Knight",
+              "title_zh": "御林铁卫骑士",
+              "political_role_zh": "御林铁卫；与雷尼拉公主关系破裂",
+              "alive": true,
+              "safe_summary_zh": "出身寒微的杰出比武骑士，被雷尼拉钦点入御林铁卫。"
+            },
+            "reason": "在S01E05中，克里斯顿·科尔与雷尼拉公主的感情彻底破裂，他甚至在婚礼上杀死了雷尼拉的未婚夫的伴侣，这表明他与公主的关系已不再是“微妙”，而是公开的敌对。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "mysaria",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "「白色虫子」 戴蒙的旧情人",
+            "suggested_value": "「白虫」 戴蒙的旧情人",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Information Broker",
+              "title_zh": "情报掮客",
+              "political_role_zh": "原本是戴蒙的舞女情人，逐渐建立起自己的情报网",
+              "alive": true,
+              "safe_summary_zh": "原是戴蒙的情人，后在君临经营情报与人脉网络。"
+            },
+            "reason": "根据剧中字幕和常见汉化，「白色虫子」更常译作「白虫」。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "state_timeline[0].political_role_zh",
+            "change_type": "replace",
+            "current_value": "原本是戴蒙的舞女情人，逐渐建立起自己的情报网",
+            "suggested_value": "戴蒙的旧情人，君临情报网的幕后主使",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Information Broker",
+              "title_zh": "情报掮客",
+              "political_role_zh": "戴蒙的旧情人，君临情报网的幕后主使",
+              "alive": true,
+              "safe_summary_zh": "原是戴蒙的情人，后在君临经营情报与人脉网络。"
+            },
+            "reason": "在S01E05中，米莎莉娅已经明确是君临情报网的幕后主使，且与戴蒙的关系已是“旧情人”，而非“原本是...情人，逐渐建立”。更简洁准确的描述是“戴蒙的旧情人，君临情报网的幕后主使”。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[0].safe_summary_zh",
+            "change_type": "replace",
+            "current_value": "原是戴蒙的情人，后在君临经营情报与人脉网络。",
+            "suggested_value": "戴蒙的旧情人，君临情报网的幕后主使。",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Information Broker",
+              "title_zh": "情报掮客",
+              "political_role_zh": "戴蒙的旧情人，君临情报网的幕后主使",
+              "alive": true,
+              "safe_summary_zh": "戴蒙的旧情人，君临情报网的幕后主使。"
+            },
+            "reason": "在S01E05中，米莎莉娅已经明确是君临情报网的幕后主使，且与戴蒙的关系已是“旧情人”。更简洁准确的描述是“戴蒙的旧情人，君临情报网的幕后主使”。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "corlys_velaryon",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "short_identity_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].active_range.to",
+          "actor_versions[0].face_group_id",
+          "state_timeline[0].from",
+          "state_timeline[0].to",
+          "state_timeline[0].title_en",
+          "state_timeline[0].title_zh",
+          "state_timeline[0].political_role_zh",
+          "state_timeline[0].alive",
+          "state_timeline[0].safe_summary_zh"
+        ],
+        "suggestions": []
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    },
+    {
+      "character_id": "aemond_targaryen",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags"
+        ],
+        "suggestions": [
+          {
+            "field_path": "actor_versions",
+            "change_type": "append",
+            "current_value": "[]",
+            "suggested_value": "{\"actor_name\": \"Leo Ashton\", \"version\": \"child\", \"active_range\": {\"from\": \"S01E03\", \"to\": \"S01E07\"}, \"face_group_id\": \"aemond_child\"}",
+            "suggested_entry": {
+              "from": "S01E03",
+              "to": "S01E07",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的次子",
+              "alive": true,
+              "safe_summary_zh": "阿莉森特次子，童年时期性格内敛。"
+            },
+            "reason": "当前剧集S01E05中，艾蒙德·坦格利安由儿童演员Leo Ashton饰演，且在S01E03中首次出场。条目中缺失儿童演员信息。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "韦赛里斯次子",
+            "suggested_value": "韦赛里斯与阿莉森特的次子",
+            "suggested_entry": {
+              "from": "S01E03",
+              "to": "S01E07",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的次子",
+              "alive": true,
+              "safe_summary_zh": "阿莉森特次子，童年时期性格内敛。"
+            },
+            "reason": "为避免与雷尼拉的孩子混淆，更准确地指出艾蒙德是韦赛里斯和阿莉森特的儿子。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline",
+            "change_type": "append",
+            "current_value": "[]",
+            "suggested_value": "{\"from\": \"S01E03\", \"to\": \"S01E07\", \"title_en\": \"Prince\", \"title_zh\": \"王子\", \"political_role_zh\": \"韦赛里斯与阿莉森特的次子\", \"alive\": true, \"safe_summary_zh\": \"阿莉森特次子，童年时期性格内敛。\"}",
+            "suggested_entry": {
+              "from": "S01E03",
+              "to": "S01E07",
+              "title_en": "Prince",
+              "title_zh": "王子",
+              "political_role_zh": "韦赛里斯与阿莉森特的次子",
+              "alive": true,
+              "safe_summary_zh": "阿莉森特次子，童年时期性格内敛。"
+            },
+            "reason": "艾蒙德在S01E03首次以儿童形象出现，并在S01E07前一直保持此状态。当前条目缺失S01E03至S01E07的儿童时期状态。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 1
+      }
+    },
+    {
+      "character_id": "harwin_strong",
+      "review": {
+        "confirmed_correct_fields": [
+          "canonical_name",
+          "display_name_zh",
+          "house",
+          "tags",
+          "actor_versions[0].actor_name",
+          "actor_versions[0].version",
+          "actor_versions[0].active_range.from",
+          "actor_versions[0].face_group_id",
+          "state_timeline[0].from",
+          "state_timeline[0].title_en",
+          "state_timeline[0].title_zh",
+          "state_timeline[0].political_role_zh",
+          "state_timeline[0].alive",
+          "state_timeline[0].safe_summary_zh"
+        ],
+        "suggestions": [
+          {
+            "field_path": "short_identity_zh",
+            "change_type": "replace",
+            "current_value": "「碎骨人」 莱昂诺的长子",
+            "suggested_value": "「碎骨人」 莱昂诺·斯壮长子",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Commander of the City Watch",
+              "title_zh": "都城卫戍司令",
+              "political_role_zh": "莱昂诺·斯壮长子；都城金袍卫指挥官；以蛮力闻名",
+              "alive": true,
+              "safe_summary_zh": "御前首相之子，七国最强壮的男人之一，绰号「碎骨人」。"
+            },
+            "reason": "为了与其他角色条目保持一致，且更明确地指出其父亲的全名。",
+            "episode_scope": "S01E05",
+            "confidence": 0.95
+          },
+          {
+            "field_path": "actor_versions[0].active_range.to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Commander of the City Watch",
+              "title_zh": "都城卫戍司令",
+              "political_role_zh": "莱昂诺·斯壮长子；都城金袍卫指挥官；以蛮力闻名",
+              "alive": true,
+              "safe_summary_zh": "御前首相之子，七国最强壮的男人之一，绰号「碎骨人」。"
+            },
+            "reason": "哈尔温·斯壮在本集结尾与雷妮拉公主的婚宴上与克里斯顿·科尔爵士发生冲突，并被其殴打致重伤，随后被父亲送回赫伦堡。此后，该演员不再以该形象出现。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          },
+          {
+            "field_path": "state_timeline[0].to",
+            "change_type": "replace",
+            "current_value": "null",
+            "suggested_value": "S01E05",
+            "suggested_entry": {
+              "from": "S01E01",
+              "to": "S01E05",
+              "title_en": "Commander of the City Watch",
+              "title_zh": "都城卫戍司令",
+              "political_role_zh": "莱昂诺·斯壮长子；都城金袍卫指挥官；以蛮力闻名",
+              "alive": true,
+              "safe_summary_zh": "御前首相之子，七国最强壮的男人之一，绰号「碎骨人」。"
+            },
+            "reason": "哈尔温·斯壮在本集结尾与克里斯顿·科尔爵士发生冲突，并被其殴打致重伤，随后被父亲送回赫伦堡。他的都城卫戍司令职位在此之后不再提及，且他本人在后续剧集中不再以该身份出现。",
+            "episode_scope": "S01E05",
+            "confidence": 0.9
+          }
+        ]
+      },
+      "_meta": {
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "frames_used": 3
+      }
+    }
+  ],
+  "apply_thresholds": {
+    "replace": 0.85,
+    "add_state_timeline_entry": 0.7
+  }
+}

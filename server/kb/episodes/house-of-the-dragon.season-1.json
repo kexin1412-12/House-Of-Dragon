@@ -1,0 +1,242 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "季级元数据：每集的 title / tag / synopsis / key_events / 派系归属 / 跨集脉络。",
+    "运行时由 lib/season.js + GET /api/agent/timeline/season 消费。",
+    "spoiler-safe：cursor < episode 的条目在响应里被 mask 为 locked。",
+    "causal_links 是手工画的跨集前后呼应（E5→E10 等）；后续可由 character_graph_agent 自动生成。",
+    "video_id 非 null 表示该集已有 scene KB——endpoint 会在响应里把那条事件用 KB 真实数据 enrich 一遍。"
+  ],
+  "show_id": "house-of-the-dragon",
+  "season": 1,
+  "season_label_zh": "第一季",
+
+  "arcs": [
+    { "id": "succession", "label_zh": "继承之争", "ep_range": [1, 3],  "subtitle_zh": "雷妮拉成为继承人" },
+    { "id": "rupture",    "label_zh": "决裂之夜", "ep_range": [4, 5],  "subtitle_zh": "君临夜游 → 婚礼血案" },
+    { "id": "rift",       "label_zh": "十年裂痕", "ep_range": [6, 8],  "subtitle_zh": "时间跳跃，国王走向死亡" },
+    { "id": "war",        "label_zh": "血龙狂舞", "ep_range": [9, 10], "subtitle_zh": "绿党宫变 → 战火点燃" }
+  ],
+
+  "factions": [
+    { "id": "black",   "label_zh": "雷妮拉派 (黑党)", "color_hint": "#7f1d1d" },
+    { "id": "green",   "label_zh": "阿莉森特派 (绿党)", "color_hint": "#14532d" },
+    { "id": "neutral", "label_zh": "中立 / 王座", "color_hint": "#475569" }
+  ],
+
+  "faction_membership": {
+    "rhaenyra_targaryen": "black",
+    "daemon_targaryen":   "black",
+    "corlys_velaryon":    "black",
+    "rhaenys_targaryen":  "black",
+    "harwin_strong":      "black",
+    "laenor_velaryon":    "black",
+    "alicent_hightower":  "green",
+    "otto_hightower":     "green",
+    "criston_cole":       "green",
+    "aegon_targaryen_ii": "green",
+    "aemond_targaryen":   "green",
+    "helaena_targaryen":  "green",
+    "larys_strong":       "green",
+    "viserys_targaryen":  "neutral",
+    "lyonel_strong":      "neutral",
+    "joffrey_lonmouth":   "black",
+    "rhea_royce":         "neutral",
+    "mysaria":            "black"
+  },
+
+  "episodes": [
+    {
+      "episode": "S01E01",
+      "ep_num": 1,
+      "title": "The Heirs of the Dragon",
+      "title_zh": "龙的继承人",
+      "tag": "大议会",
+      "synopsis": "大议会推举韦赛里斯·坦格利安一世继位。王后艾玛在生产时身亡，新生男婴贝伦数小时后夭折。韦赛里斯打破传统，册封女儿雷妮拉为铁王座继承人。",
+      "synopsis_long": "故事以坦格利安和平的最后阶段开篇。韦赛里斯娶艾玛多年只得一女；艾玛剖腹产子身亡之后，他做出册封女儿雷妮拉为继承人的决定。同夜，戴蒙在烟柳之地把幼弟之死称作'继承人之夜'，言论被奥托·海塔尔报告国王。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "韦赛里斯在大议会被选为继承人，蕾妮丝·坦格利安落选" },
+        { "t": null, "crit": true,  "text": "王后艾玛剖腹身亡，男婴贝伦数小时后夭折" },
+        { "t": null, "crit": true,  "text": "韦赛里斯册封雷妮拉为铁王座继承人" },
+        { "t": null, "crit": false, "text": "戴蒙在烟柳之地的'继承人之夜'言论被奥托报告国王" }
+      ]
+    },
+    {
+      "episode": "S01E02",
+      "ep_num": 2,
+      "title": "The Rogue Prince",
+      "title_zh": "无赖王子",
+      "tag": "王后人选",
+      "synopsis": "戴蒙携情妇米莎莉雅占据龙石岛。韦赛里斯拒绝科利斯·瓦列利安提出的与其女蕾娜联姻，转而宣布迎娶奥托·海塔尔之女阿莉森特。",
+      "synopsis_long": "王后死后，国王再婚的人选成为朝堂主线。奥托·海塔尔安排女儿阿莉森特持续陪伴居丧的韦赛里斯，最终促成婚事。科利斯·瓦列利安提议自己十二岁的女儿蕾娜·瓦列利安联姻被婉拒，瓦列利安家族因此渐渐倒向戴蒙一方。",
+      "key_events": [
+        { "t": null, "crit": false, "text": "戴蒙携米莎莉雅占据龙石岛，与韦赛里斯当庭对峙" },
+        { "t": null, "crit": true,  "text": "奥托安排阿莉森特探视哀痛中的韦赛里斯" },
+        { "t": null, "crit": true,  "text": "科利斯提议蕾娜·瓦列利安联姻被韦赛里斯拒绝" },
+        { "t": null, "crit": true,  "text": "韦赛里斯宣布迎娶阿莉森特·海塔尔" }
+      ]
+    },
+    {
+      "episode": "S01E03",
+      "ep_num": 3,
+      "title": "Second of His Name",
+      "title_zh": "以父之名",
+      "tag": "二王子诞生",
+      "synopsis": "二王子伊耿满周岁。韦赛里斯在猎场公开重申雷妮拉的继承人身份。戴蒙与科利斯在阶梯列岛击败螃蟹饲喂者归来。",
+      "synopsis_long": "阿莉森特生下伊耿之后，雷妮拉的继承人身份在朝堂被重新讨论。韦赛里斯以猎场宣告的方式压住质疑，但事实已经改变。雷妮拉在本集挑选克里斯顿·科尔为御林铁卫。",
+      "key_events": [
+        { "t": null, "crit": false, "text": "伊耿二世周岁庆典" },
+        { "t": null, "crit": true,  "text": "韦赛里斯在猎场公开重申雷妮拉为继承人" },
+        { "t": null, "crit": false, "text": "戴蒙与科利斯在阶梯列岛击败螃蟹饲喂者归来" },
+        { "t": null, "crit": false, "text": "雷妮拉挑选克里斯顿·科尔为御林铁卫" }
+      ]
+    },
+    {
+      "episode": "S01E04",
+      "ep_num": 4,
+      "title": "King of the Narrow Sea",
+      "title_zh": "狭海君主",
+      "tag": "君临夜游",
+      "synopsis": "戴蒙带雷妮拉易装夜游君临烟柳之地。奥托得知后向韦赛里斯报告。当夜雷妮拉与克里斯顿·科尔越界。",
+      "synopsis_long": "戴蒙带雷妮拉夜游君临，进入烟柳之地后两人短暂亲密，戴蒙在最后离开。奥托派人监视并将所见报告国王。同夜雷妮拉与克里斯顿在卧房越界。本集所有事件成为下一集多条情节的直接触发。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "戴蒙带雷妮拉夜游君临烟柳之地，亲密后戴蒙离开" },
+        { "t": null, "crit": true,  "text": "奥托派拉里斯监视并将所见报告韦赛里斯" },
+        { "t": null, "crit": true,  "text": "雷妮拉与克里斯顿·科尔当夜越界" },
+        { "t": null, "crit": false, "text": "韦赛里斯决意为雷妮拉安排婚事，目标是兰诺·瓦列利安" }
+      ]
+    },
+    {
+      "episode": "S01E05",
+      "ep_num": 5,
+      "title": "We Light the Way",
+      "title_zh": "我们照亮道路",
+      "tag": "婚礼之夜",
+      "synopsis": "戴蒙在谷地杀死妻子蕾雅·罗伊斯。奥托被解除国王之手职务。雷妮拉与兰诺·瓦列利安在潮头岛海滩商定政治婚姻。婚宴上阿莉森特身穿海塔尔家族绿色礼服姗姗来迟，克里斯顿·科尔当众打死乔弗里·朗茅斯。婚礼在血泊中草草完成。",
+      "synopsis_long": "本集发生四个独立但同夜上演的事件：戴蒙在谷地杀妻、韦赛里斯解除奥托·海塔尔的国王之手职务、雷妮拉与兰诺·瓦列利安在海滩达成政治婚姻协议（双方各自留情人）、克里斯顿·科尔在婚宴当众打死乔弗里·朗茅斯。同夜，阿莉森特首次身穿海塔尔家族绿色礼服公开亮相。",
+      "key_events": [
+        { "t": "00:42", "crit": true,  "text": "戴蒙在谷地杀死妻子蕾雅·罗伊斯" },
+        { "t": "08:27", "crit": true,  "text": "奥托·海塔尔被解除国王之手职务" },
+        { "t": "09:50", "crit": true,  "text": "鱼梁木雕像渗血——开场空镜" },
+        { "t": "11:32", "crit": true,  "text": "韦赛里斯派人送月亮茶到龙石岛雷妮拉寝宫" },
+        { "t": "19:08", "crit": true,  "text": "雷妮拉与兰诺在海滩商定'政治婚姻+各自情人'" },
+        { "t": "42:36", "crit": true,  "text": "阿莉森特首次身穿海塔尔家族绿色礼服入婚宴" },
+        { "t": "55:07", "crit": true,  "text": "克里斯顿·科尔在婚宴当众打死乔弗里·朗茅斯" },
+        { "t": "56:07", "crit": true,  "text": "婚礼在血泊残局中完成" },
+        { "t": "56:45", "crit": false, "text": "婚礼后空厅老鼠的镜头" }
+      ],
+      "video_id": "house_of_dragon_05"
+    },
+    {
+      "episode": "S01E06",
+      "ep_num": 6,
+      "title": "The Princess and the Queen",
+      "title_zh": "公主与王后",
+      "tag": "十年后",
+      "synopsis": "时间向前十年。雷妮拉与阿莉森特已完全分立。雷妮拉的三个儿子相貌明显近哈尔温·斯壮，王朝合法性问题在朝堂上不再是秘密。艾蒙德首次尝试骑龙未果。",
+      "synopsis_long": "主要演员换代，时间向前十年。雷妮拉的三个儿子（杰卡里斯、卢斯里斯、乔弗里）相貌都更近哈尔温·斯壮。艾蒙德被王孙们嘲笑'没有龙的王子'。本集结尾，莱昂诺与哈尔温·斯壮在赫伦堡死于大火，幕后是拉里斯。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "时间向前十年，主要演员换代" },
+        { "t": null, "crit": true,  "text": "雷妮拉的三个儿子相貌近哈尔温·斯壮" },
+        { "t": null, "crit": false, "text": "阿莉森特暗中与拉里斯·斯壮联络" },
+        { "t": null, "crit": true,  "text": "艾蒙德试图骑龙未果，被王孙们嘲弄" },
+        { "t": null, "crit": true,  "text": "莱昂诺与哈尔温·斯壮在赫伦堡死于大火（拉里斯所为）" }
+      ]
+    },
+    {
+      "episode": "S01E07",
+      "ep_num": 7,
+      "title": "Driftmark",
+      "title_zh": "潮头岛",
+      "tag": "葬礼之夜",
+      "synopsis": "蕾娜·瓦列利安死于难产。葬礼之夜，艾蒙德偷骑瓦格哈尔。与雷妮拉之子卢斯里斯冲突中失去左眼。雷妮拉与戴蒙当夜在海滩相认并发誓再婚。",
+      "synopsis_long": "蕾娜·瓦列利安死于难产。葬礼当夜，艾蒙德偷骑年龄最长、体型最大的龙瓦格哈尔成功，与卢斯里斯起冲突时被对方挑去左眼。同夜雷妮拉与戴蒙在海滩私会决定结婚。兰诺'被杀'实为雷妮拉与戴蒙合谋安排其出逃。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "蕾娜·瓦列利安葬礼" },
+        { "t": null, "crit": true,  "text": "艾蒙德偷骑瓦格哈尔成功" },
+        { "t": null, "crit": true,  "text": "卢斯里斯用刀挑出艾蒙德左眼" },
+        { "t": null, "crit": true,  "text": "雷妮拉与戴蒙在海滩相认并发誓再婚" },
+        { "t": null, "crit": true,  "text": "兰诺'被杀'实为出逃——戴蒙与雷妮拉合谋" }
+      ]
+    },
+    {
+      "episode": "S01E08",
+      "ep_num": 8,
+      "title": "The Lord of the Tides",
+      "title_zh": "潮汐之主",
+      "tag": "国王临终",
+      "synopsis": "科利斯在战场重伤，潮头岛继承权之争开启。垂死的韦赛里斯最后一次坐上铁王座，再次为雷妮拉的继承人身份背书。当夜对阿莉森特错说出'应许之伊耿'预言，被她误解为指其儿伊耿。",
+      "synopsis_long": "韦赛里斯重病，已无能力压制朝堂。他最后一次以国王之手撑起场面，再次为雷妮拉的继承人身份发声。当夜他在病榻上对阿莉森特错说出'应许之伊耿'的预言，阿莉森特误解为指其子伊耿二世。这个误解成为下一集绿党宫变的宗教合法性。",
+      "key_events": [
+        { "t": null, "crit": false, "text": "科利斯在战场重伤，潮头岛继承权之争" },
+        { "t": null, "crit": true,  "text": "垂死的韦赛里斯重坐铁王座，再次背书雷妮拉继承人身份" },
+        { "t": null, "crit": true,  "text": "全家共膳，艾蒙德当众发誓要'报失目之仇'" },
+        { "t": null, "crit": true,  "text": "韦赛里斯临终错说'应许之伊耿'预言，被阿莉森特误解为指伊耿二世" },
+        { "t": null, "crit": true,  "text": "韦赛里斯死亡" }
+      ]
+    },
+    {
+      "episode": "S01E09",
+      "ep_num": 9,
+      "title": "The Green Council",
+      "title_zh": "绿色议会",
+      "tag": "绿党议会",
+      "synopsis": "韦赛里斯一死，绿党立刻召开秘密议会发动政变，加冕伊耿二世。奥托与阿莉森特在'是否处死雷妮拉'上分歧。蕾妮丝逃出红堡飞回潮头岛报信。",
+      "synopsis_long": "国王刚一断气，绿党便启动政变。奥托·海塔尔在被解除国王之手职务的十年之后再次掌权，成为政变的总操盘手。阿莉森特仍以为自己在执行国王的临终遗愿，奥托则按家族夺位的逻辑布局。蕾妮丝在十天软禁后逃出，骑龙踏破加冕大殿后离开君临，但选择不开屠龙之口。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "奥托召开绿党秘密议会，加冕伊耿二世" },
+        { "t": null, "crit": true,  "text": "奥托与阿莉森特在'是否处死雷妮拉'上分歧" },
+        { "t": null, "crit": true,  "text": "蕾妮丝软禁十天后逃出，骑龙踏破加冕大殿后飞回潮头岛" },
+        { "t": null, "crit": false, "text": "拉里斯·斯壮以情报换得阿莉森特之足" }
+      ]
+    },
+    {
+      "episode": "S01E10",
+      "ep_num": 10,
+      "title": "The Black Queen",
+      "title_zh": "黑色女王",
+      "tag": "战火点燃",
+      "synopsis": "雷妮拉在龙石岛得知政变。她临盆产下的女儿维桑尼娅早夭。卢斯里斯奉命去风暴角谈判，遭艾蒙德骑瓦格哈尔报复，连人带龙坠海。血龙狂舞战争开打。",
+      "synopsis_long": "雷妮拉在龙石岛同时得知韦赛里斯死讯与绿党加冕。临盆早产，女儿维桑尼娅几小时后夭折。戴蒙独自在龙穴边以高等瓦雷利亚语召唤巨龙维米塔尔。卢斯里斯奉命飞往风暴角谈判被艾蒙德拒绝；返航途中遇风暴，艾蒙德骑瓦格哈尔追击，阿拉克斯与卢斯里斯一同坠海。血龙狂舞自此正式开战。",
+      "key_events": [
+        { "t": null, "crit": true,  "text": "雷妮拉在龙石岛得知韦赛里斯死讯及绿党宫变" },
+        { "t": null, "crit": true,  "text": "雷妮拉临盆早产，女儿维桑尼娅早夭" },
+        { "t": null, "crit": false, "text": "戴蒙在龙穴边以高等瓦雷利亚语召唤维米塔尔" },
+        { "t": null, "crit": true,  "text": "卢斯里斯奉命前往风暴角谈判被艾蒙德拒绝" },
+        { "t": null, "crit": true,  "text": "艾蒙德骑瓦格哈尔在风暴中追杀卢斯里斯，阿拉克斯连人带龙坠海" }
+      ]
+    }
+  ],
+
+  "causal_links": [
+    { "from_episode": "S01E01", "to_episode": "S01E05", "kind": "setup",
+      "label_zh": "戴蒙'继承人之夜'言论被奥托报告——奥托对戴蒙长期监视的开端" },
+
+    { "from_episode": "S01E02", "to_episode": "S01E05", "kind": "setup",
+      "label_zh": "奥托安排阿莉森特嫁给韦赛里斯——E5 阿莉森特绿衣亮相的身份基础" },
+
+    { "from_episode": "S01E04", "to_episode": "S01E05", "kind": "trigger",
+      "label_zh": "奥托报告戴蒙与雷妮拉烟柳之夜——直接触发 E5 奥托被解职、月亮茶送达龙石岛" },
+
+    { "from_episode": "S01E05", "to_episode": "S01E08", "kind": "long_setup",
+      "label_zh": "阿莉森特绿衣亮相——为 E8 艾蒙德'报失目之仇'言论提供政治基础" },
+
+    { "from_episode": "S01E05", "to_episode": "S01E09", "kind": "long_setup",
+      "label_zh": "奥托被解职、阿莉森特绿党化——E9 绿色议会宫变的人事根基" },
+
+    { "from_episode": "S01E05", "to_episode": "S01E09", "kind": "long_setup",
+      "label_zh": "克里斯顿·科尔在乔弗里之血中转向——E9 绿党武力骨干" },
+
+    { "from_episode": "S01E05", "to_episode": "S01E10", "kind": "thematic",
+      "label_zh": "鱼梁木开场渗血 → E10 卢斯里斯坠海" },
+
+    { "from_episode": "S01E07", "to_episode": "S01E10", "kind": "trigger",
+      "label_zh": "艾蒙德失目得瓦格哈尔——E10 杀卢斯里斯的直接武器" },
+
+    { "from_episode": "S01E08", "to_episode": "S01E09", "kind": "trigger",
+      "label_zh": "韦赛里斯临终'应许之伊耿'预言被阿莉森特误解——为绿党宫变提供宗教合法性" },
+
+    { "from_episode": "S01E07", "to_episode": "S01E10", "kind": "long_setup",
+      "label_zh": "雷妮拉与戴蒙海滩誓再婚 + 兰诺出逃——黑党决策核心成形" }
+  ]
+}

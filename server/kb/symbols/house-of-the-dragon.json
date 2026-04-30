@@ -1,0 +1,285 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "符号词典：让 LLM 在 enrich 阶段主动到画面里搜这些视觉/听觉/缺席信号。",
+    "category 取值：",
+    "  - prop          ：可见的具体物件/服饰/道具",
+    "  - omission      ：'应该出现而没出现'的反常仪式（最难，需要剧情先验）",
+    "  - editing       ：跨帧的剪辑/蒙太奇手法（多帧采样才看得到）",
+    "  - micro_signal  ：人物身体细节（手指抓痕/不对视/紧握）",
+    "  - color_code    ：阵营/家族色码（绿党、黑党、海塔尔绿）",
+    "earliest_appearance: spoiler-safe 边界。LLM 解读不能引用比 cursor 还晚的符号含义。",
+    "examples: 已知出现这个符号的场景或时间点（用于 few-shot prompt）。",
+    "**这个文件由人工种子驱动**：用户列了 10 条核心观察作为 seed，其余从大聪解说和 wiki 整理。请校对增删后再跑 enrich。"
+  ],
+  "show": "house-of-the-dragon",
+  "season_canon": "S01",
+  "symbols": [
+    {
+      "symbol_id": "moon_tea",
+      "category": "prop",
+      "visual_cue": "一只杯子盛着淡黄色或泛白的草药茶；通常由长辈/医师/国王亲自递给年轻女性",
+      "context_required": "封闭/私密空间；递茶者神色凝重；接茶者沉默",
+      "meaning_zh": "moon tea，月亮茶——堕胎/避孕药。镜头一旦给到这杯茶，就在确认当事女性近期与人发生过性关系，且当事方不希望此事公开（或孕事不可发生）。",
+      "viewer_takeaway": "这一刻是家族对'丑闻'做的政治止损，不是关心",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "雷妮拉与克里斯顿/戴蒙之事后，韦赛里斯派人送茶到龙石岛公主寝宫"
+      ]
+    },
+    {
+      "symbol_id": "hightower_green",
+      "category": "color_code",
+      "visual_cue": "Hightower 海塔尔家族的深祖母绿礼服；常见于阿莉森特或其家族成员",
+      "context_required": "如果出现在大型公开仪式（婚礼/朝会），且穿着者此前从未穿过绿色，则信号最强",
+      "meaning_zh": "海塔尔家族绿是该家族对外宣示立场的战旗色。在 S01E05 婚礼上阿莉森特首次公开穿绿，被普遍解读为'绿党'诞生的标志性瞬间——她已不再依附于韦赛里斯/雷妮拉的'国王—继承人'轴线，而是站在父亲奥托和海塔尔家族这一边。",
+      "viewer_takeaway": "这是一次政治宣战，比任何台词都明确",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "bp_5e_alicent_dress (timestamp 2940s) 周围 ±5 个 scene"
+      ]
+    },
+    {
+      "symbol_id": "hand_of_king_pin",
+      "category": "prop",
+      "visual_cue": "胸前金色'手掌'徽章/胸针，戴在男性朝臣的礼服外",
+      "context_required": "镜头给到徽章特写或近景；佩戴者并非奥托·海塔尔",
+      "meaning_zh": "国王之手徽章。S01E05 开头奥托被解职，新任'手'还未在朝堂正式宣布。如果船上/路上某朝臣已佩戴此徽，意味着国王绕过传统流程私下任命，或某人正在'抢'这个位置。",
+      "viewer_takeaway": "权力交接已经发生，只是没公开",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "雷妮拉去潮头岛的船上"
+      ]
+    },
+    {
+      "symbol_id": "iron_throne_cuts",
+      "category": "prop",
+      "visual_cue": "韦赛里斯被铁王座的剑刃剐到/划伤手指、手背或袖口",
+      "context_required": "他坐在或靠近铁王座；周围有冲突",
+      "meaning_zh": "铁王座既是权力的象征，也象征坐上去的人正在被它一点点吞噬。每次见血都暗示'他不是合适的君主'或'他的统治在流失'。",
+      "viewer_takeaway": "坐这个位子的代价具象化",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E01"
+    },
+    {
+      "symbol_id": "mouse_after_wedding",
+      "category": "prop",
+      "visual_cue": "婚礼/宴会后空荡的厅堂里，一只老鼠从镜头前穿过/啃食残羹",
+      "context_required": "前一组镜头是奢华仪式；切到老鼠时光线变暗",
+      "meaning_zh": "繁华表象之下的腐朽。婚礼这场政治戏看着热闹（红黑礼服、龙旗、大餐），但散场之后只剩老鼠——隐喻坦格利安王朝的根基已经在烂。",
+      "viewer_takeaway": "'王朝百年和平'的滤镜碎了",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05"
+    },
+    {
+      "symbol_id": "moth_on_corpse",
+      "category": "prop",
+      "visual_cue": "金色或白色蛾/蝶停在血迹/盔甲/剑刃旁",
+      "context_required": "通常紧跟暴力镜头（血、尸体、武器）",
+      "meaning_zh": "死亡的诗化标记。蛾本身是腐烂的清道夫；视觉上把暴力'美化'，但也在确认'这里有人死了'。",
+      "viewer_takeaway": "这个镜头里其实有人刚死，HBO 用蛾子来代替直白的尸体",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s04 t=17-23s 戴蒙杀妻蒙太奇结尾"
+      ]
+    },
+    {
+      "symbol_id": "kingsguard_no_announcement",
+      "category": "omission",
+      "visual_cue": "高朝的人物（王子/朝臣）入场时，御林铁卫沉默——没有按礼制大声宣告其名号",
+      "context_required": "当时的场合是正式的（婚礼/朝会/晚宴）；其他客人入场时铁卫报了名",
+      "meaning_zh": "在维斯特洛仪礼中，铁卫报名是身份的官方认证。不报名意味着此人未被'邀请'或'王不愿正式承认其在场'。S01E05 婚礼戴蒙的入场就是这种处理——他没有被请帖，是自己来的，国王不想为他正名。",
+      "viewer_takeaway": "他来了，但'不被认'",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "bp_5e_daemon_arrival t=3240s 戴蒙到场附近"
+      ]
+    },
+    {
+      "symbol_id": "extra_chair_added",
+      "category": "omission",
+      "visual_cue": "宴席主桌、客人已入座后，仆从临时搬一把椅子塞到桌边；某人随后入座",
+      "context_required": "主桌格局原本对称/固定；新增的座位破坏了座次",
+      "meaning_zh": "正式宴席的座次是事先排好的，临时加椅子=客人不在原宾客名单里。这个动作和'铁卫不报名'是一组，强化'未受邀'的政治信号。",
+      "viewer_takeaway": "他在这里，但礼制上不该在",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "bp_5e_daemon_arrival 附近"
+      ]
+    },
+    {
+      "symbol_id": "seahorse_no_greeting",
+      "category": "omission",
+      "visual_cue": "国王/王室抵达潮头岛/瓦列利安领地，码头/城门只有低阶仆从迎接，海蛇本人和雷妮丝公主缺席",
+      "context_required": "这是国王国事访问；按礼制主家本人必须亲迎",
+      "meaning_zh": "海蛇·科利斯是维斯特洛最富的人，他和雷妮丝（'本应当王后'的女人）拒绝亲迎国王，是高调的政治冷淡——这次联姻是各取所需的交易，不是顺服。",
+      "viewer_takeaway": "海蛇不是来朝贡的，是来谈生意的",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05"
+    },
+    {
+      "symbol_id": "wedding_chaos",
+      "category": "editing",
+      "visual_cue": "宴会镜头开始破碎、剪辑节奏加快、人物动作开始失控（推搡、争吵、流血）",
+      "context_required": "前段是仪式优雅的婚礼；剪辑突然变快变碎",
+      "meaning_zh": "S01E05 婚礼最后从'王室秀'退化成肢体冲突。HBO 用剪辑节奏的崩坏告诉观众：这桩政治联姻的所有体面只是表象，每一方都已经各怀心思——克里斯顿杀乔弗里、戴蒙逼近雷妮拉、绿党亮相，全都在同一晚发生。",
+      "viewer_takeaway": "王朝的正式秩序最后一次维持，从这之后一切失控",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s640+ 婚礼末尾"
+      ]
+    },
+    {
+      "symbol_id": "murder_montage_offscreen",
+      "category": "editing",
+      "visual_cue": "几个跳跃式的暴力意象（血、武器、惨叫、动物或自然元素），没有完整的杀戮镜头",
+      "context_required": "通常在 cold open 或 act 转场；与某角色的'回归/缺席'对位",
+      "meaning_zh": "HBO 处理'某角色刚做完什么'的常用手法——不正面拍杀戮，用蒙太奇片段拼出。S01E05 开场用这种方式暗示戴蒙处理了妻子瑞亚·罗伊斯（被马踩死/或被戴蒙亲手）。",
+      "viewer_takeaway": "他刚做完一件你不该问、但已经默认的事",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s03-s10 t=15-50s 开场血滴+石头+谷地"
+      ]
+    },
+    {
+      "symbol_id": "fingernail_scratch",
+      "category": "micro_signal",
+      "visual_cue": "阿莉森特的手指——指甲缝/指根处可见抓痕、伤口或血",
+      "context_required": "近景能看见手；通常在政治压力大的场合",
+      "meaning_zh": "阿莉森特在精神紧绷时无意识地抠/咬手指。是这个角色独有的焦虑信号，比她的台词更早暴露她正在挣扎。",
+      "viewer_takeaway": "她正在崩，只是没说出口",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E02"
+    },
+    {
+      "symbol_id": "rhaenyra_red_black",
+      "category": "color_code",
+      "visual_cue": "雷妮拉穿坦格利安红黑礼服/披风",
+      "context_required": "正式公开场合",
+      "meaning_zh": "雷妮拉始终用红黑表明自己'坦格利安王朝继承人'的身份。即使在与瓦列利安联姻的婚礼上她仍然主穿红黑，强调'我是龙家而不是瓦列利安家'。",
+      "viewer_takeaway": "她在用衣服告诉所有人：我是这个王朝的人",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E01"
+    },
+    {
+      "symbol_id": "valyrian_relief",
+      "category": "prop",
+      "visual_cue": "片头浮雕：两条龙在崩塌的城邦上空缠斗",
+      "context_required": "S01 通用片头；演员名字浮现",
+      "meaning_zh": "瓦雷利亚末日（Doom of Valyria）的视觉总纲。每集片头都在重申一件事——龙家的内斗是文明级毁灭的引子。",
+      "viewer_takeaway": "这部剧讲的不是宫斗，是文明级的崩塌",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E01"
+    },
+    {
+      "symbol_id": "hightower_as_outsider",
+      "category": "micro_signal",
+      "visual_cue": "婚礼/朝会对话中，某瓦雷利亚血统人物（海蛇/戴蒙/雷妮拉）用'花/草'之类的意象提及海塔尔家族",
+      "context_required": "对话场景；正式或半正式社交",
+      "meaning_zh": "'花/草'在这里是身份标记而非贬义。Targaryen / Velaryon 是瓦雷利亚血统、骑龙、说瓦雷利亚语；Hightower 是维斯特洛本土的安达尔贵族——所以从龙家视角看，海塔尔'是外来的人，不是龙家'。这一刻是在划线：你姓什么、你属不属于这个王朝核心圈。",
+      "viewer_takeaway": "这是身份界定，不是嘲讽——但越是平静地说，越是冷",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "用户原话：'弯腿说花是外来的，不是贬低，暗示海塔尔家族是外来的不是龙家'"
+    },
+    {
+      "symbol_id": "otto_dismissal",
+      "category": "prop",
+      "visual_cue": "奥托·海塔尔胸前不再佩戴金色'手掌'徽章；骑马或乘船离开，身边没有仪仗相送",
+      "context_required": "他此前一直佩戴徽章；离开的方式静悄悄，没有公开廷议或宣告",
+      "meaning_zh": "被解职的方式暴露了权力运作的底色。没有朝堂辩论、没有公开贬黜——韦赛里斯让最有权势的谋士悄悄离开，像打发一个仆人。这种'软性驱逐'说明这位国王的统治靠的是回避冲突，而不是政治决断。奥托走了，但他留下的海塔尔家族影响没走。",
+      "viewer_takeaway": "他是被体面地请走的，但这个体面是假的",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s31-s36 奥托骑马离京"
+      ]
+    },
+    {
+      "symbol_id": "laenor_agreement",
+      "category": "micro_signal",
+      "visual_cue": "雷妮拉与莱诺·瓦列利安在私下场合的正视/握手/点头——两人神色坦诚，不像恋人，更像在签一份合同",
+      "context_required": "两人都知道各自无法公开的情况；场合是私下，不是正式仪式",
+      "meaning_zh": "这是一桩政治婚姻的君子协定——两人都有无法公开的感情线，在这次谈话里达成了互相保护的默契。对视/握手的瞬间标志着这段婚姻从第一天起就建立在谎言和协议上，而不是爱情。这个协议在后续剧情里会撑起整个'黑党'的联盟地基。",
+      "viewer_takeaway": "这不是爱情开始，是一份合同签署",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s225-s231 海滩私谈，台词'perform our duty...each of us dines as we see fit'，两人达成君子协定"
+      ]
+    },
+    {
+      "symbol_id": "rhaenys_watchful",
+      "category": "micro_signal",
+      "visual_cue": "蕾妮丝·塔格利安面无表情地旁观宴席/仪式/政治角力，眼神冷静，不参与，只观察",
+      "context_required": "周围人在热闹；她在场但保持距离；镜头特意给到她的表情",
+      "meaning_zh": "蕾妮丝是'从未成为女王的女人'，她的沉默旁观是这部剧最高密度的政治评论之一。她的每一个冷眼，都是对这个让女性继承权系统性失效的世界的无声控诉。镜头给到她，是在提醒观众：这一切本可以是不同的。",
+      "viewer_takeaway": "她什么都没说，但什么都看穿了",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s238-s244 蕾妮丝旁观谈话"
+      ]
+    },
+    {
+      "symbol_id": "viserys_wound",
+      "category": "micro_signal",
+      "visual_cue": "韦赛里斯的右手或手腕处包扎物、腐烂伤口，或他需要他人搀扶/走路费力的身体状态",
+      "context_required": "韦赛里斯在公开场合出现；镜头给到他的手或行动",
+      "meaning_zh": "韦赛里斯的身体腐烂是坦格利安王朝衰败的具身化。铁王座从字面意义上在割伤他、吞噬他——每次更换包扎、每次露出的腐烂创面，都在倒计时。这个国王不是不够强，而是王座本来就会消耗任何坐上去的人。",
+      "viewer_takeaway": "他的手在烂，整个王朝也在烂",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E01",
+      "examples_e5": [
+        "s379-s385 婚宴上的韦赛里斯"
+      ]
+    },
+    {
+      "symbol_id": "daemon_whisper",
+      "category": "micro_signal",
+      "visual_cue": "戴蒙俯身靠近雷妮拉的耳边低语；周围是喧嚣的婚宴人群，两人形成一个私密气泡",
+      "context_required": "公开场合；其他人看不清说的什么；雷妮拉有明显反应（惊愕/沉默/变色）",
+      "meaning_zh": "在最公开的场合制造最私密的接触——这是戴蒙的惯常手法。低语内容在外人看来只是叔侄交谈，但雷妮拉的反应说明内容完全不寻常。这一刻确认了两人之间存在任何人都进不去的私人频道，也是婚礼上真正改变雷妮拉轨迹的那句话。",
+      "viewer_takeaway": "婚礼上最危险的话，是那句没被任何人听见的",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s509-s515 婚宴舞池旁"
+      ]
+    },
+    {
+      "symbol_id": "criston_blood",
+      "category": "prop",
+      "visual_cue": "克里斯顿·科尔的拳头/铠甲/地面上的血迹；宾客圈成人墙旁观",
+      "context_required": "紧跟暴力镜头；宴席场合；克里斯顿刚失控",
+      "meaning_zh": "御林铁卫在王室婚宴上将人打死，是这个世界礼制彻底崩塌的信号。比克里斯顿个人失控更重要的是：没有任何人立刻阻止他——这说明婚礼的礼法秩序已经没有人能维持。血迹出现在婚宴地板上，是S01E05那一晚'所有体面同时失效'的最直接视觉证明。",
+      "viewer_takeaway": "不是一个人失控，是所有人同时放弃了规则",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s657-s663 乔弗里被杀现场"
+      ]
+    },
+    {
+      "symbol_id": "weirwood_bleeding",
+      "category": "prop",
+      "visual_cue": "鱼梁木（weirwood）的人脸雕刻特写，眼/口流出深红色的血状汁液，背景是模糊的红叶树冠",
+      "context_required": "镜头给到雕刻面部特写；通常作为段落开场或转场，与人物无直接互动；前后镜头是政治/暴力相关情节",
+      "meaning_zh": "鱼梁木是旧神信仰的祭祀树，'流血泪'在《冰与火之歌》视觉系统里是旧神预见或回应即将发生的流血事件。HoTD 作为坦格利安王朝史，主要用这个意象做'神性见证'——红堡的旧神在替这片土地哭泣，预示这一集（乃至整个王朝）即将到来的内战与血腥。和片头序列'鲜血流入瓦雷利亚石板'是一组互文：旧神血泪 vs 新神/瓦雷利亚血脉，两套信仰体系都在为同一件事预警。",
+      "viewer_takeaway": "连旧神都已经预见到这一切要见血了",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "examples_e5": [
+        "s130 t≈591s 君临红堡神木林（godswood）的鱼梁木流血泪特写，作为段落开场"
+      ]
+    }
+  ]
+}

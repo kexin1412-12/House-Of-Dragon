@@ -1,0 +1,1691 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "时间游标格式 = 'S01E04'，字典序比较即可（S01E04 < S01E10 因为 04 < 10 仍成立，因为字符串两位数零填充）。",
+    "runtime: 取播放进度 cursor → 对每个 character 过滤出 from <= cursor 且 (to == null || cursor <= to) 的 state_timeline 条目；relationships 同样过滤。",
+    "actor_versions[].active_range 只用来选脸部分组，不影响身份/关系展示。",
+    "scene_id（PySceneDetect 局部编号）→ episode_marker 的映射在 episode_map 里维护；如果暂未对齐，episode_map 可为空，retrieval 退化为'按时间顺序'语义。",
+    "原则：spoiler-safe by data filter。任何 from > cursor 的状态/关系/称号/生死/阵营都不应进入 LLM context。"
+  ],
+  "show": "house-of-the-dragon",
+  "season_canon": "S01",
+  "cursor_format": "S01E0N (N=01..10)",
+  "episode_map": [],
+  "characters": [
+    {
+      "character_id": "viserys_targaryen",
+      "canonical_name": "Viserys I Targaryen",
+      "display_name_zh": "韦赛里斯一世·坦格利安",
+      "short_identity_zh": "坦格利安王朝第五任国王",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "king"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Paddy Considine",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "viserys_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E05",
+          "title_en": "King of the Seven Kingdoms",
+          "title_zh": "七大王国之王",
+          "political_role_zh": "王朝维系者，介于平衡各家族之间",
+          "alive": true,
+          "safe_summary_zh": "坦格利安王朝第五任国王，老国王杰赫里斯指定的继承人，被期待维系王朝百年和平。"
+        }
+      ]
+    },
+    {
+      "character_id": "rhaenyra_targaryen",
+      "canonical_name": "Rhaenyra Targaryen",
+      "display_name_zh": "雷尼拉·坦格利安",
+      "short_identity_zh": "龙石岛公主，铁王座继承人",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "heir"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Milly Alcock",
+          "version": "young",
+          "active_range": {
+            "from": "S01E01",
+            "to": "S01E05"
+          },
+          "face_group_id": "rhaenyra_young"
+        },
+        {
+          "actor_name": "Emma D'Arcy",
+          "version": "adult",
+          "active_range": {
+            "from": "S01E06",
+            "to": null
+          },
+          "face_group_id": "rhaenyra_adult"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E01",
+          "title_en": "Princess",
+          "title_zh": "公主",
+          "political_role_zh": "国王韦赛里斯的独女，并未被视为继承人",
+          "alive": true,
+          "safe_summary_zh": "韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚。"
+        },
+        {
+          "from": "S01E02",
+          "to": "S01E05",
+          "title_en": "Princess of Dragonstone, Heir to the Iron Throne",
+          "title_zh": "龙石岛公主，铁王座继承人",
+          "political_role_zh": "王朝继承人，承受家族期待与传统男权的双重压力",
+          "alive": true,
+          "safe_summary_zh": "被父王册封为铁王座继承人，但其地位受到挑战，并被要求履行政治联姻的责任。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "龙石岛公主，铁王座继承人，莱诺·瓦列利安之妻",
+          "title_en": null,
+          "political_role_zh": "通过血泊婚礼与瓦列利安家族绑定；其婚事开局即被血涂改",
+          "alive": true,
+          "safe_summary_zh": "在血泊残局中与莱诺·瓦列利安完成割手交血礼，婚事完成但其象征意义已坍塌。",
+          "triggered_by_scene_id": "s680",
+          "triggered_by_change": "title_added",
+          "evidence_zh": "s680 deep_reading：婚礼在血泊中草草完成……仪式被压到能压的最短——但还是必须做完。"
+        }
+      ],
+      "motivations_timeline": [
+        {
+          "from": "S01E05",
+          "to": "S01E04",
+          "motivation_zh": "认清自己在父亲眼中已是'要被止损的丑闻'，不再为政治婚姻保留浪漫幻想，准备以清醒交易心态进入婚姻",
+          "triggered_by_scene_id": "s146",
+          "evidence_zh": "s146 deep_reading：她已经知道在父亲眼里自己就是'要被止损的丑闻'，她没有理由再为一段政治婚姻保留浪漫幻想。"
+        },
+        {
+          "from": "S01E05",
+          "to": "S01E04",
+          "motivation_zh": "接受'政治婚姻+各自情人各自留'的协作模式，把婚姻视为可执行的工程问题",
+          "triggered_by_scene_id": "s231",
+          "evidence_zh": "s231 deep_reading：'perform our duty / each of us dines as we see fit' 是他们自己写出的协议……不是爱，是协作。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "motivation_zh": "戴蒙的耳语在公开仪式内部撕开私人裂口；雷妮拉默认接受'戴蒙永远在场'的事实",
+          "triggered_by_scene_id": "s509",
+          "evidence_zh": "s509 deep_reading：真正改变雷妮拉轨迹的不是戴蒙说的内容，而是戴蒙能在这个场合说这种话本身——她在那一刻接受了'戴蒙永远在场'。"
+        }
+      ]
+    },
+    {
+      "character_id": "daemon_targaryen",
+      "canonical_name": "Daemon Targaryen",
+      "display_name_zh": "戴蒙·坦格利安",
+      "short_identity_zh": "韦赛里斯国王之弟",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "warrior"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Matt Smith",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "daemon_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E01",
+          "title_en": "Commander of the City Watch / Prince",
+          "title_zh": "都城卫戍司令 / 王子",
+          "political_role_zh": "国王之弟，性情野且具威胁性，被部分朝臣视为危险因素",
+          "alive": true,
+          "safe_summary_zh": "韦赛里斯的弟弟，被一度认为可能继承王位，但行事张扬好战。"
+        },
+        {
+          "from": "S01E01",
+          "to": "S01E05",
+          "title_en": "Prince",
+          "title_zh": "王子",
+          "political_role_zh": "国王之弟；被剥夺都城卫戍指挥权后转而经营龙石岛",
+          "alive": true,
+          "safe_summary_zh": "公开发言激怒国王后被解除军职。性格难以约束，行动常出乎宫廷预期。"
+        }
+      ]
+    },
+    {
+      "character_id": "alicent_hightower",
+      "canonical_name": "Alicent Hightower",
+      "display_name_zh": "阿莉森特·海塔尔",
+      "short_identity_zh": "韦赛里斯一世之妻，奥托·海塔尔之女",
+      "house": "Hightower",
+      "tags": [
+        "main",
+        "court",
+        "queen-consort"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Emily Carey",
+          "version": "young",
+          "active_range": {
+            "from": "S01E01",
+            "to": "S01E05"
+          },
+          "face_group_id": "alicent_young"
+        },
+        {
+          "actor_name": "Olivia Cooke",
+          "version": "adult",
+          "active_range": {
+            "from": "S01E06",
+            "to": null
+          },
+          "face_group_id": "alicent_adult"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E01",
+          "title_en": "Lady-in-waiting",
+          "title_zh": "宫廷侍女 / 王之手之女",
+          "political_role_zh": "海塔尔家族在朝中的延伸；与雷尼拉自幼相识",
+          "alive": true,
+          "safe_summary_zh": "御前首相奥托之女，与雷尼拉公主同龄、关系亲密。"
+        },
+        {
+          "from": "S01E02",
+          "to": "S01E05",
+          "title_en": "Queen Consort",
+          "title_zh": "王后 / 维斯特洛王后",
+          "political_role_zh": "海塔尔家族在朝中的政治支点；其子嗣对继承格局形成新变量",
+          "alive": true,
+          "safe_summary_zh": "成为韦赛里斯第二任王后；其家族希望从中获取更深的政治影响力。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "海塔尔家族战旗持有者（仍为王后）",
+          "title_en": null,
+          "political_role_zh": "公开宣告归入海塔尔家族一侧；'绿党'诞生时刻的当事人",
+          "alive": true,
+          "safe_summary_zh": "在雷妮拉婚宴上身穿海塔尔祖母绿独自迟到入场——告别韦赛里斯—雷妮拉父女轴线。",
+          "triggered_by_scene_id": "s454",
+          "triggered_by_change": "political_realignment",
+          "evidence_zh": "s454 deep_reading：阿莉森特此前一直依附韦赛里斯—雷妮拉的'国王—继承人'轴线……今晚她决意用最公开的仪式当众告别这个轴线，把自己重新归入'我父亲奥托被赶走的那个家族'一侧——绿党由此诞生。"
+        }
+      ],
+      "motivations_timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "motivation_zh": "把海塔尔家族重新推回权力轴线；替被革职的父亲奥托做政治反弹",
+          "triggered_by_scene_id": "s454",
+          "evidence_zh": "s454 deep_reading：女儿用一袭绿衣替父亲把宣战书递回到国王面前。"
+        }
+      ]
+    },
+    {
+      "character_id": "otto_hightower",
+      "canonical_name": "Otto Hightower",
+      "display_name_zh": "奥托·海塔尔",
+      "short_identity_zh": "前御前首相",
+      "house": "Hightower",
+      "tags": [
+        "main",
+        "court",
+        "hand"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Rhys Ifans",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "otto_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E05",
+          "title_en": "Hand of the King",
+          "title_zh": "御前首相",
+          "political_role_zh": "国王最重要的政务顾问；同时通过其女向王座施加家族影响",
+          "alive": true,
+          "safe_summary_zh": "韦赛里斯朝的御前首相，主张以制度而非武力对抗戴蒙的威胁。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "前任御前首相",
+          "title_en": null,
+          "political_role_zh": "被韦赛里斯解职的前任'手'，海塔尔家族在朝堂失去最高代言人",
+          "alive": true,
+          "safe_summary_zh": "因如实禀报雷妮拉与戴蒙夜游烟柳事被韦赛里斯反革职，无宣告无饯行式离任。",
+          "triggered_by_scene_id": "s109",
+          "triggered_by_change": "title_revoked",
+          "evidence_zh": "s109 deep_reading：韦赛里斯因奥托如实禀报雷妮拉与戴蒙夜游烟柳之事，反将奥托革职。"
+        }
+      ]
+    },
+    {
+      "character_id": "corlys_velaryon",
+      "canonical_name": "Corlys Velaryon",
+      "display_name_zh": "科利斯·瓦列利安",
+      "short_identity_zh": "「海蛇」",
+      "house": "Velaryon",
+      "tags": [
+        "main",
+        "lord",
+        "sea_snake"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Steve Toussaint",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "corlys_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "title_en": "Lord of the Tides",
+          "title_zh": "潮汐之主",
+          "political_role_zh": "维斯特洛最富有的航海家族族长；自封「海蛇」",
+          "alive": true,
+          "safe_summary_zh": "瓦列利安家族族长，绰号海蛇，财富与航海经验无人能及。"
+        }
+      ]
+    },
+    {
+      "character_id": "rhaenys_targaryen",
+      "canonical_name": "Rhaenys Targaryen",
+      "display_name_zh": "蕾妮丝·坦格利安",
+      "short_identity_zh": "「无冕女王」",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "queen_who_never_was"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Eve Best",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "rhaenys_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "title_en": "Princess",
+          "title_zh": "公主",
+          "political_role_zh": "曾被认为是杰赫里斯一世的最合理继承人，被议会跳过；现为科利斯·瓦列利安之妻",
+          "alive": true,
+          "safe_summary_zh": "曾经的王位最有力竞争者，被大议会以性别理由排除。嫁给科利斯·瓦列利安。"
+        }
+      ]
+    },
+    {
+      "character_id": "criston_cole",
+      "canonical_name": "Criston Cole",
+      "display_name_zh": "克里斯顿·科尔",
+      "short_identity_zh": "御林铁卫",
+      "house": "Cole",
+      "tags": [
+        "main",
+        "kingsguard",
+        "knight"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Fabien Frankel",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "criston_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_en": "Kingsguard Knight",
+          "title_zh": "御林铁卫骑士",
+          "political_role_zh": "御林铁卫；与雷尼拉公主关系破裂",
+          "alive": true,
+          "safe_summary_zh": "出身寒微的杰出比武骑士，被雷尼拉钦点入御林铁卫。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "失控的御林铁卫",
+          "title_en": "Kingsguard Knight",
+          "political_role_zh": "在王室婚宴上当众杀人，从公主守卫者跌入私愤暴徒",
+          "alive": true,
+          "safe_summary_zh": "因雷妮拉拒绝私奔积压的羞愤在婚宴上爆发，对乔弗里·朗茅斯施以致命暴打。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "moral_breakdown",
+          "evidence_zh": "s661 deep_reading：御林铁卫在王室婚宴上当众杀人，礼法系统在仪式中心被碾过……克里斯顿本人也在这一帧黑化完成。"
+        }
+      ],
+      "motivations_timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "motivation_zh": "对雷妮拉的私人忠诚转向私愤投射；为后续投靠绿党铺设动机",
+          "triggered_by_scene_id": "s661",
+          "evidence_zh": "s661 deep_reading：克里斯顿对绿党的忠诚都是从这摊血开始计算的。"
+        }
+      ]
+    },
+    {
+      "character_id": "harwin_strong",
+      "canonical_name": "Harwin Strong",
+      "display_name_zh": "哈尔温·斯壮",
+      "short_identity_zh": "「碎骨人」 莱昂诺·斯壮长子",
+      "house": "Strong",
+      "tags": [
+        "main",
+        "knight"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Ryan Corr",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "harwin_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E05",
+          "title_en": "Commander of the City Watch",
+          "title_zh": "都城卫戍司令",
+          "political_role_zh": "莱昂诺·斯壮长子；都城金袍卫指挥官；以蛮力闻名",
+          "alive": true,
+          "safe_summary_zh": "御前首相之子，七国最强壮的男人之一，绰号「碎骨人」。"
+        }
+      ]
+    },
+    {
+      "character_id": "larys_strong",
+      "canonical_name": "Larys Strong",
+      "display_name_zh": "拉里斯·斯壮",
+      "short_identity_zh": "莱昂诺的次子",
+      "house": "Strong",
+      "tags": [
+        "main",
+        "schemer"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Matthew Needham",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "larys_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "title_en": "Son of Lyonel Strong",
+          "title_zh": "斯壮家次子",
+          "political_role_zh": "御前首相莱昂诺的次子",
+          "alive": true,
+          "safe_summary_zh": "莱昂诺·斯壮的次子，瘸腿，沉默寡言，善于经营暗中关系。"
+        }
+      ]
+    },
+    {
+      "character_id": "lyonel_strong",
+      "canonical_name": "Lyonel Strong",
+      "display_name_zh": "莱昂诺·斯壮",
+      "short_identity_zh": "御前首相",
+      "house": "Strong",
+      "tags": [
+        "main",
+        "court",
+        "hand"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Gavin Spokes",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "lyonel_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_en": "Master of Laws",
+          "title_zh": "司法大臣",
+          "political_role_zh": "赫伦堡领主；以法律和理性顾问国王",
+          "alive": true,
+          "safe_summary_zh": "赫伦堡的莱昂诺·斯壮公爵，以学识与公正见长，曾任国王法律顾问。"
+        }
+      ]
+    },
+    {
+      "character_id": "mysaria",
+      "canonical_name": "Mysaria",
+      "display_name_zh": "米莎莉娅",
+      "short_identity_zh": "「白虫」 戴蒙的旧情人",
+      "house": null,
+      "tags": [
+        "main",
+        "spy"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Sonoya Mizuno",
+          "version": "default",
+          "active_range": {
+            "from": "S01E01",
+            "to": null
+          },
+          "face_group_id": "mysaria_default"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "title_en": "Information Broker",
+          "title_zh": "情报掮客",
+          "political_role_zh": "戴蒙的旧情人，君临情报网的幕后主使",
+          "alive": true,
+          "safe_summary_zh": "戴蒙的旧情人，君临情报网的幕后主使。"
+        }
+      ]
+    },
+    {
+      "character_id": "aegon_targaryen_ii",
+      "canonical_name": "Aegon II Targaryen",
+      "display_name_zh": "伊耿二世·坦格利安",
+      "short_identity_zh": "韦赛里斯与阿莉森特的长子",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "prince"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Tom Glynn-Carney",
+          "version": "adult",
+          "active_range": {
+            "from": "S01E06",
+            "to": null
+          },
+          "face_group_id": "aegon_adult"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_en": "Prince",
+          "title_zh": "王子",
+          "political_role_zh": "韦赛里斯与阿莉森特的长子；母系希望他成为继承人",
+          "alive": true,
+          "safe_summary_zh": "韦赛里斯与阿莉森特之长子，年少放荡，对继承王位无兴趣。"
+        }
+      ]
+    },
+    {
+      "character_id": "aemond_targaryen",
+      "canonical_name": "Aemond Targaryen",
+      "display_name_zh": "艾蒙德·坦格利安",
+      "short_identity_zh": "韦赛里斯与阿莉森特的次子",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "prince"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Ewan Mitchell",
+          "version": "adult",
+          "active_range": {
+            "from": "S01E07",
+            "to": null
+          },
+          "face_group_id": "aemond_adult"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E07",
+          "to": null,
+          "title_en": "Prince",
+          "title_zh": "王子",
+          "political_role_zh": "韦赛里斯与阿莉森特的次子；自小被嘲未驯龙，性格冷峻",
+          "alive": true,
+          "safe_summary_zh": "阿莉森特次子，性格内敛冷峻，与兄姐不同极有抱负。"
+        }
+      ]
+    },
+    {
+      "character_id": "helaena_targaryen",
+      "canonical_name": "Helaena Targaryen",
+      "display_name_zh": "海拉娜·坦格利安",
+      "short_identity_zh": "韦赛里斯与阿莉森特之女",
+      "house": "Targaryen",
+      "tags": [
+        "main",
+        "royalty",
+        "princess"
+      ],
+      "actor_versions": [
+        {
+          "actor_name": "Phia Saban",
+          "version": "adult",
+          "active_range": {
+            "from": "S01E07",
+            "to": null
+          },
+          "face_group_id": "helaena_adult"
+        }
+      ],
+      "state_timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "title_en": "Princess",
+          "title_zh": "公主",
+          "political_role_zh": "韦赛里斯与阿莉森特之女；性格疏离，痴迷昆虫",
+          "alive": true,
+          "safe_summary_zh": "阿莉森特之女，性情温和却疏离世事，对昆虫有特别兴趣。"
+        }
+      ]
+    },
+    {
+      "character_id": "caraxes",
+      "canonical_name": "Caraxes",
+      "display_name_zh": "凯拉克西斯",
+      "short_identity_zh": "血翼，戴蒙的红龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "syrax",
+      "canonical_name": "Syrax",
+      "display_name_zh": "赛拉克丝",
+      "short_identity_zh": "雷尼拉的金龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "vhagar",
+      "canonical_name": "Vhagar",
+      "display_name_zh": "瓦格哈尔",
+      "short_identity_zh": "现存最年长、最大的龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "meleys",
+      "canonical_name": "Meleys",
+      "display_name_zh": "梅蕾斯",
+      "short_identity_zh": "红色女王，蕾妮丝的龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "sunfyre",
+      "canonical_name": "Sunfyre",
+      "display_name_zh": "阳焰",
+      "short_identity_zh": "伊耿二世的金鳞龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "dreamfyre",
+      "canonical_name": "Dreamfyre",
+      "display_name_zh": "梦火",
+      "short_identity_zh": "海拉娜的浅蓝龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "seasmoke",
+      "canonical_name": "Seasmoke",
+      "display_name_zh": "海雾",
+      "short_identity_zh": "银灰色，劳琳诺的龙",
+      "house": "dragon",
+      "tags": [
+        "dragon"
+      ],
+      "actor_versions": [],
+      "state_timeline": []
+    },
+    {
+      "character_id": "laenor_velaryon",
+      "canonical_name": "Laenor Velaryon",
+      "display_name_zh": "莱诺·瓦列利安",
+      "short_identity_zh": "潮头岛继承人，海蛇科利斯之子",
+      "house": "Velaryon",
+      "tags": [
+        "main",
+        "noble",
+        "queer"
+      ],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "潮头岛继承人",
+          "alive": true,
+          "safe_summary_zh": "瓦列利安家族继承人，与情人乔弗里·朗茅斯维持秘密关系。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "雷妮拉·坦格利安之夫，潮头岛继承人",
+          "title_en": null,
+          "political_role_zh": null,
+          "alive": true,
+          "safe_summary_zh": "在情人乔弗里被杀的同夜与雷妮拉完成婚礼。",
+          "triggered_by_scene_id": "s680",
+          "triggered_by_change": "title_added",
+          "evidence_zh": "s680 deep_reading：雷妮拉与莱诺在已沾血的宴厅一侧完成割手交血礼。"
+        }
+      ]
+    },
+    {
+      "character_id": "joffrey_lonmouth",
+      "canonical_name": "Joffrey Lonmouth",
+      "display_name_zh": "乔弗里·朗茅斯",
+      "short_identity_zh": "莱诺·瓦列利安的情人，'骑士骑士'",
+      "house": "Lonmouth",
+      "tags": [
+        "supporting",
+        "queer"
+      ],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "莱诺的情人",
+          "alive": true,
+          "safe_summary_zh": "莱诺·瓦列利安的恋人；只在私下被承认。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "已故莱诺之恋人",
+          "title_en": null,
+          "political_role_zh": null,
+          "alive": false,
+          "safe_summary_zh": "S01E05 婚宴上被克里斯顿·科尔当众殴打致死。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "death",
+          "evidence_zh": "s661 deep_reading：克里斯顿·科尔失控以拳/铠甲反复击打乔弗里·朗茅斯。"
+        }
+      ]
+    },
+    {
+      "character_id": "rhea_royce",
+      "canonical_name": "Rhea Royce",
+      "display_name_zh": "瑞亚·罗伊斯",
+      "short_identity_zh": "戴蒙·坦格利安的妻子，谷地青铜骑手",
+      "house": "Royce",
+      "tags": [
+        "supporting"
+      ],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "符文谷夫人",
+          "alive": true,
+          "safe_summary_zh": "戴蒙的合法妻子，被戴蒙长期冷落。"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "title_zh": "已故符文谷夫人",
+          "title_en": null,
+          "political_role_zh": null,
+          "alive": false,
+          "safe_summary_zh": "S01E05 冷开场被戴蒙以伪装坠马的方式杀害；蒙太奇拍法让暴行被遮蔽但已成既成事实。",
+          "triggered_by_scene_id": "s10",
+          "triggered_by_change": "death",
+          "evidence_zh": "s10 deep_reading：HBO 用蒙太奇取代正面拍杀戮……戴蒙刚杀了瑞亚……血已经出来了。"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "source": "rhaenyra_targaryen",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "父女",
+          "relation_en": "daughter-of",
+          "summary_zh": "韦赛里斯是雷尼拉的父亲。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "rhaenyra_targaryen",
+      "target": "daemon_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "叔侄",
+          "relation_en": "uncle-niece",
+          "summary_zh": "戴蒙是雷尼拉的叔叔。两人之间存在超越正常血亲的张力。",
+          "relation_zh_original": "叔侄",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "rhaenyra_targaryen",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "relation_zh": "好友",
+          "relation_en": "close-friend",
+          "summary_zh": "自幼相伴的密友，能彼此倾诉宫廷压力。",
+          "relation_kind": "friend"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "关系疏远",
+          "relation_en": "estranged",
+          "summary_zh": "因身份与立场变化关系出现裂痕。",
+          "relation_zh_original": "关系疏离",
+          "relation_kind": "enemy"
+        }
+      ]
+    },
+    {
+      "source": "alicent_hightower",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E01",
+          "relation_zh": "侍女",
+          "relation_en": "court-attendant",
+          "summary_zh": "阿莉森特奉父命陪伴国王舒缓哀痛。",
+          "relation_zh_original": "国王与侍女",
+          "relation_kind": "ally"
+        },
+        {
+          "from": "S01E02",
+          "to": "S01E04",
+          "relation_zh": "夫妻",
+          "relation_en": "spouse",
+          "summary_zh": "阿莉森特成为韦赛里斯的第二任王后。",
+          "relation_kind": "marriage"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "夫妻对立",
+          "relation_en": "spouse-politically-estranged",
+          "relation_kind": "enemy",
+          "intensity_delta": -2,
+          "summary_zh": "在雷妮拉婚宴上身穿海塔尔祖母绿独自迟到——王后用最公开的仪式当众告别国王轴线。",
+          "triggered_by_scene_id": "s454",
+          "triggered_by_change": "relation_strained",
+          "evidence_zh": "s454 deep_reading：阿莉森特此前一直依附韦赛里斯—雷妮拉的'国王—继承人'轴线……今晚她决意用最公开的仪式当众告别这个轴线。",
+          "relation_zh_original": "夫妻（政治分立）"
+        }
+      ]
+    },
+    {
+      "source": "alicent_hightower",
+      "target": "otto_hightower",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "父女",
+          "relation_en": "daughter-of",
+          "summary_zh": "阿莉森特是奥托·海塔尔的女儿。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "兄弟",
+          "relation_en": "brother",
+          "summary_zh": "韦赛里斯（兄）与戴蒙（弟）；老国王杰赫里斯之孙。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "otto_hightower",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "政治对立",
+          "relation_en": "political-rival",
+          "summary_zh": "戴蒙视奥托为弱化王权的宫廷文官代表；奥托则视戴蒙为最大威胁。",
+          "relation_zh_original": "政治对立",
+          "relation_kind": "enemy"
+        }
+      ]
+    },
+    {
+      "source": "corlys_velaryon",
+      "target": "rhaenys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "夫妻",
+          "relation_en": "spouse",
+          "summary_zh": "潮汐之主与\"未当上的女王\"——海军势力与坦格利安血脉的联姻。",
+          "relation_kind": "marriage"
+        }
+      ]
+    },
+    {
+      "source": "rhaenys_targaryen",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "relation_zh": "表亲",
+          "relation_en": "cousin",
+          "summary_zh": "本应继承王位的人。先王大议会上韦赛里斯被选中，蕾妮丝被跳过。",
+          "relation_kind": "blood"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "表亲冷淡",
+          "relation_en": "cousin-watchful-rival",
+          "relation_kind": "enemy",
+          "intensity_delta": -1,
+          "summary_zh": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。",
+          "triggered_by_scene_id": "s123",
+          "triggered_by_change": "relation_reaffirmed",
+          "evidence_zh": "s123 deep_reading：婚事谈得再漂亮，这家人不会真的承认你这一支的优越性。",
+          "relation_zh_original": "表亲（被踢出体系的人对体系受益者的冷审视）"
+        }
+      ]
+    },
+    {
+      "source": "rhaenys_targaryen",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "表姑侄",
+          "relation_en": "aunt-niece",
+          "summary_zh": "同样的\"被跳过\"是雷尼拉的镜子——蕾妮丝是同盟，也是警示。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "corlys_velaryon",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E07",
+          "to": "S01E09",
+          "relation_zh": "政治盟友",
+          "relation_en": "political-ally",
+          "summary_zh": "通过子嗣联姻把瓦列利安家族绑在雷尼拉一方。",
+          "relation_kind": "ally"
+        },
+        {
+          "from": "S01E10",
+          "to": null,
+          "relation_zh": "关系紧张",
+          "relation_en": "strained",
+          "summary_zh": "失子之痛 + 战略分歧让同盟出现裂痕。",
+          "relation_kind": "ally"
+        }
+      ]
+    },
+    {
+      "source": "corlys_velaryon",
+      "target": "daemon_targaryen",
+      "timeline": [
+        {
+          "from": "S01E02",
+          "to": null,
+          "relation_zh": "政治盟友",
+          "relation_en": "political-ally",
+          "summary_zh": "阶梯列岛之战的并肩者；后又因联姻成姻亲。",
+          "relation_kind": "ally"
+        }
+      ]
+    },
+    {
+      "source": "rhaenys_targaryen",
+      "target": "daemon_targaryen",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "表亲",
+          "relation_en": "cousin",
+          "summary_zh": "同代坦格利安，对宫廷政治都看得透。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "harwin_strong",
+      "target": "lyonel_strong",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "父子",
+          "relation_en": "father-son",
+          "summary_zh": "哈尔温是河铭城公爵 Lyonel 的长子与继承人。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "larys_strong",
+      "target": "lyonel_strong",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E06",
+          "relation_zh": "父子",
+          "relation_en": "father-son",
+          "summary_zh": "拉里斯是河铭城公爵的次子。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "harwin_strong",
+      "target": "larys_strong",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "兄弟",
+          "relation_en": "siblings",
+          "summary_zh": "\"折骨\"哈尔温与\"瘸子\"拉里斯——气质截然相反的两兄弟。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "harwin_strong",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": "S01E06",
+          "relation_zh": "私情",
+          "relation_en": "lover",
+          "summary_zh": "雷尼拉三个儿子的生父（公开身份是公主与驸马劳琳诺的孩子）。",
+          "relation_kind": "secret"
+        }
+      ]
+    },
+    {
+      "source": "larys_strong",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E07",
+          "to": null,
+          "relation_zh": "政治附庸",
+          "relation_en": "covert-ally",
+          "summary_zh": "靠为王后做\"脏活\"上位——耳目、纵火、刺杀。",
+          "relation_kind": "ally"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "mysaria",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "情人",
+          "relation_en": "lover",
+          "summary_zh": "戴蒙最早的情妇与心腹耳目；后亦成下层人脉网络的入口。",
+          "relation_kind": "secret"
+        }
+      ]
+    },
+    {
+      "source": "criston_cole",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E02",
+          "to": "S01E04",
+          "relation_zh": "卫士公主",
+          "relation_en": "protector",
+          "summary_zh": "雷尼拉亲选的白袍护卫，曾因好感生情。",
+          "relation_zh_original": "卫士与公主",
+          "relation_kind": "friend"
+        },
+        {
+          "from": "S01E05",
+          "to": "S01E04",
+          "relation_zh": "决裂",
+          "relation_en": "rival",
+          "summary_zh": "私情破裂后倒向阿莉森特一方，自此对她抱有近乎扭曲的恨意。",
+          "relation_kind": "enemy"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "敌对",
+          "relation_en": "guardian-turned-rival",
+          "relation_kind": "enemy",
+          "intensity_delta": -3,
+          "summary_zh": "雷妮拉拒绝私奔后克里斯顿在婚宴当众杀人——他与雷妮拉的私人忠诚关系在这一帧彻底反转。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "relation_inverted",
+          "evidence_zh": "s661 deep_reading：克里斯顿在前段（雷妮拉拒绝与他私奔）+ s509 戴蒙耳语 + s454 阿莉森特绿衣登场……三重压力下，选择把私人羞愤投射到乔弗里身上。",
+          "relation_zh_original": "守护者→失意者→敌对"
+        }
+      ]
+    },
+    {
+      "source": "criston_cole",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": "S01E04",
+          "relation_zh": "政治盟友",
+          "relation_en": "political-ally",
+          "summary_zh": "王后的私人护卫与心腹，\"绿党\"军中执剑人。",
+          "relation_kind": "ally"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "政治盟友",
+          "relation_en": "political-ally",
+          "relation_kind": "ally",
+          "intensity_delta": 2,
+          "summary_zh": "克里斯顿黑化完成后转向海塔尔一侧——他对绿党的忠诚从这摊血开始计算。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "relation_created",
+          "evidence_zh": "s661 deep_reading：克里斯顿本人也在这一帧黑化完成，后续他对绿党的忠诚都是从这摊血开始计算的。",
+          "relation_zh_original": "政治盟友（绿党雏形）"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "母子",
+          "relation_en": "mother-son",
+          "summary_zh": "王后阿莉森特的长子，\"绿党\"立场上的王位候选。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "父子",
+          "relation_en": "father-son",
+          "summary_zh": "韦赛里斯的长子，但父亲从未真正想立他为继承人。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aemond_targaryen",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "母子",
+          "relation_en": "mother-son",
+          "summary_zh": "王后的次子，少年时即失一目并夺得瓦格哈尔。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aemond_targaryen",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "父子",
+          "relation_en": "father-son",
+          "summary_zh": "韦赛里斯的次子。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "helaena_targaryen",
+      "target": "alicent_hightower",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "母女",
+          "relation_en": "mother-daughter",
+          "summary_zh": "王后唯一的女儿；性情温和，常说出像预言一样的怪话。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "helaena_targaryen",
+      "target": "viserys_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "父女",
+          "relation_en": "father-daughter",
+          "summary_zh": "韦赛里斯的小女儿。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "aemond_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "兄弟",
+          "relation_en": "siblings",
+          "summary_zh": "同母兄弟。年少时哥哥经常嘲弄艾蒙德没有龙。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "helaena_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": "S01E07",
+          "relation_zh": "兄妹",
+          "relation_en": "siblings",
+          "summary_zh": "同母兄妹。",
+          "relation_kind": "blood"
+        },
+        {
+          "from": "S01E08",
+          "to": null,
+          "relation_zh": "夫妻",
+          "relation_en": "spouse",
+          "summary_zh": "为延续坦格利安血统由阿莉森特安排的政治联姻。",
+          "relation_kind": "marriage"
+        }
+      ]
+    },
+    {
+      "source": "aemond_targaryen",
+      "target": "helaena_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "兄妹",
+          "relation_en": "siblings",
+          "summary_zh": "同母兄妹。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": "S01E07",
+          "relation_zh": "同父异母",
+          "relation_en": "half-siblings",
+          "summary_zh": "同一个父亲；雷尼拉是嫡长女继承人，伊耿是男性长子。",
+          "relation_kind": "blood"
+        },
+        {
+          "from": "S01E08",
+          "to": null,
+          "relation_zh": "王位之争",
+          "relation_en": "rival",
+          "summary_zh": "继承权之争公开化；\"绿党\"与\"黑党\"分裂的核心冲突。",
+          "relation_kind": "enemy"
+        }
+      ]
+    },
+    {
+      "source": "aemond_targaryen",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": "S01E06",
+          "relation_zh": "同父异母",
+          "relation_en": "half-siblings",
+          "summary_zh": "同一个父亲。",
+          "relation_kind": "blood"
+        },
+        {
+          "from": "S01E07",
+          "to": null,
+          "relation_zh": "政治对立",
+          "relation_en": "political-rival",
+          "summary_zh": "驯龙夺目事件后裂痕公开；他成为\"绿党\"阵营最锋利的剑。",
+          "relation_kind": "enemy"
+        }
+      ]
+    },
+    {
+      "source": "helaena_targaryen",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "同父异母",
+          "relation_en": "half-siblings",
+          "summary_zh": "同一个父亲。",
+          "relation_kind": "blood"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "caraxes",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "daemon_targaryen 与 caraxes 之间的龙骑士血誓。"
+        }
+      ]
+    },
+    {
+      "source": "rhaenyra_targaryen",
+      "target": "syrax",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "rhaenyra_targaryen 与 syrax 之间的龙骑士血誓。"
+        }
+      ]
+    },
+    {
+      "source": "rhaenys_targaryen",
+      "target": "meleys",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "rhaenys_targaryen 与 meleys 之间的龙骑士血誓。"
+        }
+      ]
+    },
+    {
+      "source": "corlys_velaryon",
+      "target": "seasmoke",
+      "timeline": [
+        {
+          "from": "S01E01",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "原本是科利斯之子劳琳诺的龙，剧中没有直接登场太多——这里以瓦列利安家族关联呈现。"
+        }
+      ]
+    },
+    {
+      "source": "aemond_targaryen",
+      "target": "vhagar",
+      "timeline": [
+        {
+          "from": "S01E07",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "S01E07 哈伦堡，艾蒙德在莱娜·瓦列利安死后大胆抢下空闲的瓦格哈尔。"
+        }
+      ]
+    },
+    {
+      "source": "aegon_targaryen_ii",
+      "target": "sunfyre",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "aegon_targaryen_ii 与 sunfyre 之间的龙骑士血誓。"
+        }
+      ]
+    },
+    {
+      "source": "helaena_targaryen",
+      "target": "dreamfyre",
+      "timeline": [
+        {
+          "from": "S01E06",
+          "to": null,
+          "relation_zh": "龙骑士",
+          "relation_en": "dragon-rider",
+          "summary_zh": "helaena_targaryen 与 dreamfyre 之间的龙骑士血誓。"
+        }
+      ]
+    },
+    {
+      "source": "viserys_targaryen",
+      "target": "otto_hightower",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "决裂",
+          "relation_en": "political-fallout",
+          "relation_kind": "enemy",
+          "intensity_delta": -3,
+          "summary_zh": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。",
+          "triggered_by_scene_id": "s109",
+          "triggered_by_change": "relation_inverted",
+          "evidence_zh": "s109 deep_reading：韦赛里斯因奥托如实禀报……反将奥托革职……'国王之手'被悄无声息地从权力中心抹掉。"
+        }
+      ]
+    },
+    {
+      "source": "viserys_targaryen",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "信任破裂",
+          "relation_en": "parent-child-strained",
+          "relation_kind": "enemy",
+          "intensity_delta": -2,
+          "summary_zh": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。",
+          "triggered_by_scene_id": "s146",
+          "triggered_by_change": "relation_strained",
+          "evidence_zh": "s146 deep_reading：他选择用药代替对话，雷妮拉接过药代替解释，两人都用沉默确认彼此的不信任。",
+          "relation_zh_original": "父女（信任崩塌）"
+        }
+      ]
+    },
+    {
+      "source": "rhaenyra_targaryen",
+      "target": "laenor_velaryon",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": "S01E04",
+          "relation_zh": "政治婚约",
+          "relation_en": "political-marriage",
+          "relation_kind": "marriage",
+          "intensity_delta": 1,
+          "summary_zh": "海滩私谈达成协议——婚姻只履行政治义务，私下各过各的；这是整剧最'清醒地不浪漫'的婚姻起点。",
+          "triggered_by_scene_id": "s231",
+          "triggered_by_change": "relation_created",
+          "evidence_zh": "s231 deep_reading：'perform our duty / each of us dines as we see fit' 是他们自己写出的协议：履行职责，但口味由我自己来定。",
+          "relation_zh_original": "政治婚约（君子协定：履行职责、各自情人各自留）"
+        },
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "夫妻决裂",
+          "relation_en": "spouse-political-blooded",
+          "relation_kind": "enemy",
+          "intensity_delta": 1,
+          "summary_zh": "在乔弗里被杀同夜完成割手交血礼——婚事完成，但 s231 海滩协议的私人维度已被克里斯顿一拳打废。",
+          "triggered_by_scene_id": "s680",
+          "triggered_by_change": "relation_intensified",
+          "evidence_zh": "s680 deep_reading：海滩协议——本帧让其当晚作废……婚礼在血泊中草草完成。",
+          "relation_zh_original": "夫妻（政治婚姻，开局即被血涂改）"
+        }
+      ]
+    },
+    {
+      "source": "alicent_hightower",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "公开对立",
+          "relation_en": "political-rival",
+          "relation_kind": "enemy",
+          "intensity_delta": -3,
+          "summary_zh": "绿衣登场是阿莉森特把对雷妮拉父女轴线的告别公开化的瞬间——闺蜜→疏离→当众宣战。",
+          "triggered_by_scene_id": "s454",
+          "triggered_by_change": "relation_inverted",
+          "evidence_zh": "s454 deep_reading：色码、迟到、独行，三个仪式层面的动作叠加……'绿党'诞生的视觉签字时刻。",
+          "relation_zh_original": "公开政敌"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "rhaenyra_targaryen",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "暧昧",
+          "relation_en": "uncle-niece-private-channel",
+          "relation_kind": "secret",
+          "intensity_delta": 2,
+          "summary_zh": "戴蒙在婚宴舞池贴近雷妮拉耳边低语——在最公开的场合制造最私密的接触，雷妮拉接受了'戴蒙永远在场'。",
+          "triggered_by_scene_id": "s509",
+          "triggered_by_change": "relation_intensified",
+          "evidence_zh": "s509 deep_reading：在所有人能看到的地方说所有人都听不到的话……她在那一刻接受了'戴蒙永远在场'。",
+          "relation_zh_original": "叔侄（私人频道无人能进）"
+        }
+      ]
+    },
+    {
+      "source": "viserys_targaryen",
+      "target": "daemon_targaryen",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "兄弟不认",
+          "relation_en": "sibling-non-recognition",
+          "relation_kind": "enemy",
+          "intensity_delta": -1,
+          "summary_zh": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。",
+          "triggered_by_scene_id": "s550",
+          "triggered_by_change": "relation_strained",
+          "evidence_zh": "s550 deep_reading：你来了我不能拦，但我不为你正名。",
+          "relation_zh_original": "兄弟（官方不予承认）"
+        }
+      ]
+    },
+    {
+      "source": "criston_cole",
+      "target": "joffrey_lonmouth",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "凶手",
+          "relation_en": "killer-victim",
+          "relation_kind": "enemy",
+          "intensity_delta": -3,
+          "summary_zh": "克里斯顿在婚宴上当众殴打致死乔弗里·朗茅斯。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "relation_created",
+          "evidence_zh": "s661 deep_reading：御林铁卫在王室婚礼上将人当众打死。",
+          "relation_zh_original": "凶手—被害者"
+        }
+      ]
+    },
+    {
+      "source": "criston_cole",
+      "target": "laenor_velaryon",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "凶手",
+          "relation_en": "lover-killer",
+          "relation_kind": "enemy",
+          "intensity_delta": -3,
+          "summary_zh": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。",
+          "triggered_by_scene_id": "s661",
+          "triggered_by_change": "relation_created",
+          "evidence_zh": "s661 deep_reading：乔弗里之死也直接把 s231 海滩协议（政治婚姻+各自情人）在数小时内写废：莱诺这一侧的'各自为政'当晚就报销。",
+          "relation_zh_original": "杀其情人者"
+        }
+      ]
+    },
+    {
+      "source": "daemon_targaryen",
+      "target": "rhea_royce",
+      "timeline": [
+        {
+          "from": "S01E05",
+          "to": null,
+          "relation_zh": "凶手",
+          "relation_en": "killer-of-spouse",
+          "relation_kind": "secret",
+          "intensity_delta": -3,
+          "summary_zh": "戴蒙在 Vale 用伪装坠马的方式谋杀合法妻子瑞亚·罗伊斯——蒙太奇拍法让暴行被遮蔽但已成既成事实。",
+          "triggered_by_scene_id": "s10",
+          "triggered_by_change": "relation_terminated",
+          "evidence_zh": "s10 deep_reading：HBO 用蒙太奇取代正面拍杀戮……戴蒙刚杀了瑞亚……血已经出来了。",
+          "relation_zh_original": "杀妻者"
+        }
+      ]
+    }
+  ]
+}

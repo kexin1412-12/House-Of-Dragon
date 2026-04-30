@@ -1,0 +1,347 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "由 character-graph-agent 产出（S1E5 这份是手工 ground-truth，从 server/kb/house_of_dragon_05.json 各 scene 的 plot.deep_reading + narrative + foreshadow 抽取）。",
+    "事件按 scene_id 锚定，是审计/解释用的细粒度信号；apply 后归并到 episode 级 timeline 条目，cursor 仍保持 S01E0N。",
+    "三类事件：state_events（角色身份/职位/生死）、motivation_events（驱动力变化）、relationship_events（人物对的关系变化）。",
+    "relation_kind 取自下列受控枚举：parent-child / sibling / spouse / kin-other / close-friend / estranged / political-ally / political-rival / political-fallout / lover / lover-killer / killer-of-kin / mentor / patron-client / hostile / guardian / political-marriage / dance-partner-of-pretender。",
+    "intensity_delta：-3..+3 整数；用于 UI 上画关系曲线时给方向感（-3=死敌、+3=至亲）。",
+    "evidence：可直接引用 deep_reading 关键句，让事件可追溯。"
+  ],
+  "episode": "S01E05",
+  "video_id": "house_of_dragon_05",
+  "show_id": "house-of-the-dragon",
+  "generated_by": "ground-truth-handcurated",
+  "generated_at": "2026-04-30",
+
+  "character_creations": [
+    {
+      "character_id": "laenor_velaryon",
+      "canonical_name": "Laenor Velaryon",
+      "display_name_zh": "莱诺·瓦列利安",
+      "short_identity_zh": "潮头岛继承人，海蛇科利斯之子",
+      "house": "Velaryon",
+      "tags": ["main", "noble", "queer"],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "潮头岛继承人",
+          "alive": true,
+          "safe_summary_zh": "瓦列利安家族继承人，与情人乔弗里·朗茅斯维持秘密关系。"
+        }
+      ]
+    },
+    {
+      "character_id": "joffrey_lonmouth",
+      "canonical_name": "Joffrey Lonmouth",
+      "display_name_zh": "乔弗里·朗茅斯",
+      "short_identity_zh": "莱诺·瓦列利安的情人，'骑士骑士'",
+      "house": "Lonmouth",
+      "tags": ["supporting", "queer"],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "莱诺的情人",
+          "alive": true,
+          "safe_summary_zh": "莱诺·瓦列利安的恋人；只在私下被承认。"
+        }
+      ]
+    },
+    {
+      "character_id": "rhea_royce",
+      "canonical_name": "Rhea Royce",
+      "display_name_zh": "瑞亚·罗伊斯",
+      "short_identity_zh": "戴蒙·坦格利安的妻子，谷地青铜骑手",
+      "house": "Royce",
+      "tags": ["supporting"],
+      "actor_versions": [],
+      "state_timeline": [
+        {
+          "from": "S01E01",
+          "to": "S01E04",
+          "title_zh": "符文谷夫人",
+          "alive": true,
+          "safe_summary_zh": "戴蒙的合法妻子，被戴蒙长期冷落。"
+        }
+      ]
+    }
+  ],
+
+  "state_events": [
+    {
+      "scene_id": "s10",
+      "character_id": "rhea_royce",
+      "change": "death",
+      "new_alive": false,
+      "new_title_zh": "已故符文谷夫人",
+      "new_safe_summary_zh": "S01E05 冷开场被戴蒙以伪装坠马的方式杀害；蒙太奇拍法让暴行被遮蔽但已成既成事实。",
+      "evidence": "s10 deep_reading：HBO 用蒙太奇取代正面拍杀戮……戴蒙刚杀了瑞亚……血已经出来了。"
+    },
+    {
+      "scene_id": "s109",
+      "character_id": "otto_hightower",
+      "change": "title_revoked",
+      "new_title_zh": "前任御前首相",
+      "new_political_role_zh": "被韦赛里斯解职的前任'手'，海塔尔家族在朝堂失去最高代言人",
+      "new_safe_summary_zh": "因如实禀报雷妮拉与戴蒙夜游烟柳事被韦赛里斯反革职，无宣告无饯行式离任。",
+      "evidence": "s109 deep_reading：韦赛里斯因奥托如实禀报雷妮拉与戴蒙夜游烟柳之事，反将奥托革职。"
+    },
+    {
+      "scene_id": "s454",
+      "character_id": "alicent_hightower",
+      "change": "political_realignment",
+      "new_title_zh": "海塔尔家族战旗持有者（仍为王后）",
+      "new_political_role_zh": "公开宣告归入海塔尔家族一侧；'绿党'诞生时刻的当事人",
+      "new_safe_summary_zh": "在雷妮拉婚宴上身穿海塔尔祖母绿独自迟到入场——告别韦赛里斯—雷妮拉父女轴线。",
+      "evidence": "s454 deep_reading：阿莉森特此前一直依附韦赛里斯—雷妮拉的'国王—继承人'轴线……今晚她决意用最公开的仪式当众告别这个轴线，把自己重新归入'我父亲奥托被赶走的那个家族'一侧——绿党由此诞生。"
+    },
+    {
+      "scene_id": "s661",
+      "character_id": "criston_cole",
+      "change": "moral_breakdown",
+      "new_title_zh": "失控的御林铁卫",
+      "new_political_role_zh": "在王室婚宴上当众杀人，从公主守卫者跌入私愤暴徒",
+      "new_safe_summary_zh": "因雷妮拉拒绝私奔积压的羞愤在婚宴上爆发，对乔弗里·朗茅斯施以致命暴打。",
+      "evidence": "s661 deep_reading：御林铁卫在王室婚宴上当众杀人，礼法系统在仪式中心被碾过……克里斯顿本人也在这一帧黑化完成。"
+    },
+    {
+      "scene_id": "s661",
+      "character_id": "joffrey_lonmouth",
+      "change": "death",
+      "new_alive": false,
+      "new_title_zh": "已故莱诺之恋人",
+      "new_safe_summary_zh": "S01E05 婚宴上被克里斯顿·科尔当众殴打致死。",
+      "evidence": "s661 deep_reading：克里斯顿·科尔失控以拳/铠甲反复击打乔弗里·朗茅斯。"
+    },
+    {
+      "scene_id": "s680",
+      "character_id": "rhaenyra_targaryen",
+      "change": "title_added",
+      "new_title_zh": "龙石岛公主，铁王座继承人，莱诺·瓦列利安之妻",
+      "new_political_role_zh": "通过血泊婚礼与瓦列利安家族绑定；其婚事开局即被血涂改",
+      "new_safe_summary_zh": "在血泊残局中与莱诺·瓦列利安完成割手交血礼，婚事完成但其象征意义已坍塌。",
+      "evidence": "s680 deep_reading：婚礼在血泊中草草完成……仪式被压到能压的最短——但还是必须做完。"
+    },
+    {
+      "scene_id": "s680",
+      "character_id": "laenor_velaryon",
+      "change": "title_added",
+      "new_title_zh": "雷妮拉·坦格利安之夫，潮头岛继承人",
+      "new_safe_summary_zh": "在情人乔弗里被杀的同夜与雷妮拉完成婚礼。",
+      "evidence": "s680 deep_reading：雷妮拉与莱诺在已沾血的宴厅一侧完成割手交血礼。"
+    }
+  ],
+
+  "motivation_events": [
+    {
+      "scene_id": "s146",
+      "character_id": "rhaenyra_targaryen",
+      "change": "motivation_shift",
+      "new_motivation_zh": "认清自己在父亲眼中已是'要被止损的丑闻'，不再为政治婚姻保留浪漫幻想，准备以清醒交易心态进入婚姻",
+      "evidence": "s146 deep_reading：她已经知道在父亲眼里自己就是'要被止损的丑闻'，她没有理由再为一段政治婚姻保留浪漫幻想。"
+    },
+    {
+      "scene_id": "s231",
+      "character_id": "rhaenyra_targaryen",
+      "change": "motivation_shift",
+      "new_motivation_zh": "接受'政治婚姻+各自情人各自留'的协作模式，把婚姻视为可执行的工程问题",
+      "evidence": "s231 deep_reading：'perform our duty / each of us dines as we see fit' 是他们自己写出的协议……不是爱，是协作。"
+    },
+    {
+      "scene_id": "s454",
+      "character_id": "alicent_hightower",
+      "change": "motivation_shift",
+      "new_motivation_zh": "把海塔尔家族重新推回权力轴线；替被革职的父亲奥托做政治反弹",
+      "evidence": "s454 deep_reading：女儿用一袭绿衣替父亲把宣战书递回到国王面前。"
+    },
+    {
+      "scene_id": "s509",
+      "character_id": "rhaenyra_targaryen",
+      "change": "motivation_shift",
+      "new_motivation_zh": "戴蒙的耳语在公开仪式内部撕开私人裂口；雷妮拉默认接受'戴蒙永远在场'的事实",
+      "evidence": "s509 deep_reading：真正改变雷妮拉轨迹的不是戴蒙说的内容，而是戴蒙能在这个场合说这种话本身——她在那一刻接受了'戴蒙永远在场'。"
+    },
+    {
+      "scene_id": "s661",
+      "character_id": "criston_cole",
+      "change": "motivation_shift",
+      "new_motivation_zh": "对雷妮拉的私人忠诚转向私愤投射；为后续投靠绿党铺设动机",
+      "evidence": "s661 deep_reading：克里斯顿对绿党的忠诚都是从这摊血开始计算的。"
+    }
+  ],
+
+  "relationship_events": [
+    {
+      "scene_id": "s109",
+      "source": "viserys_targaryen",
+      "target": "otto_hightower",
+      "change": "relation_inverted",
+      "new_relation_kind": "political-fallout",
+      "new_relation_zh": "决裂",
+      "new_relation_en": "political-fallout",
+      "intensity_delta": -3,
+      "summary_zh": "韦赛里斯因奥托报告雷妮拉与戴蒙夜游烟柳之事反将奥托革职——多年同僚以无宣告无饯行的形式一夜决裂。",
+      "evidence": "s109 deep_reading：韦赛里斯因奥托如实禀报……反将奥托革职……'国王之手'被悄无声息地从权力中心抹掉。"
+    },
+    {
+      "scene_id": "s146",
+      "source": "viserys_targaryen",
+      "target": "rhaenyra_targaryen",
+      "change": "relation_strained",
+      "new_relation_kind": "parent-child",
+      "new_relation_zh": "父女（信任崩塌）",
+      "new_relation_en": "parent-child-strained",
+      "intensity_delta": -2,
+      "summary_zh": "韦赛里斯派人送月亮茶到龙石岛——父亲在沉默中宣告不再相信女儿。父女间从此再无'我可以问你'的空间。",
+      "evidence": "s146 deep_reading：他选择用药代替对话，雷妮拉接过药代替解释，两人都用沉默确认彼此的不信任。"
+    },
+    {
+      "scene_id": "s231",
+      "source": "rhaenyra_targaryen",
+      "target": "laenor_velaryon",
+      "change": "relation_created",
+      "new_relation_kind": "political-marriage",
+      "new_relation_zh": "政治婚约（君子协定：履行职责、各自情人各自留）",
+      "new_relation_en": "political-marriage",
+      "intensity_delta": 1,
+      "summary_zh": "海滩私谈达成协议——婚姻只履行政治义务，私下各过各的；这是整剧最'清醒地不浪漫'的婚姻起点。",
+      "evidence": "s231 deep_reading：'perform our duty / each of us dines as we see fit' 是他们自己写出的协议：履行职责，但口味由我自己来定。"
+    },
+    {
+      "scene_id": "s454",
+      "source": "alicent_hightower",
+      "target": "viserys_targaryen",
+      "change": "relation_strained",
+      "new_relation_kind": "spouse",
+      "new_relation_zh": "夫妻（政治分立）",
+      "new_relation_en": "spouse-politically-estranged",
+      "intensity_delta": -2,
+      "summary_zh": "在雷妮拉婚宴上身穿海塔尔祖母绿独自迟到——王后用最公开的仪式当众告别国王轴线。",
+      "evidence": "s454 deep_reading：阿莉森特此前一直依附韦赛里斯—雷妮拉的'国王—继承人'轴线……今晚她决意用最公开的仪式当众告别这个轴线。"
+    },
+    {
+      "scene_id": "s454",
+      "source": "alicent_hightower",
+      "target": "rhaenyra_targaryen",
+      "change": "relation_inverted",
+      "new_relation_kind": "political-rival",
+      "new_relation_zh": "公开政敌",
+      "new_relation_en": "political-rival",
+      "intensity_delta": -3,
+      "summary_zh": "绿衣登场是阿莉森特把对雷妮拉父女轴线的告别公开化的瞬间——闺蜜→疏离→当众宣战。",
+      "evidence": "s454 deep_reading：色码、迟到、独行，三个仪式层面的动作叠加……'绿党'诞生的视觉签字时刻。"
+    },
+    {
+      "scene_id": "s509",
+      "source": "daemon_targaryen",
+      "target": "rhaenyra_targaryen",
+      "change": "relation_intensified",
+      "new_relation_kind": "kin-other",
+      "new_relation_zh": "叔侄（私人频道无人能进）",
+      "new_relation_en": "uncle-niece-private-channel",
+      "intensity_delta": 2,
+      "summary_zh": "戴蒙在婚宴舞池贴近雷妮拉耳边低语——在最公开的场合制造最私密的接触，雷妮拉接受了'戴蒙永远在场'。",
+      "evidence": "s509 deep_reading：在所有人能看到的地方说所有人都听不到的话……她在那一刻接受了'戴蒙永远在场'。"
+    },
+    {
+      "scene_id": "s550",
+      "source": "viserys_targaryen",
+      "target": "daemon_targaryen",
+      "change": "relation_strained",
+      "new_relation_kind": "sibling",
+      "new_relation_zh": "兄弟（官方不予承认）",
+      "new_relation_en": "sibling-non-recognition",
+      "intensity_delta": -1,
+      "summary_zh": "戴蒙到场无报名——韦赛里斯用礼制手段宣告：'你存在但你不被认'，'承认在场不承认身份'的精确羞辱。",
+      "evidence": "s550 deep_reading：你来了我不能拦，但我不为你正名。"
+    },
+    {
+      "scene_id": "s661",
+      "source": "criston_cole",
+      "target": "rhaenyra_targaryen",
+      "change": "relation_inverted",
+      "new_relation_kind": "political-fallout",
+      "new_relation_zh": "守护者→失意者→敌对",
+      "new_relation_en": "guardian-turned-rival",
+      "intensity_delta": -3,
+      "summary_zh": "雷妮拉拒绝私奔后克里斯顿在婚宴当众杀人——他与雷妮拉的私人忠诚关系在这一帧彻底反转。",
+      "evidence": "s661 deep_reading：克里斯顿在前段（雷妮拉拒绝与他私奔）+ s509 戴蒙耳语 + s454 阿莉森特绿衣登场……三重压力下，选择把私人羞愤投射到乔弗里身上。"
+    },
+    {
+      "scene_id": "s661",
+      "source": "criston_cole",
+      "target": "alicent_hightower",
+      "change": "relation_created",
+      "new_relation_kind": "political-ally",
+      "new_relation_zh": "政治盟友（绿党雏形）",
+      "new_relation_en": "political-ally",
+      "intensity_delta": 2,
+      "summary_zh": "克里斯顿黑化完成后转向海塔尔一侧——他对绿党的忠诚从这摊血开始计算。",
+      "evidence": "s661 deep_reading：克里斯顿本人也在这一帧黑化完成，后续他对绿党的忠诚都是从这摊血开始计算的。"
+    },
+    {
+      "scene_id": "s661",
+      "source": "criston_cole",
+      "target": "joffrey_lonmouth",
+      "change": "relation_created",
+      "new_relation_kind": "killer-of-kin",
+      "new_relation_zh": "凶手—被害者",
+      "new_relation_en": "killer-victim",
+      "intensity_delta": -3,
+      "summary_zh": "克里斯顿在婚宴上当众殴打致死乔弗里·朗茅斯。",
+      "evidence": "s661 deep_reading：御林铁卫在王室婚礼上将人当众打死。"
+    },
+    {
+      "scene_id": "s661",
+      "source": "criston_cole",
+      "target": "laenor_velaryon",
+      "change": "relation_created",
+      "new_relation_kind": "lover-killer",
+      "new_relation_zh": "杀其情人者",
+      "new_relation_en": "lover-killer",
+      "intensity_delta": -3,
+      "summary_zh": "克里斯顿是莱诺情人乔弗里的凶手——这层关系将贯穿莱诺余生的痛楚。",
+      "evidence": "s661 deep_reading：乔弗里之死也直接把 s231 海滩协议（政治婚姻+各自情人）在数小时内写废：莱诺这一侧的'各自为政'当晚就报销。"
+    },
+    {
+      "scene_id": "s10",
+      "source": "daemon_targaryen",
+      "target": "rhea_royce",
+      "change": "relation_terminated",
+      "new_relation_kind": "killer-of-kin",
+      "new_relation_zh": "杀妻者",
+      "new_relation_en": "killer-of-spouse",
+      "intensity_delta": -3,
+      "summary_zh": "戴蒙在 Vale 用伪装坠马的方式谋杀合法妻子瑞亚·罗伊斯——蒙太奇拍法让暴行被遮蔽但已成既成事实。",
+      "evidence": "s10 deep_reading：HBO 用蒙太奇取代正面拍杀戮……戴蒙刚杀了瑞亚……血已经出来了。"
+    },
+    {
+      "scene_id": "s680",
+      "source": "rhaenyra_targaryen",
+      "target": "laenor_velaryon",
+      "change": "relation_intensified",
+      "new_relation_kind": "spouse",
+      "new_relation_zh": "夫妻（政治婚姻，开局即被血涂改）",
+      "new_relation_en": "spouse-political-blooded",
+      "intensity_delta": 1,
+      "summary_zh": "在乔弗里被杀同夜完成割手交血礼——婚事完成，但 s231 海滩协议的私人维度已被克里斯顿一拳打废。",
+      "evidence": "s680 deep_reading：海滩协议——本帧让其当晚作废……婚礼在血泊中草草完成。"
+    },
+    {
+      "scene_id": "s123",
+      "source": "rhaenys_targaryen",
+      "target": "viserys_targaryen",
+      "change": "relation_reaffirmed",
+      "new_relation_kind": "political-rival",
+      "new_relation_zh": "表亲（被踢出体系的人对体系受益者的冷审视）",
+      "new_relation_en": "cousin-watchful-rival",
+      "intensity_delta": -1,
+      "summary_zh": "蕾妮丝在潮头岛迎接仪式上对韦赛里斯施以'不全礼'——海蛇家族用礼节表达不满，蕾妮丝的注视则是冷审视。",
+      "evidence": "s123 deep_reading：婚事谈得再漂亮，这家人不会真的承认你这一支的优越性。"
+    }
+  ]
+}

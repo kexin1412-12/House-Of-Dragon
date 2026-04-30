@@ -1,0 +1,46 @@
+# --- Secrets ---
+.env
+.env.local
+**/.env
+!**/.env.example
+
+# --- Dependencies ---
+node_modules/
+__pycache__/
+*.pyc
+
+# --- Build artifacts ---
+client/build/
+*.log
+
+# --- Large media (regenerable / copyrighted) ---
+# server/uploads — 5.6 GB raw video
+server/uploads/
+# server/kb/frames — 533 MB extracted keyframes
+server/kb/frames/
+# server/kb/characters/face_refs — 52 MB face reference images
+server/kb/characters/face_refs/
+# server/references — third-party books (Blood and Fire) + cached pages
+server/references/
+
+# --- Backups & scratch ---
+*.backup-*.json
+*.backup-*
+server/scripts/apply_log.txt
+server/scripts/audit.txt
+server/scripts/whisper_*.txt
+server/scripts/final_inv.txt
+server/kb/symbols/_suggestions/
+
+# --- Editor / IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- Claude Code state ---
+.claude/
+
+# --- Misc ---
+*.tmp

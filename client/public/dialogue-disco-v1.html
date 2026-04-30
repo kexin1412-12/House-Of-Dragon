@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>对话界面 · 极乐迪斯科风格 v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* —— 配色（沿用电影感暗调） —— */
+  --bg-overlay: rgba(15, 10, 7, 0.72);
+  --bg-overlay-strong: rgba(15, 10, 7, 0.92);
+  --gold: #c9a87a;
+  --gold-bright: #e8c896;
+  --gold-dim: #8a724f;
+  --npc-text: #f0d4a8;
+  --inner-text: #b8c4ce;
+  --option-text: #d4c4a8;
+  --option-text-dim: #8a7e68;
+
+  --speaker-red: #c45656;          /* NPC 名 ALL CAPS 红 */
+  --skill-empathy: #6b9bd1;        /* 共情 / 内心声音 默认蓝 */
+  --skill-instinct: #8a6dc4;       /* 直觉 紫 */
+  --skill-blood: #c45656;          /* 龙血 红 */
+  --skill-authority: #c9a87a;      /* 威严 金 */
+
+  /* —— 立场色 —— */
+  --stance-king: #c9a87a;          /* 王者 金 */
+  --stance-prudent: #6b8db5;       /* 审慎 冷蓝 */
+  --stance-blood: #d6938a;          /* 血亲 暖粉 */
+  --stance-fire: #c45656;          /* 火焰 红 */
+  --stance-free: #6b6960;          /* 自由输入 灰 */
+
+  --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+  --sans:  'Noto Sans SC', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0807;color:#e8e6df;font-family:var(--serif);overflow:hidden;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit;background:none;border:0;outline:0;cursor:pointer}
+ol,ul,li{list-style:none}
+
+/* ─── 全屏画面区 ─────────────────────────────────────── */
+.stage{position:relative;width:100vw;height:100vh;overflow:hidden}
+
+/* 多层背景叠出"烛光夜厅 + 立绘"的电影感；如果服务器在跑，会自动换成 Alicent 真实立绘 */
+.frame{position:absolute;inset:0;background:
+  radial-gradient(800px 600px at 62% 38%, #3a2418 0%, #1a0e08 55%, #0a0605 100%),
+  linear-gradient(180deg, #1a0c06 0%, #0a0807 100%);}
+.frame.has-portrait{background:
+  url('http://localhost:5000/kb/characters/face_refs/alicent_hightower/young/wp_Emily_Carey.jpg') 55% 22% / cover no-repeat,
+  radial-gradient(800px 600px at 62% 38%, #3a2418 0%, #1a0e08 55%, #0a0605 100%);}
+.frame::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.18'/></svg>");
+  mix-blend-mode:overlay;opacity:.6}
+.vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 70% at center, transparent 40%, rgba(0,0,0,.55) 100%)}
+
+/* ─── 左上身份卡（极简） ─────────────────────────────── */
+.id-card{position:absolute;top:34px;left:36px;z-index:5;animation:fadeIn .9s ease both}
+.id-card .name{font-family:var(--serif);font-size:17px;color:var(--gold);letter-spacing:.04em;font-weight:500}
+.id-card .gold-line{width:44px;height:1px;background:var(--gold);margin:8px 0;opacity:.85}
+.id-card .title{font-family:var(--sans);font-size:11px;color:var(--gold-dim);letter-spacing:.18em;text-transform:uppercase}
+
+/* ─── 底部叠层（核心改动区） ─────────────────────────── */
+.bottom{position:absolute;left:0;right:0;bottom:0;z-index:10;
+  /* 半透明渐变带，文字背景 —— 不用实色块 */
+  background:linear-gradient(180deg,
+    transparent 0%,
+    rgba(15,10,7,.18) 12%,
+    rgba(15,10,7,.55) 36%,
+    var(--bg-overlay) 60%,
+    var(--bg-overlay-strong) 100%);
+  padding:80px 56px 32px;
+  /* 不挡核心构图：上限 30vh */
+  max-height:36vh;}
+
+/* 3.1 NPC 字幕 */
+.npc{display:flex;gap:14px;align-items:baseline;margin-bottom:18px;animation:fadeIn .6s ease both .3s}
+.npc-name{font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.34em;color:var(--speaker-red);text-transform:uppercase;flex-shrink:0}
+.npc-dash{color:var(--gold-dim);opacity:.7}
+.npc-text{font-family:var(--serif);font-size:15px;line-height:1.55;font-style:italic;color:var(--npc-text);
+  /* 一次最多 2 行 —— 超出折行 */
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+
+/* 3.2 内心声音（剧情触发；不是每次都出现） */
+.inner{position:relative;padding-left:18px;margin-bottom:22px;animation:fadeIn .55s ease both 1.1s}
+.inner::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:2px;background:var(--skill-empathy)}
+.inner.skill-blood::before{background:var(--skill-blood)}
+.inner.skill-instinct::before{background:var(--skill-instinct)}
+.inner.skill-authority::before{background:var(--skill-authority)}
+.inner-skill{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.24em;color:var(--skill-empathy);text-transform:uppercase;margin-right:10px}
+.inner.skill-blood     .inner-skill{color:var(--skill-blood)}
+.inner.skill-instinct  .inner-skill{color:var(--skill-instinct)}
+.inner.skill-authority .inner-skill{color:var(--skill-authority)}
+.inner-dash{color:var(--gold-dim);opacity:.6;margin-right:8px}
+.inner-text{font-family:var(--serif);font-size:12px;font-style:italic;color:var(--inner-text);line-height:1.5}
+
+/* 3.3 玩家选项 */
+.options{display:flex;flex-direction:column;gap:6px;
+  /* 配音播放完毕 0.4s 后才出现；不打断台词 */
+  animation:fadeIn .55s ease both 1.9s;}
+.option{position:relative;display:flex;align-items:baseline;gap:10px;padding:3px 0 3px 14px;cursor:pointer;
+  transition:opacity .25s ease;}
+.option::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:var(--gold);opacity:0;transition:opacity .2s ease}
+.option:hover::before{opacity:1}
+.option .num{font-family:var(--sans);font-size:13px;color:var(--gold);font-weight:500;min-width:14px}
+.option .stance{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.06em;flex-shrink:0;
+  /* 方括号 + 专属色（颜色由 modifier 决定） */
+  color:var(--stance-king);}
+.option .stance::before{content:"[ "}
+.option .stance::after{content:" ]"}
+.option.stance-king    .stance{color:var(--stance-king)}
+.option.stance-prudent .stance{color:var(--stance-prudent)}
+.option.stance-blood   .stance{color:var(--stance-blood)}
+.option.stance-fire    .stance{color:var(--stance-fire)}
+.option .text{font-family:var(--serif);font-size:14px;color:var(--option-text);line-height:1.5;
+  transition:color .2s ease, filter .2s ease}
+.option:hover .text{color:#ead8b8}                  /* 鼠标悬停：文字略亮 +10% */
+.option:hover .stance{filter:brightness(1.2)}
+
+/* 技能检定 */
+.option .check{margin-left:auto;display:flex;align-items:baseline;gap:10px;flex-shrink:0;padding-left:18px}
+.option .skill-num{font-family:var(--sans);font-size:11px;font-weight:500;letter-spacing:.16em;color:var(--gold)}
+.option .skill-num::before{content:"[ "}
+.option .skill-num::after{content:" ]"}
+.option .difficulty{font-family:var(--sans);font-size:11px;letter-spacing:.16em;color:var(--gold-dim)}
+.option .difficulty::before{content:"— "}
+.option.diff-hard   .difficulty{color:#c8857a}
+.option.diff-medium .difficulty{color:#c9a87a}
+.option.diff-easy   .difficulty{color:#8aa67a}
+
+/* 自由输入项 */
+.option.free .text-free{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--stance-free)}
+.option.free .text-free::before{content:"[ "}
+.option.free .text-free::after{content:" ]"}
+.option.free:hover .text-free{color:#a89e8c}
+
+/* 自由输入展开态 */
+.free-input-row{display:none;margin-top:10px;align-items:center;gap:10px;animation:fadeIn .35s ease}
+.free-input-row.show{display:flex}
+.free-input-row .prompt{font-family:var(--sans);font-size:12px;letter-spacing:.24em;color:var(--gold);font-weight:500}
+.free-input-row .prompt::after{content:" —"}
+.free-input-row input{flex:1;padding:6px 0;font-family:var(--serif);font-size:14px;color:#ead8b8;
+  border-bottom:1px solid rgba(201,168,122,.45)}
+.free-input-row input::placeholder{color:#7a6f5e;font-style:italic}
+.free-input-row .hint{font-family:var(--sans);font-size:10px;letter-spacing:.18em;color:var(--gold-dim)}
+
+/* ─── 选中态：金光闪烁 200ms + 其他 30% ─── */
+.options.has-selected .option:not(.is-selected){opacity:.3}
+.option.is-selected{animation:goldFlash 200ms ease-out}
+@keyframes goldFlash{
+  0%   {background:rgba(232,200,150,.0)}
+  40%  {background:rgba(232,200,150,.22)}
+  100% {background:rgba(232,200,150,0)}
+}
+
+/* ─── 切换 NPC 台词时：底层不动，只字幕区淡入淡出 ─── */
+.npc.is-fading{animation:fadeOutIn 600ms ease}
+@keyframes fadeOutIn{0%{opacity:1}40%{opacity:0;transform:translateY(2px)}60%{opacity:0}100%{opacity:1;transform:translateY(0)}}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* 底部右下角小提示（demo 用，告诉评审能用键盘） */
+.kbd-hint{position:absolute;right:36px;bottom:14px;z-index:11;
+  font-family:var(--sans);font-size:10px;letter-spacing:.24em;color:var(--gold-dim);opacity:.65;
+  pointer-events:none}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="frame" id="frame"></div>
+  <div class="vignette"></div>
+
+  <!-- 左上身份卡 -->
+  <aside class="id-card">
+    <div class="name">雷尼拉·坦格利安</div>
+    <div class="gold-line"></div>
+    <div class="title">龙石岛公主 · 王座继承人</div>
+  </aside>
+
+  <!-- 底部三层叠层 -->
+  <div class="bottom">
+
+    <!-- 3.1 NPC 字幕 -->
+    <div class="npc" id="npc">
+      <span class="npc-name">阿莉森特</span>
+      <span class="npc-dash">—</span>
+      <span class="npc-text" id="npcText">"我希望你这次能识趣一些，雷尼拉。"</span>
+    </div>
+
+    <!-- 3.2 内心声音（剧本控制；本场触发"共情"） -->
+    <div class="inner skill-empathy">
+      <span class="inner-skill">共情</span>
+      <span class="inner-dash">—</span>
+      <span class="inner-text">她的语气里有一丝你从未听过的疲倦。</span>
+    </div>
+
+    <!-- 3.3 玩家选项（gemini 生成 3 立场 + 1 自由输入） -->
+    <ol class="options" id="options">
+      <li class="option stance-king diff-hard" data-key="1">
+        <span class="num">1.</span>
+        <span class="stance">王者</span>
+        <span class="text">"我自有分寸。"</span>
+        <span class="check"><span class="skill-num">威严 12</span><span class="difficulty">困难</span></span>
+      </li>
+      <li class="option stance-blood" data-key="2">
+        <span class="num">2.</span>
+        <span class="stance">血亲</span>
+        <span class="text">"我们曾是朋友。是什么让你变成了今天这样？"</span>
+      </li>
+      <li class="option stance-prudent diff-medium" data-key="3">
+        <span class="num">3.</span>
+        <span class="stance">审慎</span>
+        <span class="text">"国师之女，向我提建议——这本身就值得玩味。"</span>
+        <span class="check"><span class="skill-num">王朝史 8</span><span class="difficulty">中等</span></span>
+      </li>
+      <li class="option free" data-key="4">
+        <span class="num">4.</span>
+        <span class="text-free">自由输入</span>
+      </li>
+    </ol>
+
+    <!-- 自由输入展开行 -->
+    <div class="free-input-row" id="freeInputRow">
+      <span class="prompt">YOU</span>
+      <input id="freeInput" type="text" placeholder="自己开口……" autocomplete="off" />
+      <span class="hint">ENTER 说出 · ESC 收回</span>
+    </div>
+  </div>
+
+  <div class="kbd-hint">1-4 选择 · ENTER 自由输入 · ESC 收回</div>
+</div>
+
+<script>
+/* ─── 立绘探测：服务器在跑就用真立绘，否则纯 gradient ─── */
+(function probePortrait(){
+  const img = new Image();
+  img.onload = () => document.getElementById('frame').classList.add('has-portrait');
+  img.onerror = () => {};
+  img.src = 'http://localhost:5000/kb/characters/face_refs/alicent_hightower/young/wp_Emily_Carey.jpg';
+})();
+
+/* ─── 选项交互 ─────────────────────────────────────── */
+const options = document.getElementById('options');
+const freeRow = document.getElementById('freeInputRow');
+const freeInput = document.getElementById('freeInput');
+
+function selectOption(li){
+  if (!li || options.classList.contains('locked')) return;
+  // 自由输入 → 展开输入框，不走 selected 流程
+  if (li.classList.contains('free')) {
+    freeRow.classList.add('show');
+    requestAnimationFrame(() => freeInput.focus());
+    return;
+  }
+  options.classList.add('has-selected', 'locked');
+  li.classList.add('is-selected');
+  // 200ms 金光闪烁后保持其它 30%；这里仅做一个 demo，真实接 gemini 后会触发下一段台词
+  setTimeout(() => {
+    // demo：1.2s 后重置回 idle，方便评审反复点
+    setTimeout(reset, 1400);
+  }, 200);
+}
+function reset(){
+  options.classList.remove('has-selected', 'locked');
+  [...options.querySelectorAll('.option')].forEach(o => o.classList.remove('is-selected'));
+}
+function closeFreeInput(){
+  freeRow.classList.remove('show');
+  freeInput.value = '';
+}
+
+[...options.querySelectorAll('.option')].forEach(li => {
+  li.addEventListener('click', () => selectOption(li));
+});
+
+document.addEventListener('keydown', e => {
+  if (freeRow.classList.contains('show')) {
+    if (e.key === 'Escape') { closeFreeInput(); }
+    if (e.key === 'Enter')  { e.preventDefault();
+      // demo：把输入回显到 NPC 字幕上方（真实接入时这里把内容发给 gemini）
+      console.log('free input submitted:', freeInput.value);
+      closeFreeInput();
+    }
+    return;
+  }
+  if (['1','2','3','4'].includes(e.key)) {
+    const li = options.querySelector(`.option[data-key="${e.key}"]`);
+    selectOption(li);
+  } else if (e.key === 'Enter') {
+    const li = options.querySelector('.option.free');
+    selectOption(li);
+  }
+});
+
+/* ─── 演示：切换 NPC 台词时只字幕区淡入淡出（底层不动） ─── */
+const NPC_LINES = [
+  '"我希望你这次能识趣一些，雷尼拉。"',
+  '"你父王召见你 —— 这一次他不会再容忍你的沉默。"',
+];
+let lineIdx = 0;
+const npc = document.getElementById('npc');
+const npcText = document.getElementById('npcText');
+setInterval(() => {
+  npc.classList.add('is-fading');
+  setTimeout(() => {
+    lineIdx = (lineIdx + 1) % NPC_LINES.length;
+    npcText.textContent = NPC_LINES[lineIdx];
+  }, 240);
+  setTimeout(() => npc.classList.remove('is-fading'), 600);
+}, 6500);
+</script>
+</body>
+</html>
