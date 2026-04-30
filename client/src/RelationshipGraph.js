@@ -583,11 +583,11 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           <header className="rg-tree-header">
             <div className="rg-tree-title-zh">
               {tree?.title_zh}
-              <span className="rg-tree-subtitle-zh">{tree?.subtitle_zh}</span>
+              {tree?.subtitle_zh ? <span className="rg-tree-subtitle-zh">{tree.subtitle_zh}</span> : null}
             </div>
             <div className="rg-tree-title-en">
               <span>{tree?.title_en}</span>
-              <span className="rg-tree-subtitle-en">{tree?.subtitle_en}</span>
+              {tree?.subtitle_en ? <span className="rg-tree-subtitle-en">{tree.subtitle_en}</span> : null}
             </div>
           </header>
 

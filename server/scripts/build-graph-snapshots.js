@@ -394,10 +394,13 @@ function main() {
   const out = {
     show_id: SHOW_ID,
     cursor_used: CURSOR,
+    // Title only carries the show name now — the tree spans Targaryens,
+    // Velaryons, Hightowers, Strongs, Cole, Royce and Lonmouth, so calling
+    // the whole thing "坦格利安家族" was misleading.
     title_zh: '《龙之家族》',
     title_en: 'HOUSE OF THE DRAGON',
-    subtitle_zh: '坦格利安家族',
-    subtitle_en: 'HOUSE TARGARYEN',
+    subtitle_zh: '',
+    subtitle_en: '',
     characters,
     kin_edges,
     conflict_edges,
