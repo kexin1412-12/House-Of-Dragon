@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import './RelationshipGraph.css';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 /* 关系类型 → 颜色 / 标签
  * 后端返回的是中文 relation（"父女"、"关系疏离"、"政治对立"…）

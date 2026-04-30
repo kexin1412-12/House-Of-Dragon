@@ -7,7 +7,7 @@ const fs = require('fs');
 const agent = require('./agent');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
 app.use(cors());
@@ -35,11 +35,14 @@ const upload = multer({
   },
 });
 
+// 视频清单：先扫本地 uploads/（开发模式）；本地为空时回落到 demo-videos.json
+// （部署模式：视频已传到 Cloudflare R2，URL 由 client 用 REACT_APP_VIDEO_CDN 拼出）
 app.get('/api/videos', (req, res) => {
   const videoExts = /\.(mp4|mov|avi|mkv|webm|flv|wmv|m4v)$/i;
-  const files = fs.readdirSync(UPLOADS_DIR).filter(f => videoExts.test(f));
-  const videos = files
-    .map(f => {
+  let videos = [];
+  if (fs.existsSync(UPLOADS_DIR)) {
+    const files = fs.readdirSync(UPLOADS_DIR).filter(f => videoExts.test(f));
+    videos = files.map(f => {
       const stat = fs.statSync(path.join(UPLOADS_DIR, f));
       const ts = parseInt(f.split('-')[0]);
       const originalName = f.replace(/^\d+-/, '').replace(/\.[^.]+$/, '');
@@ -51,8 +54,15 @@ app.get('/api/videos', (req, res) => {
         size: stat.size,
         uploadedAt: isNaN(ts) ? stat.mtime.toISOString() : new Date(ts).toISOString(),
       };
-    })
-    .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    });
+  }
+  if (videos.length === 0) {
+    const manifestPath = path.join(__dirname, 'demo-videos.json');
+    if (fs.existsSync(manifestPath)) {
+      try { videos = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch {}
+    }
+  }
+  videos.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
   res.json(videos);
 });
 

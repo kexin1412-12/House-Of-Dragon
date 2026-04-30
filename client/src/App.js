@@ -6,7 +6,9 @@ import SeasonTimeline from './SeasonTimeline';
 import RoleplayDialogueDE from './RoleplayDialogueDE';
 import SymbolHotspots from './SymbolHotspots';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+// 视频源 CDN：生产环境一般是 Cloudflare R2；不设时回落到本地 Express 的 /uploads
+const VIDEO_CDN = process.env.REACT_APP_VIDEO_CDN || API;
 
 const MOCK_RATINGS = ['9.8', '8.5', '9.1', '7.8', '9.3', '8.7', '9.0', '8.2'];
 const GENRES = ['ACTION', 'FANTASY', 'DRAMA'];
@@ -229,7 +231,7 @@ export default function App() {
               >
                 <div className="card-thumb">
                   <video
-                    src={`${API}${video.url}`}
+                    src={`${VIDEO_CDN}${video.url}`}
                     preload="metadata"
                     muted
                   />
@@ -1472,7 +1474,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             <video
               ref={videoRef}
               key={playing.id}
-              src={`${API}${playing.url}`}
+              src={`${VIDEO_CDN}${playing.url}`}
               autoPlay
               crossOrigin="anonymous"
               className="tx-player-video"

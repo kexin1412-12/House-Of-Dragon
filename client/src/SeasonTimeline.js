@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import axios from 'axios';
 import './SeasonTimeline.css';
 
-const API = 'http://localhost:5000';
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 /* SeasonTimeline —— 季级宏观时间轴卡（独立于 scene 卡 / 关系图）
    · 三层信息密度：episode chips → focused episode → causal links
