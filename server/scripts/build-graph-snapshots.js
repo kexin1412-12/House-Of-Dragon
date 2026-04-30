@@ -190,6 +190,7 @@ function purgeStaleSnapshots() {
   for (const f of fs.readdirSync(SNAPSHOT_DIR)) {
     if (f === '_family-tree.json') continue;
     if (f.startsWith('_scene-focus-')) continue;     // managed by buildSceneFocus
+    if (f.startsWith('_char-events-')) continue;     // managed by buildCharEvents
     if (!f.endsWith('.json')) continue;
     fs.unlinkSync(path.join(SNAPSHOT_DIR, f));
     removed++;
@@ -381,6 +382,33 @@ function buildSceneFocus(videoId, eligibleIds) {
   return merged;
 }
 
+// Per-video character events keyed off scene_ids in the KB. Right now we
+// only resolve "death moments" (state entries flagged alive=false with a
+// triggered_by_scene_id pointing at a scene in this video). The frontend
+// uses death_at to gate the "已故" badge on currentTime — so the badge only
+// appears once the recap actually shows the death scene, instead of being
+// present from t=0 just because the character is dead by S01E10.
+function buildCharEvents(videoId, db, eligibleIds) {
+  const kbFile = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  if (!fs.existsSync(kbFile)) return null;
+  const kb = JSON.parse(fs.readFileSync(kbFile, 'utf8'));
+  const sceneById = new Map();
+  for (const sc of kb.scenes || []) sceneById.set(sc.scene_id, sc);
+  const eligible = new Set(eligibleIds);
+  const out = {};
+  for (const ch of db.characters || []) {
+    if (!eligible.has(ch.character_id)) continue;
+    for (const entry of ch.state_timeline || []) {
+      if (entry.alive !== false || !entry.triggered_by_scene_id) continue;
+      const sc = sceneById.get(entry.triggered_by_scene_id);
+      if (!sc || typeof sc.start_time !== 'number') continue;
+      out[ch.character_id] = { death_at: sc.start_time };
+      break;  // one death per character is enough
+    }
+  }
+  return out;
+}
+
 function main() {
   fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
   const db = charactersLib.loadCharacterDb(SHOW_ID);
@@ -418,12 +446,18 @@ function main() {
     .filter(f => f.endsWith('.json') && !f.includes('backup'))
     .map(f => f.replace(/\.json$/, ''));
   let focusFiles = 0;
+  let eventFiles = 0;
   for (const vid of videoIds) {
     const focus = buildSceneFocus(vid, eligible);
-    if (!focus || focus.length === 0) continue;
-    const outPath = path.join(SNAPSHOT_DIR, `_scene-focus-${vid}.json`);
-    fs.writeFileSync(outPath, JSON.stringify(focus));
-    focusFiles++;
+    if (focus && focus.length > 0) {
+      fs.writeFileSync(path.join(SNAPSHOT_DIR, `_scene-focus-${vid}.json`), JSON.stringify(focus));
+      focusFiles++;
+    }
+    const events = buildCharEvents(vid, db, eligible);
+    if (events && Object.keys(events).length > 0) {
+      fs.writeFileSync(path.join(SNAPSHOT_DIR, `_char-events-${vid}.json`), JSON.stringify(events));
+      eventFiles++;
+    }
   }
 
   const purged = purgeStaleSnapshots();
@@ -431,6 +465,7 @@ function main() {
 
   console.log(`✓ family tree: ${characters.length} characters, ${kin_edges.length} kin, ${conflict_edges.length} conflict → ${path.relative(process.cwd(), SNAPSHOT_FILE)}`);
   console.log(`✓ ${focusFiles} scene-focus map(s) → client/public/relationship-graph/_scene-focus-*.json`);
+  console.log(`✓ ${eventFiles} char-events map(s) → client/public/relationship-graph/_char-events-*.json`);
   console.log(`✓ ${IMG_CACHE_BY_PATH.size} face portraits → client/public/kb/characters/face_refs/`);
   console.log(`✓ ${dragonCount} dragon portraits → client/public/kb/characters/dragon_refs/`);
   if (purged > 0) console.log(`✓ removed ${purged} stale per-hero snapshot file(s)`);

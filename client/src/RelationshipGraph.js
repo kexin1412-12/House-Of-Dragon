@@ -138,13 +138,13 @@ function Companion({ data }) {
   );
 }
 
-function CharacterNode({ char, position, highlighted, focused, onClick }) {
+function CharacterNode({ char, position, highlighted, focused, dead, onClick }) {
   const clipId = `rg-clip-${char.character_id}`;
   const cls = [
     'rg-node',
     highlighted ? 'is-highlighted' : '',
     focused ? 'is-focused' : '',
-    char.alive ? '' : 'is-dead',
+    dead ? 'is-dead' : '',
   ].filter(Boolean).join(' ');
   return (
     <g
@@ -178,7 +178,7 @@ function CharacterNode({ char, position, highlighted, focused, onClick }) {
 
       <text className="rg-name-zh" y={NAME_BLOCK_Y}>{char.display_name}</text>
       <text className="rg-name-en" y={NAME_BLOCK_Y + 16}>{char.name_en}</text>
-      {!char.alive && (
+      {dead && (
         <text className="rg-died" y={NAME_BLOCK_Y + 32}>已故</text>
       )}
 
@@ -444,6 +444,7 @@ function useViewport(graphSize, viewportRef) {
 export default function RelationshipGraph({ videoId, videoRef }) {
   const [tree, setTree] = useState(null);
   const [focusList, setFocusList] = useState(null);
+  const [charEvents, setCharEvents] = useState(null);   // per-video death/spawn timing
   const [profileMap, setProfileMap] = useState(null);   // pre-built static profiles keyed by character_id
   const [open, setOpen] = useState(false);
   const [hasNews, setHasNews] = useState(false);
@@ -451,6 +452,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const [error, setError] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
   const [focused, setFocused] = useState(null);
+  const [deadNow, setDeadNow] = useState(() => new Set());
   const [profileId, setProfileId] = useState(null);
   const viewportRef = useRef(null);
 
@@ -487,6 +489,18 @@ export default function RelationshipGraph({ videoId, videoRef }) {
     return () => { cancelled = true; };
   }, [videoId]);
 
+  // load per-video character events ({character_id: {death_at}}). Without
+  // it the family tree falls back to the static `char.alive` (final-state).
+  useEffect(() => {
+    if (!videoId) { setCharEvents(null); return; }
+    let cancelled = false;
+    const url = `${SNAPSHOT_BASE}/relationship-graph/_char-events-${encodeURIComponent(videoId.replace(/\.[^.]+$/, ''))}.json`;
+    axios.get(url, { timeout: 5000 })
+      .then(r => { if (!cancelled) setCharEvents(r.data || null); })
+      .catch(() => { if (!cancelled) setCharEvents(null); });
+    return () => { cancelled = true; };
+  }, [videoId]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
@@ -500,39 +514,58 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   // close profile when the whole relationship graph drawer closes
   useEffect(() => { if (!open) setProfileId(null); }, [open]);
 
-  // Time-driven focus: poll currentTime every 600ms, look up the dominant
-  // character for that moment, and update local state. Cheap binary search
-  // through the merged ranges keeps polling work negligible even at 458
-  // entries.
+  // Time-driven polling: every 600 ms while the drawer is open, derive the
+  // focal character (binary search through scene-focus ranges) AND the set
+  // of characters whose death scene has already played (compare currentTime
+  // to char-events death_at). Both update only on actual change to avoid
+  // re-rendering the whole tree every tick.
   useEffect(() => {
-    if (!open || !focusList || !videoRef?.current) return;
-    let raf = 0;
+    if (!open || !videoRef?.current) return;
+    if (!focusList && !charEvents) return;
+    let timer = 0;
     let lastHero = null;
+    let lastDeadKey = '';
     const tick = () => {
       const v = videoRef.current;
-      if (v && !v.paused) {
+      if (v) {
         const t = v.currentTime;
-        // Linear scan with start-cache would be enough; binary search just to
-        // be safe if the list ever grows.
-        let lo = 0, hi = focusList.length - 1, hit = null;
-        while (lo <= hi) {
-          const m = (lo + hi) >> 1;
-          const r = focusList[m];
-          if (t < r.start) hi = m - 1;
-          else if (t >= r.end) lo = m + 1;
-          else { hit = r; break; }
+
+        if (focusList) {
+          let lo = 0, hi = focusList.length - 1, hit = null;
+          while (lo <= hi) {
+            const m = (lo + hi) >> 1;
+            const r = focusList[m];
+            if (t < r.start) hi = m - 1;
+            else if (t >= r.end) lo = m + 1;
+            else { hit = r; break; }
+          }
+          const heroId = hit ? hit.hero_id : null;
+          if (heroId !== lastHero) {
+            lastHero = heroId;
+            setFocused(heroId);
+          }
         }
-        const heroId = hit ? hit.hero_id : null;
-        if (heroId !== lastHero) {
-          lastHero = heroId;
-          setFocused(heroId);
+
+        if (charEvents) {
+          const next = new Set();
+          for (const id in charEvents) {
+            const ev = charEvents[id];
+            if (ev?.death_at != null && t >= ev.death_at) next.add(id);
+          }
+          // Set membership rarely changes (twice in the demo), so a sorted
+          // string key is cheap enough as a change detector.
+          const key = [...next].sort().join(',');
+          if (key !== lastDeadKey) {
+            lastDeadKey = key;
+            setDeadNow(next);
+          }
         }
       }
-      raf = window.setTimeout(tick, 600);
+      timer = window.setTimeout(tick, 600);
     };
     tick();
-    return () => clearTimeout(raf);
-  }, [open, focusList, videoRef]);
+    return () => clearTimeout(timer);
+  }, [open, focusList, charEvents, videoRef]);
 
   const layout = useMemo(() => tree ? computeLayout(tree) : null, [tree]);
   const parentGroups = useMemo(
@@ -723,16 +756,24 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
                 {/* portrait layer last so circles draw above edges */}
                 <g className="rg-node-layer">
-                  {tree.characters.map(c => (
-                    <CharacterNode
-                      key={c.character_id}
-                      char={c}
-                      position={layout.positions[c.character_id]}
-                      highlighted={highlighted === c.character_id}
-                      focused={focused === c.character_id}
-                      onClick={onCharClick}
-                    />
-                  ))}
+                  {tree.characters.map(c => {
+                    // If we know when (in this video) the character's death
+                    // scene plays, use the time-based deadNow set; otherwise
+                    // fall back to the static "alive at end-of-S1" flag.
+                    const hasTimedDeath = charEvents?.[c.character_id]?.death_at != null;
+                    const dead = hasTimedDeath ? deadNow.has(c.character_id) : !c.alive;
+                    return (
+                      <CharacterNode
+                        key={c.character_id}
+                        char={c}
+                        position={layout.positions[c.character_id]}
+                        highlighted={highlighted === c.character_id}
+                        focused={focused === c.character_id}
+                        dead={dead}
+                        onClick={onCharClick}
+                      />
+                    );
+                  })}
                 </g>
               </svg>
             )}

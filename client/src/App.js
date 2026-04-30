@@ -21,18 +21,7 @@ function resolveVideoSrc(url) {
   return `${VIDEO_CDN}${url}`;
 }
 
-const MOCK_RATINGS = ['9.8', '8.5', '9.1', '7.8', '9.3', '8.7', '9.0', '8.2'];
 const GENRES = ['ACTION', 'FANTASY', 'DRAMA'];
-
-function formatSize(bytes) {
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-  return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
-}
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' });
-}
 
 export default function App() {
   const [videos, setVideos] = useState([]);
@@ -92,19 +81,6 @@ export default function App() {
     }
   }
 
-  async function handleDelete(video, e) {
-    e.stopPropagation();
-    try {
-      await axios.delete(`${API}/api/videos/${encodeURIComponent(video.filename)}`);
-      notify(`"${video.name}" 已删除`);
-      setVideos(prev => prev.filter(v => v.id !== video.id));
-      if (featured?.id === video.id) setFeatured(null);
-      if (playing?.id === video.id) setPlaying(null);
-    } catch {
-      notify('删除失败', 'error');
-    }
-  }
-
   function onDragOver(e) { e.preventDefault(); setDragOver(true); }
   function onDragLeave() { setDragOver(false); }
   function onDrop(e) {
@@ -112,10 +88,6 @@ export default function App() {
     setDragOver(false);
     handleUpload(e.dataTransfer.files[0]);
   }
-
-  const filtered = videos.filter(v =>
-    v.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   const heroPreview = featured || videos[0];
 
@@ -196,94 +168,6 @@ export default function App() {
             <div className="hero-preview-meta">
               <span className="hero-preview-pill">▶ 正在播放</span>
               <span className="hero-preview-name">{heroPreview.name}</span>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* Video List */}
-      <section className="content-section">
-        <div className="section-header">
-          <div>
-            <h2 className="section-title">正在热播</h2>
-            <p className="section-sub">根据您的喜好为您推荐</p>
-          </div>
-          <div className="storage-badge">
-            <span className="green-dot" />
-            存储空间：85% 剩余
-          </div>
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="empty-state" onClick={() => setShowUpload(true)}>
-            <div className="empty-icon">
-              <svg viewBox="0 0 64 64" fill="none">
-                <rect x="8" y="16" width="48" height="36" rx="4" stroke="currentColor" strokeWidth="2"/>
-                <path d="M26 28l12 8-12 8V28z" fill="currentColor"/>
-              </svg>
-            </div>
-            <p className="empty-title">还没有视频</p>
-            <p className="empty-sub">点击此处上传您的第一个视频</p>
-          </div>
-        ) : (
-          <div className="video-grid">
-            {filtered.map((video, i) => (
-              <div
-                key={video.id}
-                className={`video-card ${featured?.id === video.id ? 'active' : ''}`}
-                onClick={() => { setFeatured(video); setPlaying(video); }}
-              >
-                <div className="card-thumb">
-                  <video
-                    src={`${resolveVideoSrc(video.url)}#t=60`}
-                    preload="auto"
-                    muted
-                    autoPlay
-                    loop
-                    playsInline
-                  />
-                  <div className="card-overlay">
-                    <div className="card-play-btn">▶</div>
-                  </div>
-                  <span className="card-rating">
-                    ★ {MOCK_RATINGS[i % MOCK_RATINGS.length]}
-                  </span>
-                  <button
-                    className="card-delete"
-                    onClick={e => handleDelete(video, e)}
-                    title="删除"
-                  >✕</button>
-                </div>
-                <div className="card-info">
-                  <h3 className="card-title" title={video.name}>{video.name}</h3>
-                  <div className="card-meta">
-                    <span>{formatSize(video.size)}</span>
-                    <span>{formatDate(video.uploadedAt)}</span>
-                  </div>
-                </div>
-                <div className="card-footer">
-                  <button
-                    className="card-set-featured"
-                    onClick={e => { e.stopPropagation(); setFeatured(video); }}
-                  >
-                    {featured?.id === video.id ? '★ 已置顶' : '☆ 置顶'}
-                  </button>
-                  <button
-                    className="card-play-small"
-                    onClick={e => { e.stopPropagation(); setFeatured(video); setPlaying(video); }}
-                  >
-                    ▶ 播放
-                  </button>
-                </div>
-              </div>
-            ))}
-
-            {/* Add more card */}
-            <div className="video-card add-card" onClick={() => setShowUpload(true)}>
-              <div className="add-card-inner">
-                <div className="add-icon">+</div>
-                <p>上传视频</p>
-              </div>
             </div>
           </div>
         )}
