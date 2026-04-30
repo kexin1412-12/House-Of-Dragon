@@ -683,6 +683,15 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   const focusPos = focused && layout ? layout.positions[focused] : null;
 
+  // useViewport returns a fresh wrapper object every render (because `view`
+  // state changes whenever the user pans/zooms), so any effect depending on
+  // `viewport` directly fires on every render — including those triggered by
+  // the user's own drag/wheel — and snaps the view back. Stash a ref so the
+  // effects below can reach `centerOn` / `fit` without putting the wrapper
+  // in their dep arrays.
+  const viewportFnsRef = useRef(viewport);
+  viewportFnsRef.current = viewport;
+
   // First-open homing: once the drawer opens and the tree is laid out, jump
   // to the comfortable scale centered on the current focal character (or
   // graph midpoint if focus hasn't resolved yet). Gated by a ref so we don't
@@ -692,17 +701,18 @@ export default function RelationshipGraph({ videoId, videoRef }) {
     if (!open) { homedRef.current = false; return; }
     if (homedRef.current || !graphSize.width) return;
     homedRef.current = true;
-    if (focusPos) viewport.fit(focusPos.x, focusPos.y);
-    else viewport.fit();
-  }, [open, graphSize.width, viewport, focusPos]);
+    const v = viewportFnsRef.current;
+    if (focusPos) v.fit(focusPos.x, focusPos.y);
+    else v.fit();
+  }, [open, graphSize.width, focusPos]);
 
   // Time-driven focus change after the initial home: pan only (preserve the
   // user's current scale so manual zoom isn't wiped each scene).
   useEffect(() => {
     if (!open || !focusPos) return;
     if (!homedRef.current) return;        // first home will already cover this
-    viewport.centerOn(focusPos.x, focusPos.y);
-  }, [focusPos, open, viewport]);
+    viewportFnsRef.current.centerOn(focusPos.x, focusPos.y);
+  }, [focusPos, open]);
 
   // ⟲ button: re-home on the current focal character.
   const onResetView = useCallback(() => {
