@@ -22,48 +22,64 @@ function deriveShowFromVideoId(videoId) {
 
 // 设定百科分类图标——内联 SVG，跟整体金边深底审美一致；不再用 emoji。
 // （JSON 里仍有 category_icon 字段，但渲染层忽略它）
+// 风格：填充剪影（fill=currentColor），由外层 tile 给金色 + 暗底背景。
 const LORE_CATEGORY_ICON = {
-  // 地点与建筑：城堡轮廓
+  // 地点与建筑：三塔城堡
   place: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 20 L3 11 L6 11 L6 8 L9 8 L9 11 L12 11 L12 6 L15 6 L15 11 L18 11 L18 8 L21 8 L21 20 Z" />
-      <line x1="3" y1="20" x2="21" y2="20" />
-      <line x1="11" y1="20" x2="11" y2="15" />
-      <line x1="13" y1="20" x2="13" y2="15" />
+    <svg viewBox="0 0 32 32" fill="currentColor">
+      <path d="M2 28 L2 14 L5 14 L5 11 L7 11 L7 14 L9 14 L9 11 L11 11 L11 16 L13 16 L13 8 L19 8 L19 16 L21 16 L21 11 L23 11 L23 14 L25 14 L25 11 L27 11 L27 14 L30 14 L30 28 Z" />
+      <rect x="14" y="20" width="4" height="8" fill="#0b0805" />
+      <rect x="6" y="22" width="3" height="3" fill="#0b0805" />
+      <rect x="23" y="22" width="3" height="3" fill="#0b0805" />
     </svg>
   ),
-  // 制度与传统：王冠
+  // 制度与传统：三尖王冠 + 宝石
   institution: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 17 L4 8 L9 12 L12 6 L15 12 L20 8 L21 17 Z" />
-      <line x1="3" y1="20" x2="21" y2="20" />
-      <circle cx="4" cy="8" r="0.9" fill="currentColor" />
-      <circle cx="20" cy="8" r="0.9" fill="currentColor" />
-      <circle cx="12" cy="6" r="0.9" fill="currentColor" />
+    <svg viewBox="0 0 32 32" fill="currentColor">
+      <path d="M3 23 L4 11 L10 16 L16 8 L22 16 L28 11 L29 23 Z" />
+      <rect x="3" y="23" width="26" height="3" />
+      <circle cx="4" cy="11" r="1.6" />
+      <circle cx="16" cy="8" r="1.8" />
+      <circle cx="28" cy="11" r="1.6" />
     </svg>
   ),
-  // 龙与龙骑：飞翼龙剪影
+  // 龙与龙骑：盘踞的龙
   dragon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 13 C 5 10 8 9 11 11 L 13 11 C 16 9 19 10 21 13" />
-      <path d="M11 11 L 12 16 L 14 18 L 16 17" />
-      <path d="M5 13 L 7 16" />
-      <path d="M19 13 L 17 16" />
-      <circle cx="13" cy="11" r="0.7" fill="currentColor" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 25 C 9 17, 13 14, 17 16 C 21 18, 24 15, 22 11 C 20 7, 14 7, 12 11" />
+      <path d="M22 25 C 22 22, 20 20, 17 20" />
+      <circle cx="9" cy="25" r="2" fill="currentColor" stroke="none" />
+      <path d="M22 8 L 24 6 M22 11 L 25 10" />
     </svg>
   ),
-  // 家族与阵营：交叉双剑
+  // 家族与阵营：交叉双剑（带十字护手 + 圆首）
   house: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="5" x2="15" y2="15" />
-      <line x1="19" y1="5" x2="9" y2="15" />
-      <path d="M14 14 L 16 14 L 16 16 L 14 16 Z" />
-      <path d="M8 14 L 10 14 L 10 16 L 8 16 Z" />
-      <line x1="12" y1="17" x2="12" y2="20" />
-      <line x1="10" y1="20" x2="14" y2="20" />
+    <svg viewBox="0 0 32 32" fill="currentColor">
+      {/* sword 1: NW-SE blade */}
+      <path d="M7 5 L11 5 L11 9 L23 21 L23 25 L19 25 L19 23 L7 11 Z" />
+      <circle cx="9" cy="3.5" r="2" />
+      {/* sword 2: NE-SW blade */}
+      <path d="M25 5 L21 5 L21 9 L9 21 L9 25 L13 25 L13 23 L25 11 Z" />
+      <circle cx="23" cy="3.5" r="2" />
     </svg>
   ),
 };
+
+// 分类副标题（固定文案，不在 JSON 里——presentation 层）
+const LORE_CATEGORY_SUBTITLE = {
+  place:       '探索维斯特洛的城堡、城市与地标',
+  institution: '了解七大国的政治、律法与社会习俗',
+  dragon:      '深入龙族、巨龙与龙骑士的传奇',
+  house:       '王室家族、权力派系与复杂盟约',
+};
+
+// 设定百科 header 旁的小书图标
+const LORE_HEADER_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 5 C 4 4 5 4 6 4 L 11 4 C 12 4 12 5 12 5 L 12 19 C 12 19 12 18 11 18 L 6 18 C 5 18 4 18 4 19 Z" />
+    <path d="M20 5 C 20 4 19 4 18 4 L 13 4 C 12 4 12 5 12 5 L 12 19 C 12 19 12 18 13 18 L 18 18 C 19 18 20 18 20 19 Z" />
+  </svg>
+);
 
 export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeExpand }) {
   const [riffs, setRiffs] = useState([]);
@@ -129,9 +145,10 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
         onClick={() => setLoreOpen(o => !o)}
         aria-expanded={loreOpen}
       >
-        <span className="mp-lore-caret">{loreOpen ? '▼' : '▶'}</span>
+        <span className="mp-lore-toggle-icon" aria-hidden="true">{LORE_HEADER_ICON}</span>
         <span className="mp-lore-toggle-label">设定百科</span>
         <span className="mp-lore-count">{loreTotal}</span>
+        <span className="mp-lore-caret">{loreOpen ? '▾' : '▸'}</span>
       </button>
 
       {loreOpen && (
@@ -145,14 +162,19 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                   onClick={() => setLoreCatOpen(s => ({ ...s, [g.category]: !s[g.category] }))}
                   aria-expanded={catOpen}
                 >
-                  <span className="mp-lore-caret mp-lore-caret-sm">{catOpen ? '▼' : '▶'}</span>
                   {LORE_CATEGORY_ICON[g.category] && (
                     <span className="mp-lore-group-icon" aria-hidden="true">
                       {LORE_CATEGORY_ICON[g.category]}
                     </span>
                   )}
-                  <span className="mp-lore-group-label">{g.label}</span>
+                  <span className="mp-lore-group-text">
+                    <span className="mp-lore-group-label">{g.label}</span>
+                    {LORE_CATEGORY_SUBTITLE[g.category] && (
+                      <span className="mp-lore-group-subtitle">{LORE_CATEGORY_SUBTITLE[g.category]}</span>
+                    )}
+                  </span>
                   <span className="mp-lore-group-count">{g.cards.length}</span>
+                  <span className="mp-lore-group-caret">{catOpen ? '▾' : '▸'}</span>
                 </button>
 
                 {catOpen && (
