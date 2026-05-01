@@ -806,10 +806,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setAiInput('');
     setAiSending(true);
 
-    // Typewriter: 不再等标点凑齐才刷一整段。把进来的 delta 推进队列，
-    // 每 ~22ms 吐 1 个字符到 UI；队列堆积时按比例加速，避免后端突然
-    // 喷一大段时把用户卡在那等"再等一段"。stream 收尾时一次性 flush 剩余。
-    const TYPE_INTERVAL_MS = 22;       // ~45 chars/sec at base speed
+    // 严格打字机：每 18ms 吐 1 个字。即使后端把整段一次性 flush 过来，
+    // 前端仍然按"敲字"节奏呈现，不会出现"等几秒然后全砸出来"。
+    // 仅当队列堆得很大时（>80 / >200）才允许小幅加速到 2 / 3 字，避免
+    // 长回复的尾巴拖太久。stream 结束后让 tick 自己继续敲完队列。
+    const TYPE_INTERVAL_MS = 18;
     let queue = '';
     let typing = false;
     const flushChunk = (chunk) => setAiMessages(prev => {
@@ -822,8 +823,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     });
     const tick = () => {
       if (!queue.length) { typing = false; return; }
-      // 队列越长每帧吐越多，避免长回复尾巴拖太久
-      const n = Math.min(queue.length, Math.max(1, Math.ceil(queue.length / 30)));
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
       flushChunk(queue.slice(0, n));
       queue = queue.slice(n);
       typing = true;
@@ -834,10 +834,8 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       queue += delta;
       if (!typing) tick();
     };
-    const flushPending = () => {
-      if (queue.length) { flushChunk(queue); queue = ''; }
-      typing = false;
-    };
+    // 不在 stream 结束时立即 dump 剩余 —— 用户要"打字感"，让 tick 把队列敲完。
+    const flushPending = () => {};
 
     const finalizeMsg = (patch) => {
       flushPending();
@@ -1612,6 +1610,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
 
             <PlayerControls
               videoRef={videoRef}
+              videoId={aiKb}
               hasNext={videos.length > 1}
               onNext={() => {
                 const idx = videos.findIndex(v => v.id === playing.id);
@@ -2460,7 +2459,7 @@ function fmtTime(s) {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 
-function PlayerControls({ videoRef, hasNext, onNext }) {
+function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -2474,6 +2473,10 @@ function PlayerControls({ videoRef, hasNext, onNext }) {
   const [subtitle, setSubtitle] = useState('中文');
   const [audioTrack, setAudioTrack] = useState('默认');
   const [dragPreview, setDragPreview] = useState(null); // {time, leftPct} while dragging
+  // 进度条 chapter ticks —— 来自 KB 的章节锚点（act + branch_point）。
+  // 没 videoId / 后端 / KB 时静默为 []，进度条退化成普通 progress。
+  const [chapters, setChapters] = useState([]);
+  const [hoveredChapter, setHoveredChapter] = useState(null); // 整个 chapter 对象，含 t/label/kind
 
   const progressRef = useRef(null);
   const draggingRef = useRef(false);
@@ -2510,6 +2513,16 @@ function PlayerControls({ videoRef, hasNext, onNext }) {
       v.removeEventListener('progress', onProgress);
     };
   }, [videoRef]);
+
+  // 拉这一集的章节锚点；videoId 变了重拉。后端不可达 / 没 KB 时静默置空。
+  useEffect(() => {
+    if (!videoId) { setChapters([]); return; }
+    let cancelled = false;
+    axios.get(`${API}/api/agent/timeline/chapters`, { params: { videoId }, timeout: 8000 })
+      .then(r => { if (!cancelled) setChapters(r.data?.chapters || []); })
+      .catch(() => { if (!cancelled) setChapters([]); });
+    return () => { cancelled = true; };
+  }, [videoId]);
 
   const togglePlay = () => {
     const v = videoRef.current;
@@ -2596,10 +2609,34 @@ function PlayerControls({ videoRef, hasNext, onNext }) {
           >
             <div className="tx-controls-progress-buffered" style={{ width: `${bufferedPct}%` }} />
             <div className="tx-controls-progress-played" style={{ width: `${playedPct}%` }} />
+            {/* 章节 ticks：act = 灰色细条；branch = 橙色粗条（剧情分支锚点）。
+                pointer-events: none 在 CSS 里关掉，让点击穿透到底下进度条仍能 seek。*/}
+            {duration > 0 && chapters.map(c => {
+              const left = Math.max(0, Math.min(100, (c.t / duration) * 100));
+              return (
+                <div
+                  key={`${c.kind}-${c.t}`}
+                  className={`tx-controls-progress-tick tx-controls-progress-tick-${c.kind}`}
+                  style={{ left: `${left}%` }}
+                  onMouseEnter={() => setHoveredChapter(c)}
+                  onMouseLeave={() => setHoveredChapter(prev => prev === c ? null : prev)}
+                />
+              );
+            })}
             <div className="tx-controls-progress-thumb" style={{ left: `${playedPct}%` }} />
             {dragPreview && (
               <div className="tx-controls-progress-tooltip" style={{ left: `${dragPreview.leftPct}%` }}>
                 {fmtTime(dragPreview.time)}
+              </div>
+            )}
+            {/* hover chapter 时显示 label tooltip（drag 时让位给时间 tooltip）*/}
+            {!dragPreview && hoveredChapter && duration > 0 && (
+              <div
+                className={`tx-controls-progress-chapter-tip tx-controls-progress-chapter-tip-${hoveredChapter.kind}`}
+                style={{ left: `${(hoveredChapter.t / duration) * 100}%` }}
+              >
+                <span className="tx-controls-progress-chapter-tip-time">{fmtTime(hoveredChapter.t)}</span>
+                <span className="tx-controls-progress-chapter-tip-label">{hoveredChapter.label}</span>
               </div>
             )}
           </div>

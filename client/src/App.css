@@ -1811,6 +1811,78 @@ body {
   white-space: nowrap;
 }
 
+/* 章节 ticks：act 灰条、branch 橙条；hover 区比视觉条宽，方便鼠标命中 */
+.tx-controls-progress-tick {
+  position: absolute; top: 50%;
+  width: 10px; height: 14px;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  cursor: pointer;
+  z-index: 2;
+}
+/* 视觉条画在 ::before 上 —— 真正的命中区是上面的透明 10px 包络 */
+.tx-controls-progress-tick::before {
+  content: '';
+  position: absolute; left: 50%; top: 50%;
+  width: 2px; height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 1px;
+  transition: width 0.15s, height 0.15s;
+}
+.tx-controls-progress-tick-act::before {
+  background: rgba(255, 255, 255, 0.55);
+}
+.tx-controls-progress-tick-branch::before {
+  width: 3px;
+  background: #e8954d;
+  box-shadow: 0 0 4px rgba(232, 149, 77, 0.6);
+}
+.tx-controls-progress-tick:hover::before {
+  width: 4px;
+  height: 18px;
+  background: #fff;
+}
+.tx-controls-progress-tick-branch:hover::before {
+  background: #ffb37a;
+}
+
+/* hover chapter 时浮起的 label 气泡（drag 中让位给时间 tooltip） */
+.tx-controls-progress-chapter-tip {
+  position: absolute;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 360px;
+  z-index: 3;
+  border-left: 3px solid rgba(255, 255, 255, 0.45);
+}
+.tx-controls-progress-chapter-tip-branch {
+  border-left-color: #e8954d;
+}
+.tx-controls-progress-chapter-tip-time {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+.tx-controls-progress-chapter-tip-label {
+  font-size: 12px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 340px;
+}
+
 /* ───── Middle slot: danmaku input ───── */
 .tx-controls-row { /* override: no more margin-left: auto, use middle spacer */ }
 .tx-controls-right { margin-left: 0 !important; }
