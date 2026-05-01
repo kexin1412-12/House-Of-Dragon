@@ -28,9 +28,14 @@ const NODE_H = 168;
 const THUMB_W = 184;
 const THUMB_H = 104;
 const NODE_GAP = 36;        // 主线相邻节点的水平间距
-const SIDE_OFFSET_Y = 240;  // 支线节点距主线的垂直距离
+const SIDE_OFFSET_Y = 240;  // 支线节点距主线的垂直距离（中心到中心）
 const CANVAS_PAD_X = 60;
-const CANVAS_PAD_Y = 220;
+// 上下 padding 给支线节点留呼吸空间。mainLineY 必须 >= CANVAS_PAD_TOP +
+// NODE_H/2 + SIDE_OFFSET_Y，否则 above 支线会被画到 y<0（在 SVG 画布外，
+// 默认 fit 都看不到，往上拖更直接消失）。
+const CANVAS_PAD_TOP = 40;
+const CANVAS_PAD_BOTTOM = 40;
+const CANVAS_PAD_Y = CANVAS_PAD_TOP + NODE_H / 2 + SIDE_OFFSET_Y;  // = mainLineY
 
 // 把主线节点按 narrative_function 的连续段切成幕段，给顶部进度带用。
 function computePhases(storyline, allNodesById) {
@@ -95,7 +100,8 @@ function computeLayout(storyline) {
     ? CANVAS_PAD_X + (mainIds.length - 1) * (NODE_W + NODE_GAP) + NODE_W / 2
     : CANVAS_PAD_X;
   const width = lastMainCx + NODE_W / 2 + CANVAS_PAD_X;
-  const height = mainLineY + SIDE_OFFSET_Y + NODE_H + 60;
+  // 高度对称：mainLineY 之下也留同样的 SIDE_OFFSET_Y + NODE_H/2 + bottom pad
+  const height = mainLineY + SIDE_OFFSET_Y + NODE_H / 2 + CANVAS_PAD_BOTTOM;
   return { positions, width, height, mainLineY, sideTracksMeta };
 }
 
@@ -126,8 +132,10 @@ function useViewport(graphSize, viewportRef) {
     const vw = viewportRef.current?.clientWidth || 0;
     const vh = viewportRef.current?.clientHeight || 0;
     if (!vw || !vh || !graphSize.width || !graphSize.height) return;
-    const sx = (vw - 80) / graphSize.width;
-    const sy = (vh - 80) / graphSize.height;
+    // viewport 内边距小一点（24px）—— 画布自身已经有 CANVAS_PAD_TOP/BOTTOM 留了
+    // 支线呼吸位，再叠 80px 双重 padding 会让默认 fit 缩得太狠看不清字。
+    const sx = (vw - 24) / graphSize.width;
+    const sy = (vh - 24) / graphSize.height;
     const s = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.min(sx, sy, 1)));
     const tx = (vw - graphSize.width * s) / 2;
     const ty = (vh - graphSize.height * s) / 2;
@@ -152,8 +160,27 @@ function useViewport(graphSize, viewportRef) {
   const onMouseMove = useCallback((e) => {
     if (!dragRef.current) return;
     const { x, y, tx, ty } = dragRef.current;
-    setView(v => ({ ...v, tx: tx + (e.clientX - x), ty: ty + (e.clientY - y) }));
-  }, []);
+    setView(v => {
+      const nextTx = tx + (e.clientX - x);
+      const nextTy = ty + (e.clientY - y);
+      // pan 软边界：至少保证 graph 在 viewport 内有 120px 可见，
+      // 防止用户把整张图拖到屏幕外（特别是支线节点贴上沿时往上一拖就消失）
+      const vw = viewportRef.current?.clientWidth || 0;
+      const vh = viewportRef.current?.clientHeight || 0;
+      const gw = graphSize.width  * v.scale;
+      const gh = graphSize.height * v.scale;
+      const MARGIN = 120;
+      const minTx = -gw + MARGIN;       // graph 右边只能拖到 viewport 左边 +120 处
+      const maxTx = vw - MARGIN;        // graph 左边只能拖到 viewport 右边 -120 处
+      const minTy = -gh + MARGIN;
+      const maxTy = vh - MARGIN;
+      return {
+        ...v,
+        tx: Math.max(minTx, Math.min(maxTx, nextTx)),
+        ty: Math.max(minTy, Math.min(maxTy, nextTy)),
+      };
+    });
+  }, [graphSize, viewportRef]);
   const onMouseUp = useCallback(() => { dragRef.current = null; }, []);
 
   return { view, setScale, zoomIn, zoomOut, fit, onWheel, onMouseDown, onMouseMove, onMouseUp };
