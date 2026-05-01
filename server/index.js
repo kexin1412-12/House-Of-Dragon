@@ -191,6 +191,52 @@ app.get('/api/riffs', (req, res) => {
   res.json({ video_id: videoId || null, count: riffs.length, riffs });
 });
 
+// 设定百科 / Lore Cards —— 静态 KB 直出。按 show 维度组织，整季共用，不带时间锚。
+let _loreCache = null;
+function loadLore() {
+  if (_loreCache) return _loreCache;
+  const dir = path.join(__dirname, 'kb', 'lore_cards');
+  const all = [];
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        const showSlug = j.show || null;
+        for (const c of (j.lore_cards || [])) {
+          all.push({ ...c, show: c.show || showSlug });
+        }
+      } catch (e) {
+        console.warn(`[lore] skip bad file ${f}:`, e.message);
+      }
+    }
+  }
+  _loreCache = all;
+  return all;
+}
+
+const LORE_CATEGORY_ORDER = ['place', 'institution', 'dragon', 'house'];
+
+app.get('/api/lore', (req, res) => {
+  const show = req.query.show;
+  const all = loadLore();
+  const cards = show ? all.filter(c => c.show === show) : all;
+  // 按 category 顺序分组：place / institution / dragon / house
+  const groups = LORE_CATEGORY_ORDER
+    .map(cat => {
+      const inCat = cards.filter(c => c.category === cat);
+      if (inCat.length === 0) return null;
+      return {
+        category: cat,
+        label: inCat[0].category_label || cat,
+        icon: inCat[0].category_icon || '',
+        cards: inCat,
+      };
+    })
+    .filter(Boolean);
+  res.json({ show: show || null, count: cards.length, groups });
+});
+
 // 叙事 X 光 / Storyline —— 静态 KB 直出。每个 video_id 一个 JSON 文件。
 let _storylineCache = null;
 function loadStoryline() {

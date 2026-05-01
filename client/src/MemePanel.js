@@ -12,11 +12,25 @@ function formatMMSS(seconds) {
   return `${mm}:${ss}`;
 }
 
+// 从 video_id 推 show slug。demo 期只有 HotD 一部剧，按前缀简单映射；
+// 接其他剧时再扩展或改由 App.js 显式传入 show prop。
+function deriveShowFromVideoId(videoId) {
+  if (!videoId) return null;
+  if (videoId.startsWith('house_of_dragon_')) return 'house-of-the-dragon';
+  return null;
+}
+
 export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeExpand }) {
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const itemRefs = useRef({}); // riff_id -> DOM node
   const { isFav, toggle: toggleFav, count: favCount } = useMemeFavorites();
+
+  // 段 B：设定百科
+  const [loreGroups, setLoreGroups] = useState([]);
+  const [loreOpen, setLoreOpen] = useState(false); // 顶级折叠
+  const [loreCatOpen, setLoreCatOpen] = useState({}); // category -> bool（二级折叠）
+  const [loreCardOpen, setLoreCardOpen] = useState(null); // lore_id（三级展开）
 
   useEffect(() => {
     if (!videoId) { setRiffs([]); return; }
@@ -24,6 +38,19 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
       .then(r => r.json())
       .then(data => setRiffs(data.riffs || []))
       .catch(() => setRiffs([]));
+  }, [videoId]);
+
+  // 拉设定百科。视频切换时重置所有折叠状态（spec §3.4 第 9 条）。
+  useEffect(() => {
+    const show = deriveShowFromVideoId(videoId);
+    setLoreOpen(false);
+    setLoreCatOpen({});
+    setLoreCardOpen(null);
+    if (!show) { setLoreGroups([]); return; }
+    fetch(`${API}/api/lore?show=${encodeURIComponent(show)}`)
+      .then(r => r.json())
+      .then(data => setLoreGroups(data.groups || []))
+      .catch(() => setLoreGroups([]));
   }, [videoId]);
 
   // MemeOverlay 触发"展开详情"时：自动滚动到对应条目并展开
@@ -42,122 +69,214 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
     if (v) v.currentTime = t;
   };
 
-  if (riffs.length === 0) {
-    return (
-      <div className="mp-empty">本集无文化梗</div>
-    );
+  const loreTotal = loreGroups.reduce((n, g) => n + g.cards.length, 0);
+
+  // 全空 → 空态。否则即使台词梗为空，只要有设定百科也照常渲染。
+  if (riffs.length === 0 && loreTotal === 0) {
+    return <div className="mp-empty">本集无文化梗</div>;
   }
 
   return (
     <div className="mp-root">
-      <div className="mp-header">
-        本集检测到 <strong>{riffs.length}</strong> 个文化梗
-        {favCount > 0 && (
-          <span className="mp-header-fav">· 已收藏 {favCount}</span>
-        )}
-      </div>
-      <div className="mp-list">
-        {riffs.map((r, i) => {
-          const isOpen = openId === r.riff_id;
-          return (
-            <div
-              key={r.riff_id}
-              ref={el => { if (el) itemRefs.current[r.riff_id] = el; }}
-              className={`mp-item${isOpen ? ' is-open' : ''}`}
-            >
-              <button
-                className="mp-item-head"
-                onClick={() => setOpenId(isOpen ? null : r.riff_id)}
-              >
-                <span className="mp-item-num">{i + 1}</span>
-                {r.anchor && r.anchor.keyframe && (
-                  <div className="mp-item-thumb-wrap">
-                    <img
-                      className="mp-item-thumb"
-                      src={`/kb/${r.anchor.keyframe}`}
-                      alt=""
-                    />
-                    {isFav(r.riff_id) && (
-                      <span className="mp-item-fav-badge" title="已收藏">♥</span>
+      {/* ─── 段 A：台词梗 ──────────────────── */}
+      {riffs.length > 0 && (
+        <>
+          <div className="mp-header">
+            本集 · 台词梗 <strong>{riffs.length}</strong>
+            {favCount > 0 && (
+              <span className="mp-header-fav">· 已收藏 {favCount}</span>
+            )}
+          </div>
+          <div className="mp-list">
+            {riffs.map((r, i) => {
+              const isOpen = openId === r.riff_id;
+              return (
+                <div
+                  key={r.riff_id}
+                  ref={el => { if (el) itemRefs.current[r.riff_id] = el; }}
+                  className={`mp-item${isOpen ? ' is-open' : ''}`}
+                >
+                  <button
+                    className="mp-item-head"
+                    onClick={() => setOpenId(isOpen ? null : r.riff_id)}
+                  >
+                    <span className="mp-item-num">{i + 1}</span>
+                    {r.anchor && r.anchor.keyframe && (
+                      <div className="mp-item-thumb-wrap">
+                        <img
+                          className="mp-item-thumb"
+                          src={`/kb/${r.anchor.keyframe}`}
+                          alt=""
+                        />
+                        {isFav(r.riff_id) && (
+                          <span className="mp-item-fav-badge" title="已收藏">♥</span>
+                        )}
+                      </div>
                     )}
-                  </div>
-                )}
-                <div className="mp-item-body">
-                  <div className="mp-item-quote">
-                    "{(r.anchor && r.anchor.subtitle_en) || ''}"
-                  </div>
-                  <div className="mp-item-meta">
-                    <span className="mp-item-time">
-                      {r.anchor ? formatMMSS(r.anchor.start_time) : ''}
-                    </span>
-                    {(r.tags || []).map(t => (
-                      <span key={t} className="mp-tag">{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </button>
-
-              {isOpen && r.tier3 && (
-                <div className="mp-item-detail">
-                  <div className="mp-detail-quote">
-                    <div className="mp-detail-quote-en">
-                      "{r.anchor.subtitle_en}"
+                    <div className="mp-item-body">
+                      <div className="mp-item-quote">
+                        "{(r.anchor && r.anchor.subtitle_en) || ''}"
+                      </div>
+                      <div className="mp-item-meta">
+                        <span className="mp-item-time">
+                          {r.anchor ? formatMMSS(r.anchor.start_time) : ''}
+                        </span>
+                        {(r.tags || []).map(t => (
+                          <span key={t} className="mp-tag">{t}</span>
+                        ))}
+                      </div>
                     </div>
-                    {r.anchor.subtitle_zh && (
-                      <div className="mp-detail-quote-zh">
-                        {r.anchor.subtitle_zh}
+                  </button>
+
+                  {isOpen && r.tier3 && (
+                    <div className="mp-item-detail">
+                      <div className="mp-detail-quote">
+                        <div className="mp-detail-quote-en">
+                          "{r.anchor.subtitle_en}"
+                        </div>
+                        {r.anchor.subtitle_zh && (
+                          <div className="mp-detail-quote-zh">
+                            {r.anchor.subtitle_zh}
+                          </div>
+                        )}
+                      </div>
+
+                      {r.tier2_punch && (
+                        <div className="mp-detail-punch">{r.tier2_punch}</div>
+                      )}
+
+                      {r.tier3.why_meme && (
+                        <section className="mp-detail-section">
+                          <h4>为什么是个梗</h4>
+                          <p>{r.tier3.why_meme}</p>
+                        </section>
+                      )}
+
+                      {Array.isArray(r.tier3.background) && r.tier3.background.length > 0 && (
+                        <section className="mp-detail-section">
+                          <h4>背景知识</h4>
+                          <ul>
+                            {r.tier3.background.map((b, idx) => (
+                              <li key={idx}>{b}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+
+                      {r.tier3.why_it_matters_now && (
+                        <section className="mp-detail-section">
+                          <h4>剧情里为什么重要</h4>
+                          <p>{r.tier3.why_it_matters_now}</p>
+                        </section>
+                      )}
+
+                      <div className="mp-detail-actions">
+                        <button
+                          className="mp-detail-jump"
+                          onClick={() => jumpTo(r.anchor.start_time)}
+                        >▶ 跳到此处</button>
+                        <button
+                          className={`mp-detail-fav${isFav(r.riff_id) ? ' is-on' : ''}`}
+                          onClick={() => toggleFav(r.riff_id)}
+                          title={isFav(r.riff_id) ? '取消收藏' : '收藏这条梗'}
+                        >
+                          {isFav(r.riff_id) ? '♥ 已收藏' : '♡ 收藏'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ─── 段 B：设定百科（默认折叠） ─────────────────── */}
+      {loreTotal > 0 && (
+        <div className="mp-lore-section">
+          <button
+            className={`mp-lore-toggle${loreOpen ? ' is-open' : ''}`}
+            onClick={() => setLoreOpen(o => !o)}
+            aria-expanded={loreOpen}
+          >
+            <span className="mp-lore-caret">{loreOpen ? '▼' : '▶'}</span>
+            <span className="mp-lore-toggle-label">设定百科</span>
+            <span className="mp-lore-count">{loreTotal}</span>
+          </button>
+
+          {loreOpen && (
+            <div className="mp-lore-groups">
+              {loreGroups.map(g => {
+                const catOpen = !!loreCatOpen[g.category];
+                return (
+                  <div key={g.category} className={`mp-lore-group${catOpen ? ' is-open' : ''}`}>
+                    <button
+                      className="mp-lore-group-toggle"
+                      onClick={() => setLoreCatOpen(s => ({ ...s, [g.category]: !s[g.category] }))}
+                      aria-expanded={catOpen}
+                    >
+                      <span className="mp-lore-caret mp-lore-caret-sm">{catOpen ? '▼' : '▶'}</span>
+                      {g.icon && <span className="mp-lore-group-icon">{g.icon}</span>}
+                      <span className="mp-lore-group-label">{g.label}</span>
+                      <span className="mp-lore-group-count">{g.cards.length}</span>
+                    </button>
+
+                    {catOpen && (
+                      <div className="mp-lore-cards">
+                        {g.cards.map(c => {
+                          const cardOpen = loreCardOpen === c.lore_id;
+                          return (
+                            <div key={c.lore_id} className={`mp-lore-card${cardOpen ? ' is-open' : ''}`}>
+                              <div className="mp-lore-card-head">
+                                <div className="mp-lore-card-title">
+                                  {c.title}
+                                  {c.title_en && (
+                                    <span className="mp-lore-card-title-en">（{c.title_en}）</span>
+                                  )}
+                                  {c.tag && <span className="mp-tag mp-lore-tag">{c.tag}</span>}
+                                </div>
+                                <div className="mp-lore-card-summary">{c.summary}</div>
+                                {!cardOpen && (
+                                  <button
+                                    className="mp-lore-detail-link"
+                                    onClick={() => setLoreCardOpen(c.lore_id)}
+                                  >查看详情 →</button>
+                                )}
+                              </div>
+
+                              {cardOpen && (
+                                <div className="mp-lore-card-detail">
+                                  <p className="mp-lore-card-body">{c.detail}</p>
+                                  {Array.isArray(c.see_also) && c.see_also.length > 0 && (
+                                    <div className="mp-lore-see-also">
+                                      <span className="mp-lore-see-also-label">延伸：</span>
+                                      {c.see_also.map((s, idx) => (
+                                        <React.Fragment key={idx}>
+                                          {idx > 0 && <span className="mp-lore-see-also-sep"> / </span>}
+                                          <span className="mp-lore-see-also-item">{s}</span>
+                                        </React.Fragment>
+                                      ))}
+                                    </div>
+                                  )}
+                                  <button
+                                    className="mp-lore-collapse-link"
+                                    onClick={() => setLoreCardOpen(null)}
+                                  >↑ 收起</button>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
-
-                  {r.tier2_punch && (
-                    <div className="mp-detail-punch">{r.tier2_punch}</div>
-                  )}
-
-                  {r.tier3.why_meme && (
-                    <section className="mp-detail-section">
-                      <h4>为什么是个梗</h4>
-                      <p>{r.tier3.why_meme}</p>
-                    </section>
-                  )}
-
-                  {Array.isArray(r.tier3.background) && r.tier3.background.length > 0 && (
-                    <section className="mp-detail-section">
-                      <h4>背景知识</h4>
-                      <ul>
-                        {r.tier3.background.map((b, idx) => (
-                          <li key={idx}>{b}</li>
-                        ))}
-                      </ul>
-                    </section>
-                  )}
-
-                  {r.tier3.why_it_matters_now && (
-                    <section className="mp-detail-section">
-                      <h4>剧情里为什么重要</h4>
-                      <p>{r.tier3.why_it_matters_now}</p>
-                    </section>
-                  )}
-
-                  <div className="mp-detail-actions">
-                    <button
-                      className="mp-detail-jump"
-                      onClick={() => jumpTo(r.anchor.start_time)}
-                    >▶ 跳到此处</button>
-                    <button
-                      className={`mp-detail-fav${isFav(r.riff_id) ? ' is-on' : ''}`}
-                      onClick={() => toggleFav(r.riff_id)}
-                      title={isFav(r.riff_id) ? '取消收藏' : '收藏这条梗'}
-                    >
-                      {isFav(r.riff_id) ? '♥ 已收藏' : '♡ 收藏'}
-                    </button>
-                  </div>
-                </div>
-              )}
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
