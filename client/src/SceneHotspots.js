@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './SceneHotspots.css';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-const FADE_TIMEOUT_MS = 3000;     // popover → badge 自动过渡
+const FADE_TIMEOUT_MS = 10000;    // popover → badge 自动过渡（用户反馈 3s 来不及反应，特别是放大视频时）
 const TICK_INTERVAL_MS = 250;     // 跟 MemeOverlay / RelationshipGraph 同节奏
 const DEFAULT_WINDOW_SEC = 8;
 

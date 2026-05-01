@@ -1,0 +1,179 @@
+/* ─── InPlayerLoreCard — 全屏/放大视频模式下的设定百科浮层 ─────────
+   挂在 .tx-player-wrap 内右侧，半透明背景让视频透出来。
+   主要为全屏观影场景设计——非全屏时还是用外面右栏的 MemePanel。
+*/
+
+.iplc-root {
+  position: absolute;
+  top: 56px;            /* 给上面 SceneHotspots popover (top: 16px) 留位 */
+  right: 16px;
+  bottom: 70px;         /* 避开底部进度条 / MemeOverlay 字幕 */
+  width: 380px;
+  max-width: 36vw;      /* 小屏自适应 */
+  z-index: 7;           /* 在 SceneHotspots (z=6) 之上，但低于全屏关闭按钮等 */
+  display: flex;
+  flex-direction: column;
+  pointer-events: none; /* 让 .iplc-card 自己开 pointer-events */
+}
+
+.iplc-card {
+  pointer-events: auto;
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 16px;
+  background: rgba(8, 4, 4, 0.42);    /* 半透明，让视频隐约透出 */
+  border: 1px solid rgba(243, 201, 122, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55),
+              0 0 24px rgba(243, 201, 122, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #f0e6d2;
+  overflow: hidden;
+  animation: iplcIn 320ms cubic-bezier(.2, .7, .2, 1);
+}
+
+@keyframes iplcIn {
+  from { opacity: 0; transform: translateX(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+/* ─── 关闭按钮 ────────────────────────────── */
+
+.iplc-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease;
+  z-index: 2;
+}
+.iplc-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ─── 头部：标题 + 标签 ───────────────────────── */
+
+.iplc-header {
+  flex: 0 0 auto;
+  margin-right: 28px;       /* 给关闭按钮让位 */
+  margin-bottom: 12px;
+}
+
+.iplc-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.iplc-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0e6d2;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.iplc-title-en {
+  font-size: 12px;
+  color: rgba(243, 201, 122, 0.7);
+  letter-spacing: 0.4px;
+}
+
+.iplc-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid rgba(243, 201, 122, 0.45);
+  border-radius: 999px;
+  color: rgba(243, 201, 122, 0.92);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
+
+/* ─── 内容 body ───────────────────────────── */
+
+.iplc-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 4px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* 自定义滚动条让背景透一些不被白条破坏 */
+.iplc-body::-webkit-scrollbar { width: 4px; }
+.iplc-body::-webkit-scrollbar-thumb {
+  background: rgba(243, 201, 122, 0.22);
+  border-radius: 2px;
+}
+
+.iplc-summary {
+  margin: 0 0 10px;
+  color: #f0e6d2;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.iplc-divider {
+  height: 1px;
+  background: linear-gradient(to right,
+    rgba(243, 201, 122, 0) 0%,
+    rgba(243, 201, 122, 0.3) 30%,
+    rgba(243, 201, 122, 0.3) 70%,
+    rgba(243, 201, 122, 0) 100%);
+  margin: 10px 0;
+}
+
+.iplc-detail {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: justify;
+}
+
+.iplc-see-also {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: rgba(243, 201, 122, 0.06);
+  border-radius: 4px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.iplc-see-also-label {
+  color: rgba(243, 201, 122, 0.85);
+  margin-right: 4px;
+}
+
+.iplc-see-also-sep {
+  color: rgba(243, 201, 122, 0.35);
+}
+
+.iplc-see-also-item {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ─── Loading / empty ─────────────────────── */
+
+.iplc-loading,
+.iplc-empty {
+  padding: 18px 8px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+}

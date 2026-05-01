@@ -8,6 +8,7 @@ import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
 import MemeToggle from './MemeToggle';
 import SceneHotspots from './SceneHotspots';
+import InPlayerLoreCard from './InPlayerLoreCard';
 import FavoritesView from './FavoritesView';
 import useMemeFavorites from './useMemeFavorites';
 import DEMO_VIDEOS from './demoVideos';
@@ -514,9 +515,18 @@ function TencentPlayer({
   const [playerIdle, setPlayerIdle] = useState(false);
   const playerWrapRef = useRef(null);
   const idleTimerRef = useRef(null);
+  // 全屏状态：SceneHotspots → "了解详情" 时根据这个判断走外栏 MemePanel 还是画面内 InPlayerLoreCard
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  // 全屏 / 放大模式下被 SceneHotspots 触发的设定百科 id（独立于外栏的 pendingExpandLoreId）
+  const [inlineLoreId, setInlineLoreId] = useState(null);
   useEffect(() => {
     const onFs = () => {
-      if (!document.fullscreenElement) setAiChatOpen(false);
+      const fs = !!document.fullscreenElement;
+      setIsFullscreen(fs);
+      if (!fs) {
+        setAiChatOpen(false);
+        setInlineLoreId(null); // 退出全屏时关掉画面内 lore 浮层
+      }
     };
     document.addEventListener('fullscreenchange', onFs);
     return () => document.removeEventListener('fullscreenchange', onFs);
@@ -571,6 +581,18 @@ function TencentPlayer({
   const aiCharStateRef = useRef(new Map()); // charId → last seen short_identity（用于检测状态变化）
   const aiLastPopupAtRef = useRef(new Map()); // charId → ms timestamp of last popup（cooldown）
   const aiLogRef = useRef(null);
+
+  // ─── 角色内心模态（AgentPanel 第二种模态）─────────────
+  // 'analysis'  → 现有 AI 解析（QUICK_QUESTIONS + 自由问）
+  // 'character' → 选一个在场角色，钻进 TA 的内心和 TA 对话
+  const [panelMode, setPanelMode] = useState('analysis');
+  const [charSelected, setCharSelected] = useState(null);     // { character_id, display_name, short_identity, core_traits }
+  const [charCandidates, setCharCandidates] = useState([]);   // 当前场景里有 profile 的角色
+  const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
+  const [charInput, setCharInput] = useState('');
+  const [charSending, setCharSending] = useState(false);
+  const charLogRef = useRef(null);
+  const CHAR_TURN_LIMIT = 10;
 
   // ─── 共谋者 · 机制 A：分支推演 ─────────────────────────────────
   const [branchPoints, setBranchPoints] = useState([]);            // [{branch_id, timestamp, label, options, ...}]
@@ -879,6 +901,39 @@ function TencentPlayer({
   useEffect(() => {
     if (aiLogRef.current) aiLogRef.current.scrollTop = aiLogRef.current.scrollHeight;
   }, [aiMessages, aiSending]);
+  useEffect(() => {
+    if (charLogRef.current) charLogRef.current.scrollTop = charLogRef.current.scrollHeight;
+  }, [charMessages, charSending]);
+
+  // 进入角色模态 / 没选角色时，按当前播放进度拉"有 profile 的在场角色"
+  useEffect(() => {
+    if (panelMode !== 'character' || charSelected) return;
+    if (!aiKb) { setCharCandidates([]); return; }
+    const v = videoRef.current;
+    const t = v?.currentTime || 0;
+    let cancelled = false;
+    fetch(`${API}/api/agent/character/inner/list?videoId=${encodeURIComponent(aiKb)}&t=${t}`)
+      .then(r => r.json())
+      .then(d => { if (!cancelled) setCharCandidates(d.characters || []); })
+      .catch(() => { if (!cancelled) setCharCandidates([]); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [panelMode, charSelected, aiKb, aiOnScreenChars]);
+
+  function clearCharMessages() {
+    setCharMessages([]);
+    setCharInput('');
+  }
+  function exitCharacter() {
+    setCharSelected(null);
+    setCharMessages([]);
+    setCharInput('');
+  }
+  function pickCharacter(c) {
+    setCharSelected(c);
+    setCharMessages([]);
+    setCharInput('');
+  }
 
   function clearAiMessages() {
     setAiMessages([]);
@@ -1285,15 +1340,21 @@ function TencentPlayer({
               }}
             />
 
-            {/* 共谋者 · 场景热点 —— 10 个时间锚点弹小卡，3s 退化为右上角 badge，
-                点"了解详情"穿透到右栏设定百科/台词梗，或跳到关联时间点 */}
+            {/* 共谋者 · 场景热点 —— 10 个时间锚点弹小卡，10s 退化为右上角 badge，
+                点"了解详情"全屏走画面内 InPlayerLoreCard / 非全屏走右栏 MemePanel */}
             <SceneHotspots
               videoId={aiKb}
               videoRef={videoRef}
               enabled={conspiratorMode}
               onLoreClick={(loreId) => {
-                setRightTab('meme');
-                setPendingExpandLoreId(loreId);
+                if (isFullscreen) {
+                  // 全屏：画面内右侧浮一张半透明 lore 卡
+                  setInlineLoreId(loreId);
+                } else {
+                  // 非全屏：切到外栏文化梗 tab + 触发设定百科展开
+                  setRightTab('meme');
+                  setPendingExpandLoreId(loreId);
+                }
               }}
               onRiffClick={(riffId) => {
                 setRightTab('meme');
@@ -1311,6 +1372,13 @@ function TencentPlayer({
                   v.currentTime = ref.time || 0;
                 }
               }}
+            />
+
+            {/* 全屏模式下 SceneHotspots 触发的设定百科浮层 —— 半透明、画面内右侧 */}
+            <InPlayerLoreCard
+              videoId={aiKb}
+              loreId={isFullscreen ? inlineLoreId : null}
+              onClose={() => setInlineLoreId(null)}
             />
 
             <PlayerControls
