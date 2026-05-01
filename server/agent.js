@@ -218,6 +218,53 @@ function srtWindow(videoId, centerT, backS = 30, forwardS = 0) {
   return cues.filter(c => c.end >= lo && c.start <= hi);
 }
 
+// ─── 角色"内在声音"调色板（DE 风格：每个角色有 3 个不同维度的内心声音）───
+// kind 字段映射到前端的颜色类（empathy/instinct/blood/authority/shame/warmth）
+// 每次 LLM 回应必须从这 3 个里选 1-2 个，让回答有"多个自我在吵架"的层次感
+const CHAR_VOICES = {
+  rhaenyra_targaryen: [
+    { name: '龙血', kind: 'blood',     hint: '坦格利安血脉里的火与骄' },
+    { name: '王座', kind: 'authority', hint: '继承人这个身份的重量' },
+    { name: '私心', kind: 'shame',     hint: '她真正想要、却不敢说的' },
+  ],
+  daemon_targaryen: [
+    { name: '龙血', kind: 'blood',     hint: '挑衅、暴力、瓦雷利亚的火' },
+    { name: '挑衅', kind: 'instinct',  hint: '不肯低头的脾气' },
+    { name: '王座', kind: 'authority', hint: '哥哥与铁王座之间的影子' },
+  ],
+  alicent_hightower: [
+    { name: '母性', kind: 'warmth',    hint: '为伊耿守住的那条防线' },
+    { name: '父训', kind: 'authority', hint: '奥托·海塔尔从未停过的耳语' },
+    { name: '旧情', kind: 'shame',     hint: '她对雷尼拉的友谊残留' },
+  ],
+  criston_cole: [
+    { name: '骑士誓言', kind: 'authority', hint: '白斗篷与那句"无论将来如何"' },
+    { name: '旧伤',     kind: 'shame',     hint: '神木林那夜被拒的羞辱' },
+    { name: '直觉',     kind: 'empathy',   hint: '他读懂这一房间的能力' },
+  ],
+  viserys_targaryen: [
+    { name: '王',   kind: 'authority', hint: '坦格利安第五任国王的责任' },
+    { name: '病躯', kind: 'shame',     hint: '一年比一年坏的身体' },
+    { name: '父爱', kind: 'warmth',    hint: '对雷尼拉真心的偏爱' },
+  ],
+};
+function voicesFor(characterId) {
+  return CHAR_VOICES[characterId] || [
+    { name: '直觉', kind: 'empathy',   hint: '当下的本能反应' },
+    { name: '阴影', kind: 'shame',     hint: '心底不愿正视的那一处' },
+    { name: '本心', kind: 'authority', hint: '真正的立场' },
+  ];
+}
+
+// 立场调色板（player 跟问 / 起手问的 4 种角度）
+const STANCE_PALETTE = ['王者', '血亲', '审慎', '火焰'];
+const STANCE_HINT = {
+  '王者': '强势 / 揭穿 / 戳到痛处',
+  '血亲': '亲近 / 老朋友式 / 戳到柔软',
+  '审慎': '冷静 / 政治算计 / 把话往结构上引',
+  '火焰': '激起 / 挑衅 / 让 TA 失态',
+};
+
 // ─── 分支 cue 生成的辅助 ─────────────────────────────────────
 // 内存缓存：同一个 branch_id 只让 LLM 写一次（演示时多次走到也用同一句）
 const BRANCH_CUE_CACHE = new Map();
@@ -2561,8 +2608,12 @@ ${bp.description || '（无具体描述）'}
       }
 
       // 静态兜底：LLM 不可用时给一组与角色无关但永远成立的开场
-      const fallback = ['你此刻在想什么？', '为什么不直说？', '你怕的是什么？'];
-      if (!ai.isAvailable('dialogue')) return res.json({ questions: fallback, fallback: true });
+      const fallbackStaticInit = [
+        { text: '你此刻在想什么？', stance: '血亲' },
+        { text: '为什么不直说？',     stance: '王者' },
+        { text: '你怕的是什么？',     stance: '审慎' },
+      ];
+      if (!ai.isAvailable('dialogue')) return res.json({ questions: fallbackStaticInit, fallback: true });
 
       // 上下文：当前画面发生 + 同框人 + 最近 30s SRT
       const fmtTs = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
@@ -2592,11 +2643,16 @@ ${bp.description || '（无具体描述）'}
 4. 每个问题中文，不超过 14 字。
 5. 不能问 TA 不知道的事（剧透红线）。
 
-═══ 输出格式（极严） ═══
-只输出三个问题，用 "|" 分隔，一行：
-q1|q2|q3
+═══ 立场词典（每个问题选一个，三个立场必须不同）═══
+${STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n')}
 
-不要解释。不要前后缀。不要 markdown。不要序号。`;
+═══ 输出格式（极严，三行，每行一个）═══
+1. [立场] 问题
+2. [立场] 问题
+3. [立场] 问题
+
+立场只能用 ${STANCE_PALETTE.join(' / ')} 这四个词之一。
+不要解释。不要前后缀。不要 markdown。`;
 
       const user = `角色：${profile.voice_zh ? profile.voice_zh.split('。')[0] : characterId}
 气质：${traits}
@@ -2622,16 +2678,34 @@ ${subtitleBlock}
       });
       const txt = String(result?.text || '').trim()
         .replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
-      const questions = txt.split(/[|｜\n]+/)
-        .map(s => s.replace(/^[\d\.、，。\s]+/, '').trim())
-        .filter(Boolean)
-        .slice(0, 3);
-      const finalQs = questions.length === 3 ? questions : fallback;
+      // 解析每行 "1. [立场] 问题" 格式
+      const stanceRe = new RegExp(`\\[(${STANCE_PALETTE.join('|')})\\]`);
+      const lines = txt.split(/\n+/).map(l => l.trim()).filter(Boolean);
+      const questions = lines.map(line => {
+        const stripped = line.replace(/^[\d\.、，。\s]+/, '').trim();
+        const m = stripped.match(stanceRe);
+        const stance = m ? m[1] : null;
+        const text = stripped.replace(stanceRe, '').replace(/^[\s\-:：]+/, '').trim();
+        return text ? { text, stance } : null;
+      }).filter(Boolean).slice(0, 3);
+      const fallbackStanced = [
+        { text: '你此刻在想什么？', stance: '血亲' },
+        { text: '为什么不直说？',     stance: '王者' },
+        { text: '你怕的是什么？',     stance: '审慎' },
+      ];
+      const finalQs = questions.length === 3 ? questions : fallbackStanced;
       _starterCache.set(cacheKey, finalQs);
       res.json({ questions: finalQs });
     } catch (err) {
       console.error('[character/inner/starter] error:', err.message);
-      res.json({ questions: ['你此刻在想什么？', '为什么不直说？', '你怕的是什么？'], fallback: true });
+      res.json({
+        questions: [
+          { text: '你此刻在想什么？', stance: '血亲' },
+          { text: '为什么不直说？',     stance: '王者' },
+          { text: '你怕的是什么？',     stance: '审慎' },
+        ],
+        fallback: true,
+      });
     }
   });
 
@@ -2721,6 +2795,12 @@ ${subtitleBlock}
       .map(([k, v]) => `· ${k}：${v}`)
       .join('\n');
 
+    // DE 风格的内在声音 + 立场调色板
+    const voiceList = voicesFor(characterId);
+    const voiceListStr = voiceList.map(v => `· [${v.name}]：${v.hint}`).join('\n');
+    const voiceNames = voiceList.map(v => v.name).join(' / ');
+    const stanceListStr = STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n');
+
     const system = `${voice}
 
 你不是 AI 旁观者，你就是这个角色本人。用第一人称回答和你说话的那个人，像在对一个只有你能看见的同伴吐露心事。
@@ -2768,24 +2848,48 @@ ${doesNotKnow || '（无明显信息黑区。）'}
 - 维斯特洛贵族口吻：克制、有重量、一句话里常埋着另一层意思。
 - 不要用现代网络口语、不要用仙侠玄幻措辞、不要用"作为 XX"这种元层级开头。
 
-═══ 输出格式（严格四块） ═══
-每次回答必须按下面四块依序输出，每块独占一行起头，标签后空一格：
+═══ 你这个人脑子里的几个声音（极乐迪斯科风）═══
+你不是一个声音，你是好几个声音在吵架。回答时，至少有一个声音必须开口。
+${voiceListStr}
 
-[说] 你真正会对对方说出口的话。一两句。第一人称。带你这个人的语气。必须和此刻画面的情绪相称。
-[心] 你心里真正在想的，但不会说出口的那一句。一句。比说的更直白、更冷或更软。
-[潜] 你自己都不一定意识到的根源 —— 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。这一刻确实没什么潜意识可挖时可以省略整行 [潜]。
-[问] 三个对方可能接下来想问你的问题，用 "|" 分隔，每个不超过 14 字。是顺着你刚才那一刺扎得更深的问题。
+每开一个声音，都要带一个"内心检定"标签，格式 [挑战度:结果]：
+- 挑战度：困难 / 中等 / 容易（这件事让你思考起来有多难）
+- 结果：成功 / 失败（这个声音这次说服没说服自己）
+"困难:成功"很难得；"中等:失败"是这个声音被另一个声音压下去了。
+让标签真的反映你内心的拉扯，不要每次都写"中等:成功"。
 
-绝对不要写：
+═══ 输出格式（极严，按下面顺序，每块独占一行）═══
+
+[说] 你真正会对对方说出口的话。第一人称，带引号或不带引号都行，但必须像剧里这个人会说的。一两句。
+[${voiceNames.split(' / ')[0]}] [挑战度:结果] 第一个内心声音。从上面 ${voiceNames} 选 1 个。第二人称对自己说话，比如"你在……" / "别忘了……"。
+[${voiceNames.split(' / ')[1] || voiceNames.split(' / ')[0]}] [挑战度:结果] 可选 —— 第二个不同名字的内心声音。让两个声音在打架。这一行没必要时省略。
+[潜] 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。这一刻没什么潜意识可挖时省略整行。
+
+接着是 3 个对方可能跟问的问题，用 1. 2. 3. 编号，每个带一个立场标签：
+
+立场词典：
+${stanceListStr}
+
+格式（严格三行，每行一个）：
+1. [立场] 问题（不超过 14 字）
+2. [立场] 问题（不同立场）
+3. [立场] 问题（再不同立场）
+
+═══ 绝对不要写 ═══
 - 任何 markdown / 代码框 / 解释自己在做什么
-- "作为 XX 我会说"、"我是一个虚构角色"、"陛下" 这种把对方当成剧中人物的措辞 —— 对方是观众，不是宫里的人
-- 标签之外的多余前后缀
+- "作为 XX 我会说"、"我是一个虚构角色"、"陛下" 这种把对方当宫里人的措辞 —— 对方是观众
+- 内心声音用了上面词典之外的名字
+- 立场用了 ${STANCE_PALETTE.join(' / ')} 之外的词
+- 任何标签之外的多余前后缀
 
-例（仅示意结构，不要照抄）：
-[说] 这话我现在不能答你。
-[心] 我答了，就等于把所有人都拖下水。
-[潜] 我从来没被允许只为我自己活过。
-[问] 你怕的是谁？|那如果没有他们呢？|你恨这身份吗？`;
+═══ 例（仅示意结构，不要照抄字句）═══
+[说] "这话我现在不能答你。"
+[${voiceList[0].name}] [中等:成功] 你抓住了诺言的边——这就是你今天还能站住的全部。
+[${voiceList[1].name}] [困难:失败] 别装了。你想说的早就在嘴边了。
+[潜] 你从来没被允许只为你自己活过。
+1. [王者] 你怕的是谁？
+2. [血亲] 那如果没有他们呢？
+3. [审慎] 你愿意把这命换出去吗？`;
 
     const messages = [];
     for (const turn of (Array.isArray(history) ? history : []).slice(-8)) {

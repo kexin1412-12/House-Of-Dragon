@@ -1484,11 +1484,6 @@ body {
 }
 .tx-char-say-body::before { content: '「'; color: rgba(232, 200, 150, 0.55); }
 .tx-char-say-body::after  { content: '」'; color: rgba(232, 200, 150, 0.55); }
-.tx-char-think-body {
-  color: #b8c4ce;
-  font-style: italic;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-}
 .tx-char-sub-body {
   color: #c8b8e0;
   font-style: italic;
@@ -1496,15 +1491,99 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 
-/* 跟问 chip：在 chips 容器里复用 .tx-agent-de-chip 基类，再覆冷调 */
-.tx-char-suggest {
-  color: rgba(216, 228, 238, 0.85);
-  border-color: rgba(216, 228, 238, 0.32);
+/* ─── DE 风格：内在声音多色 ─────────────────────────────
+   每个 voice 一行：左边色名（粗、ALL CAPS letter-spacing）+ 检定 [困难:成功] +
+   破折号 + 正文（衬线斜体，第二人称对自己说话）。颜色严格对应 DE 调色板：
+   empathy 蓝 / instinct 紫 / blood 红 / authority 金 / shame 紫红 / warmth 暖玫瑰 */
+.tx-char-voice {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px; line-height: 1.7;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
-.tx-char-suggest:hover:not(:disabled) {
-  color: #f0d4a8;
-  border-color: rgba(232, 200, 150, 0.6);
+.tx-char-voice-name {
+  display: inline;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 600; font-size: 12px;
+  letter-spacing: 0.32em;
+  margin-right: 8px;
 }
+.tx-char-voice-body { font-style: italic; }
+.tx-char-check {
+  display: inline-block;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
+  margin-right: 8px;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  vertical-align: 1px;
+  opacity: 0.8;
+}
+.tx-char-check-pass { color: #8aa67a; }   /* 暗绿 = 成功 */
+.tx-char-check-fail { color: #c8857a; }   /* 暗红 = 失败 */
+
+.tx-char-voice-empathy   .tx-char-voice-name { color: #6b9bd1; }
+.tx-char-voice-empathy   .tx-char-voice-body { color: rgba(140, 175, 210, 0.92); }
+.tx-char-voice-instinct  .tx-char-voice-name { color: #b08adb; }
+.tx-char-voice-instinct  .tx-char-voice-body { color: rgba(190, 165, 220, 0.92); }
+.tx-char-voice-blood     .tx-char-voice-name { color: #d68080; }
+.tx-char-voice-blood     .tx-char-voice-body { color: rgba(220, 160, 160, 0.94); }
+.tx-char-voice-authority .tx-char-voice-name { color: #d8b07a; }
+.tx-char-voice-authority .tx-char-voice-body { color: rgba(220, 192, 150, 0.94); }
+.tx-char-voice-shame     .tx-char-voice-name { color: #c485a8; }
+.tx-char-voice-shame     .tx-char-voice-body { color: rgba(200, 160, 184, 0.92); }
+.tx-char-voice-warmth    .tx-char-voice-name { color: #d6938a; }
+.tx-char-voice-warmth    .tx-char-voice-body { color: rgba(220, 170, 160, 0.94); }
+
+/* ─── 立场化的玩家选项（编号 1./2./3. + [立场] + 文案）─── */
+.tx-char-options {
+  list-style: none; padding: 0; margin: 0 0 10px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.tx-char-option {
+  position: relative;
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 5px 0 5px 14px;
+  cursor: pointer;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13.5px; line-height: 1.55;
+  transition: background 0.15s ease, transform 0.12s ease;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+.tx-char-option::before {
+  content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+  width: 2px; background: currentColor; opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.tx-char-option:hover::before { opacity: 0.85; }
+.tx-char-option:hover { background: rgba(232, 200, 150, 0.05); }
+.tx-char-option-num {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 13px; font-weight: 500;
+  flex-shrink: 0; min-width: 14px;
+  color: rgba(232, 200, 150, 0.85);
+}
+.tx-char-option-stance {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+  flex-shrink: 0;
+  /* 颜色由 stance modifier 覆盖 */
+}
+.tx-char-option-text {
+  color: rgba(212, 196, 168, 0.88);
+  font-style: italic;
+}
+.tx-char-option:hover .tx-char-option-text { color: #ead8b8; }
+
+/* 立场色（与 voice authority/blood/empathy/shame 同源，但更饱和）*/
+.tx-char-stance-王者     { color: #c9a87a; }
+.tx-char-stance-王者     .tx-char-option-stance { color: #c9a87a; }
+.tx-char-stance-血亲     { color: #d6938a; }
+.tx-char-stance-血亲     .tx-char-option-stance { color: #d6938a; }
+.tx-char-stance-审慎     { color: #6b8db5; }
+.tx-char-stance-审慎     .tx-char-option-stance { color: #6b8db5; }
+.tx-char-stance-火焰     { color: #c45656; }
+.tx-char-stance-火焰     .tx-char-option-stance { color: #c45656; }
 
 .tx-char-limit {
   margin-top: 8px;

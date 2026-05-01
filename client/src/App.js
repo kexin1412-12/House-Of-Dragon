@@ -1739,40 +1739,97 @@ const QUICK_QUESTIONS = [
   '这句台词什么意思',
 ];
 
-// 角色内心 reply 解析：[说]/[心]/[潜]/[问] 四块。流式部分到达时也要稳定渲染。
+// 内在声音 → 颜色 kind 映射（和后端 CHAR_VOICES 的 kind 字段保持一致）
+// 名称在所有角色之间唯一，所以 kind 可以按名字直接查
+const VOICE_KIND = {
+  '龙血': 'blood',
+  '王座': 'authority', '王': 'authority', '父训': 'authority', '骑士誓言': 'authority',
+  '挑衅': 'instinct', '直觉': 'empathy',
+  '私心': 'shame', '旧情': 'shame', '旧伤': 'shame', '病躯': 'shame',
+  '母性': 'warmth', '父爱': 'warmth',
+  '阴影': 'shame', '本心': 'authority', // 兜底通用名
+};
+const STANCE_NAMES = ['王者', '血亲', '审慎', '火焰'];
+
+// 角色内心 reply 解析。新格式：
+//   [说] outer line
+//   [VOICE_NAME] [困难:成功] inner voice
+//   [ANOTHER_VOICE] [中等:失败] another voice
+//   [潜] subconscious (optional)
+//   1. [立场] q1
+//   2. [立场] q2
+//   3. [立场] q3
+//
+// 流式中也要稳定渲染（每多收一个字符都重新解析一次，不能崩）
 function parseCharacterReply(text) {
-  const empty = { say: '', think: '', sub: '', suggestions: [] };
+  const empty = { say: '', voices: [], sub: '', suggestions: [] };
   if (!text) return empty;
-  const TAGS = ['[说]', '[心]', '[潜]', '[问]'];
-  const idx = {};
-  for (const t of TAGS) {
-    const i = text.indexOf(t);
-    if (i !== -1) idx[t] = i;
+
+  // 先把 questions 部分（行首 1./2./3.）从全文剥离出来
+  const lines = text.split('\n');
+  const out = { say: '', voices: [], sub: '', suggestions: [] };
+  const stanceRe = new RegExp(`\\[(${STANCE_NAMES.join('|')})\\]`);
+  const qLineRe = /^\s*([1-3])[\.、:：]\s*(.+)$/;
+
+  const bodyLines = [];
+  for (const ln of lines) {
+    const qm = ln.match(qLineRe);
+    if (qm && stanceRe.test(qm[2])) {
+      const sm = qm[2].match(stanceRe);
+      const stance = sm ? sm[1] : null;
+      const txt = qm[2].replace(stanceRe, '').replace(/^[\s\-:：]+/, '').trim();
+      if (txt) out.suggestions.push({ text: txt, stance });
+    } else {
+      bodyLines.push(ln);
+    }
   }
-  const order = TAGS.filter(t => idx[t] != null).sort((a, b) => idx[a] - idx[b]);
-  const slice = (tag) => {
-    if (idx[tag] == null) return '';
-    const start = idx[tag] + tag.length;
-    const next = order.find(t => idx[t] > idx[tag]);
-    const end = next ? idx[next] : text.length;
-    return text.slice(start, end).trim();
-  };
-  const out = {
-    say: slice('[说]'),
-    think: slice('[心]'),
-    sub: slice('[潜]'),
-    suggestions: [],
-  };
-  // 第一块 [说] 之前如果有裸文本，归为 say 的一部分（流式过渡帧 / LLM 漏标）
-  if (idx['[说]'] != null && idx['[说]'] > 0) {
-    const lead = text.slice(0, idx['[说]']).trim();
-    if (lead) out.say = (lead + ' ' + out.say).trim();
-  } else if (idx['[说]'] == null) {
-    out.say = text.trim();
+  out.suggestions = out.suggestions.slice(0, 3);
+
+  const body = bodyLines.join('\n');
+  // 在 body 里找所有 [TAG] 位置；TAG 可以是"说"、"潜"、或任意中文 voice 名
+  const tagRe = /\[([^\]\n]{1,8})\]/g;
+  const positions = [];
+  let m;
+  while ((m = tagRe.exec(body)) !== null) {
+    positions.push({ tag: m[1], start: m.index, end: m.index + m[0].length });
   }
-  const qRaw = slice('[问]');
-  if (qRaw) {
-    out.suggestions = qRaw.split(/\||｜|\n/).map(s => s.trim()).filter(Boolean).slice(0, 3);
+  if (positions.length === 0) {
+    out.say = body.trim();
+    return out;
+  }
+  // 第一个 tag 之前的裸文本归 say
+  if (positions[0].start > 0) {
+    const lead = body.slice(0, positions[0].start).trim();
+    if (lead) out.say = lead;
+  }
+
+  // skill-check 标签 [困难:成功] 紧跟在 voice 名后面
+  const checkRe = /^\s*\[(困难|中等|容易):(成功|失败)\]\s*/;
+
+  for (let i = 0; i < positions.length; i++) {
+    const p = positions[i];
+    const next = positions[i + 1];
+    const segEnd = next ? next.start : body.length;
+    let raw = body.slice(p.end, segEnd);
+    // 这个 tag 后紧跟的 [挑战度:结果] 算 voice 的检定，不是新一段
+    let check = null;
+    const cm = raw.match(checkRe);
+    if (cm) {
+      check = { difficulty: cm[1], result: cm[2] };
+      raw = raw.slice(cm[0].length);
+    }
+    const seg = raw.trim();
+    if (p.tag === '说') {
+      out.say = seg;
+    } else if (p.tag === '潜') {
+      out.sub = seg;
+    } else if (checkRe.test(`[${p.tag}]${body.slice(p.end, segEnd)}`) || VOICE_KIND[p.tag] || /^[一-龥]{1,4}$/.test(p.tag)) {
+      // 任意中文 1-4 字命名都视为 voice（即使没在 VOICE_KIND 里也允许，颜色用 fallback）
+      // 排除：[说] [潜]（已处理）+ skill-check 标签
+      if (!/^(困难|中等|容易):(成功|失败)$/.test(p.tag)) {
+        if (seg) out.voices.push({ name: p.tag, kind: VOICE_KIND[p.tag] || 'instinct', check, text: seg });
+      }
+    }
   }
   return out;
 }
@@ -2035,18 +2092,25 @@ function CharacterPanel({
           </div>
 
           {suggestions.length > 0 && !reachedLimit && (
-            <div className="tx-agent-de-chips">
-              {suggestions.map((q, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className="tx-agent-de-chip tx-char-suggest"
-                  onClick={() => !sending && onSubmit(q)}
-                  disabled={sending}
-                  title="点击直接问"
-                >{q}</button>
-              ))}
-            </div>
+            <ol className="tx-char-options">
+              {suggestions.map((q, i) => {
+                // suggestions 可以是 string 也可以是 { text, stance }
+                const text = typeof q === 'string' ? q : q.text;
+                const stance = typeof q === 'string' ? null : q.stance;
+                if (!text) return null;
+                return (
+                  <li
+                    key={i}
+                    className={`tx-char-option${stance ? ` tx-char-stance-${stance}` : ''}`}
+                    onClick={() => !sending && onSubmit(text)}
+                  >
+                    <span className="tx-char-option-num">{i + 1}.</span>
+                    {stance && <span className="tx-char-option-stance">[{stance}]</span>}
+                    <span className="tx-char-option-text">{text}</span>
+                  </li>
+                );
+              })}
+            </ol>
           )}
 
           {reachedLimit ? (
@@ -2087,9 +2151,14 @@ function CharLine({ message, speakerName }) {
       </div>
     );
   }
-  const p = message.parsed || { say: message.text || '', think: '', sub: '', suggestions: [] };
+  const p = message.parsed || { say: message.text || '', voices: [], sub: '', suggestions: [] };
   const showThinking = !message.text && message.streaming;
   const showCursor = message.streaming && message.text;
+  // 流式光标只挂在最后一段
+  const lastIdx =
+    p.sub ? 'sub' :
+    (p.voices && p.voices.length) ? `voice-${p.voices.length - 1}` :
+    p.say ? 'say' : null;
   return (
     <div className="de-line de-line-agent tx-char-line">
       {showThinking && <span className="de-thinking">思考中…</span>}
@@ -2098,21 +2167,27 @@ function CharLine({ message, speakerName }) {
           <span className="tx-char-layer-name">{speakerName}</span>
           <span className="de-dash">—</span>
           <span className="tx-char-say-body">{p.say}</span>
-          {showCursor && !p.think && !p.sub && <span className="de-cursor">▍</span>}
+          {showCursor && lastIdx === 'say' && <span className="de-cursor">▍</span>}
         </div>
       )}
-      {p.think && (
-        <div className="tx-char-layer tx-char-think">
-          <span className="tx-char-tag">心</span>
-          <span className="tx-char-think-body">{p.think}</span>
-          {showCursor && !p.sub && <span className="de-cursor">▍</span>}
+      {(p.voices || []).map((v, i) => (
+        <div key={i} className={`tx-char-layer tx-char-voice tx-char-voice-${v.kind || 'instinct'}`}>
+          <span className="tx-char-voice-name">{v.name}</span>
+          {v.check && (
+            <span className={`tx-char-check tx-char-check-${v.check.result === '成功' ? 'pass' : 'fail'}`}>
+              [{v.check.difficulty}: {v.check.result}]
+            </span>
+          )}
+          <span className="de-dash">—</span>
+          <span className="tx-char-voice-body">{v.text}</span>
+          {showCursor && lastIdx === `voice-${i}` && <span className="de-cursor">▍</span>}
         </div>
-      )}
+      ))}
       {p.sub && (
         <div className="tx-char-layer tx-char-sub">
           <span className="tx-char-tag tx-char-tag-sub">潜</span>
           <span className="tx-char-sub-body">{p.sub}</span>
-          {showCursor && <span className="de-cursor">▍</span>}
+          {showCursor && lastIdx === 'sub' && <span className="de-cursor">▍</span>}
         </div>
       )}
     </div>
