@@ -522,7 +522,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
     if (!open) return;
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
-      // Esc dismisses overlays in order: profile panel → conflict highlight → whole drawer
+      // Esc 与点击空白共用渐进关闭语义：profile → 高亮 → 抽屉。
+      // closeOneLayer 在函数体下方定义，读取最新 state 时直接 inline 同款逻辑。
       if (profileId) { setProfileId(null); setHighlighted(null); return; }
       if (highlighted) { setHighlighted(null); return; }
       setOpen(false);
@@ -740,16 +741,21 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   const closeProfile = useCallback(() => setProfileId(null), []);
 
-  // Click anywhere outside a character node (transparent SVG background, kin
-  // edge, viewport border, …) → drop both the conflict highlight and the
-  // profile panel. We use closest('.rg-node') so that clicks on epithet
-  // pills / portrait clip-paths inside the node still count as a node click.
+  // 渐进关闭：profile → 冲突高亮 → 整个抽屉，一次只剥一层。Esc / 抽屉
+  // 外部 scrim / 图内空白处 click 共用同一逻辑，跟键盘节奏对齐。
+  const closeOneLayer = useCallback(() => {
+    if (profileId) { setProfileId(null); setHighlighted(null); return; }
+    if (highlighted) { setHighlighted(null); return; }
+    setOpen(false);
+  }, [profileId, highlighted]);
+
+  // 图内点击：在 SVG 空白 / kin 边上 click（不在角色节点上）走 closeOneLayer。
+  // closest('.rg-node') 确保点头像 clip-path 内部仍算点节点本身。
   const clearOverlays = useCallback((e) => {
     if (e.target?.closest && !e.target.closest('.rg-node')) {
-      setHighlighted(null);
-      setProfileId(null);
+      closeOneLayer();
     }
-  }, []);
+  }, [closeOneLayer]);
 
   // Same dismiss-on-background behavior at the START of a drag — without it,
   // the panel stays open while the user pans (because onClick only fires for
@@ -813,7 +819,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
       </div>
 
       <div className={`rg-focus-overlay ${open ? 'open' : ''}`}>
-        <div className="rg-scrim" onClick={close} />
+        <div className="rg-scrim" onClick={closeOneLayer} />
         <div className="rg-tree-card">
           <div className="rg-scan-line" key={scanKey} />
           <button className="rg-close" onClick={close} title="关闭 (Esc)">×</button>
