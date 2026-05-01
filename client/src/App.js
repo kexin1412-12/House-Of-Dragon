@@ -2427,20 +2427,31 @@ function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
         cursor && String(cursor).endsWith(`E${String(e.ep_num).padStart(2, '0')}`)
       );
       const events = ep?.key_events || [];
-      const ticks = [];
+      const all = [];
       for (const ev of events) {
         const m = typeof ev.t === 'string' && ev.t.match(/^(\d{1,2}):(\d{2})$/);
         if (!m) continue; // 没时间戳的集级事件跳过 —— 它们没法落到进度条上
         const sec = parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
-        ticks.push({
+        all.push({
           t: sec,
           label: ev.text || '',
           kind: ev.crit ? 'crit' : (ev.from_kb ? 'kb' : 'manual'),
           scene_id: ev.scene_id || null,
         });
       }
-      ticks.sort((a, b) => a.t - b.t);
-      setChapters(ticks);
+      all.sort((a, b) => a.t - b.t);
+
+      // 精简：crit 全保留（人工挑过的关键节点），KB/manual 离任何已保留
+      // tick < MIN_GAP 秒的丢掉 —— 主要是杀掉同一分钟内连续 3-4 条 KB 解读
+      // 在进度条上糊在一起的视觉拥堵。
+      const MIN_GAP = 90;
+      const kept = [];
+      for (const tick of all) {
+        if (tick.kind === 'crit') { kept.push(tick); continue; }
+        if (kept.some(k => Math.abs(k.t - tick.t) < MIN_GAP)) continue;
+        kept.push(tick);
+      }
+      setChapters(kept);
     }).catch(() => { if (!cancelled) setChapters([]); });
     return () => { cancelled = true; };
   }, [videoId]);
