@@ -2840,6 +2840,52 @@ body {
                   'STSong', 'SimSun', '宋体', Georgia, serif;
 }
 
+/* ─── 首页 navbar：我的收藏按钮 ─────────────────── */
+.nav-fav-btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 7px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+  margin-right: 6px;
+}
+
+.nav-fav-btn:hover {
+  color: #ff8aa8;
+  border-color: rgba(255, 138, 168, 0.5);
+  background: rgba(255, 138, 168, 0.06);
+}
+
+.nav-fav-btn.is-active {
+  color: #ff5b8a;
+  border-color: rgba(255, 91, 138, 0.55);
+  background: rgba(255, 91, 138, 0.12);
+}
+
+.nav-fav-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.nav-fav-count {
+  margin-left: 2px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(255, 91, 138, 0.25);
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  min-width: 18px;
+  text-align: center;
+}
+
 /* ─── 右栏 tab 切换 ─────────────────────────────────── */
 .tx-right-tabs {
   display: flex;

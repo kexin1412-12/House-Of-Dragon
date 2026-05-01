@@ -6,6 +6,8 @@ import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
 import MemeToggle from './MemeToggle';
+import FavoritesView from './FavoritesView';
+import useMemeFavorites from './useMemeFavorites';
 import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -86,6 +88,13 @@ export default function App() {
   const [playing, setPlaying] = useState(null);
   const [search, setSearch] = useState('');
   const [notification, setNotification] = useState(null);
+  // 我的收藏页（覆盖首页 hero+grid，不影响 player）
+  const [showFavorites, setShowFavorites] = useState(false);
+  // 从收藏页"跳转片段"传给 player 的初始 seek + 自动展开 riff
+  const [pendingSeekTime, setPendingSeekTime] = useState(null);
+  const [pendingExpandRiffId, setPendingExpandRiffId] = useState(null);
+  const [pendingRightTab, setPendingRightTab] = useState(null);
+  const { count: favCount } = useMemeFavorites();
 
   const fetchVideos = useCallback(async () => {
     let list = [];
@@ -152,6 +161,15 @@ export default function App() {
           ))}
         </div>
         <div className="nav-right">
+          <button
+            className={`nav-fav-btn${showFavorites ? ' is-active' : ''}`}
+            onClick={() => setShowFavorites(s => !s)}
+            title="我的收藏"
+          >
+            <span className="nav-fav-icon">♥</span>
+            <span>我的收藏</span>
+            {favCount > 0 && <span className="nav-fav-count">{favCount}</span>}
+          </button>
           <button className="nav-icon-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -162,7 +180,8 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* Hero —— 在我的收藏页时隐藏 */}
+      {!showFavorites && (<>
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-content">
@@ -315,14 +334,39 @@ export default function App() {
           </div>
         ))}
       </section>
+      </>)}
+
+      {/* 我的收藏页（覆盖 hero + feature-cards） */}
+      {showFavorites && !playing && (
+        <FavoritesView
+          videos={videos}
+          onClose={() => setShowFavorites(false)}
+          onJumpToRiff={(video, riff, seek) => {
+            setShowFavorites(false);
+            setPendingExpandRiffId(riff.riff_id);
+            setPendingRightTab('meme');
+            setPendingSeekTime(seek ? riff.anchor.start_time : null);
+            setFeatured(video);
+            setPlaying(video);
+          }}
+        />
+      )}
 
       {/* Tencent Video Player Page */}
       {playing && (
         <TencentPlayer
           playing={playing}
           videos={videos}
-          onClose={() => setPlaying(null)}
+          onClose={() => {
+            setPlaying(null);
+            setPendingSeekTime(null);
+            setPendingExpandRiffId(null);
+            setPendingRightTab(null);
+          }}
           onSelect={setPlaying}
+          initialSeekTime={pendingSeekTime}
+          initialExpandRiffId={pendingExpandRiffId}
+          initialRightTab={pendingRightTab}
         />
       )}
     </div>
@@ -413,7 +457,15 @@ function IronThroneArt() {
 
 /* ─── Tencent Video Player Page ─────────────────────── */
 
-function TencentPlayer({ playing, videos, onClose, onSelect }) {
+function TencentPlayer({
+  playing,
+  videos,
+  onClose,
+  onSelect,
+  initialSeekTime = null,
+  initialExpandRiffId = null,
+  initialRightTab = null,
+}) {
   const [search, setSearch] = useState('');
 
   const videoRef = useRef(null);
@@ -425,10 +477,23 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
   const [aiChatOpen, setAiChatOpen] = useState(false);
-  // 右栏 tab：'agent'（AI 助手）| 'meme'（文化梗）
-  const [rightTab, setRightTab] = useState('agent');
+  // 右栏 tab：'agent'（AI 助手）| 'meme'（文化梗）—— 可由 App.js 通过 prop 预设（从我的收藏跳进来时）
+  const [rightTab, setRightTab] = useState(initialRightTab || 'agent');
   // 当 MemeOverlay 触发"展开详情"时，设置这个 id；MemePanel 监听后自动展开 + 滚动
-  const [pendingExpandRiffId, setPendingExpandRiffId] = useState(null);
+  const [pendingExpandRiffId, setPendingExpandRiffId] = useState(initialExpandRiffId || null);
+  // App 重新派发新的初始值时（player 已打开但用户又从收藏跳了一条），同步进来
+  useEffect(() => { if (initialRightTab) setRightTab(initialRightTab); }, [initialRightTab]);
+  useEffect(() => { if (initialExpandRiffId) setPendingExpandRiffId(initialExpandRiffId); }, [initialExpandRiffId]);
+  // 初始 seek：从我的收藏跳进来时把视频拨到 riff 的 start_time
+  useEffect(() => {
+    if (initialSeekTime == null) return;
+    const v = videoRef.current;
+    if (!v) return;
+    const seek = () => { try { v.currentTime = initialSeekTime; } catch {} };
+    if (v.readyState >= 1) seek();
+    else v.addEventListener('loadedmetadata', seek, { once: true });
+    return () => { try { v.removeEventListener('loadedmetadata', seek); } catch {} };
+  }, [initialSeekTime, playing.id]);
   // 文化注释总开关（localStorage 由 MemeToggle 自维护初值）
   const [memeEnabled, setMemeEnabled] = useState(true);
   // 没有 riffs 时直接隐藏 toggle —— fetch 一次同样的端点判断
@@ -1001,11 +1066,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       {/* Nav */}
       <nav className="tx-nav">
         <div className="tx-nav-section tx-nav-left">
-          <div className="tx-logo" onClick={onClose}>
-            <span className="tx-logo-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <div className="tx-logo logo" onClick={onClose}>
+            <span className="logo-play">▶</span>
+            <span className="logo-text">
+              共谋者 <span className="logo-sep">|</span> Co-Conspirator
             </span>
-            <span className="tx-logo-text">腾讯视频</span>
           </div>
           <a className="tx-nav-link">电视剧</a>
           <a className="tx-nav-link">电影</a>

@@ -184,11 +184,11 @@ function loadRiffs() {
 
 app.get('/api/riffs', (req, res) => {
   const videoId = req.query.videoId;
-  if (!videoId) return res.status(400).json({ error: 'videoId required' });
-  const riffs = loadRiffs()
-    .filter(r => r.video_id === videoId)
+  const all = loadRiffs();
+  // 不传 videoId → 返回所有视频的 riffs，给"我的收藏"页面用
+  const riffs = (videoId ? all.filter(r => r.video_id === videoId) : all)
     .sort((a, b) => (a.anchor?.start_time || 0) - (b.anchor?.start_time || 0));
-  res.json({ video_id: videoId, count: riffs.length, riffs });
+  res.json({ video_id: videoId || null, count: riffs.length, riffs });
 });
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
