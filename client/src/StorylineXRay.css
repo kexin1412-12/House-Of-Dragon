@@ -88,6 +88,13 @@
       rgba(8, 4, 4, 0.96) 100%);
   overflow: hidden;            /* 圆角裁切顶栏 */
   animation: sxPanelIn .22s cubic-bezier(.2, .7, .2, 1);
+  transition: min-height .25s ease;
+}
+.sx-panel--inline.is-collapsed {
+  min-height: 0;               /* 收起时只剩顶栏高度（约 56px）*/
+}
+.sx-root--inline.is-collapsed {
+  margin-bottom: 16px;         /* 收起后下边距收紧 */
 }
 .sx-panel--inline .sx-body {
   /* 内嵌 RelationshipGraph / StorylineTimeline 需要一个固定高度容器才能滚动绘图 */
@@ -100,7 +107,7 @@
 .sx-topbar {
   position: relative;
   display: flex; align-items: center; justify-content: space-between;
-  height: 56px;
+  height: 84px;
   padding: 0 22px;
   background: linear-gradient(to bottom,
     rgba(8, 4, 4, 0.85) 0%,
@@ -112,6 +119,15 @@
 .sx-topbar-left {
   display: flex; align-items: center; gap: 8px;
   min-width: 200px;
+  /* button reset：因为 inline 模式下整块 left 是个 toggle 按钮 */
+  background: transparent; border: 0;
+  padding: 0; margin: 0;
+  font: inherit; color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sx-topbar-left:hover .sx-topbar-title {
+  color: var(--sx-gold);
 }
 .sx-topbar-title {
   font-size: 16px; font-weight: 600; letter-spacing: 1.5px;
@@ -127,16 +143,30 @@
 .sx-tab {
   background: transparent; border: 0;
   color: var(--sx-ink-soft);
-  padding: 8px 14px;
-  font-size: 13px; letter-spacing: 0.5px;
+  padding: 10px 22px 12px;
+  font-size: 14px; letter-spacing: 1px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: color .15s ease, border-color .15s ease;
+  /* 竖排：icon 在上，字在下，跟参考截图视觉一致 */
+  display: inline-flex; flex-direction: column; align-items: center; gap: 4px;
+  min-width: 96px;
 }
 .sx-tab:hover { color: var(--sx-ink); }
 .sx-tab.is-active {
   color: var(--sx-gold);
   border-bottom-color: var(--sx-gold);
+}
+.sx-tab-icon {
+  width: 28px; height: 28px;
+  flex-shrink: 0;
+  opacity: 0.78;
+  transition: opacity .15s ease, filter .15s ease;
+}
+.sx-tab:hover .sx-tab-icon { opacity: 0.95; }
+.sx-tab.is-active .sx-tab-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.45));
 }
 .sx-topbar-right {
   display: flex; align-items: center; gap: 10px;
@@ -160,6 +190,39 @@
   background: linear-gradient(to right, rgba(212, 175, 55, 0.62), var(--sx-gold));
   transition: width .35s ease;
 }
+/* inline 模式的展开/收起按钮 —— 替代 close × */
+.sx-topbar-toggle {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  color: var(--sx-ink-soft);
+  padding: 5px 10px 5px 8px;
+  font-size: 12px; line-height: 1;
+  letter-spacing: 0.5px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 8px;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.sx-topbar-toggle:hover {
+  color: var(--sx-gold);
+  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(212, 175, 55, 0.06);
+}
+.sx-topbar-toggle-caret {
+  display: inline-block;
+  font-size: 10px;
+  transition: transform .2s ease;
+  /* 默认（收起态）caret 朝下 ▾，展开后旋 180° 朝上 */
+}
+.sx-topbar-toggle-caret.is-open {
+  transform: rotate(180deg);
+}
+.sx-topbar-toggle-label {
+  font-size: 12px;
+}
+
 .sx-topbar-close {
   background: transparent; border: 0;
   color: var(--sx-ink-soft);

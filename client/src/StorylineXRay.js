@@ -49,12 +49,31 @@ function useCurrentTime(videoRef, active) {
   return currentTime;
 }
 
+// inline 模式下面板的开/收状态：持久化到 localStorage，默认收起。
+// 用户反馈：常驻面板默认全展开占太多版面，做成可开关。
+const INLINE_OPEN_KEY = 'storyline-xray-inline-open';
+function readInlineOpen() {
+  try {
+    const v = window.localStorage.getItem(INLINE_OPEN_KEY);
+    return v === '1';
+  } catch (_) { return false; }
+}
+function writeInlineOpen(v) {
+  try { window.localStorage.setItem(INLINE_OPEN_KEY, v ? '1' : '0'); } catch (_) {}
+}
+
 export default function StorylineXRay({ videoId, videoRef, inline = false }) {
   const [open, setOpen] = useState(false);
+  const [inlineOpen, setInlineOpen] = useState(() => readInlineOpen());
   const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph' | 'symbols'
   const { storyline } = useStoryline(videoId);
-  // inline 模式下 currentTime 始终在跑（面板常驻），HUD 模式只在打开时跑
-  const currentTime = useCurrentTime(videoRef, inline || open);
+  // inline 模式下 currentTime 只在面板展开时跑（收起时不浪费 setTimeout 链）；
+  // HUD 模式只在 open=true 时跑
+  const currentTime = useCurrentTime(videoRef, inline ? inlineOpen : open);
+
+  const toggleInline = useCallback(() => {
+    setInlineOpen(v => { writeInlineOpen(!v); return !v; });
+  }, []);
 
   // 完成度：已观看主线节点数 / 主线总数
   const completion = useMemo(() => {
@@ -91,14 +110,23 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
   // 没数据 → HUD 按钮 / inline 面板都不渲染
   if (!storyline) return null;
 
+  // inline 模式下：收起时整个 body + tabs + 完成度都隐藏，只留顶栏当 toggle 条
+  const inlineCollapsed = inline && !inlineOpen;
+
   // 共用的面板内容（顶栏 + tab body）
   const panelInner = (
     <>
-      <header className="sx-topbar">
-        <div className="sx-topbar-left">
+      <header className={`sx-topbar${inlineCollapsed ? ' is-collapsed' : ''}`}>
+        <button
+          type="button"
+          className="sx-topbar-left"
+          onClick={inline ? toggleInline : undefined}
+          title={inline ? (inlineOpen ? '收起面板' : '展开面板') : undefined}
+        >
           <span className="sx-topbar-title">叙事 X 光</span>
           <span className="sx-topbar-info" title="本集关键叙事节点 + 人物关系全景">ⓘ</span>
-        </div>
+        </button>
+        {!inlineCollapsed && (
         <nav className="sx-topbar-tabs">
           <button
             className={`sx-tab${activeTab === 'events' ? ' is-active' : ''}`}
@@ -140,18 +168,34 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
             <span>关键线索</span>
           </button>
         </nav>
+        )}
         <div className="sx-topbar-right">
-          <span className="sx-completion-label">本集完成度</span>
-          <span className="sx-completion-pct">{completion.pct}%</span>
-          <span className="sx-completion-bar">
-            <span className="sx-completion-bar-fill" style={{ width: `${completion.pct}%` }} />
-          </span>
-          {!inline && (
+          {!inlineCollapsed && (
+            <>
+              <span className="sx-completion-label">本集完成度</span>
+              <span className="sx-completion-pct">{completion.pct}%</span>
+              <span className="sx-completion-bar">
+                <span className="sx-completion-bar-fill" style={{ width: `${completion.pct}%` }} />
+              </span>
+            </>
+          )}
+          {inline ? (
+            <button
+              className="sx-topbar-toggle"
+              onClick={toggleInline}
+              title={inlineOpen ? '收起面板' : '展开面板'}
+              aria-expanded={inlineOpen}
+            >
+              <span className={`sx-topbar-toggle-caret${inlineOpen ? ' is-open' : ''}`}>▾</span>
+              <span className="sx-topbar-toggle-label">{inlineOpen ? '收起' : '展开'}</span>
+            </button>
+          ) : (
             <button className="sx-topbar-close" onClick={() => setOpen(false)} title="关闭 (Esc)">×</button>
           )}
         </div>
       </header>
 
+      {!inlineCollapsed && (
       <div className="sx-body">
         {activeTab === 'events' && (
           <StorylineTimeline
@@ -177,14 +221,15 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
           />
         )}
       </div>
+      )}
     </>
   );
 
   // inline：常驻面板，跟随页面滚动；不渲染 HUD 按钮和 scrim
   if (inline) {
     return (
-      <section className="sx-root sx-root--inline">
-        <div className="sx-panel sx-panel--inline">
+      <section className={`sx-root sx-root--inline${inlineCollapsed ? ' is-collapsed' : ''}`}>
+        <div className={`sx-panel sx-panel--inline${inlineCollapsed ? ' is-collapsed' : ''}`}>
           {panelInner}
         </div>
       </section>
