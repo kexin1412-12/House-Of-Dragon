@@ -9,8 +9,7 @@ export default function MemeToggle({ enabled, onChange, hidden }) {
     if (raw === '0' && enabled !== false) onChange(false);
     if (raw === '1' && enabled !== true) onChange(true);
     // raw === null → 用父组件传进来的默认（true）
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line
 
   const toggle = () => {
     const next = !enabled;

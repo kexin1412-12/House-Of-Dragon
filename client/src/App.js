@@ -22,7 +22,54 @@ function resolveVideoSrc(url) {
   return `${VIDEO_CDN}${url}`;
 }
 
-const GENRES = ['ACTION', 'FANTASY', 'DRAMA'];
+const HOME_NAV = ['首页', '发现', '我的列表', '社区'];
+
+const HERO_FEATURES = [
+  { id: 'hotspots', label: '剧情热点' },
+  { id: 'graph',    label: '人物关系' },
+  { id: 'memes',    label: '文化梗卡' },
+  { id: 'clues',    label: '线索图谱' },
+];
+
+const HERO_CARD_CHIPS = [
+  { id: 'graph', title: '人物关系', sub: '阿丽森与奈德的纠葛' },
+  { id: 'memes', title: '文化梗',   sub: '瓦雷利亚钢的历史' },
+  { id: 'tips',  title: '剧情提示', sub: '北境即将发生变故' },
+];
+
+const HERO_FEATURE_CARDS = [
+  {
+    id: 'memes',
+    title: '文化梗卡片',
+    desc: '一键了解剧中文化背景与历史细节。',
+    sample: { title: '铁王座', tag: '文化梗',
+      body: '维斯特洛七大王国的象征，由征服者伊耿使用瓦雷利亚钢铸造而成。' },
+  },
+  {
+    id: 'graph',
+    title: '人物关系图谱',
+    desc: '可视化人物关系，理清复杂的权力与情感网络。',
+  },
+  {
+    id: 'hotspots',
+    title: '剧情热点注释',
+    desc: 'AI 实时标注关键情节与伏笔，帮你不错过每个细节。',
+    sample: [
+      { t: '28:12', kind: '伏笔', tone: 'crit',  text: '瑟曦的表情暗示了她对权力的渴望。' },
+      { t: '32:05', kind: '关键', tone: 'key',   text: '北境的信使带来了重要消息。' },
+      { t: '34:47', kind: '疑问', tone: 'doubt', text: '这个角色的真实身份似乎并不简单。' },
+    ],
+  },
+];
+
+function heroFeatureIcon(id) {
+  if (id === 'hotspots') return <IconHotspots />;
+  if (id === 'graph')    return <IconHeroGraph />;
+  if (id === 'memes')    return <IconHeroMeme />;
+  if (id === 'clues')    return <IconHeroClues />;
+  if (id === 'tips')     return <IconHeroClue />;
+  return null;
+}
 
 export default function App() {
   const [videos, setVideos] = useState([]);
@@ -52,6 +99,11 @@ export default function App() {
   }
 
   const heroPreview = featured || videos[0];
+  const enterPlayer = () => {
+    if (!heroPreview) return;
+    setFeatured(heroPreview);
+    setPlaying(heroPreview);
+  };
 
   return (
     <div className="app">
@@ -76,11 +128,19 @@ export default function App() {
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>
             <input
-              placeholder="搜索我的作品"
+              placeholder="搜索作品、人物、文化梗、线索…"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
+            <span className="searchbar-kbd">⌘K</span>
           </div>
+        </div>
+        <div className="nav-center">
+          {HOME_NAV.map((label, i) => (
+            <span key={label} className={`nav-link ${i === 0 ? 'is-active' : ''}`}>
+              {label}
+            </span>
+          ))}
         </div>
         <div className="nav-right">
           <button className="nav-icon-btn">
@@ -99,33 +159,145 @@ export default function App() {
         <div className="hero-content">
           <div className="hero-badge">
             <span className="star">★</span>
-            AI 原生 · 长视频获得游戏的交互层
+            AI 原生 · 长视频交互层
           </div>
-          <h1 className="hero-title">{'共谋者\nCo-Conspirator'}</h1>
+          <h1 className="hero-title">共谋者</h1>
+          <div className="hero-subtitle">Co-Conspirator</div>
           <p className="hero-desc">
-            视频不再是一条线，而是一个空间，共谋者是一个让任何长视频获得游戏级交互的 AI 原生产品——让观众不再是「看戏的人」，而是「与戏共谋的人」
+            视频不再是一条线，而是一个可探索的世界。<br />
+            共谋者将 AI 与长视频深度融合，让你在观看的同时<br />
+            探索人物、线索、文化梗与剧情结构，发现更多可能。
           </p>
-          <div className="hero-genres">
-            {GENRES.map(g => <span key={g}>{g}</span>)}
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={enterPlayer}>
+              <span>▶</span>
+              立即体验
+            </button>
+            <button className="btn-secondary" onClick={enterPlayer}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/>
+              </svg>
+              查看 Demo
+            </button>
+          </div>
+          <div className="hero-features">
+            {HERO_FEATURES.map(f => (
+              <div key={f.id} className="hero-feature-pill">
+                <span className="hero-feature-icon">{heroFeatureIcon(f.id)}</span>
+                <span>{f.label}</span>
+              </div>
+            ))}
           </div>
         </div>
+
         {heroPreview && (
-          <div
-            className="hero-preview"
-            onClick={() => { setFeatured(heroPreview); setPlaying(heroPreview); }}
-          >
+          <div className="hero-preview" onClick={enterPlayer}>
             <video
               key={heroPreview.id}
               src={`${resolveVideoSrc(heroPreview.url)}#t=60`}
               autoPlay loop muted playsInline
             />
             <div className="hero-preview-mask" />
+
             <div className="hero-preview-meta">
-              <span className="hero-preview-name">{heroPreview.name}</span>
+              <div className="hero-preview-title-row">
+                <span className="hero-preview-name">龙之家族</span>
+                <span className="hero-preview-ep">S1·E05</span>
+              </div>
+              <div className="hero-preview-sub">迎光赴礼</div>
+              <div className="hero-preview-progress-text">已观看 32:18 / 51:42</div>
             </div>
-            <span className="hero-preview-pill">▶ 正在播放</span>
+
+            <button className="hero-preview-add" onClick={(e) => e.stopPropagation()}>
+              <span>+</span> 加入列表
+            </button>
+
+            <div className="hero-card-chips" onClick={(e) => e.stopPropagation()}>
+              {HERO_CARD_CHIPS.map(c => (
+                <div key={c.id} className="hero-card-chip">
+                  <span className="hero-card-chip-icon">{heroFeatureIcon(c.id)}</span>
+                  <span className="hero-card-chip-text">
+                    <span className="hero-card-chip-title">{c.title}</span>
+                    <span className="hero-card-chip-sub">{c.sub}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="hero-preview-progress">
+              <div className="hero-preview-progress-fill" />
+              <div className="hero-preview-progress-thumb" />
+            </div>
+
+            <div className="hero-preview-controls" onClick={(e) => e.stopPropagation()}>
+              <div className="hero-preview-controls-left">
+                <button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+                <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 17l-5-5 5-5"/><path d="M19 17l-5-5 5-5"/></svg></button>
+                <button><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg></button>
+                <span className="hero-preview-time">32:18 / 51:42</span>
+              </div>
+              <div className="hero-preview-controls-right">
+                <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82 2 2 0 1 1-2.83 2.83 1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33 2 2 0 1 1-2.83-2.83 1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82 2 2 0 1 1 2.83-2.83 1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33 2 2 0 1 1 2.83 2.83 1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+              </div>
+            </div>
           </div>
         )}
+      </section>
+
+      {/* Feature cards row */}
+      <section className="feature-cards">
+        {HERO_FEATURE_CARDS.map(card => (
+          <div key={card.id} className="feature-card" onClick={enterPlayer}>
+            <div className="feature-card-head">
+              <h3>{card.title}</h3>
+              <p>{card.desc}</p>
+            </div>
+            <div className="feature-card-body">
+              {card.id === 'memes' && (
+                <div className="meme-card-sample">
+                  <div className="meme-card-thumb">
+                    <span className="meme-card-thumb-glyph">⚔</span>
+                  </div>
+                  <div className="meme-card-body">
+                    <div className="meme-card-title-row">
+                      <span className="meme-card-title">{card.sample.title}</span>
+                      <span className="meme-card-tag">{card.sample.tag}</span>
+                    </div>
+                    <div className="meme-card-desc">{card.sample.body}</div>
+                    <div className="meme-card-link">查看详情 →</div>
+                  </div>
+                </div>
+              )}
+              {card.id === 'graph' && (
+                <svg className="graph-sample" viewBox="0 0 280 140">
+                  <line x1="140" y1="38"  x2="80"  y2="80" />
+                  <line x1="140" y1="38"  x2="200" y2="80" />
+                  <line x1="80"  y1="80"  x2="140" y2="115" />
+                  <line x1="200" y1="80"  x2="140" y2="115" />
+                  <line x1="80"  y1="80"  x2="200" y2="80"  strokeDasharray="3 4" />
+                  <g className="graph-sample-node"><circle cx="140" cy="38"  r="14"/><text x="140" y="22">提利昂</text></g>
+                  <g className="graph-sample-node"><circle cx="80"  cy="80"  r="14"/><text x="44"  y="84">丹妮莉丝</text></g>
+                  <g className="graph-sample-node"><circle cx="200" cy="80"  r="14"/><text x="232" y="84">乔拉·莫尔蒙</text></g>
+                  <g className="graph-sample-node"><circle cx="140" cy="115" r="14"/><text x="140" y="138">小恶魔</text></g>
+                </svg>
+              )}
+              {card.id === 'hotspots' && (
+                <ul className="hotspot-sample">
+                  {card.sample.map((row, i) => (
+                    <li key={i}>
+                      <span className="hotspot-time">{row.t}</span>
+                      <span className={`hotspot-tag hotspot-tag-${row.tone}`}>{row.kind}</span>
+                      <span className="hotspot-text">{row.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        ))}
       </section>
 
       {/* Tencent Video Player Page */}
@@ -139,6 +311,39 @@ export default function App() {
       )}
     </div>
   );
+}
+
+/* Hero feature SVGs (used both in hero-features pill row and on the video card chips) */
+function IconHotspots() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 12h3l2-6 4 14 2-7 2 3h5"/>
+  </svg>);
+}
+function IconHeroGraph() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="6" cy="7" r="2.4"/><circle cx="18" cy="7" r="2.4"/>
+    <circle cx="12" cy="17" r="2.4"/>
+    <path d="M7.7 8.4 16.3 8.4 M7.5 9 11 15 M16.5 9 13 15"/>
+  </svg>);
+}
+function IconHeroMeme() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3"  y="5" width="13" height="11" rx="1.6"/>
+    <rect x="8"  y="9" width="13" height="11" rx="1.6"/>
+  </svg>);
+}
+function IconHeroClues() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="6" cy="6"  r="2.4"/><circle cx="18" cy="6" r="2.4"/>
+    <circle cx="12" cy="18" r="2.4"/>
+    <path d="M7.6 7.5 11.2 16 M16.4 7.5 12.8 16 M8.4 6 H15.6"/>
+  </svg>);
+}
+function IconHeroClue() {
+  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 3l9 5v8l-9 5-9-5V8z"/>
+    <path d="M9 11h6 M9 14h4"/>
+  </svg>);
 }
 
 /* ─── Tencent Video Player Page ─────────────────────── */
