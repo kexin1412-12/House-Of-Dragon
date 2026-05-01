@@ -505,8 +505,8 @@ function TencentPlayer({
     else v.addEventListener('loadedmetadata', seek, { once: true });
     return () => { try { v.removeEventListener('loadedmetadata', seek); } catch {} };
   }, [initialSeekTime, playing.id]);
-  // 文化注释总开关（localStorage 由 MemeToggle 自维护初值）
-  const [memeEnabled, setMemeEnabled] = useState(true);
+  // 共谋模式总开关：覆盖文化注释 + 符号热点 + 场景热点。localStorage 由 MemeToggle 自维护初值。
+  const [conspiratorMode, setConspiratorMode] = useState(true);
   // 没有 riffs 时直接隐藏 toggle —— fetch 一次同样的端点判断
   const [hasRiffs, setHasRiffs] = useState(false);
   // 鼠标长时间不动 → 隐藏底部进度条 + 顶部浮动按钮 + 鼠标本体；
@@ -1123,8 +1123,8 @@ function TencentPlayer({
                 {aiRecognizing ? '识别中…' : '人物识别'}
               </button>
               <MemeToggle
-                enabled={memeEnabled}
-                onChange={setMemeEnabled}
+                enabled={conspiratorMode}
+                onChange={setConspiratorMode}
                 hidden={!hasRiffs}
               />
             </div>
@@ -1264,8 +1264,11 @@ function TencentPlayer({
               />
             )}
 
-            {/* 共谋者 · 隐藏符号热点 —— 脉冲小点 + 角标 pill，点击查看深度解读 */}
-            <SymbolHotspots videoId={aiKb} videoRef={videoRef} />
+            {/* 共谋者 · 隐藏符号热点 —— 脉冲小点 + 角标 pill，点击查看深度解读
+                共谋模式关闭时整组下线（不轮询、不渲染） */}
+            {conspiratorMode && (
+              <SymbolHotspots videoId={aiKb} videoRef={videoRef} />
+            )}
 
 
             {/* 人物关系图 —— 独立 HUD 入口（X 光内的"人物关系"tab 也保留） */}
@@ -1275,7 +1278,7 @@ function TencentPlayer({
             <MemeOverlay
               videoId={aiKb}
               videoRef={videoRef}
-              enabled={memeEnabled}
+              enabled={conspiratorMode}
               onExpandRequest={(riffId) => {
                 setRightTab('meme');
                 setPendingExpandRiffId(riffId);
@@ -1287,7 +1290,7 @@ function TencentPlayer({
             <SceneHotspots
               videoId={aiKb}
               videoRef={videoRef}
-              enabled={memeEnabled}
+              enabled={conspiratorMode}
               onLoreClick={(loreId) => {
                 setRightTab('meme');
                 setPendingExpandLoreId(loreId);

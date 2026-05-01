@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 
-const STORAGE_KEY = 'memeAnnotationsEnabled';
+// 共谋模式总开关：一关全关（文化注释 + 符号热点 + 场景热点 …）。
+// 旧 storage key 是 memeAnnotationsEnabled，重命名后老用户回到默认值（开），
+// 一次性影响可接受。
+const STORAGE_KEY = 'conspiratorModeEnabled';
 
 export default function MemeToggle({ enabled, onChange, hidden }) {
   // 只在挂载时从 localStorage 拉一次初值（父组件保管 enabled state）
@@ -23,10 +26,10 @@ export default function MemeToggle({ enabled, onChange, hidden }) {
     <button
       className={`meme-toggle${enabled ? ' is-on' : ' is-off'}`}
       onClick={toggle}
-      title={enabled ? '点击关闭文化注释' : '点击开启文化注释'}
+      title={enabled ? '关闭共谋模式（隐藏所有文化注释与热点）' : '开启共谋模式（显示文化注释与热点）'}
     >
       <span className="meme-toggle-spark">✦</span>
-      <span className="meme-toggle-label">文化注释</span>
+      <span className="meme-toggle-label">共谋模式</span>
     </button>
   );
 }
