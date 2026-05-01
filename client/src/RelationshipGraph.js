@@ -762,8 +762,10 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
 
   // 渐进关闭：profile → 冲突高亮 → 整个抽屉，一次只剥一层。Esc / 抽屉
   // 外部 scrim / 图内空白处 click 共用同一逻辑，跟键盘节奏对齐。
+  // 注意：profile 关闭时不连带清 highlighted —— 用户反馈「点空白先关详情、再
+  // 点一次才关剧情冲突线」。两层是独立的，必须分两次点击。
   const closeOneLayer = useCallback(() => {
-    if (profileId) { setProfileId(null); setHighlighted(null); return; }
+    if (profileId) { setProfileId(null); return; }
     if (highlighted) { setHighlighted(null); return; }
     closeDrawer();
   }, [profileId, highlighted, closeDrawer]);
@@ -776,23 +778,14 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     }
   }, [closeOneLayer]);
 
-  // Same dismiss-on-background behavior at the START of a drag — without it,
-  // the panel stays open while the user pans (because onClick only fires for
-  // a no-move release), which is the main reason "can't drag the graph" felt
-  // broken: the panel kept covering the right ~40% of the viewport.
+  // 不在 mousedown 阶段做剥离 —— 否则 click 触发时 profile/highlight 已经
+  // 都被清了，剥层就跨了两层。剥离改在 click 走 closeOneLayer。代价：profile
+  // 还开着时拖拽，panel 仍盖住右 40% 视野——用户可以先点空白关 panel 再拖。
   const onViewportMouseDown = useCallback((e) => {
-    if (e.target?.closest && !e.target.closest('.rg-node')) {
-      setHighlighted(null);
-      setProfileId(null);
-    }
     viewport.onMouseDown(e);
   }, [viewport]);
 
   const onViewportTouchStart = useCallback((e) => {
-    if (e.target?.closest && !e.target.closest('.rg-node')) {
-      setHighlighted(null);
-      setProfileId(null);
-    }
     viewport.onTouchStart(e);
   }, [viewport]);
 
