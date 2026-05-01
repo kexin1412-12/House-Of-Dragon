@@ -1034,7 +1034,7 @@ function register(app) {
     // 没 KB 时也加载默认 show DB
     const db = kb ? getCharacterDb(kb.show_id) : getCharacterDb('house-of-the-dragon');
 
-    // face_service 先跑，全识到就跳过 LLM；半匹配/没起/没检出才调 Gemini。
+    // face_service 先跑，识到 ≥1 张就跳过 LLM；没起 / 没检出脸时才调 LLM 兜底。
     // 见 recognizeViaFaceService 上方注释里的设计说明。
     const t0 = Date.now();
     let faceResult = null;
@@ -1043,38 +1043,55 @@ function register(app) {
     } catch (e) {
       console.warn('[recognize] face_service:', e?.message || e);
     }
+    const tFace = Date.now() - t0;
 
     const faceChars = faceResult?.matched || [];
     const totalDetected = faceResult?.totalDetected ?? 0;
     const rawMatchedCount = faceResult?.rawMatchedCount ?? 0;
 
-    // 跳 LLM 的硬条件：face_service 起着 + 检出 ≥1 张脸 + 检出全部都匹配上
-    const fullyResolved = faceResult !== null
-      && totalDetected > 0
-      && rawMatchedCount === totalDetected;
+    // 跳 LLM 的条件：face_service 起着 + 至少识到一张脸。
+    // 之前要求"检出全部都匹配上"，但半匹配场景（一张主角 + 一个开集背景人物）
+    // 也要等 ~2-5s 的 LLM 才能返回，体感很差。放宽到「识到 ≥1」：偶尔漏掉
+    // 开集 / 客串人物，但常见路径从 ~3s 降到 ~200ms。要补开集人物的话由用户
+    // 二次点击触发。
+    const fastReturn = faceResult !== null && rawMatchedCount >= 1;
 
-    if (fullyResolved) {
+    if (fastReturn) {
+      console.log(`[recognize] fast: face=${tFace}ms matched=${rawMatchedCount}/${totalDetected}`);
       return res.json({
         characters: faceChars,
         cursor_used: cursor,
         has_kb: !!kb,
         llm_ready: ai.isAvailable('vision'),
         sources: { insightface: faceChars.length, llm: 0, faces_detected: totalDetected },
-        skipped: 'llm_unneeded_face_service_full_match',
+        skipped: rawMatchedCount === totalDetected
+          ? 'llm_unneeded_face_service_full_match'
+          : 'llm_unneeded_face_service_partial_match',
         elapsed_ms: Date.now() - t0,
       });
     }
 
-    // 否则 LLM 兜底（face_service 没起 / 没检出脸 / 半匹配都走这里）
+    // 否则 LLM 兜底（face_service 没起 / 没检出脸 / 一张都没匹配上）。
+    // 8s 硬超时：之前 LLM 卡住会让前端等满 axios 30s 才看到失败。
     let llmChars = [];
+    const tLlm0 = Date.now();
     try {
-      llmChars = (await recognizeViaLLM({ image, db, cursor })) || [];
+      const llmPromise = recognizeViaLLM({ image, db, cursor });
+      const result = await Promise.race([
+        llmPromise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('llm_timeout_8s')), 8000),
+        ),
+      ]);
+      llmChars = result || [];
     } catch (e) {
       console.error('[recognize] llm:', e?.message || e);
     }
+    const tLlm = Date.now() - tLlm0;
 
     const characters = mergeRecognitions(faceChars, llmChars);
 
+    console.log(`[recognize] slow: face=${tFace}ms llm=${tLlm}ms detected=${totalDetected} face_matched=${faceChars.length} llm_added=${llmChars.length}`);
     res.json({
       characters,
       cursor_used: cursor,
