@@ -107,7 +107,7 @@ function NodeCardStrip({ storyline, currentTime, onJumpTo, onExpand }) {
               {n.keyframe ? (
                 <img
                   className="sx-strip-card-thumb"
-                  src={`${API}/kb/${n.keyframe}`}
+                  src={`/kb/${n.keyframe}`}
                   alt=""
                   loading="lazy"
                 />
@@ -256,8 +256,8 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
               title={inlineOpen ? '收起面板' : '展开面板'}
               aria-expanded={inlineOpen}
             >
-              <span className={`sx-topbar-toggle-caret${inlineOpen ? ' is-open' : ''}`}>⌃</span>
-              <span className="sx-topbar-toggle-label">{inlineOpen ? '下滑收起' : '上滑展开'}</span>
+              <span className="sx-topbar-toggle-label">{inlineOpen ? '收起' : '展开'}</span>
+              <span className={`sx-topbar-toggle-caret${inlineOpen ? ' is-open' : ''}`}>{inlineOpen ? '▲' : '▼'}</span>
             </button>
           ) : (
             <button className="sx-topbar-close" onClick={() => setOpen(false)} title="关闭 (Esc)">×</button>

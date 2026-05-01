@@ -22,13 +22,15 @@ function formatMMSS(seconds) {
 
 // SVG 画布几何 —— 主线节点等距铺开（横向 spacing 由序号决定，不按时长比例，
 // 否则前面密后面稀；参考图也是等距）。支线挂在 after_node_id 主线节点上方/下方。
-// 展开态：节点是"标题 + 时间 + ✓"的紧凑文本卡（缩略图移到右侧详情侧栏）。
-const NODE_W = 156;
-const NODE_H = 68;
-const NODE_GAP = 56;        // 主线相邻节点的水平间距
-const SIDE_OFFSET_Y = 130;  // 支线节点距主线的垂直距离
+// 展开态：节点是"上缩略图 + 下标题 + 时间"的纵向卡片（视觉锚点更强）。
+const NODE_W = 200;
+const NODE_H = 168;
+const THUMB_W = 184;
+const THUMB_H = 104;
+const NODE_GAP = 36;        // 主线相邻节点的水平间距
+const SIDE_OFFSET_Y = 240;  // 支线节点距主线的垂直距离
 const CANVAS_PAD_X = 60;
-const CANVAS_PAD_Y = 180;
+const CANVAS_PAD_Y = 220;
 
 // 把主线节点按 narrative_function 的连续段切成幕段，给顶部进度带用。
 function computePhases(storyline, allNodesById) {
@@ -158,8 +160,8 @@ function useViewport(graphSize, viewportRef) {
 }
 
 // ─── Node component ─────────────────────────────────────────────────
-// 展开态布局：标题（上）+ 时间（下）+ 已观看 ✓ 在右下角。无缩略图（缩略图移到详情侧栏）。
-// 锁住的支线节点：顶部"???"占位 + 中间 🔒。
+// 展开态布局：上缩略图（184×104）+ 下信息区（标题 + 时间 + ✓）。
+// 锁住的支线节点：缩略图位置变成虚线占位 + 🔒，标题改 "???"。
 function StoryNode({
   node, position, state, locked, isCurrent, isSelected, onClick,
 }) {
@@ -175,6 +177,14 @@ function StoryNode({
     isCriticalTurn ? 'is-critical-turn' : '',
   ].filter(Boolean).join(' ');
 
+  const thumbX = (NODE_W - THUMB_W) / 2;
+  const thumbY = 8;
+  const titleY = thumbY + THUMB_H + 22;
+  const timeY = titleY + 18;
+
+  // 同源相对路径（client/public/kb/frames/... 直接由 client 静态托管）
+  const thumbHref = (!locked && node.keyframe) ? `/kb/${node.keyframe}` : null;
+
   return (
     <g
       className={cls}
@@ -182,42 +192,56 @@ function StoryNode({
       onClick={(e) => { e.stopPropagation(); onClick(node.node_id); }}
     >
       {/* 节点矩形 */}
-      <rect className="sx-node-rect" x={0} y={0} width={NODE_W} height={NODE_H} rx={8} ry={8} />
+      <rect className="sx-node-rect" x={0} y={0} width={NODE_W} height={NODE_H} rx={10} ry={10} />
 
-      {/* 标题（居中偏上） */}
+      {/* 缩略图占位底色 */}
+      <rect
+        className="sx-node-thumb-bg"
+        x={thumbX} y={thumbY} width={THUMB_W} height={THUMB_H} rx={6} ry={6}
+      />
+      {thumbHref && (
+        <image
+          href={thumbHref}
+          x={thumbX} y={thumbY} width={THUMB_W} height={THUMB_H}
+          preserveAspectRatio="xMidYMid slice"
+          style={{ clipPath: 'inset(0 round 6px)' }}
+        />
+      )}
+
+      {/* 锁图标（隐藏支线未解锁时，画在缩略图位置中央） */}
+      {locked && (
+        <text
+          className="sx-node-lock"
+          x={thumbX + THUMB_W / 2}
+          y={thumbY + THUMB_H / 2 + 8}
+          textAnchor="middle"
+        >🔒</text>
+      )}
+
+      {/* 标题（缩略图下方居中） */}
       <text
         className="sx-node-title"
         x={NODE_W / 2}
-        y={26}
+        y={titleY}
         textAnchor="middle"
       >{locked ? '???' : node.title}</text>
 
-      {/* 时间（居中偏下） */}
+      {/* 时间（标题下方居中） */}
       {!locked && (
         <text
           className="sx-node-time"
           x={NODE_W / 2}
-          y={48}
+          y={timeY}
           textAnchor="middle"
         >{formatMMSS(node.start_time)}</text>
-      )}
-
-      {/* 锁图标（隐藏支线未解锁时） */}
-      {locked && (
-        <text
-          className="sx-node-lock"
-          x={NODE_W / 2}
-          y={50}
-          textAnchor="middle"
-        >🔒</text>
       )}
 
       {/* 已观看 ✓ 标记（右下角内嵌） */}
       {state === 'watched' && !locked && (
         <text
           className="sx-node-watched"
-          x={NODE_W - 10}
-          y={NODE_H - 8}
+          x={NODE_W - 12}
+          y={NODE_H - 10}
           textAnchor="end"
         >✓</text>
       )}
