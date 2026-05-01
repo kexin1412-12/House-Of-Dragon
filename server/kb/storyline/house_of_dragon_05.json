@@ -39,7 +39,7 @@
     {
       "node_id": "n_kill_wife",
       "title": "开场杀妻",
-      "start_time": 0,
+      "start_time": 165,
       "end_time": 340,
       "track": "main",
       "narrative_function": "铺垫",
@@ -50,7 +50,7 @@
         "n_father_farewell"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-001.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-036.jpg"
     },
     {
       "node_id": "n_father_farewell",
