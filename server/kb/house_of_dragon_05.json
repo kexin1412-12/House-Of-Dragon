@@ -5849,6 +5849,15 @@
           ],
           "confidence": 0.5928
         }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "royce_bronze_runic_armor",
+          "evidence_in_frame": "蕾雅·罗伊斯（KB 中识别为\"莱娜·瓦列利安\"）身着雕刻先民符文的青铜甲，神情严肃，背景是开阔山地。",
+          "confidence": "medium",
+          "source": "user_seed_e5_2026-05-01",
+          "_user_note": "KB 把蕾雅误识别为莱娜——anchor 仍以镜头内容为准"
+        }
       ]
     },
     {
@@ -41296,7 +41305,14 @@
           "confidence": null
         }
       ],
-      "symbols": [],
+      "symbols": [
+        {
+          "symbol_id": "parallel_walk_no_touch",
+          "evidence_in_frame": "雷尼拉公主与莱诺·瓦列利安在船上交谈，背景黄昏海景；两人保持一臂距离，从未接触。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        }
+      ],
       "directing": {
         "editing_pattern": null,
         "expected_but_missing": [],
@@ -41992,7 +42008,14 @@
           "confidence": null
         }
       ],
-      "symbols": [],
+      "symbols": [
+        {
+          "symbol_id": "duck_goose_euphemism",
+          "evidence_in_frame": "雷尼拉公主与莱诺·瓦列利安在船上交谈，雷尼拉用\"鸭肉/鹅肉\"委婉表达她理解莱诺的性取向。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        }
+      ],
       "directing": {
         "editing_pattern": null,
         "expected_but_missing": [],
@@ -52174,6 +52197,14 @@
             0.662
           ],
           "confidence": 0.5589
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "kingsguard_vow_punishment",
+          "evidence_in_frame": "克里斯顿·科尔身着盔甲，面露痛苦绝望，向画面外人请求\"仁慈地判处死刑\"——违誓刑罚的具体台词。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
         }
       ]
     },
@@ -79044,6 +79075,14 @@
           ],
           "confidence": 0.5333
         }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "daemon_does_not_rise",
+          "evidence_in_frame": "戴蒙王子坐在宴会厅餐桌旁，目光转向右侧，神情若有所思——周围人入场行礼时他端坐不动。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        }
       ]
     },
     {
@@ -92286,6 +92325,14 @@
             0.4426
           ],
           "confidence": null
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "viserys_carving_squab",
+          "evidence_in_frame": "婚宴主位，韦赛里斯起身致辞，桌前有切到一半的乳鸽与餐刀；他手上的伤口绷带在烛光下可见，刀工凌乱。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
         }
       ]
     },
@@ -134321,6 +134368,18 @@
           "symbol_id": "rhaenys_watchful",
           "evidence_in_frame": "事件后蕾妮丝立于人群一侧,目光扫过新人与国王,姿态依旧不动——本集注视线在血变后的最终总账。",
           "confidence": "medium"
+        },
+        {
+          "symbol_id": "reaction_montage",
+          "evidence_in_frame": "婚宴大厅，殴杀事件已发生：地面血迹、人群退散或惊愕、新人处于震惊状态；蕾妮丝立于人群一侧静观。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        },
+        {
+          "symbol_id": "wedding_color_drop",
+          "evidence_in_frame": "同一空间在婚宴前后的色温骤变：从婚宴的暖金转为血案后的冷蓝灰，画面只剩稀疏火把。",
+          "confidence": "medium",
+          "source": "user_seed_e5_2026-05-01"
         }
       ],
       "directing": {
@@ -139566,7 +139625,14 @@
           "confidence": 0.9955
         }
       ],
-      "symbols": [],
+      "symbols": [
+        {
+          "symbol_id": "cloaking_ritual",
+          "evidence_in_frame": "雷尼拉公主与莱诺·瓦列利安在神木林举行婚礼，新郎为新娘披上瓦列利安家族斗篷的\"披纱礼\"瞬间。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        }
+      ],
       "directing": {
         "editing_pattern": null,
         "expected_but_missing": [],
@@ -140696,7 +140762,14 @@
           "confidence": 0.569
         }
       ],
-      "symbols": [],
+      "symbols": [
+        {
+          "symbol_id": "kingsguard_white_cloak_pin",
+          "evidence_in_frame": "克里斯顿·科尔低头坐在地上，双手紧握，脸上和手臂上可见伤痕——手中应有白斗篷别针特写（自尽未遂时刻）。",
+          "confidence": "high",
+          "source": "user_seed_e5_2026-05-01"
+        }
+      ],
       "directing": {
         "editing_pattern": null,
         "expected_but_missing": [],
