@@ -3,6 +3,7 @@ import axios from 'axios';
 import './App.css';
 import RelationshipGraph from './RelationshipGraph';
 import SymbolHotspots from './SymbolHotspots';
+import MemePanel from './MemePanel';
 import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -993,9 +994,12 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             />
           )}
           {rightTab === 'meme' && (
-            <div style={{ padding: 16, color: '#888' }}>
-              文化梗面板待接入（Task 4-6）
-            </div>
+            <MemePanel
+              videoId={aiKb}
+              videoRef={videoRef}
+              expandRiffId={pendingExpandRiffId}
+              onConsumeExpand={() => setPendingExpandRiffId(null)}
+            />
           )}
         </aside>
       </main>
