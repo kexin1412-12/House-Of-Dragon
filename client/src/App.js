@@ -220,12 +220,11 @@ export default function App() {
               <span>▶</span>
               立即体验
             </button>
-            <button className="btn-secondary" onClick={enterPlayer}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="5" width="18" height="14" rx="2"/>
-                <path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/>
+            <button className="btn-secondary" onClick={() => setShowFavorites(true)}>
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <path d="M12 21s-7-4.35-7-10a4.5 4.5 0 0 1 8-2.85A4.5 4.5 0 0 1 19 11c0 5.65-7 10-7 10z"/>
               </svg>
-              查看 Demo
+              我的收藏{favCount > 0 && ` · ${favCount}`}
             </button>
           </div>
           <div className="hero-features">
