@@ -64,6 +64,38 @@
   to   { opacity: 1; transform: scale(1); }
 }
 
+/* ─── Inline mode: 视频下方常驻面板（不浮层，不蒙板）─────────────── */
+.sx-root--inline {
+  display: block;
+  width: 100%;
+  margin: 24px 0 40px;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+.sx-panel--inline {
+  position: relative;          /* 不再 absolute / inset:0 */
+  inset: auto;
+  height: auto;                /* 高度由内容撑开 + body min-height 保底 */
+  min-height: 540px;
+  max-width: 1600px;
+  margin: 0 auto;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 10px;
+  background:
+    radial-gradient(ellipse at top right,
+      rgba(20, 14, 10, 0.55) 0%,
+      rgba(8, 4, 4, 0.88) 60%,
+      rgba(8, 4, 4, 0.96) 100%);
+  overflow: hidden;            /* 圆角裁切顶栏 */
+  animation: sxPanelIn .22s cubic-bezier(.2, .7, .2, 1);
+}
+.sx-panel--inline .sx-body {
+  /* 内嵌 RelationshipGraph / StorylineTimeline 需要一个固定高度容器才能滚动绘图 */
+  height: 540px;
+  min-height: 540px;
+  flex: none;
+}
+
 /* ─── Top bar ───────────────────────────────────────────────────────── */
 .sx-topbar {
   position: relative;

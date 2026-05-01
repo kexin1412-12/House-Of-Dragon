@@ -1268,9 +1268,6 @@ function TencentPlayer({
             {/* 人物关系图 —— 独立 HUD 入口（X 光内的"人物关系"tab 也保留） */}
             <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
 
-            {/* 叙事 X 光 —— HUD 入口，包"关键事件结构图" + "人物关系" 两 tab */}
-            <StorylineXRay videoId={aiKb} videoRef={videoRef} />
-
             {/* 共谋者 · 文化梗浮层 —— 4 条 riff 命中时段：底部蒙板 + HTML 字幕 + 金色高亮 + hover 浮窗 */}
             <MemeOverlay
               videoId={aiKb}
@@ -1343,6 +1340,9 @@ function TencentPlayer({
           )}
         </aside>
       </main>
+
+      {/* 叙事 X 光 —— 视频下方常驻面板：关键事件 / 人物关系 / 本集符号 三 tab */}
+      <StorylineXRay videoId={aiKb} videoRef={videoRef} inline />
 
       {/* Floating side icons */}
       <div className="tx-floating">
