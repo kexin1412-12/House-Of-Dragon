@@ -260,6 +260,12 @@ const BANNED_HOTD_OVERLAY = [
   '改写历史', '抉择',
   // perspective HUD 旧标签污染（眼前/盘算/隐忧）+ "此刻/命运/宿命" 这类宿命论修辞
   '眼前', '盘算', '隐忧', '此刻', '命运', '宿命',
+  // 万金油对冲词 —— "TA 可能在影响 X 局势 / 可能影响 Y 稳定 / 仍然活跃"
+  // 这种不写就丢饭碗的模板句式是典型违规。"可能"/"或许" 单独不拉黑（合
+  // 法的"可能要求 X"/"或许会失去 Y"语义需要保留），但短语组合拉黑。
+  '仍然活跃', '可能在影响', '或许会', '可能会被',
+  '影响家族稳定', '影响王位继承', '影响 X', '影响家族',
+  '暂未明朗', '尚未明朗', '尚不清楚', '不得而知',
 ];
 function containsBannedOverlayPhrase(text) {
   if (!text) return false;
@@ -1883,7 +1889,7 @@ ${JSON.stringify(prepared.context, null, 2)}
   // 每张卡片正文写当前场景里 TA 的具体认知。语气是 HBO 译制风的冷峻政治叙事，
   // 不是史书学士那一套。
   app.post('/api/agent/perspective/generate', async (req, res) => {
-    const { videoId, t, characterId } = req.body || {};
+    const { videoId, t, characterId, image } = req.body || {};
     const kb = videoId ? loadKB(videoId) : null;
     if (!kb || !characterId) {
       return res.status(400).json({ error: 'videoId + characterId required' });
@@ -1893,6 +1899,11 @@ ${JSON.stringify(prepared.context, null, 2)}
     if (!scene) {
       return res.status(400).json({ error: 'no scene at cursor' });
     }
+    // When the client posts a current-frame data URL, we route the request
+    // to vision_chat (Gemini multimodal) so the LLM grounds its 3 cards in
+    // what's actually visible — not just KB summaries. Falls back to text
+    // chat when no image is provided or vision provider isn't available.
+    const hasImage = typeof image === 'string' && image.startsWith('data:image/');
     const showId = kb.show_id || 'house-of-the-dragon';
     const episode = resolveEpisode(kb);
     const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
@@ -1901,7 +1912,8 @@ ${JSON.stringify(prepared.context, null, 2)}
     const displayName = dbCard?.display_name_zh || dbCard?.canonical_name || characterId;
     const subtitleLine = dbCard?.short_identity_zh || profile?.subtitle || '';
 
-    if (!ai.isAvailable('chat')) {
+    const useVision = hasImage && ai.isAvailable('vision_chat');
+    if (!useVision && !ai.isAvailable('chat')) {
       return res.status(503).json({ error: 'no llm available' });
     }
 
@@ -1935,6 +1947,13 @@ ${JSON.stringify(prepared.context, null, 2)}
 - 旧版 HUD 标签：眼前、盘算、隐忧
 - 套话："此刻就在你面前""问问看""问她一句""问 TA 一句""你后悔吗""你到底想做什么""另一条路"
 - "此刻"作为副词也不要用 —— 用"现在""正在""当前"或者干脆不写时间状语
+
+═══ 万金油对冲句拉黑 ═══
+下面这些是"听起来像在说什么但其实没说"的废话句式，命中即丢弃：
+- "X 仍然活跃" / "X 可能在影响 Y" / "X 可能影响 Y 局势" / "X 影响家族稳定"
+- "暂未明朗" / "尚未明朗" / "尚不清楚" / "不得而知"
+不要用"可能在""可能会被""或许会"开头空对空地猜测影响。要写就写具体的、画面/材料里能落地的事——
+比如："父子争吵后被赶出王廷"比"可能影响家族稳定"好十倍。如果只能写空话，宁可换一张卡的 label。
 
 ═══ 输出格式（严格 JSON） ═══
 {
@@ -2001,12 +2020,19 @@ ${sceneSummary}
 请生成 ${displayName} 在这一刻的认知 HUD。label 必须从安全表（看到/判断/风险/立场/关系/代价）里挑 3 个不同的。直接输出 JSON。`;
 
     try {
+      // vision_chat 走 Gemini 多模态：把当前帧作为画面证据塞进 user 消息，
+      // LLM 必须在画面里找到能写进卡片的具体事实，而不是从 KB 字面"自由发挥"。
+      const userContent = useVision ? [
+        { type: 'image', dataUrl: image, detail: 'high' },
+        { type: 'text', text: `↑ 上面是用户当前看到的画面（${displayName} 的视角锚点）。请基于画面+下面的文字材料生成 3 张卡。\n\n${user}` },
+      ] : user;
+
       const result = await ai.chat({
-        task: 'chat',
+        task: useVision ? 'vision_chat' : 'chat',
         system,
-        messages: [{ role: 'user', content: user }],
+        messages: [{ role: 'user', content: userContent }],
         maxTokens: 500,
-        temperature: 0.7,
+        temperature: useVision ? 0.5 : 0.7,
       });
       const txt = String(result?.text || '').trim();
       const parsed = parsePerspectiveJSON(txt);
