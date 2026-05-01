@@ -94,7 +94,9 @@
   background: transparent;
   pointer-events: none;
 }
-.rg-focus-overlay.open .rg-scrim { pointer-events: none; }
+/* When drawer is open, scrim must capture clicks so blank-area click closes
+ * the graph (drawer only covers right 46vw — left side IS the scrim). */
+.rg-focus-overlay.open .rg-scrim { pointer-events: auto; }
 
 /* ─── Tree drawer: right-side panel, transparent over the video ──── */
 .rg-tree-card {
