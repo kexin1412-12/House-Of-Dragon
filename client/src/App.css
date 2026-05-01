@@ -1746,32 +1746,20 @@ body {
   cursor: pointer;
   z-index: 2;
 }
-/* 视觉点画在 ::before 上 —— 真正的命中区是上面的透明 10px 包络 */
+/* 视觉点画在 ::before 上；真正命中区是上面 14px 透明包络。crit / kb /
+   manual 三类用同一色同一尺寸 —— 区分靠 hover label，不靠颜色冗余。*/
 .tx-controls-progress-tick::before {
   content: '';
   position: absolute; left: 50%; top: 50%;
-  width: 6px; height: 6px;
+  width: 7px; height: 7px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  transition: width 0.15s, height 0.15s, background 0.15s, box-shadow 0.15s;
-}
-/* kb = 来自 KB 自动 enrich 的场景级事件（白圆点）
-   manual = 编辑手写的事件（白圆点同款）
-   crit = manual 中标了 crit:true 的关键节点（橙圆点 + 发光） */
-.tx-controls-progress-tick-kb::before,
-.tx-controls-progress-tick-manual::before {
-  background: rgba(255, 255, 255, 0.55);
-}
-.tx-controls-progress-tick-crit::before {
-  width: 8px; height: 8px;
-  background: #e8954d;
+  background: rgba(255, 255, 255, 0.7);
+  transition: width 0.15s, height 0.15s, background 0.15s;
 }
 .tx-controls-progress-tick:hover::before {
   width: 10px; height: 10px;
   background: #fff;
-}
-.tx-controls-progress-tick-crit:hover::before {
-  background: #ffb37a;
 }
 
 /* hover chapter 时浮起的 label 气泡（drag 中让位给时间 tooltip） */
@@ -1793,9 +1781,6 @@ body {
   max-width: 360px;
   z-index: 3;
   border-left: 3px solid rgba(255, 255, 255, 0.45);
-}
-.tx-controls-progress-chapter-tip-crit {
-  border-left-color: #e8954d;
 }
 .tx-controls-progress-chapter-tip-time {
   font-size: 10px;
