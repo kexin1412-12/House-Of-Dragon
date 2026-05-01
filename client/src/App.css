@@ -114,16 +114,6 @@ body {
 }
 .searchbar input::placeholder { color: var(--text3); }
 
-/* Nav buttons */
-.btn-upload-nav {
-  display: flex; align-items: center; gap: 7px;
-  background: var(--accent); color: #0d0e14;
-  border: none; border-radius: 22px;
-  padding: 9px 22px; font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: background 0.2s, transform 0.15s;
-}
-.btn-upload-nav svg { width: 15px; height: 15px; }
-.btn-upload-nav:hover { background: var(--accent2); transform: scale(1.03); }
 
 .nav-icon-btn {
   background: none; border: none;
@@ -456,114 +446,6 @@ body {
 }
 .add-card:hover .add-icon { color: var(--accent); }
 .add-card-inner p { font-size: 13px; }
-
-/* ─── Modal Shared ────────────────────────────────────── */
-.modal-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.82);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 200;
-  animation: fadeIn 0.2s ease;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.modal-close {
-  background: rgba(255,255,255,0.07); border: none;
-  color: var(--text2); font-size: 15px;
-  width: 32px; height: 32px; border-radius: 50%;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s, color 0.2s;
-}
-.modal-close:hover { background: rgba(255,255,255,0.14); color: var(--text); }
-
-/* ─── Upload Modal ────────────────────────────────────── */
-.modal {
-  background: var(--bg2);
-  border-radius: 18px;
-  width: 90%; max-width: 480px;
-  border: 1px solid var(--border);
-  animation: scaleIn 0.2s ease;
-}
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 1.4rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-}
-.modal-header h2 { font-size: 1.1rem; font-weight: 700; }
-
-.drop-zone {
-  padding: 3rem 2rem;
-  text-align: center;
-  cursor: pointer;
-  border-radius: 0 0 18px 18px;
-  transition: background 0.2s;
-  min-height: 260px;
-  display: flex; align-items: center; justify-content: center;
-}
-.drop-zone:hover:not(.is-uploading) { background: rgba(245,166,35,0.04); }
-.drop-zone.drag-active {
-  background: rgba(245,166,35,0.08);
-  outline: 2px dashed var(--accent);
-  outline-offset: -16px;
-}
-
-/* Idle state */
-.drop-idle { display: flex; flex-direction: column; align-items: center; }
-.drop-icon {
-  width: 64px; height: 64px; color: var(--text3);
-  margin-bottom: 1.2rem;
-  transition: color 0.2s;
-}
-.drop-zone:hover .drop-icon, .drop-zone.drag-active .drop-icon { color: var(--accent); }
-.drop-icon svg { width: 100%; height: 100%; }
-.drop-idle h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
-.drop-idle p  { font-size: 14px; color: var(--text2); }
-.browse-link  { color: var(--accent); text-decoration: underline; }
-.file-hint    { font-size: 12px; color: var(--text3); margin-top: 12px; letter-spacing: 0.5px; }
-
-/* Progress state */
-.upload-progress-wrap { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; }
-
-.progress-circle {
-  position: relative;
-  width: 90px; height: 90px;
-}
-.progress-circle svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.progress-circle .track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 6; }
-.progress-circle .fill  {
-  fill: none; stroke: var(--accent); stroke-width: 6;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.3s ease;
-}
-.progress-circle span {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: 700; color: var(--accent);
-}
-
-.upload-status-text { font-size: 14px; color: var(--text2); }
-
-.progress-bar-wrap {
-  width: 100%; height: 4px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px; overflow: hidden;
-}
-.progress-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), #ffcc70);
-  border-radius: 2px;
-  transition: width 0.3s ease;
-}
 
 /* ─── Player Modal ────────────────────────────────────── */
 .player-backdrop { padding: 1rem; }

@@ -82,13 +82,6 @@ export default function App() {
           </div>
         </div>
         <div className="nav-right">
-          <button className="btn-upload-nav" onClick={() => setShowUpload(true)}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-            上传
-          </button>
           <button className="nav-icon-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
@@ -133,68 +126,6 @@ export default function App() {
           </div>
         )}
       </section>
-
-      {/* Upload Modal */}
-      {showUpload && (
-        <div className="modal-backdrop" onClick={() => !uploading && setShowUpload(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>上传视频</h2>
-              {!uploading && (
-                <button className="modal-close" onClick={() => setShowUpload(false)}>✕</button>
-              )}
-            </div>
-            <div
-              className={`drop-zone ${dragOver ? 'drag-active' : ''} ${uploading ? 'is-uploading' : ''}`}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-              onClick={() => !uploading && fileInputRef.current?.click()}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="video/*"
-                hidden
-                onChange={e => handleUpload(e.target.files[0])}
-              />
-              {uploading ? (
-                <div className="upload-progress-wrap">
-                  <div className="progress-circle">
-                    <svg viewBox="0 0 80 80">
-                      <circle cx="40" cy="40" r="34" className="track" />
-                      <circle
-                        cx="40" cy="40" r="34"
-                        className="fill"
-                        strokeDasharray={`${2 * Math.PI * 34}`}
-                        strokeDashoffset={`${2 * Math.PI * 34 * (1 - progress / 100)}`}
-                      />
-                    </svg>
-                    <span>{progress}%</span>
-                  </div>
-                  <p className="upload-status-text">正在上传… {progress}%</p>
-                  <div className="progress-bar-wrap">
-                    <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-                  </div>
-                </div>
-              ) : (
-                <div className="drop-idle">
-                  <div className="drop-icon">
-                    <svg viewBox="0 0 64 64" fill="none">
-                      <rect x="4" y="12" width="56" height="40" rx="6" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M22 32l10 8 10-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                      <path d="M32 40V20" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <h3>拖放视频文件到此处</h3>
-                  <p>或 <span className="browse-link">点击浏览文件</span></p>
-                  <p className="file-hint">支持 MP4 · MOV · AVI · MKV · WebM</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Tencent Video Player Page */}
       {playing && (
