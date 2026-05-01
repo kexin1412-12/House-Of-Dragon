@@ -2809,16 +2809,22 @@ body {
   color: #f5d590;
 }
 
-/* 共谋者 brand badge */
+/* 共谋者 brand badge —— 暗金徽章感，跟全站 HotD 金黑调一致 */
 .conspirator-badge {
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
-  background: linear-gradient(135deg, #8a5ae8 0%, #b58ae8 50%, #4dd0d0 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(138, 90, 232, 0.3);
+  letter-spacing: 2px;
+  background: linear-gradient(135deg,
+    rgba(40, 26, 12, 0.92) 0%,
+    rgba(60, 40, 18, 0.92) 100%);
+  color: #f5d590;
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  text-shadow: 0 0 8px rgba(245, 213, 144, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 213, 144, 0.10),
+    0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 
