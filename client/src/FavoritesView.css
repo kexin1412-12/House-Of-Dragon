@@ -8,6 +8,11 @@
   font-size: 14px;
 }
 
+/* 展开/收起注释时页面高度变化导致滚动条出现/消失 → 视口宽度抖动 → 列宽漂移
+   把滚动条占位永久预留（modern browsers），无论有没有滚动条页面宽度都一样。
+   作用在 html 上；body 滚动也走它 */
+html { scrollbar-gutter: stable; }
+
 /* ─── 空态 */
 .fv-empty {
   display: flex;
@@ -288,8 +293,9 @@
 
 .fv-card-row {
   display: grid;
-  grid-template-columns: 160px 1fr 220px;
+  grid-template-columns: 160px minmax(0, 1fr) 220px;
   gap: 18px;
+  align-items: stretch;
 }
 
 .fv-card-bookmark {
@@ -329,6 +335,11 @@
 
 .fv-card-body {
   min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.fv-card-side {
+  min-width: 220px;
 }
 
 .fv-card-quote-en {
