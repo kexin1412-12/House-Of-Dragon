@@ -9,6 +9,7 @@
     "  - micro_signal  ：人物身体细节（手指抓痕/不对视/紧握）",
     "  - color_code    ：阵营/家族色码（绿党、黑党、海塔尔绿）",
     "  - lore          ：维斯特洛文化/礼制/誓言等背景知识——画面里看不到，知道了才解锁",
+    "  - cta           ：跨栏跳转/回看的引导卡（带 cta 字段，前端渲染按钮）",
     "earliest_appearance: spoiler-safe 边界。LLM 解读不能引用比 cursor 还晚的符号含义。",
     "examples: 已知出现这个符号的场景或时间点（用于 few-shot prompt）。",
     "**这个文件由人工种子驱动**：用户列了 10 条核心观察作为 seed，其余从大聪解说和 wiki 整理。请校对增删后再跑 enrich。"
@@ -381,6 +382,116 @@
       "viewer_takeaway": "真正的礼貌，是不让对方说出口",
       "spoiler_safe": true,
       "earliest_appearance": "S01E05"
+    },
+    {
+      "symbol_id": "runestone_intro_e05",
+      "category": "cta",
+      "visual_cue": "戴蒙在谷地猎捕雷雅·罗伊斯",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "戴蒙在谷地猎捕雷雅·罗伊斯",
+      "viewer_takeaway": "奔石城",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots runestone_intro_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "hand_of_king_appointment_e05",
+      "category": "cta",
+      "visual_cue": "韦赛里斯任命斯壮为新国王之手",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "韦赛里斯任命斯壮为新国王之手",
+      "viewer_takeaway": "国王之手",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots hand_of_king_appointment_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "high_tide_arrival_e05",
+      "category": "cta",
+      "visual_cue": "雷妮拉抵达瓦列利安领地",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "雷妮拉抵达瓦列利安领地",
+      "viewer_takeaway": "潮汐堡",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots high_tide_arrival_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "duck_to_goose_hotspot_e05",
+      "category": "cta",
+      "visual_cue": "雷妮拉用食物比喻性取向",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "雷妮拉用食物比喻性取向",
+      "viewer_takeaway": "「鸭肉与鹅肉」",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots duck_to_goose_hotspot_e05; ref.kind=riff"
+    },
+    {
+      "symbol_id": "kingsguard_stained_e05",
+      "category": "cta",
+      "visual_cue": "克里斯顿坦白「有污点之人」",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "克里斯顿坦白「有污点之人」",
+      "viewer_takeaway": "御林铁卫誓言",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots kingsguard_stained_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "alicent_truth_callback_e05",
+      "category": "cta",
+      "visual_cue": "亚莉森意识到雷妮拉对她撒了谎",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "亚莉森意识到雷妮拉对她撒了谎",
+      "viewer_takeaway": "雷妮拉的谎言",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots alicent_truth_callback_e05; ref.kind=callback"
+    },
+    {
+      "symbol_id": "greens_birth_e05",
+      "category": "cta",
+      "visual_cue": "拉蕊斯向哈尔温拆解亚莉森绿裙的军事含义",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "拉蕊斯向哈尔温拆解亚莉森绿裙的军事含义",
+      "viewer_takeaway": "绿党诞生",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots greens_birth_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "throne_wound_callback_e05",
+      "category": "cta",
+      "visual_cue": "韦赛里斯手伤恶化——铁王座在吞噬他",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "韦赛里斯手伤恶化——铁王座在吞噬他",
+      "viewer_takeaway": "铁王座的诅咒",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots throne_wound_callback_e05; ref.kind=callback"
+    },
+    {
+      "symbol_id": "cloaking_e05",
+      "category": "cta",
+      "visual_cue": "雷妮拉与莱诺的婚礼誓词与披纱仪式",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "雷妮拉与莱诺的婚礼誓词与披纱仪式",
+      "viewer_takeaway": "披纱礼",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots cloaking_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "godswood_e05",
+      "category": "cta",
+      "visual_cue": "克里斯顿在此近乎自杀",
+      "context_required": "从 scene_hotspots 迁移而来——画面到该时间点即触发",
+      "meaning_zh": "克里斯顿在此近乎自杀",
+      "viewer_takeaway": "神木林",
+      "spoiler_safe": true,
+      "earliest_appearance": "S01E05",
+      "_user_note": "migrated from SceneHotspots godswood_e05; ref.kind=lore"
     }
   ]
 }

@@ -179,3 +179,22 @@
   padding-top: 7px;
   margin-top: 4px;
 }
+
+/* CTA 按钮：跨栏跳转 / 回看引导（迁移自旧 SceneHotspots） */
+.sh-tooltip-cta {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: rgba(212, 175, 55, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 4px;
+  color: rgba(255, 220, 130, 0.95);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background .14s ease, border-color .14s ease;
+}
+.sh-tooltip-cta:hover {
+  background: rgba(212, 175, 55, 0.26);
+  border-color: rgba(255, 217, 102, 0.85);
+}

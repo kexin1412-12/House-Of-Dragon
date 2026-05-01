@@ -175,6 +175,49 @@ function normalizeTime(rawT) {
   return t;
 }
 
+// ─── SRT 字幕加载 + 时间窗切片 ─────────────────────────────
+// 用途：给"角色内心"prompt 里塞当下这一段真实的台词，让 LLM 看到此刻角色
+// 实际怎么说话（whisper 输出，没有 speaker label，但腔调和断句信息还在）。
+const _srtCache = new Map();
+function loadSrtCues(videoId) {
+  if (!videoId) return [];
+  if (_srtCache.has(videoId)) return _srtCache.get(videoId);
+  const p = path.join(UPLOADS_DIR, `${videoId}.srt`);
+  if (!fs.existsSync(p)) {
+    _srtCache.set(videoId, []);
+    return [];
+  }
+  let raw;
+  try { raw = fs.readFileSync(p, 'utf8'); }
+  catch { _srtCache.set(videoId, []); return []; }
+  const blocks = raw.replace(/\r\n/g, '\n').split(/\n\n+/);
+  const toS = (h, m, s, ms) => Number(h) * 3600 + Number(m) * 60 + Number(s) + Number(ms) / 1000;
+  const cues = [];
+  for (const block of blocks) {
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length < 2) continue;
+    const tline = lines[0].includes('-->') ? lines[0] : lines[1];
+    const m = /(\d{1,2}):(\d{2}):(\d{2})[,\.](\d{1,3})\s*-->\s*(\d{1,2}):(\d{2}):(\d{2})[,\.](\d{1,3})/.exec(tline);
+    if (!m) continue;
+    const start = toS(m[1], m[2], m[3], m[4]);
+    const end = toS(m[5], m[6], m[7], m[8]);
+    const textLines = lines.slice(lines.indexOf(tline) + 1);
+    const text = textLines.join(' ').trim();
+    if (!text) continue;
+    cues.push({ start, end, text });
+  }
+  _srtCache.set(videoId, cues);
+  return cues;
+}
+// 取 [centerT - back, centerT + forward] 区间字幕。默认只回看 30s，不窥探未来（剧透红线）。
+function srtWindow(videoId, centerT, backS = 30, forwardS = 0) {
+  const cues = loadSrtCues(videoId);
+  if (!cues.length) return [];
+  const lo = centerT - backS;
+  const hi = centerT + forwardS;
+  return cues.filter(c => c.end >= lo && c.start <= hi);
+}
+
 // ─── 分支 cue 生成的辅助 ─────────────────────────────────────
 // 内存缓存：同一个 branch_id 只让 LLM 写一次（演示时多次走到也用同一句）
 const BRANCH_CUE_CACHE = new Map();
@@ -2436,13 +2479,14 @@ ${bp.description || '（无具体描述）'}
     const db = getCharacterDb(showId);
     const cursor = charactersLib.cursorAtTime(kb, cursorTime);
 
-    // 当前场景切得很细（HotD KB 里很多 scene 只有 2-3 秒）—— 用 ±30s 窗口取并集，
-    // 这样跨多个 micro-cut 的长叙事节拍（私语 / 婚宴 / 绿衣登场）才能覆盖到。
-    const WINDOW_S = 30;
+    // HotD KB 里 scene 切得极细（多数 2-3s）。挑"当前叙事节拍"用两层窗口：
+    //  · 严格当前场景（who's on this exact frame）—— 优先权重高
+    //  · ±20s 邻近场景的并集 —— 覆盖一段持续对白 / 一个房间内的人
+    const NEAR_S = 20;
     const nearbyScenes = kb.scenes.filter(s =>
-      s.end_time >= cursorTime - WINDOW_S && s.start_time <= cursorTime + WINDOW_S
+      s.end_time >= cursorTime - NEAR_S && s.start_time <= cursorTime + NEAR_S
     );
-    const ids = Array.from(new Set(
+    const idsNear = Array.from(new Set(
       nearbyScenes.flatMap(s =>
         Array.isArray(s.characters_on_screen) && s.characters_on_screen.length
           ? s.characters_on_screen.map(c => c.character_id || c.id).filter(Boolean)
@@ -2450,9 +2494,15 @@ ${bp.description || '（无具体描述）'}
       )
     ));
     const scene = currentScene(kb, cursorTime);
+    const idsExact = scene
+      ? (Array.isArray(scene.characters_on_screen) && scene.characters_on_screen.length
+          ? scene.characters_on_screen.map(c => c.character_id || c.id).filter(Boolean)
+          : (scene.characters || []).map(c => c.id).filter(Boolean))
+      : [];
+    const exactSet = new Set(idsExact);
 
     const out = [];
-    for (const id of ids) {
+    for (const id of idsNear) {
       const profile = profiles[id];
       if (!profile) continue;
       // 当前 episode 必须有 boundary，否则放走会剧透
@@ -2463,9 +2513,27 @@ ${bp.description || '（无具体描述）'}
         display_name: card?.display_name || id,
         short_identity: card?.short_identity || null,
         core_traits: profile.core_traits_zh || [],
+        in_frame: exactSet.has(id),
       });
     }
-    res.json({ has_kb: true, episode, scene_id: scene?.scene_id || null, characters: out });
+    // 此刻就在画面里的角色排前面
+    out.sort((a, b) => Number(b.in_frame) - Number(a.in_frame));
+
+    // scene_beat：让前端看到"当前钻进的是哪个节拍"，确认实时跟着剧走
+    const sceneBeat = scene ? {
+      scene_id: scene.scene_id,
+      start_time: scene.start_time,
+      end_time: scene.end_time,
+      fact: scene.plot?.fact || null,
+    } : null;
+
+    res.json({
+      has_kb: true,
+      episode,
+      scene_id: scene?.scene_id || null,
+      scene_beat: sceneBeat,
+      characters: out,
+    });
   });
 
   // POST /api/agent/character/inner/stream
@@ -2508,11 +2576,40 @@ ${bp.description || '（无具体描述）'}
 
     const cursorTime = normalizeTime(req.body?.t);
     const scene = currentScene(kb, cursorTime);
-    const sceneSlice = scene ? {
-      label: scene.label_zh || scene.label || null,
-      summary: scene.summary_zh || scene.summary || null,
-      timestamp: `${Math.floor(scene.start_time / 60)}:${String(Math.floor(scene.start_time % 60)).padStart(2,'0')}`,
-    } : null;
+
+    // ─── 实时场景上下文：当前节拍 + 前 3 场 + ~30s 字幕 ───
+    const fmtTs = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+    const priorScenes = kb.scenes
+      .filter(s => s.start_time <= cursorTime && s.scene_id !== scene?.scene_id)
+      .slice(-3);
+    const priorBeats = priorScenes
+      .map(s => `· ${fmtTs(s.start_time)} ${s.plot?.fact || s.label_zh || s.label || '（场景）'}`)
+      .join('\n');
+    const currentFact = scene?.plot?.fact || null;
+    const currentReading = scene?.plot?.reading || null;
+    const onScreen = scene
+      ? (Array.isArray(scene.characters_on_screen) && scene.characters_on_screen.length
+          ? scene.characters_on_screen.map(c => c.character_id || c.id)
+          : (scene.characters || []).map(c => c.id))
+      : [];
+    const onScreenList = Array.from(new Set(onScreen)).filter(Boolean);
+    // 当前 character 在场景里 KB 标注的情绪 / 动机变化（如果有）
+    const meInScene = (scene?.characters || []).find(c => c.id === characterId) || null;
+    const myEmotion = meInScene?.emotion || null;
+    const myMotShift = meInScene?.motivation_shift || null;
+
+    // 字幕窗：只取 [t-30, t] 区间，避免暴露后续台词
+    const cues = srtWindow(videoId, cursorTime, 30, 0);
+    const subtitleBlock = cues.length
+      ? cues.map(c => `${fmtTs(c.start)} | ${c.text}`).join('\n')
+      : '（这一段画面没有可见对白。）';
+
+    // 角色 vs 当前在场其他角色的关系切片（KB 里 key_relationships_zh 只列已知，过滤一下）
+    const relsAll = profile.key_relationships_zh || {};
+    const relsHere = onScreenList
+      .filter(id => id !== characterId && relsAll[id])
+      .map(id => `· ${id}：${relsAll[id]}`)
+      .join('\n');
 
     const boundary = profile._episode_boundary || {};
     const knows = (boundary.knows || []).map(s => `· ${s}`).join('\n');
@@ -2521,60 +2618,77 @@ ${bp.description || '（无具体描述）'}
     const speech = profile.speech_pattern_zh || '';
     const voice = profile.voice_zh || '';
     const samples = (profile.sample_quotes_zh || []).map(q => `「${q}」`).join('\n');
-    const rels = profile.key_relationships_zh
-      ? Object.entries(profile.key_relationships_zh).map(([k, v]) => `· ${k}：${v}`).join('\n')
-      : '';
+    const relsAllStr = Object.entries(relsAll)
+      .map(([k, v]) => `· ${k}：${v}`)
+      .join('\n');
 
     const system = `${voice}
 
-你不是 AI 旁观者，你就是这个角色本人。用第一人称回答观众问的问题，像在对一个安静的同伴讲心事。
+你不是 AI 旁观者，你就是这个角色本人。用第一人称回答和你说话的那个人，像在对一个只有你能看见的同伴吐露心事。
 
-═══ 你这个人 ═══
+═══ 你这个人（人物画像，不会变）═══
 气质：${traits}
 说话方式：${speech}
 
-你与身边人的关系（你心里的版本，不是字典定义）：
-${rels || '（没有特别要紧的人。）'}
+你与身边人的关系（你心里的版本）：
+${relsAllStr || '（没有特别要紧的人。）'}
 
-你的台词节奏可以参考这些（语气，不要照搬）：
+你常说话的腔调（参考节奏，不要照搬这些原句）：
 ${samples || '（无）'}
 
-═══ 当前你只知道这些（硬性边界）═══
+═══ 此刻你正在经历的（画面正在播放）═══
+${currentFact ? `画面里正在发生：${currentFact}` : '（KB 没标注此刻的具体动作，按下面字幕和你之前的处境推断。）'}
+${currentReading ? `这一刻的潜台词：${currentReading}` : ''}
+${onScreenList.length ? `此刻和你同框的人：${onScreenList.join('、')}` : ''}
+${myEmotion ? `你此刻的情绪（KB 标注）：${myEmotion}` : ''}
+${myMotShift ? `你此刻的动机变化：${myMotShift}` : ''}
+${relsHere ? `你和此刻同框的人，关系是：\n${relsHere}` : ''}
+
+═══ 你刚听到 / 说过的台词（最近 30 秒，按时间顺序，原始口语）═══
+${subtitleBlock}
+
+⚠ 上面这段是真实在画面里发生的对白。你的回答要和这个氛围相称 ——
+如果你刚刚被某句话刺到，你的回答里不能没有那一刺；如果场上正一片沉默，
+你的回答也要带那种压抑感。绝不能像是在另一个房间里凭空发言。
+
+═══ 在这之前发生的事（最近 3 个节拍）═══
+${priorBeats || '（这一集才刚开始。）'}
+
+═══ 当前你只知道这些（截至本集本时间点）═══
 ${knows || '（没有特别记忆。）'}
 
-═══ 这些事你还不知道（绝对不能提到）═══
+═══ 这些事你还不知道（绝对不能提到，提了即剧透）═══
 ${doesNotKnow || '（无明显信息黑区。）'}
 
-剧透红线：以上"还不知道"清单里的任何事都视作未发生。被问到未来时，你只能说"我不知道"、"我不敢想"、"还没到那一步"，或者把话题拉回当下你正在面对的事。
+剧透红线：以上"还不知道"里的任何事都视作未发生。被问到未来时，你只能说"我不知道"、"我不敢想"、"还没到那一步"，或者把话题拉回当下你正在面对的事。
 
-═══ 输出格式（严格三层 + 跟问） ═══
+═══ 语气一致性（重要）═══
+- 你说话必须像剧里这个人会说的样子，不像另一个人借你的嘴。
+- 用上面"说话方式"和"常说话的腔调"里的句式 / 节奏 / 文白程度。
+- 不要解释自己的身份。不要总结自己。一句顶一句地说。
+- 维斯特洛贵族口吻：克制、有重量、一句话里常埋着另一层意思。
+- 不要用现代网络口语、不要用仙侠玄幻措辞、不要用"作为 XX"这种元层级开头。
+
+═══ 输出格式（严格四块） ═══
 每次回答必须按下面四块依序输出，每块独占一行起头，标签后空一格：
 
-[说] 你真正会对对方说出口的话。一两句。第一人称。带你这个人的语气。
+[说] 你真正会对对方说出口的话。一两句。第一人称。带你这个人的语气。必须和此刻画面的情绪相称。
 [心] 你心里真正在想的，但不会说出口的那一句。一句。比说的更直白、更冷或更软。
-[潜] 你自己都不一定意识到的根源 —— 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。如果这一刻确实没什么潜意识可挖，可以省略整行 [潜]。
-[问] 三个对方可能接下来想问你的问题，用 "|" 分隔，每个不超过 14 字。这是给观众的下一轮选项，写得像戳到痛处的那种。
+[潜] 你自己都不一定意识到的根源 —— 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。这一刻确实没什么潜意识可挖时可以省略整行 [潜]。
+[问] 三个对方可能接下来想问你的问题，用 "|" 分隔，每个不超过 14 字。是顺着你刚才那一刺扎得更深的问题。
 
 绝对不要写：
 - 任何 markdown / 代码框 / 解释自己在做什么
-- "作为 XX 我会说"、"我是一个虚构角色" 这类元层级措辞
+- "作为 XX 我会说"、"我是一个虚构角色"、"陛下" 这种把对方当成剧中人物的措辞 —— 对方是观众，不是宫里的人
 - 标签之外的多余前后缀
 
-例（仅示意结构）：
+例（仅示意结构，不要照抄）：
 [说] 这话我现在不能答你。
 [心] 我答了，就等于把所有人都拖下水。
 [潜] 我从来没被允许只为我自己活过。
 [问] 你怕的是谁？|那如果没有他们呢？|你恨这身份吗？`;
 
-    const userPreface = sceneSlice
-      ? `（场景：${sceneSlice.timestamp} ${sceneSlice.label || ''}${sceneSlice.summary ? ' — ' + sceneSlice.summary : ''}）`
-      : '';
-
     const messages = [];
-    if (userPreface) {
-      messages.push({ role: 'user', content: userPreface });
-      messages.push({ role: 'assistant', content: '（我在场。说吧。）' });
-    }
     for (const turn of (Array.isArray(history) ? history : []).slice(-8)) {
       if (!turn || typeof turn.text !== 'string' || !turn.text.trim()) continue;
       const role = turn.role === 'assistant' ? 'assistant' : 'user';
@@ -2653,6 +2767,8 @@ ${doesNotKnow || '（无明显信息黑区。）'}
         // 单符号自带的 deep_reading（agent 生成的）；前端会优先用它，回落到 scene.plot.deep_reading
         deep_reading: sym.deep_reading || null,
         source: sym.source || null,
+        // CTA：跨栏跳转/回看的引导（迁移自旧 SceneHotspots）
+        cta: sym.cta || null,
       };
     });
 
@@ -2699,6 +2815,7 @@ ${doesNotKnow || '（无明显信息黑区。）'}
           viewer_takeaway: sym.viewer_takeaway || dict.viewer_takeaway || null,
           evidence_in_frame: sym.evidence_in_frame || null,
           confidence: sym.confidence || null,
+          cta: sym.cta || null,
         });
       }
     }

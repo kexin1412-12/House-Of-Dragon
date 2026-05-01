@@ -10,9 +10,10 @@ const CATEGORY_ICON = {
   editing: '◈',
   micro_signal: '◎',
   lore: '✦',
+  cta: '↗',
 };
 
-function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose }) {
+function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
   const isRight = cx > 55;
   const isBottom = cy > 55;
 
@@ -51,6 +52,12 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose }) {
       {(sym.deep_reading || deepReading) && (
         <p className="sh-tooltip-deep">{sym.deep_reading || deepReading}</p>
       )}
+      {sym.cta && onCta && (
+        <button
+          className="sh-tooltip-cta"
+          onClick={() => onCta(sym.cta)}
+        >{sym.cta.label || '查看 →'}</button>
+      )}
     </div>
   );
 }
@@ -58,7 +65,7 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose }) {
 // 角标最小停留时长（秒）—— 哪怕场景已经切走，也至少撑住这么久，避免一闪而过。
 const MIN_BADGE_DURATION_S = 6;
 
-export default function SymbolHotspots({ videoId, videoRef }) {
+export default function SymbolHotspots({ videoId, videoRef, onCta }) {
   const [symbolData, setSymbolData] = useState(null);
   // activeSymbol: { sym, mode: 'dot' | 'badge' }
   const [active, setActive] = useState(null);
@@ -173,6 +180,7 @@ export default function SymbolHotspots({ videoId, videoRef }) {
                 cx={cx}
                 cy={cy}
                 onClose={() => setActive(null)}
+                onCta={onCta}
               />
             )}
           </React.Fragment>
@@ -199,6 +207,7 @@ export default function SymbolHotspots({ videoId, videoRef }) {
                 deepReading={symbolData.deep_reading}
                 corner
                 onClose={() => setActive(null)}
+                onCta={onCta}
               />
             )}
           </React.Fragment>

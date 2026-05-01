@@ -572,14 +572,12 @@ function TencentPlayer({
   const [panelMode, setPanelMode] = useState('analysis');
   const [charSelected, setCharSelected] = useState(null);     // { character_id, display_name, short_identity, core_traits }
   const [charCandidates, setCharCandidates] = useState([]);   // 当前场景里有 profile 的角色
-  // eslint-disable-next-line no-unused-vars
-  const [charSceneBeat, setCharSceneBeat] = useState(null);   // { scene_id, fact, start_time, end_time } — WIP placeholder
+  const [charSceneBeat, setCharSceneBeat] = useState(null);   // { scene_id, fact, start_time, end_time }
   const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
   const [charInput, setCharInput] = useState('');
   const [charSending, setCharSending] = useState(false);
   const charLogRef = useRef(null);
-  // eslint-disable-next-line no-unused-vars
-  const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉 — WIP
+  const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉
   const CHAR_TURN_LIMIT = 10;
 
   // ─── 共谋者 · 机制 A：分支推演 ─────────────────────────────────

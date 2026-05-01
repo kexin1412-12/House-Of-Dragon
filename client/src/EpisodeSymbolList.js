@@ -11,6 +11,7 @@ const CATEGORY_ICON = {
   editing: '◈',
   micro_signal: '◎',
   lore: '✦',
+  cta: '↗',
 };
 const CATEGORY_LABEL = {
   prop: '道具',
@@ -19,10 +20,11 @@ const CATEGORY_LABEL = {
   editing: '剪辑',
   micro_signal: '暗示',
   lore: '文化',
+  cta: '引导',
 };
 
 const ALL_TAB = '全部';
-const TAB_ORDER = [ALL_TAB, '道具', '剪辑', '暗示', '色码', '缺席', '文化'];
+const TAB_ORDER = [ALL_TAB, '道具', '剪辑', '暗示', '色码', '缺席', '文化', '引导'];
 
 const fmt = (s) => {
   const t = Math.max(0, Math.floor(s || 0));

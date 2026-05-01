@@ -1344,6 +1344,48 @@ body {
 }
 .tx-char-switch:hover { color: #d8e4ee; }
 
+/* 实时场景节拍：显示 AI 此刻看到的画面情境，让用户知道对话不是脱节的 */
+.tx-char-beat {
+  display: flex; align-items: baseline; gap: 10px;
+  margin: -4px 0 14px;
+  padding: 8px 12px;
+  background: rgba(8, 12, 18, 0.5);
+  border-left: 2px solid rgba(216, 228, 238, 0.4);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 12px; line-height: 1.6;
+  color: rgba(212, 220, 232, 0.78);
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+.tx-char-beat-ts {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 10.5px; letter-spacing: 0.16em;
+  color: rgba(184, 196, 206, 0.7);
+  flex-shrink: 0;
+  font-style: normal;
+}
+.tx-char-beat-fact { font-style: italic; }
+
+/* 此刻就在画面里的角色：卡片镶一道暖色边 + 圆点脉冲 */
+.tx-char-card.is-in-frame {
+  border-color: rgba(232, 200, 150, 0.65);
+  background: rgba(28, 22, 16, 0.55);
+}
+.tx-char-card.is-in-frame:hover {
+  border-color: rgba(245, 220, 170, 0.85);
+}
+.tx-char-card-pulse {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 9px; vertical-align: 2px;
+  color: #e8c896;
+  animation: tx-char-pulse 1.6s ease-in-out infinite;
+}
+@keyframes tx-char-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 /* Chooser：场景里的可对谈角色卡片 */
 .tx-char-chooser {
   flex: 1; min-height: 120px; overflow-y: auto;

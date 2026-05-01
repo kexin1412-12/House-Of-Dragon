@@ -4571,6 +4571,19 @@
           ],
           "confidence": 0.4547
         }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "runestone_intro_e05",
+          "evidence_in_frame": "戴蒙在谷地猎捕雷雅·罗伊斯",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "runestone",
+            "label": "了解详情 →"
+          }
+        }
       ]
     },
     {
@@ -16554,7 +16567,19 @@
           "confidence": null
         }
       ],
-      "symbols": [],
+      "symbols": [
+        {
+          "symbol_id": "high_tide_arrival_e05",
+          "evidence_in_frame": "雷妮拉抵达瓦列利安领地",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "high_tide",
+            "label": "了解详情 →"
+          }
+        }
+      ],
       "directing": {
         "editing_pattern": null,
         "expected_but_missing": [
@@ -24726,6 +24751,19 @@
             0.9995
           ],
           "confidence": 0.9937
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "hand_of_king_appointment_e05",
+          "evidence_in_frame": "韦赛里斯任命斯壮为新国王之手",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "hand_of_the_king",
+            "label": "了解详情 →"
+          }
         }
       ]
     },
@@ -33475,6 +33513,17 @@
           "symbol_id": "laenor_agreement",
           "evidence_in_frame": "雷尼拉低头，兰诺面色凝重，两人在海滩上进行私下对话，台词中兰诺提到'It's not for a lack of trying.'，暗示两人在讨论无法改变的个人偏好，并达成某种默契。",
           "confidence": "high"
+        },
+        {
+          "symbol_id": "duck_to_goose_hotspot_e05",
+          "evidence_in_frame": "雷妮拉用食物比喻性取向",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "riff",
+            "target_id": "duck_to_goose_e05",
+            "label": "看台词梗 →"
+          }
         }
       ],
       "directing": {
@@ -43972,6 +44021,20 @@
           ],
           "confidence": 0.4728
         }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "alicent_truth_callback_e05",
+          "evidence_in_frame": "亚莉森意识到雷妮拉对她撒了谎",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_04",
+            "timestamp": 750,
+            "label": "回看 S1E4 12:30 雷妮拉的发誓"
+          }
+        }
       ]
     },
     {
@@ -44917,6 +44980,19 @@
             0.6889
           ],
           "confidence": 0.528
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "kingsguard_stained_e05",
+          "evidence_in_frame": "克里斯顿坦白「有污点之人」",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "kingsguard_oath",
+            "label": "了解详情 →"
+          }
         }
       ]
     },
@@ -53520,6 +53596,20 @@
             0.9995
           ],
           "confidence": 0.9873
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "throne_wound_callback_e05",
+          "evidence_in_frame": "韦赛里斯手伤恶化——铁王座在吞噬他",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_01",
+            "timestamp": 3060,
+            "label": "回看 S1E1 韦赛里斯首次被王座割伤"
+          }
         }
       ]
     },
@@ -82912,6 +83002,17 @@
           "symbol_id": "hightower_green",
           "evidence_in_frame": "阿莉森特王后身着深绿色礼服，这是海塔尔家族的代表色。",
           "confidence": "high"
+        },
+        {
+          "symbol_id": "greens_birth_e05",
+          "evidence_in_frame": "拉蕊斯向哈尔温拆解亚莉森绿裙的军事含义",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "house_hightower",
+            "label": "了解详情 →"
+          }
         }
       ],
       "directing": {
@@ -105171,6 +105272,19 @@
             0.6773
           ],
           "confidence": 0.6743
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "godswood_e05",
+          "evidence_in_frame": "克里斯顿在此近乎自杀",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "godswood",
+            "label": "了解详情 →"
+          }
         }
       ]
     },
@@ -140008,6 +140122,19 @@
             0.5829
           ],
           "confidence": 0.5229
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "cloaking_e05",
+          "evidence_in_frame": "雷妮拉与莱诺的婚礼誓词与披纱仪式",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "lore",
+            "target_id": "westerosi_cloaking",
+            "label": "了解详情 →"
+          }
         }
       ]
     },
