@@ -29,6 +29,33 @@ const SIDE_OFFSET_Y = 110;  // 支线节点距主线的垂直距离
 const CANVAS_PAD_X = 80;
 const CANVAS_PAD_Y = 180;
 
+// 把主线节点按 narrative_function 的连续段切成幕段，给顶部进度带用。
+function computePhases(storyline, allNodesById) {
+  if (!storyline) return [];
+  const ids = storyline.main_track_node_ids || [];
+  const phases = [];
+  let cur = null;
+  for (const id of ids) {
+    const n = allNodesById[id];
+    if (!n) continue;
+    if (cur && cur.label === n.narrative_function) {
+      cur.end = n.end_time;
+      cur.lastIdx = ids.indexOf(id);
+    } else {
+      if (cur) phases.push(cur);
+      cur = {
+        label: n.narrative_function,
+        start: n.start_time,
+        end: n.end_time,
+        firstIdx: ids.indexOf(id),
+        lastIdx: ids.indexOf(id),
+      };
+    }
+  }
+  if (cur) phases.push(cur);
+  return phases;
+}
+
 // 支线交替 above/below：第 i 条支线放在 [上, 下, 上, ...] 之一。
 function sideTrackSide(i) { return i % 2 === 0 ? 'above' : 'below'; }
 
@@ -148,12 +175,6 @@ function StoryNode({
       transform={`translate(${position.x - NODE_W / 2}, ${position.y - NODE_H / 2})`}
       onClick={(e) => { e.stopPropagation(); onClick(node.node_id); }}
     >
-      {/* 关键转折角标 ◆ —— 在节点上方 */}
-      {isCriticalTurn && !locked && (
-        <g transform={`translate(${NODE_W / 2}, ${-10})`} className="sx-node-turn-mark">
-          <path d="M 0 -7 L 7 0 L 0 7 L -7 0 Z" />
-        </g>
-      )}
       {/* 节点矩形 */}
       <rect className="sx-node-rect" x={0} y={0} width={NODE_W} height={NODE_H} rx={10} ry={10} />
       {/* 当前节点的发光描边由 CSS filter / outline 模拟 */}
@@ -170,6 +191,12 @@ function StoryNode({
       {/* 已观看 ✓ 标记 */}
       {state === 'watched' && !locked && (
         <text className="sx-node-watched" x={NODE_W - 10} y={NODE_H - 6} textAnchor="end">✓</text>
+      )}
+      {/* 当前节点 ▶ 指示在节点下方 */}
+      {isCurrent && !locked && (
+        <g transform={`translate(${NODE_W / 2}, ${NODE_H + 14})`} className="sx-node-current-mark">
+          <path d="M -5 -5 L 5 -5 L 0 5 Z" />
+        </g>
       )}
     </g>
   );
@@ -248,11 +275,18 @@ function NodeDetailPanel({ node, allNodesById, onSelectNode, onJumpTo, fav, onTo
 }
 
 // ─── Main component ─────────────────────────────────────────────────
+const VIEW_MODES = [
+  { id: 'main',       label: '主线' },
+  { id: 'branch',     label: '分支' },
+  { id: 'foreshadow', label: '伏笔线索' },
+];
+
 export default function StorylineTimeline({
   storyline, currentTime, videoId, onJumpTo,
 }) {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [unlockedSet, setUnlockedSet] = useState(() => new Set());
+  const [viewMode, setViewMode] = useState('branch');
   const viewportRef = useRef(null);
   const { isFav, toggle: toggleFav } = useStorylineFavorites();
 
@@ -264,6 +298,16 @@ export default function StorylineTimeline({
 
   const layout = useMemo(() => computeLayout(storyline), [storyline]);
   const viewport = useViewport(layout, viewportRef);
+  const phases = useMemo(() => computePhases(storyline, allNodesById), [storyline, allNodesById]);
+
+  // viewMode 决定哪些 track 可见
+  const isNodeVisible = useCallback((node) => {
+    if (!node) return false;
+    if (viewMode === 'main') return node.track === 'main';
+    if (viewMode === 'foreshadow') return !!node.is_hidden;
+    // branch (default)
+    return true;
+  }, [viewMode]);
 
   // 首次有 layout 时自动 fit
   const fittedRef = useRef(false);
@@ -337,17 +381,21 @@ export default function StorylineTimeline({
     });
   }, [selectedNode, toggleFav, videoId]);
 
-  // 主线相邻节点之间的实线连接
+  // 主线相邻节点之间的实线连接（带 turn flag：边的两端任一是关键转折，则在中点画菱标）
   const mainEdges = useMemo(() => {
     const edges = [];
     const ids = storyline?.main_track_node_ids || [];
     for (let i = 0; i < ids.length - 1; i++) {
       const a = layout.positions[ids[i]];
       const b = layout.positions[ids[i + 1]];
-      if (a && b) edges.push({ key: `me-${i}`, a, b });
+      if (!a || !b) continue;
+      const na = allNodesById[ids[i]];
+      const nb = allNodesById[ids[i + 1]];
+      const turn = na?.narrative_function === '关键转折' || nb?.narrative_function === '关键转折';
+      edges.push({ key: `me-${i}`, a, b, turn });
     }
     return edges;
-  }, [storyline, layout]);
+  }, [storyline, layout, allNodesById]);
 
   // 支线虚线连接：从 after_node 到第一个支线节点
   const sideEdges = useMemo(() => {
@@ -367,13 +415,19 @@ export default function StorylineTimeline({
 
   return (
     <div className="sx-tl-root">
-      {/* 顶部图例 */}
-      <div className="sx-tl-legend">
-        <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-watched" /> 已观看</span>
-        <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-current" /> 当前节点</span>
-        <span className="sx-legend-item"><span className="sx-legend-mark sx-sw-turn">◆</span> 关键转折</span>
-        <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-locked" /> 隐藏支线</span>
-      </div>
+      {/* 顶部幕段进度带：按 narrative_function 的连续段切，每段是一节 */}
+      {phases.length > 0 && (
+        <div className="sx-tl-phases" aria-hidden="true">
+          {phases.map((p, i) => (
+            <div key={i} className="sx-tl-phase">
+              <div className="sx-tl-phase-label">{p.label}</div>
+              <div className="sx-tl-phase-range">
+                {formatMMSS(p.start)} - {formatMMSS(p.end)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* 主区 SVG */}
       <div
@@ -395,41 +449,53 @@ export default function StorylineTimeline({
             transformOrigin: '0 0',
           }}
         >
-          {/* 主线连接 */}
+          {/* 主线连接 + 边上的关键转折菱标（取代节点上方的菱标） */}
           <g className="sx-edges-main">
-            {mainEdges.map(e => (
-              <line
-                key={e.key}
-                x1={e.a.x + NODE_W / 2} y1={e.a.y}
-                x2={e.b.x - NODE_W / 2} y2={e.b.y}
-              />
-            ))}
-          </g>
-
-          {/* 支线连接 */}
-          <g className="sx-edges-side">
-            {sideEdges.map(e => {
-              // 从主线节点的上/下边出发，画弧线到支线节点
-              const fromX = e.a.x;
-              const fromY = e.b.y < e.a.y ? e.a.y - NODE_H / 2 : e.a.y + NODE_H / 2;
-              const toX = e.b.x;
-              const toY = e.b.y < e.a.y ? e.b.y + NODE_H / 2 : e.b.y - NODE_H / 2;
-              const midY = (fromY + toY) / 2;
-              const path = `M ${fromX} ${fromY} C ${fromX} ${midY}, ${toX} ${midY}, ${toX} ${toY}`;
+            {mainEdges.map(e => {
+              const x1 = e.a.x + NODE_W / 2;
+              const x2 = e.b.x - NODE_W / 2;
+              const y  = e.a.y;
               return (
-                <path
-                  key={e.key}
-                  d={path}
-                  className={`sx-edge-side ${e.locked ? 'is-locked' : ''}`}
-                  fill="none"
-                />
+                <g key={e.key}>
+                  <line x1={x1} y1={y} x2={x2} y2={y} />
+                  {e.turn && viewMode !== 'foreshadow' && (
+                    <g transform={`translate(${(x1 + x2) / 2}, ${y})`} className="sx-edge-turn-mark">
+                      <path d="M 0 -7 L 7 0 L 0 7 L -7 0 Z" />
+                    </g>
+                  )}
+                </g>
               );
             })}
           </g>
 
-          {/* 节点 */}
+          {/* 支线连接（main 模式不画支线边） */}
+          {viewMode !== 'main' && (
+            <g className="sx-edges-side">
+              {sideEdges.map(e => {
+                const sideNode = allNodesById[e.b && Object.keys(layout.positions).find(k => layout.positions[k] === e.b)];
+                // 在 foreshadow 模式下只画通往隐藏节点的边
+                if (viewMode === 'foreshadow' && sideNode && !sideNode.is_hidden) return null;
+                const fromX = e.a.x;
+                const fromY = e.b.y < e.a.y ? e.a.y - NODE_H / 2 : e.a.y + NODE_H / 2;
+                const toX = e.b.x;
+                const toY = e.b.y < e.a.y ? e.b.y + NODE_H / 2 : e.b.y - NODE_H / 2;
+                const midY = (fromY + toY) / 2;
+                const path = `M ${fromX} ${fromY} C ${fromX} ${midY}, ${toX} ${midY}, ${toX} ${toY}`;
+                return (
+                  <path
+                    key={e.key}
+                    d={path}
+                    className={`sx-edge-side ${e.locked ? 'is-locked' : ''}`}
+                    fill="none"
+                  />
+                );
+              })}
+            </g>
+          )}
+
+          {/* 节点 —— 视图模式过滤 */}
           <g className="sx-nodes">
-            {(storyline.nodes || []).map(n => {
+            {(storyline.nodes || []).filter(isNodeVisible).map(n => {
               const pos = layout.positions[n.node_id];
               if (!pos) return null;
               const locked = !!n.is_hidden && !unlockedSet.has(n.node_id);
@@ -453,17 +519,35 @@ export default function StorylineTimeline({
         </svg>
       </div>
 
-      {/* 缩放控件 */}
-      <div className="sx-tl-zoom">
-        <button onClick={viewport.zoomOut} title="缩小">−</button>
-        <span className="sx-tl-zoom-level">{Math.round(viewport.view.scale * 100)}%</span>
-        <button onClick={viewport.zoomIn} title="放大">＋</button>
-        <button onClick={viewport.fit} title="适配" className="sx-tl-zoom-fit">⟲</button>
-      </div>
+      {/* 底部一行：图例 + 视图模式 + 缩放 */}
+      <div className="sx-tl-bottom-bar">
+        <div className="sx-tl-legend">
+          <span className="sx-tl-legend-title">图例说明</span>
+          <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-watched" /> 已完成</span>
+          <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-current" /> 当前节点</span>
+          <span className="sx-legend-item"><span className="sx-legend-mark sx-sw-turn">◆</span> 关键转折</span>
+          <span className="sx-legend-item"><span className="sx-legend-mark sx-sw-side">---</span> 分支线索</span>
+          <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-locked" /> 隐藏节点</span>
+        </div>
 
-      {/* 拖拽提示 */}
-      <div className="sx-tl-hint">
-        <span className="sx-tl-hint-icon">💡</span> 拖动或滚动可查看更多内容
+        <div className="sx-tl-viewmode">
+          <span className="sx-tl-bottom-label">视图模式</span>
+          {VIEW_MODES.map(m => (
+            <button
+              key={m.id}
+              className={`sx-tl-mode-btn${viewMode === m.id ? ' is-active' : ''}`}
+              onClick={() => setViewMode(m.id)}
+            >{m.label}</button>
+          ))}
+        </div>
+
+        <div className="sx-tl-zoom">
+          <span className="sx-tl-bottom-label">缩放</span>
+          <button onClick={viewport.zoomOut} title="缩小">−</button>
+          <span className="sx-tl-zoom-level">{Math.round(viewport.view.scale * 100)}%</span>
+          <button onClick={viewport.zoomIn} title="放大">＋</button>
+          <button onClick={viewport.fit} title="适配画布" className="sx-tl-zoom-fit">⟲</button>
+        </div>
       </div>
 
       {/* 详情侧栏 */}

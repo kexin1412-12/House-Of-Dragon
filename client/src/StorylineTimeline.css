@@ -20,31 +20,146 @@
   color: var(--sx-ink-soft, #a9a69d); font-size: 14px;
 }
 
-/* ─── Legend (top) ─────────────────────────────────────────────────── */
-.sx-tl-legend {
-  position: absolute; top: 12px; right: 24px;
-  display: flex; gap: 22px;
-  font-size: 12px; color: var(--sx-ink-soft);
+/* ─── Phase strip (top) ────────────────────────────────────────────── */
+.sx-tl-phases {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex;
+  padding: 14px 32px 10px;
+  background: linear-gradient(to bottom,
+    rgba(8, 4, 4, 0.55) 0%,
+    rgba(8, 4, 4, 0) 100%);
   pointer-events: none;
   z-index: 3;
+}
+.sx-tl-phase {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 0 6px;
+  border-right: 1px dashed rgba(212, 175, 55, 0.18);
+}
+.sx-tl-phase:last-child { border-right: 0; }
+.sx-tl-phase-label {
+  font-size: 14px; letter-spacing: 4px;
+  color: var(--sx-ink);
+  font-weight: 500;
+}
+.sx-tl-phase-range {
+  margin-top: 4px;
+  font-size: 11px; letter-spacing: 1px;
+  color: var(--sx-ink-dim);
+  font-feature-settings: 'tnum';
+}
+
+/* ─── Bottom bar (legend + view mode + zoom) ───────────────────────── */
+.sx-tl-bottom-bar {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center;
+  gap: 24px;
+  padding: 12px 24px;
+  border-top: 1px solid rgba(212, 175, 55, 0.14);
+  background: linear-gradient(to top,
+    rgba(8, 4, 4, 0.65) 0%,
+    rgba(8, 4, 4, 0.32) 100%);
+  z-index: 3;
+  font-size: 12px;
+}
+.sx-tl-bottom-label {
+  color: var(--sx-ink-soft);
+  letter-spacing: 1px;
+  margin-right: 6px;
+}
+
+.sx-tl-legend {
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+  color: var(--sx-ink-soft);
+}
+.sx-tl-legend-title {
+  color: var(--sx-ink-soft);
+  letter-spacing: 1px;
+  margin-right: 4px;
 }
 .sx-legend-item {
   display: inline-flex; align-items: center; gap: 6px;
 }
 .sx-legend-swatch {
-  display: inline-block; width: 16px; height: 10px;
-  border-radius: 2px;
+  display: inline-block; width: 14px; height: 14px;
+  border-radius: 50%;
+  position: relative;
 }
-.sx-sw-watched   { background: rgba(212, 175, 55, 0.42); border: 1px solid rgba(212, 175, 55, 0.72); }
-.sx-sw-current   { background: var(--sx-gold); box-shadow: 0 0 6px var(--sx-gold-glow); }
-.sx-sw-locked    { background: transparent; border: 1px dashed rgba(232, 230, 223, 0.32); }
+.sx-sw-watched {
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.62);
+}
+.sx-sw-watched::after {
+  content: '✓';
+  position: absolute; inset: 0;
+  font-size: 10px; line-height: 14px; text-align: center;
+  color: var(--sx-gold);
+}
+.sx-sw-current {
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid var(--sx-gold);
+  box-shadow: 0 0 6px var(--sx-gold-glow);
+  position: relative;
+}
+.sx-sw-current::after {
+  content: '▶';
+  position: absolute; inset: 0;
+  font-size: 8px; line-height: 14px; text-align: center;
+  color: var(--sx-gold);
+}
+.sx-sw-locked {
+  background: transparent;
+  border: 1px dashed rgba(232, 230, 223, 0.4);
+  position: relative;
+}
+.sx-sw-locked::after {
+  content: '🔒';
+  position: absolute; inset: 0;
+  font-size: 9px; line-height: 14px; text-align: center;
+}
 .sx-legend-mark.sx-sw-turn {
-  color: var(--sx-gold); font-size: 12px; line-height: 10px;
+  color: var(--sx-gold); font-size: 13px; line-height: 14px;
+}
+.sx-legend-mark.sx-sw-side {
+  color: var(--sx-ink-dim);
+  letter-spacing: 1px;
+  font-size: 11px;
+  font-family: monospace;
+}
+
+/* 视图模式 */
+.sx-tl-viewmode {
+  display: flex; align-items: center; gap: 4px;
+  padding: 0 4px;
+}
+.sx-tl-mode-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--sx-ink-soft);
+  padding: 5px 12px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color .14s ease, background .14s ease, border-color .14s ease;
+}
+.sx-tl-mode-btn:hover {
+  color: var(--sx-ink);
+  background: rgba(212, 175, 55, 0.06);
+}
+.sx-tl-mode-btn.is-active {
+  color: var(--sx-gold);
+  background: rgba(212, 175, 55, 0.14);
+  border-color: rgba(212, 175, 55, 0.35);
 }
 
 /* ─── Viewport (SVG canvas) ────────────────────────────────────────── */
 .sx-tl-viewport {
-  position: absolute; inset: 0;
+  /* 顶 ~60px 留给幕段进度带，底 ~50px 留给底部栏 */
+  position: absolute; top: 60px; left: 0; right: 0; bottom: 50px;
   overflow: hidden;
   cursor: grab;
 }
@@ -126,13 +241,7 @@
   stroke-width: 2;
 }
 
-/* 关键转折菱标 */
-.sx-node-turn-mark path {
-  fill: var(--sx-gold);
-  stroke: rgba(255, 217, 102, 0.9);
-  stroke-width: 1;
-  filter: drop-shadow(0 0 3px var(--sx-gold-glow));
-}
+/* (旧的节点上方 .sx-node-turn-mark 已退役 — 菱标改在边中点上，见 .sx-edge-turn-mark) */
 
 /* 锁住的隐藏支线节点：虚线 + 半透明 */
 .sx-node.is-locked .sx-node-rect {
@@ -150,37 +259,43 @@
 }
 .sx-node-side .sx-node-title { font-size: 12px; }
 
-/* ─── Zoom controls (bottom-right) ─────────────────────────────────── */
+/* ─── Zoom controls (now inside bottom-bar) ────────────────────────── */
 .sx-tl-zoom {
-  position: absolute; right: 24px; bottom: 18px;
   display: flex; align-items: center; gap: 4px;
-  background: rgba(20, 14, 12, 0.7);
-  border: 1px solid rgba(212, 175, 55, 0.24);
-  border-radius: 6px;
-  padding: 4px 6px;
-  z-index: 3;
+  flex-shrink: 0;
 }
 .sx-tl-zoom button {
-  background: transparent; border: 0; color: var(--sx-ink);
-  width: 28px; height: 24px; font-size: 14px; line-height: 1;
-  cursor: pointer; border-radius: 3px;
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  color: var(--sx-ink);
+  width: 26px; height: 24px;
+  font-size: 13px; line-height: 1;
+  cursor: pointer; border-radius: 4px;
 }
-.sx-tl-zoom button:hover { background: rgba(212, 175, 55, 0.14); }
+.sx-tl-zoom button:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--sx-gold-soft);
+}
 .sx-tl-zoom-level {
-  font-size: 11px; color: var(--sx-ink-soft);
+  font-size: 12px; color: var(--sx-ink);
   min-width: 38px; text-align: center;
   font-feature-settings: 'tnum';
 }
 .sx-tl-zoom-fit { margin-left: 4px; }
 
-/* ─── Drag hint (bottom-left) ──────────────────────────────────────── */
-.sx-tl-hint {
-  position: absolute; left: 24px; bottom: 18px;
-  font-size: 11px; color: var(--sx-ink-dim);
-  pointer-events: none;
-  z-index: 3;
+/* ─── Edge: 关键转折菱标（边中点） ───────────────────────────────── */
+.sx-edge-turn-mark path {
+  fill: var(--sx-gold);
+  stroke: rgba(255, 217, 102, 0.9);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 3px var(--sx-gold-glow));
 }
-.sx-tl-hint-icon { margin-right: 4px; opacity: 0.7; }
+
+/* 当前节点下方的 ▶ 指示 */
+.sx-node-current-mark path {
+  fill: var(--sx-gold);
+  filter: drop-shadow(0 0 3px var(--sx-gold-glow));
+}
 
 /* ─── Detail side panel (right slide-in) ───────────────────────────── */
 .sx-detail-panel {
