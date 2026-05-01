@@ -1889,7 +1889,7 @@ ${JSON.stringify(prepared.context, null, 2)}
   // 每张卡片正文写当前场景里 TA 的具体认知。语气是 HBO 译制风的冷峻政治叙事，
   // 不是史书学士那一套。
   app.post('/api/agent/perspective/generate', async (req, res) => {
-    const { videoId, t, characterId, image } = req.body || {};
+    const { videoId, t, characterId } = req.body || {};
     const kb = videoId ? loadKB(videoId) : null;
     if (!kb || !characterId) {
       return res.status(400).json({ error: 'videoId + characterId required' });
@@ -1899,11 +1899,6 @@ ${JSON.stringify(prepared.context, null, 2)}
     if (!scene) {
       return res.status(400).json({ error: 'no scene at cursor' });
     }
-    // When the client posts a current-frame data URL, we route the request
-    // to vision_chat (Gemini multimodal) so the LLM grounds its 3 cards in
-    // what's actually visible — not just KB summaries. Falls back to text
-    // chat when no image is provided or vision provider isn't available.
-    const hasImage = typeof image === 'string' && image.startsWith('data:image/');
     const showId = kb.show_id || 'house-of-the-dragon';
     const episode = resolveEpisode(kb);
     const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
@@ -1912,8 +1907,7 @@ ${JSON.stringify(prepared.context, null, 2)}
     const displayName = dbCard?.display_name_zh || dbCard?.canonical_name || characterId;
     const subtitleLine = dbCard?.short_identity_zh || profile?.subtitle || '';
 
-    const useVision = hasImage && ai.isAvailable('vision_chat');
-    if (!useVision && !ai.isAvailable('chat')) {
+    if (!ai.isAvailable('chat')) {
       return res.status(503).json({ error: 'no llm available' });
     }
 
@@ -2000,39 +1994,56 @@ ${JSON.stringify(prepared.context, null, 2)}
 
 不要任何前后说明、不要 markdown、不要 \`\`\`。直接输出 JSON。`;
 
+    // POV 角色与每位"在场"角色的关系（cursor-filtered）—— 让 LLM 写"关系"
+    // 那张卡时有具体可锚定的事实（盟友/政敌/血亲/暧昧/疏离等），不再瞎猜。
+    const cursorMark = charactersLib.cursorAtTime(kb, cursorTime);
+    const povRels = db ? charactersLib.lookupRelationships(db, characterId, cursorMark) : [];
+    const onScreenRelations = [...onScreenIds]
+      .filter(cid => cid !== characterId)
+      .map(cid => {
+        const rel = povRels.find(r => r.with === cid);
+        const other = db ? charactersLib.findCharacter(db, cid) : null;
+        const otherName = other?.display_name_zh || other?.canonical_name || cid;
+        if (!rel) return `${otherName}：暂无明确记载关系`;
+        const head = rel.relation || rel.relation_kind || '关系';
+        return `${otherName}：${head}${rel.summary ? ` —— ${rel.summary}` : ''}`;
+      });
+
     const sceneSummary = [
       scene.plot?.fact && `场景事实：${scene.plot.fact}`,
       scene.plot?.reading && `导演意图：${scene.plot.reading}`,
+      scene.narrative && `叙事节拍：${scene.narrative}`,
+      scene.shot?.intent && `镜头意图：${scene.shot.intent}`,
+      scene.shot?.emotion && `场景情绪：${scene.shot.emotion}`,
+      Array.isArray(scene.tags) && scene.tags.length && `场景标签：${scene.tags.join('、')}`,
       onScreenNames.length && `在场：${onScreenNames.join('、')}`,
-      isOnScreen ? `${displayName} 在画面里。` : `${displayName} 不在画面里 —— 但理论上可能在场外、附近，或刚刚离开。请合理处理。`,
+      onScreenRelations.length && [`${displayName} 与在场角色的关系（截至当前进度）：`, ...onScreenRelations.map(s => `  - ${s}`)].join('\n'),
+      isOnScreen
+        ? `${displayName} 在画面里。`
+        : `${displayName} 不在画面里 —— 但理论上可能在场外、附近，或刚刚离开。请合理处理。`,
     ].filter(Boolean).join('\n');
 
     const user = `【当前剧集】${episode || '未知'}
 【时间点】${Math.floor(cursorTime / 60)}:${String(Math.floor(cursorTime % 60)).padStart(2, '0')}
-【角色】${displayName}${subtitleLine ? `（${subtitleLine}）` : ''}
+【POV 角色】${displayName}${subtitleLine ? `（${subtitleLine}）` : ''}
 【性格】${traits}
 【在这一集 TA 知道的事】${knows}
 【在这一集 TA 不知道、不能写进卡片的事】${dontKnow}
 
-【当前场景】
+【当前场景（剧情切片）】
 ${sceneSummary}
 
-请生成 ${displayName} 在这一刻的认知 HUD。label 必须从安全表（看到/判断/风险/立场/关系/代价）里挑 3 个不同的。直接输出 JSON。`;
+请基于上面的"剧情切片"和"与在场角色的关系"，生成 ${displayName} 在这一刻的认知 HUD。
+卡片必须扣住具体的人和事——比如"看到"那张写谁在做什么具体动作、"关系"那张直接写 TA 与画面里另一个具体角色的状态、"风险"那张写如果当前局面继续会损失什么具体的东西。
+label 必须从安全表（看到/判断/风险/立场/关系/代价）里挑 3 个不同的。直接输出 JSON。`;
 
     try {
-      // vision_chat 走 Gemini 多模态：把当前帧作为画面证据塞进 user 消息，
-      // LLM 必须在画面里找到能写进卡片的具体事实，而不是从 KB 字面"自由发挥"。
-      const userContent = useVision ? [
-        { type: 'image', dataUrl: image, detail: 'high' },
-        { type: 'text', text: `↑ 上面是用户当前看到的画面（${displayName} 的视角锚点）。请基于画面+下面的文字材料生成 3 张卡。\n\n${user}` },
-      ] : user;
-
       const result = await ai.chat({
-        task: useVision ? 'vision_chat' : 'chat',
+        task: 'chat',
         system,
-        messages: [{ role: 'user', content: userContent }],
+        messages: [{ role: 'user', content: user }],
         maxTokens: 500,
-        temperature: useVision ? 0.5 : 0.7,
+        temperature: 0.6,
       });
       const txt = String(result?.text || '').trim();
       const parsed = parsePerspectiveJSON(txt);

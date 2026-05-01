@@ -350,22 +350,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setPerspectiveSide(pSide);
     setPerspectiveBgTone(toneFromLuminance(sampleSideLuminance(pSide)));
 
-    // Capture the current frame as a data URL so the backend can route to
-    // vision_chat (Gemini multimodal) and ground its 3 cards in what's on
-    // screen. Cross-origin/canvas-tainted hosts will throw — we just send
-    // no image in that case and the endpoint falls back to text-only chat.
-    let imageDataUrl = null;
-    try {
-      if (v && v.readyState >= 2 && v.videoWidth) {
-        const W = 640;
-        const H = Math.max(1, Math.round(v.videoHeight / v.videoWidth * W));
-        const canvas = document.createElement('canvas');
-        canvas.width = W; canvas.height = H;
-        canvas.getContext('2d').drawImage(v, 0, 0, W, H);
-        imageDataUrl = canvas.toDataURL('image/jpeg', 0.6);
-      }
-    } catch { /* canvas tainted — skip image */ }
-
     try {
       const resp = await fetch(`${API}/api/agent/perspective/generate`, {
         method: 'POST',
@@ -374,7 +358,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
           videoId: aiKb,
           t,
           characterId: castEntry.character_id,
-          image: imageDataUrl,
         }),
       });
       const data = await resp.json();
