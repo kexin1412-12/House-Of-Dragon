@@ -187,7 +187,6 @@ export default function App() {
           >
             <span className="nav-fav-icon">♥</span>
             <span>我的收藏</span>
-            {favCount > 0 && <span className="nav-fav-count">{favCount}</span>}
           </button>
           <button className="nav-icon-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -224,7 +223,7 @@ export default function App() {
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
                 <path d="M12 21s-7-4.35-7-10a4.5 4.5 0 0 1 8-2.85A4.5 4.5 0 0 1 19 11c0 5.65-7 10-7 10z"/>
               </svg>
-              我的收藏{favCount > 0 && ` · ${favCount}`}
+              我的收藏
             </button>
           </div>
           <div className="hero-features">
