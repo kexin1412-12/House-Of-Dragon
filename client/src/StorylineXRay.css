@@ -79,13 +79,19 @@
   min-height: 540px;
   max-width: 1600px;
   margin: 0 auto;
-  border: 1px solid rgba(212, 175, 55, 0.18);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 10px;
+  /* 暖灰棕基底：比页面 #0d0e14 亮一档，跟 HotD 烛火/羊皮调一致；
+     右上角微聚光，让面板读起来像一张浮起的卡片，而不是融进页面的黑洞 */
   background:
-    radial-gradient(ellipse at top right,
-      rgba(20, 14, 10, 0.55) 0%,
-      rgba(8, 4, 4, 0.88) 60%,
-      rgba(8, 4, 4, 0.96) 100%);
+    radial-gradient(ellipse at 85% -10%,
+      rgba(58, 40, 24, 0.55) 0%,
+      rgba(28, 20, 14, 0.92) 55%,
+      rgba(20, 14, 10, 0.98) 100%),
+    #1a130d;
+  box-shadow:
+    0 1px 0 rgba(212, 175, 55, 0.06) inset,
+    0 18px 40px rgba(0, 0, 0, 0.45);
   overflow: hidden;            /* 圆角裁切顶栏 */
   animation: sxPanelIn .22s cubic-bezier(.2, .7, .2, 1);
   transition: min-height .25s ease;
@@ -257,8 +263,8 @@
   height: 84px;
   padding: 0 22px;
   background: linear-gradient(to bottom,
-    rgba(8, 4, 4, 0.85) 0%,
-    rgba(8, 4, 4, 0.55) 100%);
+    rgba(14, 10, 6, 0.88) 0%,
+    rgba(20, 14, 10, 0.42) 100%);
   border-bottom: 1px solid rgba(212, 175, 55, 0.22);
   z-index: 4;
   flex-shrink: 0;

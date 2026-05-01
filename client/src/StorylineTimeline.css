@@ -26,8 +26,8 @@
   display: flex;
   padding: 14px 32px 10px;
   background: linear-gradient(to bottom,
-    rgba(8, 4, 4, 0.55) 0%,
-    rgba(8, 4, 4, 0) 100%);
+    rgba(14, 10, 6, 0.55) 0%,
+    rgba(14, 10, 6, 0) 100%);
   pointer-events: none;
   z-index: 3;
 }
@@ -58,8 +58,8 @@
   padding: 12px 24px;
   border-top: 1px solid rgba(212, 175, 55, 0.14);
   background: linear-gradient(to top,
-    rgba(8, 4, 4, 0.65) 0%,
-    rgba(8, 4, 4, 0.32) 100%);
+    rgba(14, 10, 6, 0.7) 0%,
+    rgba(14, 10, 6, 0.3) 100%);
   z-index: 3;
   font-size: 12px;
 }
