@@ -64,7 +64,7 @@ Outputs (next to the SRT):
 function parseSRT(srtText) {
   return srtText
     .replace(/\r/g, '')
-    .replace(/^﻿/, '')
+    .replace(/^/, '')
     .split(/\n\n+/)
     .map(block => {
       const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
