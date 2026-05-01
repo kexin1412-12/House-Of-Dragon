@@ -7,6 +7,7 @@ import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
 import MemeToggle from './MemeToggle';
+import SceneHotspots from './SceneHotspots';
 import FavoritesView from './FavoritesView';
 import useMemeFavorites from './useMemeFavorites';
 import DEMO_VIDEOS from './demoVideos';
@@ -489,6 +490,8 @@ function TencentPlayer({
   const [rightTab, setRightTab] = useState(initialRightTab || 'agent');
   // 当 MemeOverlay 触发"展开详情"时，设置这个 id；MemePanel 监听后自动展开 + 滚动
   const [pendingExpandRiffId, setPendingExpandRiffId] = useState(initialExpandRiffId || null);
+  // 当 SceneHotspots 触发"了解详情"指向 lore 卡时，设置这个 id；MemePanel 同样监听
+  const [pendingExpandLoreId, setPendingExpandLoreId] = useState(null);
   // App 重新派发新的初始值时（player 已打开但用户又从收藏跳了一条），同步进来
   useEffect(() => { if (initialRightTab) setRightTab(initialRightTab); }, [initialRightTab]);
   useEffect(() => { if (initialExpandRiffId) setPendingExpandRiffId(initialExpandRiffId); }, [initialExpandRiffId]);
@@ -1279,6 +1282,34 @@ function TencentPlayer({
               }}
             />
 
+            {/* 共谋者 · 场景热点 —— 10 个时间锚点弹小卡，3s 退化为右上角 badge，
+                点"了解详情"穿透到右栏设定百科/台词梗，或跳到关联时间点 */}
+            <SceneHotspots
+              videoId={aiKb}
+              videoRef={videoRef}
+              enabled={memeEnabled}
+              onLoreClick={(loreId) => {
+                setRightTab('meme');
+                setPendingExpandLoreId(loreId);
+              }}
+              onRiffClick={(riffId) => {
+                setRightTab('meme');
+                setPendingExpandRiffId(riffId);
+              }}
+              onCallbackClick={(ref) => {
+                // 同集回看：直接 seek；跨集需要先切视频，本期 demo 单集就先按当前 episode 处理
+                const v = videoRef.current;
+                if (!v) return;
+                if (!ref.video_id || ref.video_id === aiKb) {
+                  v.currentTime = ref.time || 0;
+                } else {
+                  // TODO 跨集回看：需要先切到 ref.video_id，再 seek。demo 阶段先打个 console
+                  console.warn('[scene-hotspot callback] cross-episode jump not wired yet:', ref);
+                  v.currentTime = ref.time || 0;
+                }
+              }}
+            />
+
             <PlayerControls
               videoRef={videoRef}
               videoId={aiKb}
@@ -1336,6 +1367,8 @@ function TencentPlayer({
               videoRef={videoRef}
               expandRiffId={pendingExpandRiffId}
               onConsumeExpand={() => setPendingExpandRiffId(null)}
+              expandLoreId={pendingExpandLoreId}
+              onConsumeExpandLore={() => setPendingExpandLoreId(null)}
             />
           )}
         </aside>

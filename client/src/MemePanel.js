@@ -81,7 +81,11 @@ const LORE_HEADER_ICON = (
   </svg>
 );
 
-export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeExpand }) {
+export default function MemePanel({
+  videoId, videoRef,
+  expandRiffId, onConsumeExpand,
+  expandLoreId, onConsumeExpandLore,
+}) {
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const itemRefs = useRef({}); // riff_id -> DOM node
@@ -92,6 +96,7 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
   const [loreOpen, setLoreOpen] = useState(false); // 顶级折叠
   const [loreCatOpen, setLoreCatOpen] = useState({}); // category -> bool（二级折叠）
   const [loreCardOpen, setLoreCardOpen] = useState(null); // lore_id（三级展开）
+  const loreCardRefs = useRef({}); // lore_id -> DOM node
 
   useEffect(() => {
     if (!videoId) { setRiffs([]); return; }
@@ -124,6 +129,32 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
     }
     onConsumeExpand && onConsumeExpand();
   }, [expandRiffId, onConsumeExpand]);
+
+  // SceneHotspots 触发"了解详情"指向 lore 卡时：连开三级（顶级 → category → 卡），滚到卡
+  useEffect(() => {
+    if (!expandLoreId || loreGroups.length === 0) return;
+    // 找该 lore_id 在哪个 category 下
+    let targetCat = null;
+    for (const g of loreGroups) {
+      if (g.cards.some(c => c.lore_id === expandLoreId)) { targetCat = g.category; break; }
+    }
+    if (!targetCat) {
+      // 数据里没这条卡——直接消费信号，避免重复触发
+      onConsumeExpandLore && onConsumeExpandLore();
+      return;
+    }
+    setLoreOpen(true);
+    setLoreCatOpen(s => ({ ...s, [targetCat]: true }));
+    setLoreCardOpen(expandLoreId);
+    // 等下一帧 DOM 渲染出新展开的卡再滚
+    requestAnimationFrame(() => {
+      const node = loreCardRefs.current[expandLoreId];
+      if (node && node.scrollIntoView) {
+        node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+    onConsumeExpandLore && onConsumeExpandLore();
+  }, [expandLoreId, loreGroups, onConsumeExpandLore]);
 
   const jumpTo = (t) => {
     const v = videoRef && videoRef.current;
@@ -182,7 +213,11 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                     {g.cards.map(c => {
                       const cardOpen = loreCardOpen === c.lore_id;
                       return (
-                        <div key={c.lore_id} className={`mp-lore-card${cardOpen ? ' is-open' : ''}`}>
+                        <div
+                          key={c.lore_id}
+                          ref={el => { if (el) loreCardRefs.current[c.lore_id] = el; }}
+                          className={`mp-lore-card${cardOpen ? ' is-open' : ''}`}
+                        >
                           <div className="mp-lore-card-head">
                             <div className="mp-lore-card-title">
                               {c.title}

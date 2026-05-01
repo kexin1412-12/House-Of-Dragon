@@ -196,60 +196,29 @@
   stroke: rgba(212, 175, 55, 0.36);
   stroke-width: 1.2;
 }
-/* 缩略图占位底色 —— 图片加载完之前显示这个；加载失败也降级到这个，不会留白 */
-.sx-node-thumb-bg {
-  fill: rgba(0, 0, 0, 0.55);
-  stroke: rgba(212, 175, 55, 0.18);
-  stroke-width: 1;
-}
-/* 顶部锚点圆：默认空心金色，当前节点实心 + 发光 */
-.sx-node-anchor {
-  fill: rgba(8, 4, 4, 0.9);
-  stroke: var(--sx-gold-soft);
-  stroke-width: 1.4;
-  transition: fill .18s ease, filter .18s ease;
-}
-.sx-node.is-current .sx-node-anchor {
-  fill: var(--sx-gold);
-  stroke: var(--sx-gold);
-  filter: drop-shadow(0 0 4px var(--sx-gold-glow));
-}
 .sx-node-title {
   fill: var(--sx-ink);
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
   pointer-events: none;
   dominant-baseline: middle;
 }
 .sx-node-time {
-  fill: var(--sx-gold);
-  font-size: 14px;
+  fill: var(--sx-ink-soft);
+  font-size: 12px;
   font-feature-settings: 'tnum';
-  font-weight: 500;
+  font-weight: 400;
   pointer-events: none;
   dominant-baseline: middle;
 }
-.sx-node-summary {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--sx-ink-soft);
-  letter-spacing: 0.3px;
-  /* 三行截断 */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  height: 100%;
-  pointer-events: none;
-}
 .sx-node-watched {
   fill: var(--sx-gold);
-  font-size: 14px;
+  font-size: 13px;
   pointer-events: none;
 }
 .sx-node-lock {
-  font-size: 22px;
+  font-size: 16px;
   pointer-events: none;
 }
 
@@ -284,20 +253,13 @@
   stroke-dasharray: 4 4;
   stroke-width: 1;
 }
-.sx-node.is-locked .sx-node-thumb-bg {
-  fill: rgba(0, 0, 0, 0.32);
-  stroke: rgba(232, 230, 223, 0.18);
-  stroke-dasharray: 3 3;
-}
 .sx-node.is-locked .sx-node-title { fill: var(--sx-ink-dim); letter-spacing: 4px; }
 .sx-node.is-locked { cursor: default; }
 
-/* 支线节点：略小 + 字号略小（视觉上从属于主线） */
+/* 支线节点：背景略浅，跟主线区分 */
 .sx-node-side .sx-node-rect {
   fill: rgba(20, 14, 12, 0.65);
 }
-.sx-node-side .sx-node-title { font-size: 16px; }
-.sx-node-side .sx-node-summary { font-size: 12px; }
 
 /* ─── Zoom controls (now inside bottom-bar) ────────────────────────── */
 .sx-tl-zoom {
@@ -364,6 +326,21 @@
 }
 .sx-detail-close:hover { color: var(--sx-ink); background: rgba(232, 230, 223, 0.08); }
 
+/* 详情侧栏顶部缩略图（设计图右栏的"骑士求私奔"剧照） */
+.sx-detail-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0 0 14px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+}
+.sx-detail-thumb img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
 .sx-detail-header {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 12px; margin-bottom: 16px;

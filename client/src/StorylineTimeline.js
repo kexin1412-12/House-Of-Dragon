@@ -22,15 +22,13 @@ function formatMMSS(seconds) {
 
 // SVG 画布几何 —— 主线节点等距铺开（横向 spacing 由序号决定，不按时长比例，
 // 否则前面密后面稀；参考图也是等距）。支线挂在 after_node_id 主线节点上方/下方。
-// 节点是"左缩略图 + 右标题/时间/summary"的横向卡片。
-const NODE_W = 320;
-const NODE_H = 144;
-const THUMB_W = 128;
-const THUMB_H = 120;
-const NODE_GAP = 36;        // 主线相邻节点的水平间距
-const SIDE_OFFSET_Y = 220;  // 支线节点距主线的垂直距离（节点变高，间距相应放大）
+// 展开态：节点是"标题 + 时间 + ✓"的紧凑文本卡（缩略图移到右侧详情侧栏）。
+const NODE_W = 156;
+const NODE_H = 68;
+const NODE_GAP = 56;        // 主线相邻节点的水平间距
+const SIDE_OFFSET_Y = 130;  // 支线节点距主线的垂直距离
 const CANVAS_PAD_X = 60;
-const CANVAS_PAD_Y = 200;
+const CANVAS_PAD_Y = 180;
 
 // 把主线节点按 narrative_function 的连续段切成幕段，给顶部进度带用。
 function computePhases(storyline, allNodesById) {
@@ -160,7 +158,8 @@ function useViewport(graphSize, viewportRef) {
 }
 
 // ─── Node component ─────────────────────────────────────────────────
-// 卡片布局：[10px padding] [104×96 缩略图] [12px gap] [标题 / 时间 / summary] [10px padding]
+// 展开态布局：标题（上）+ 时间（下）+ 已观看 ✓ 在右下角。无缩略图（缩略图移到详情侧栏）。
+// 锁住的支线节点：顶部"???"占位 + 中间 🔒。
 function StoryNode({
   node, position, state, locked, isCurrent, isSelected, onClick,
 }) {
@@ -176,88 +175,44 @@ function StoryNode({
     isCriticalTurn ? 'is-critical-turn' : '',
   ].filter(Boolean).join(' ');
 
-  const thumbX = 10;
-  const thumbY = (NODE_H - THUMB_H) / 2;
-  const infoX = thumbX + THUMB_W + 12;
-  const infoW = NODE_W - infoX - 12;
-
-  // 缩略图相对路径："frames/<show>/<scene>.jpg"。后端 server/index.js 已经把
-  // /kb/frames/* 服务为 static，client 用相对 /kb/... 即可（dev 环境同源 / 生产
-  // 走 vercel rewrites 到 server）。锁住的支线节点不显示缩略图（保持神秘）。
-  const thumbHref = (!locked && node.keyframe) ? `/kb/${node.keyframe}` : null;
-
   return (
     <g
       className={cls}
       transform={`translate(${position.x - NODE_W / 2}, ${position.y - NODE_H / 2})`}
       onClick={(e) => { e.stopPropagation(); onClick(node.node_id); }}
     >
-      {/* 顶部锚点圆 —— 当前节点实心金色，其余空心金色 */}
-      <circle
-        className="sx-node-anchor"
-        cx={NODE_W / 2}
-        cy={-12}
-        r={6}
-      />
-
-      {/* 节点矩形（含 clip 让缩略图圆角不溢出） */}
+      {/* 节点矩形 */}
       <rect className="sx-node-rect" x={0} y={0} width={NODE_W} height={NODE_H} rx={8} ry={8} />
 
-      {/* 缩略图占位框 + 图片（图片裁切到 8px 圆角） */}
-      <rect
-        className="sx-node-thumb-bg"
-        x={thumbX} y={thumbY} width={THUMB_W} height={THUMB_H} rx={6} ry={6}
-      />
-      {thumbHref && (
-        <image
-          href={thumbHref}
-          x={thumbX} y={thumbY} width={THUMB_W} height={THUMB_H}
-          preserveAspectRatio="xMidYMid slice"
-          clipPath={`inset(0 round 6px)`}
-          style={{ clipPath: 'inset(0 round 6px)' }}
-        />
+      {/* 标题（居中偏上） */}
+      <text
+        className="sx-node-title"
+        x={NODE_W / 2}
+        y={26}
+        textAnchor="middle"
+      >{locked ? '???' : node.title}</text>
+
+      {/* 时间（居中偏下） */}
+      {!locked && (
+        <text
+          className="sx-node-time"
+          x={NODE_W / 2}
+          y={48}
+          textAnchor="middle"
+        >{formatMMSS(node.start_time)}</text>
       )}
 
-      {/* 锁图标 (隐藏支线未解锁时，画在缩略图位置中央) */}
+      {/* 锁图标（隐藏支线未解锁时） */}
       {locked && (
         <text
           className="sx-node-lock"
-          x={thumbX + THUMB_W / 2}
-          y={thumbY + THUMB_H / 2 + 6}
+          x={NODE_W / 2}
+          y={50}
           textAnchor="middle"
         >🔒</text>
       )}
 
-      {/* 标题 + 时间（同一行，标题左、时间右） */}
-      <text
-        className="sx-node-title"
-        x={infoX}
-        y={thumbY + 18}
-      >{locked ? '???' : node.title}</text>
-      {!locked && (
-        <text
-          className="sx-node-time"
-          x={NODE_W - 12}
-          y={thumbY + 18}
-          textAnchor="end"
-        >{formatMMSS(node.start_time)}</text>
-      )}
-
-      {/* summary 多行（用 foreignObject 以便自然换行） */}
-      {!locked && node.summary && (
-        <foreignObject
-          x={infoX}
-          y={thumbY + 30}
-          width={infoW}
-          height={THUMB_H - 30}
-        >
-          <div xmlns="http://www.w3.org/1999/xhtml" className="sx-node-summary">
-            {node.summary}
-          </div>
-        </foreignObject>
-      )}
-
-      {/* 已观看 ✓ 标记（右下角） */}
+      {/* 已观看 ✓ 标记（右下角内嵌） */}
       {state === 'watched' && !locked && (
         <text
           className="sx-node-watched"
@@ -277,9 +232,16 @@ function NodeDetailPanel({ node, allNodesById, onSelectNode, onJumpTo, fav, onTo
   const prevNode = prevId ? allNodesById[prevId] : null;
   const nextNode = nextId ? allNodesById[nextId] : null;
 
+  const thumbHref = node.keyframe ? `/kb/${node.keyframe}` : null;
+
   return (
     <aside className="sx-detail-panel">
       <button className="sx-detail-close" onClick={onClose} title="关闭">×</button>
+      {thumbHref && (
+        <div className="sx-detail-thumb">
+          <img src={thumbHref} alt={node.title} />
+        </div>
+      )}
       <div className="sx-detail-header">
         <div className="sx-detail-title">{node.title}</div>
         <div className="sx-detail-time">{formatMMSS(node.start_time)}</div>
