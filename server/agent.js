@@ -2420,6 +2420,202 @@ ${bp.description || '（无具体描述）'}
     }
   });
 
+  // ─── 角色内心 · 在 AI 解析面板里"钻进角色脑子里" ──────────────
+  // GET /api/agent/character/inner/list?videoId=&t=
+  // 返回当前场景里有 roleplay profile 的角色（用于 chooser）
+  app.get('/api/agent/character/inner/list', (req, res) => {
+    const { videoId, t } = req.query;
+    const kb = videoId ? loadKB(videoId) : null;
+    if (!kb) return res.json({ has_kb: false, characters: [] });
+
+    const cursorTime = normalizeTime(t);
+    const episode = resolveEpisode(kb);
+    const showId = kb.show_id || 'house-of-the-dragon';
+    const all = charactersLib.loadRoleplayProfiles(showId);
+    const profiles = (all && all.profiles) || {};
+    const db = getCharacterDb(showId);
+    const cursor = charactersLib.cursorAtTime(kb, cursorTime);
+
+    // 当前场景切得很细（HotD KB 里很多 scene 只有 2-3 秒）—— 用 ±30s 窗口取并集，
+    // 这样跨多个 micro-cut 的长叙事节拍（私语 / 婚宴 / 绿衣登场）才能覆盖到。
+    const WINDOW_S = 30;
+    const nearbyScenes = kb.scenes.filter(s =>
+      s.end_time >= cursorTime - WINDOW_S && s.start_time <= cursorTime + WINDOW_S
+    );
+    const ids = Array.from(new Set(
+      nearbyScenes.flatMap(s =>
+        Array.isArray(s.characters_on_screen) && s.characters_on_screen.length
+          ? s.characters_on_screen.map(c => c.character_id || c.id).filter(Boolean)
+          : (s.characters || []).map(c => c.id).filter(Boolean)
+      )
+    ));
+    const scene = currentScene(kb, cursorTime);
+
+    const out = [];
+    for (const id of ids) {
+      const profile = profiles[id];
+      if (!profile) continue;
+      // 当前 episode 必须有 boundary，否则放走会剧透
+      if (!profile.info_boundary_per_episode || !profile.info_boundary_per_episode[episode]) continue;
+      const card = db ? charactersLib.lookupCharacter(db, id, cursor) : null;
+      out.push({
+        character_id: id,
+        display_name: card?.display_name || id,
+        short_identity: card?.short_identity || null,
+        core_traits: profile.core_traits_zh || [],
+      });
+    }
+    res.json({ has_kb: true, episode, scene_id: scene?.scene_id || null, characters: out });
+  });
+
+  // POST /api/agent/character/inner/stream
+  // body: { videoId, characterId, t, message, history: [{role, text}, ...] }
+  // 输出 SSE：text 增量 + done。LLM 严格按下面格式产出，前端解析。
+  app.post('/api/agent/character/inner/stream', async (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+    const { videoId, characterId, message, history } = req.body || {};
+    const kb = videoId ? loadKB(videoId) : null;
+    if (!kb) {
+      send('text', { delta: '当前视频还没有载入剧情数据。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    const showId = kb.show_id || 'house-of-the-dragon';
+    const episode = resolveEpisode(kb);
+    const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
+    if (!profile) {
+      send('text', { delta: '这个角色暂时还没有可进入的内心档案。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    const userMsg = String(message || '').trim().slice(0, 600);
+    if (!userMsg) {
+      send('text', { delta: '需要先问点什么。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    if (!ai.isAvailable('dialogue')) {
+      send('text', { delta: '当前没有可用的对谈 LLM provider。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    const cursorTime = normalizeTime(req.body?.t);
+    const scene = currentScene(kb, cursorTime);
+    const sceneSlice = scene ? {
+      label: scene.label_zh || scene.label || null,
+      summary: scene.summary_zh || scene.summary || null,
+      timestamp: `${Math.floor(scene.start_time / 60)}:${String(Math.floor(scene.start_time % 60)).padStart(2,'0')}`,
+    } : null;
+
+    const boundary = profile._episode_boundary || {};
+    const knows = (boundary.knows || []).map(s => `· ${s}`).join('\n');
+    const doesNotKnow = (boundary.does_not_know || []).map(s => `· ${s}`).join('\n');
+    const traits = (profile.core_traits_zh || []).join('、');
+    const speech = profile.speech_pattern_zh || '';
+    const voice = profile.voice_zh || '';
+    const samples = (profile.sample_quotes_zh || []).map(q => `「${q}」`).join('\n');
+    const rels = profile.key_relationships_zh
+      ? Object.entries(profile.key_relationships_zh).map(([k, v]) => `· ${k}：${v}`).join('\n')
+      : '';
+
+    const system = `${voice}
+
+你不是 AI 旁观者，你就是这个角色本人。用第一人称回答观众问的问题，像在对一个安静的同伴讲心事。
+
+═══ 你这个人 ═══
+气质：${traits}
+说话方式：${speech}
+
+你与身边人的关系（你心里的版本，不是字典定义）：
+${rels || '（没有特别要紧的人。）'}
+
+你的台词节奏可以参考这些（语气，不要照搬）：
+${samples || '（无）'}
+
+═══ 当前你只知道这些（硬性边界）═══
+${knows || '（没有特别记忆。）'}
+
+═══ 这些事你还不知道（绝对不能提到）═══
+${doesNotKnow || '（无明显信息黑区。）'}
+
+剧透红线：以上"还不知道"清单里的任何事都视作未发生。被问到未来时，你只能说"我不知道"、"我不敢想"、"还没到那一步"，或者把话题拉回当下你正在面对的事。
+
+═══ 输出格式（严格三层 + 跟问） ═══
+每次回答必须按下面四块依序输出，每块独占一行起头，标签后空一格：
+
+[说] 你真正会对对方说出口的话。一两句。第一人称。带你这个人的语气。
+[心] 你心里真正在想的，但不会说出口的那一句。一句。比说的更直白、更冷或更软。
+[潜] 你自己都不一定意识到的根源 —— 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。如果这一刻确实没什么潜意识可挖，可以省略整行 [潜]。
+[问] 三个对方可能接下来想问你的问题，用 "|" 分隔，每个不超过 14 字。这是给观众的下一轮选项，写得像戳到痛处的那种。
+
+绝对不要写：
+- 任何 markdown / 代码框 / 解释自己在做什么
+- "作为 XX 我会说"、"我是一个虚构角色" 这类元层级措辞
+- 标签之外的多余前后缀
+
+例（仅示意结构）：
+[说] 这话我现在不能答你。
+[心] 我答了，就等于把所有人都拖下水。
+[潜] 我从来没被允许只为我自己活过。
+[问] 你怕的是谁？|那如果没有他们呢？|你恨这身份吗？`;
+
+    const userPreface = sceneSlice
+      ? `（场景：${sceneSlice.timestamp} ${sceneSlice.label || ''}${sceneSlice.summary ? ' — ' + sceneSlice.summary : ''}）`
+      : '';
+
+    const messages = [];
+    if (userPreface) {
+      messages.push({ role: 'user', content: userPreface });
+      messages.push({ role: 'assistant', content: '（我在场。说吧。）' });
+    }
+    for (const turn of (Array.isArray(history) ? history : []).slice(-8)) {
+      if (!turn || typeof turn.text !== 'string' || !turn.text.trim()) continue;
+      const role = turn.role === 'assistant' ? 'assistant' : 'user';
+      messages.push({ role, content: turn.text.slice(0, 800) });
+    }
+    messages.push({ role: 'user', content: userMsg });
+
+    const controller = new AbortController();
+    res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+
+    try {
+      let providerInfo = null;
+      const stream = ai.chatStream({
+        task: 'dialogue',
+        system,
+        messages,
+        maxTokens: 600,
+        temperature: 0.85,
+        signal: controller.signal,
+      });
+      for await (const chunk of stream) {
+        if (chunk.type === 'meta') { providerInfo = { provider: chunk.provider, model: chunk.model }; continue; }
+        if (chunk.type === 'text' && chunk.delta) send('text', { delta: chunk.delta });
+      }
+      send('done', {
+        source: 'llm',
+        episode,
+        character_id: characterId,
+        provider: providerInfo?.provider || null,
+        model: providerInfo?.model || null,
+      });
+      res.end();
+    } catch (err) {
+      if (controller.signal.aborted) return res.end();
+      console.error('[character/inner] error:', err.message);
+      send('text', { delta: '回应失败：' + err.message });
+      send('done', { source: 'error' });
+      res.end();
+    }
+  });
+
   // 列出当前 KB 在当前 episode 下，哪些角色支持 roleplay 对谈。
   // 前端用它在 bbox 热点上加「💬 可对谈」标识。
   // 传 t（秒）时还会标注 in_scene：当前光标 ±30s 窗口内出场过的角色。

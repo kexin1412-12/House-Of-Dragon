@@ -1090,6 +1090,130 @@ function TencentPlayer({
     }
   }
 
+  // 角色内心：流式拿三层回应（说/心/潜）+ 三个跟问选项
+  async function submitCharacterTurn(forcedQuestion) {
+    if (!charSelected || !aiKb) return;
+    const candidate = typeof forcedQuestion === 'string' ? forcedQuestion : charInput;
+    const q = candidate.trim();
+    if (!q) return;
+    if (charSending) return;
+    const userTurns = charMessages.filter(m => m.role === 'user').length;
+    if (userTurns >= CHAR_TURN_LIMIT) return;
+
+    const v = videoRef.current;
+    const t = v?.currentTime || 0;
+
+    setCharMessages(prev => [
+      ...prev,
+      { role: 'user', text: q, t },
+      { role: 'agent', text: '', parsed: null, streaming: true, t },
+    ]);
+    setCharInput('');
+    setCharSending(true);
+
+    const TYPE_INTERVAL_MS = 18;
+    let queue = '';
+    let typing = false;
+    const flushChunk = (chunk) => setCharMessages(prev => {
+      const copy = prev.slice();
+      const last = copy[copy.length - 1];
+      if (last?.role === 'agent' && last.streaming) {
+        const nextText = last.text + chunk;
+        copy[copy.length - 1] = { ...last, text: nextText, parsed: parseCharacterReply(nextText) };
+      }
+      return copy;
+    });
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
+      flushChunk(queue.slice(0, n));
+      queue = queue.slice(n);
+      typing = true;
+      setTimeout(tick, TYPE_INTERVAL_MS);
+    };
+    const appendDelta = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const finalizeMsg = () => {
+      const apply = () => setCharMessages(prev => {
+        const copy = prev.slice();
+        const last = copy[copy.length - 1];
+        if (last?.role === 'agent' && last.streaming) {
+          copy[copy.length - 1] = { ...last, streaming: false, parsed: parseCharacterReply(last.text) };
+        }
+        return copy;
+      });
+      const wait = () => {
+        if (queue.length || typing) setTimeout(wait, 40);
+        else apply();
+      };
+      wait();
+    };
+
+    try {
+      const history = charMessages
+        .filter(m => (m.role === 'user' && m.text) || (m.role === 'agent' && m.parsed?.say))
+        .slice(-6)
+        .map(m => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          text: m.role === 'user' ? m.text : m.parsed.say,
+        }));
+      const resp = await fetch(`${API}/api/agent/character/inner/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoId: aiKb,
+          characterId: charSelected.character_id,
+          message: q,
+          history,
+          t,
+        }),
+      });
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) !== -1) {
+          const raw = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+          let evtType = 'message', dataStr = '';
+          for (const line of raw.split('\n')) {
+            if (line.startsWith('event: ')) evtType = line.slice(7).trim();
+            else if (line.startsWith('data: ')) dataStr += line.slice(6);
+          }
+          if (!dataStr) continue;
+          let data;
+          try { data = JSON.parse(dataStr); } catch { continue; }
+          if (evtType === 'text') appendDelta(data.delta || '');
+        }
+      }
+      finalizeMsg();
+    } catch (err) {
+      setCharMessages(prev => {
+        const copy = prev.slice();
+        const last = copy[copy.length - 1];
+        if (last?.role === 'agent' && last.streaming) {
+          copy[copy.length - 1] = {
+            ...last,
+            streaming: false,
+            text: '回应失败：' + (err.message || ''),
+            parsed: { say: '回应失败：' + (err.message || ''), think: null, sub: null, suggestions: [] },
+          };
+        }
+        return copy;
+      });
+    } finally {
+      setCharSending(false);
+    }
+  }
+
 
   return (
     <div className="tx-page">
@@ -1211,17 +1335,36 @@ function TencentPlayer({
                   onClick={() => setAiChatOpen(false)}
                 />
                 <div className="tx-player-aichat-drawer" onClick={e => e.stopPropagation()}>
-                  <AgentPanel
-                    messages={aiMessages}
-                    input={aiInput}
-                    setInput={setAiInput}
-                    sending={aiSending}
-                    onSubmit={submitAiQuestion}
-                    logRef={aiLogRef}
-                    depth={aiDepth}
-                    setDepth={setAiDepth}
-                    onClear={clearAiMessages}
-                  />
+                  {panelMode === 'character' ? (
+                    <CharacterPanel
+                      selected={charSelected}
+                      candidates={charCandidates}
+                      messages={charMessages}
+                      input={charInput}
+                      setInput={setCharInput}
+                      sending={charSending}
+                      logRef={charLogRef}
+                      onPick={pickCharacter}
+                      onSubmit={submitCharacterTurn}
+                      onClear={clearCharMessages}
+                      onExit={() => { setPanelMode('analysis'); exitCharacter(); }}
+                      onBackToChooser={exitCharacter}
+                      turnLimit={CHAR_TURN_LIMIT}
+                    />
+                  ) : (
+                    <AgentPanel
+                      messages={aiMessages}
+                      input={aiInput}
+                      setInput={setAiInput}
+                      sending={aiSending}
+                      onSubmit={submitAiQuestion}
+                      logRef={aiLogRef}
+                      depth={aiDepth}
+                      setDepth={setAiDepth}
+                      onClear={clearAiMessages}
+                      onEnterCharacterMode={() => setPanelMode('character')}
+                    />
+                  )}
                 </div>
               </>
             )}
@@ -1420,17 +1563,36 @@ function TencentPlayer({
           </div>
 
           {rightTab === 'agent' && (
-            <AgentPanel
-              messages={aiMessages}
-              input={aiInput}
-              setInput={setAiInput}
-              sending={aiSending}
-              onSubmit={submitAiQuestion}
-              logRef={aiLogRef}
-              depth={aiDepth}
-              setDepth={setAiDepth}
-              onClear={clearAiMessages}
-            />
+            panelMode === 'character' ? (
+              <CharacterPanel
+                selected={charSelected}
+                candidates={charCandidates}
+                messages={charMessages}
+                input={charInput}
+                setInput={setCharInput}
+                sending={charSending}
+                logRef={charLogRef}
+                onPick={pickCharacter}
+                onSubmit={submitCharacterTurn}
+                onClear={clearCharMessages}
+                onExit={() => { setPanelMode('analysis'); exitCharacter(); }}
+                onBackToChooser={exitCharacter}
+                turnLimit={CHAR_TURN_LIMIT}
+              />
+            ) : (
+              <AgentPanel
+                messages={aiMessages}
+                input={aiInput}
+                setInput={setAiInput}
+                sending={aiSending}
+                onSubmit={submitAiQuestion}
+                logRef={aiLogRef}
+                depth={aiDepth}
+                setDepth={setAiDepth}
+                onClear={clearAiMessages}
+                onEnterCharacterMode={() => setPanelMode('character')}
+              />
+            )
           )}
           {rightTab === 'meme' && (
             <MemePanel
@@ -1530,6 +1692,44 @@ const QUICK_QUESTIONS = [
   '这句台词什么意思',
 ];
 
+// 角色内心 reply 解析：[说]/[心]/[潜]/[问] 四块。流式部分到达时也要稳定渲染。
+function parseCharacterReply(text) {
+  const empty = { say: '', think: '', sub: '', suggestions: [] };
+  if (!text) return empty;
+  const TAGS = ['[说]', '[心]', '[潜]', '[问]'];
+  const idx = {};
+  for (const t of TAGS) {
+    const i = text.indexOf(t);
+    if (i !== -1) idx[t] = i;
+  }
+  const order = TAGS.filter(t => idx[t] != null).sort((a, b) => idx[a] - idx[b]);
+  const slice = (tag) => {
+    if (idx[tag] == null) return '';
+    const start = idx[tag] + tag.length;
+    const next = order.find(t => idx[t] > idx[tag]);
+    const end = next ? idx[next] : text.length;
+    return text.slice(start, end).trim();
+  };
+  const out = {
+    say: slice('[说]'),
+    think: slice('[心]'),
+    sub: slice('[潜]'),
+    suggestions: [],
+  };
+  // 第一块 [说] 之前如果有裸文本，归为 say 的一部分（流式过渡帧 / LLM 漏标）
+  if (idx['[说]'] != null && idx['[说]'] > 0) {
+    const lead = text.slice(0, idx['[说]']).trim();
+    if (lead) out.say = (lead + ' ' + out.say).trim();
+  } else if (idx['[说]'] == null) {
+    out.say = text.trim();
+  }
+  const qRaw = slice('[问]');
+  if (qRaw) {
+    out.suggestions = qRaw.split(/\||｜|\n/).map(s => s.trim()).filter(Boolean).slice(0, 3);
+  }
+  return out;
+}
+
 const DEPTH_OPTIONS = [
   { id: 'brief', label: '简明' },
   { id: 'deep',  label: '深挖' },
@@ -1569,6 +1769,7 @@ function AgentPanel({
   sending, onSubmit, logRef,
   depth = 'brief', setDepth = () => {},
   onClear,
+  onEnterCharacterMode,
 }) {
   const weighted = depth === 'deep';
 
@@ -1622,6 +1823,15 @@ function AgentPanel({
               title="点击直接发送"
             >{q}</button>
           ))}
+          {onEnterCharacterMode && (
+            <button
+              type="button"
+              className="tx-agent-de-chip tx-agent-de-chip-mode"
+              onClick={() => !sending && onEnterCharacterMode()}
+              disabled={sending}
+              title="钻进角色脑子里和 TA 对话"
+            >角色内心</button>
+          )}
         </div>
 
         {/* 自由输入：平面下划线，不是实色卡片 */}
@@ -1641,6 +1851,197 @@ function AgentPanel({
           >发送</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─── 角色内心 · AgentPanel 的第二种模态 ────────────────────────
+   未选角色 → 渲染 chooser；选定后 → 渲染对话流 + 三个跟问选项。
+   外观沿用 AgentPanel 的容器，避免在画面上出现风格断层。 */
+function CharacterPanel({
+  selected, candidates,
+  messages, input, setInput,
+  sending, logRef,
+  onPick, onSubmit, onClear, onExit, onBackToChooser,
+  turnLimit = 10,
+}) {
+  const userTurns = messages.filter(m => m.role === 'user').length;
+  const reachedLimit = userTurns >= turnLimit;
+  const lastAgent = [...messages].reverse().find(m => m.role === 'agent' && m.parsed);
+  const suggestions = (lastAgent?.parsed?.suggestions || []).filter(Boolean);
+
+  return (
+    <div className="tx-agent-de tx-char-mode">
+      <div className="tx-agent-de-rail" aria-hidden="true">
+        <span className="tx-agent-de-page">S01·A05·{String(messages.length).padStart(2, '0')}</span>
+      </div>
+
+      {/* 顶部：模态切换 + 当前所选角色头牌 */}
+      <div className="tx-char-header">
+        <button
+          className="tx-char-back"
+          onClick={onExit}
+          title="回到 AI 解析"
+        >‹ 解析模式</button>
+        {selected ? (
+          <div className="tx-char-title">
+            <div className="tx-char-name">{selected.display_name}</div>
+            {selected.short_identity && (
+              <div className="tx-char-status">{selected.short_identity}</div>
+            )}
+          </div>
+        ) : (
+          <div className="tx-char-title">
+            <div className="tx-char-name tx-char-name-dim">在场角色 · 选一个进入 TA 的内心</div>
+          </div>
+        )}
+        {selected && (
+          <button
+            className="tx-char-switch"
+            onClick={onBackToChooser}
+            title="换一个角色"
+          >换一个</button>
+        )}
+      </div>
+
+      {/* 中区：未选 → chooser；已选 → narrative log */}
+      {!selected ? (
+        <div className="tx-char-chooser">
+          {candidates.length === 0 ? (
+            <div className="tx-agent-de-empty">
+              当前场景里暂时没有可进入内心的角色。换个时间点再试，或先回到<em>解析模式</em>。
+            </div>
+          ) : (
+            <div className="tx-char-grid">
+              {candidates.map(c => (
+                <button
+                  key={c.character_id}
+                  type="button"
+                  className="tx-char-card"
+                  onClick={() => onPick(c)}
+                >
+                  <div className="tx-char-card-name">{c.display_name}</div>
+                  {c.short_identity && (
+                    <div className="tx-char-card-id">{c.short_identity}</div>
+                  )}
+                  {c.core_traits?.length > 0 && (
+                    <div className="tx-char-card-traits">
+                      {c.core_traits.slice(0, 3).join(' · ')}
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div ref={logRef} className="tx-agent-log tx-agent-de-log tx-char-log">
+          {messages.length === 0 && (
+            <div className="tx-agent-de-empty">
+              问点什么 —— <em>"你恨她吗？"</em>、<em>"你为什么不直接走？"</em>。<br/>
+              你看到的是 TA 此刻能告诉你的全部，再往后的事 TA 也还不知道。
+            </div>
+          )}
+          {messages.map((m, i) => <CharLine key={i} message={m} speakerName={selected.display_name} />)}
+        </div>
+      )}
+
+      {/* 下区：决策位 —— 跟问选项 + 自由输入；未选角色时收起 */}
+      {selected && (
+        <div className="tx-agent-de-decision">
+          <div className="tx-agent-de-depth">
+            <span className="tx-agent-de-meta">第 {Math.min(userTurns, turnLimit)}/{turnLimit} 轮</span>
+            {onClear && messages.length > 0 && (
+              <button
+                className="tx-agent-de-clear"
+                onClick={onClear}
+                disabled={sending}
+                title="清空和 TA 的对话"
+              >↺ 清空</button>
+            )}
+          </div>
+
+          {suggestions.length > 0 && !reachedLimit && (
+            <div className="tx-agent-de-chips">
+              {suggestions.map((q, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="tx-agent-de-chip tx-char-suggest"
+                  onClick={() => !sending && onSubmit(q)}
+                  disabled={sending}
+                  title="点击直接问"
+                >{q}</button>
+              ))}
+            </div>
+          )}
+
+          {reachedLimit ? (
+            <div className="tx-char-limit">
+              这一段你们已经聊了 {turnLimit} 轮 —— 继续观影，下一个场景可以再次进入 TA 或别人的内心。
+            </div>
+          ) : (
+            <div className="tx-agent-de-input">
+              <span className="tx-agent-de-prompt">你 —</span>
+              <input
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSubmit(); } }}
+                placeholder="自己开口……"
+                disabled={sending}
+              />
+              <button
+                className="tx-agent-de-send"
+                onClick={() => onSubmit()}
+                disabled={sending || !input.trim()}
+              >发送</button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* 角色对话单行：user 一行；agent 三层（说 / 心 / 潜） */
+function CharLine({ message, speakerName }) {
+  if (message.role === 'user') {
+    return (
+      <div className="de-line de-line-user">
+        <span className="de-name de-name-you">你</span>
+        <span className="de-dash">—</span>
+        <span className="de-body de-body-you">"{message.text}"</span>
+      </div>
+    );
+  }
+  const p = message.parsed || { say: message.text || '', think: '', sub: '', suggestions: [] };
+  const showThinking = !message.text && message.streaming;
+  const showCursor = message.streaming && message.text;
+  return (
+    <div className="de-line de-line-agent tx-char-line">
+      {showThinking && <span className="de-thinking">思考中…</span>}
+      {p.say && (
+        <div className="tx-char-layer tx-char-say">
+          <span className="tx-char-layer-name">{speakerName}</span>
+          <span className="de-dash">—</span>
+          <span className="tx-char-say-body">{p.say}</span>
+          {showCursor && !p.think && !p.sub && <span className="de-cursor">▍</span>}
+        </div>
+      )}
+      {p.think && (
+        <div className="tx-char-layer tx-char-think">
+          <span className="tx-char-tag">心</span>
+          <span className="tx-char-think-body">{p.think}</span>
+          {showCursor && !p.sub && <span className="de-cursor">▍</span>}
+        </div>
+      )}
+      {p.sub && (
+        <div className="tx-char-layer tx-char-sub">
+          <span className="tx-char-tag tx-char-tag-sub">潜</span>
+          <span className="tx-char-sub-body">{p.sub}</span>
+          {showCursor && <span className="de-cursor">▍</span>}
+        </div>
+      )}
     </div>
   );
 }

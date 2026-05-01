@@ -1280,6 +1280,182 @@ body {
 .tx-agent-de-send:hover:not(:disabled) { color: #f5b06d; }
 .tx-agent-de-send:disabled { color: rgba(232, 200, 150, 0.25); cursor: default; }
 
+/* ─── 角色内心模态（CharacterPanel） ─────────────────── */
+
+/* 入口 chip：和「这是什么梗」并列，但视觉上略冷一点（蓝紫调） —— DE 共情 / 直觉色系 */
+.tx-agent-de-chip-mode {
+  color: #b8c4ce;
+  border-color: rgba(184, 196, 206, 0.45);
+}
+.tx-agent-de-chip-mode:hover:not(:disabled) {
+  color: #d8e4ee;
+  border-color: rgba(216, 228, 238, 0.7);
+}
+
+/* 容器 —— 沿用 .tx-agent-de，加冷调蒙版让用户知道"换了一种心态" */
+.tx-char-mode {
+  background: rgba(8, 12, 18, 0.34);
+}
+
+/* 顶部头牌：返回按钮 / 角色名 / 状态行 / 换一个 */
+.tx-char-header {
+  display: flex; align-items: baseline; gap: 14px;
+  margin-bottom: 16px;
+}
+.tx-char-back {
+  background: transparent; border: 0;
+  color: rgba(212, 196, 168, 0.6);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: 0.16em;
+  padding: 4px 0; cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+.tx-char-back:hover { color: #f5e8d4; }
+
+.tx-char-title { flex: 1; min-width: 0; }
+.tx-char-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px; color: #e8c896; letter-spacing: 0.04em;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+.tx-char-name-dim {
+  color: rgba(212, 196, 168, 0.7);
+  font-size: 14px; font-weight: 400;
+}
+.tx-char-status {
+  margin-top: 4px;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: 0.18em;
+  color: rgba(184, 196, 206, 0.78);
+  text-transform: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+
+.tx-char-switch {
+  background: transparent; border: 0;
+  color: rgba(184, 196, 206, 0.55);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 11px; letter-spacing: 0.12em;
+  padding: 4px 0; cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+.tx-char-switch:hover { color: #d8e4ee; }
+
+/* Chooser：场景里的可对谈角色卡片 */
+.tx-char-chooser {
+  flex: 1; min-height: 120px; overflow-y: auto;
+  padding: 0 8px 12px 0;
+}
+.tx-char-grid {
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+.tx-char-card {
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(15, 18, 24, 0.4);
+  border: 1px solid rgba(184, 196, 206, 0.18);
+  border-radius: 2px;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.tx-char-card:hover {
+  border-color: rgba(216, 228, 238, 0.55);
+  background: rgba(20, 26, 36, 0.55);
+  transform: translateY(-1px);
+}
+.tx-char-card-name {
+  font-size: 14px; color: #e8c896;
+  font-weight: 500; letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.tx-char-card-id {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 10.5px; letter-spacing: 0.14em;
+  color: rgba(184, 196, 206, 0.78);
+  margin-bottom: 6px;
+}
+.tx-char-card-traits {
+  font-size: 11.5px; color: rgba(212, 196, 168, 0.62);
+  font-style: italic; line-height: 1.5;
+}
+
+/* 对话流：和 .tx-agent-de-log 一致 */
+.tx-char-log {
+  /* gap 沿用父类；这里只调间距给三层结构留呼吸 */
+  gap: 18px;
+}
+
+/* 三层叙事行 */
+.tx-char-line { display: flex; flex-direction: column; gap: 6px; }
+.tx-char-layer { font-size: 13px; line-height: 1.7; letter-spacing: 0.02em; }
+.tx-char-layer-name {
+  display: inline;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 600; font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: #e8c896;
+  margin-right: 8px;
+}
+.tx-char-tag {
+  display: inline-block;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.24em;
+  color: #6b9bd1;
+  padding: 1px 7px;
+  border: 1px solid rgba(107, 155, 209, 0.4);
+  margin-right: 10px;
+  border-radius: 1px;
+  vertical-align: 1px;
+}
+.tx-char-tag-sub {
+  color: #b08adb;
+  border-color: rgba(176, 138, 219, 0.45);
+}
+.tx-char-say-body {
+  color: #f0d4a8;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+.tx-char-say-body::before { content: '「'; color: rgba(232, 200, 150, 0.55); }
+.tx-char-say-body::after  { content: '」'; color: rgba(232, 200, 150, 0.55); }
+.tx-char-think-body {
+  color: #b8c4ce;
+  font-style: italic;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+.tx-char-sub-body {
+  color: #c8b8e0;
+  font-style: italic;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+}
+
+/* 跟问 chip：在 chips 容器里复用 .tx-agent-de-chip 基类，再覆冷调 */
+.tx-char-suggest {
+  color: rgba(216, 228, 238, 0.85);
+  border-color: rgba(216, 228, 238, 0.32);
+}
+.tx-char-suggest:hover:not(:disabled) {
+  color: #f0d4a8;
+  border-color: rgba(232, 200, 150, 0.6);
+}
+
+.tx-char-limit {
+  margin-top: 8px;
+  padding: 10px 12px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 12.5px; line-height: 1.7;
+  color: rgba(212, 196, 168, 0.7);
+  font-style: italic;
+  border-left: 2px solid rgba(232, 149, 77, 0.5);
+  background: rgba(232, 149, 77, 0.06);
+}
+
 .tx-title-row {
   display: flex; align-items: baseline;
   gap: 12px; margin-bottom: 12px;
