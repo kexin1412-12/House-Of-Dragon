@@ -1363,8 +1363,27 @@ body {
   color: rgba(184, 196, 206, 0.7);
   flex-shrink: 0;
   font-style: normal;
+  /* 顶部对齐 fact 第一行而不是 baseline，避免多行时数字飘到中间 */
+  line-height: 1.6;
+  padding-top: 1px;
 }
-.tx-char-beat-fact { font-style: italic; }
+.tx-char-beat-body {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.tx-char-beat-fact {
+  font-style: italic;
+  color: rgba(232, 222, 200, 0.85);
+}
+/* reading 层：稍冷稍淡，作为"这一刻的潜台词"附在 fact 下面 */
+.tx-char-beat-reading {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 11.5px; line-height: 1.55;
+  color: rgba(184, 196, 206, 0.7);
+  font-style: italic;
+  padding-left: 10px;
+  border-left: 1px solid rgba(184, 196, 206, 0.22);
+}
 
 /* 此刻就在画面里的角色：卡片镶一道暖色边 + 圆点脉冲 */
 .tx-char-card.is-in-frame {

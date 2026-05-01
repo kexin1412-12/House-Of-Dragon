@@ -2520,11 +2520,13 @@ ${bp.description || '（无具体描述）'}
     out.sort((a, b) => Number(b.in_frame) - Number(a.in_frame));
 
     // scene_beat：让前端看到"当前钻进的是哪个节拍"，确认实时跟着剧走
+    // 现在两层：fact（画面里发生了什么）+ reading（这一刻的潜台词）
     const sceneBeat = scene ? {
       scene_id: scene.scene_id,
       start_time: scene.start_time,
       end_time: scene.end_time,
       fact: scene.plot?.fact || null,
+      reading: scene.plot?.reading || null,
     } : null;
 
     res.json({
@@ -2534,6 +2536,103 @@ ${bp.description || '（无具体描述）'}
       scene_beat: sceneBeat,
       characters: out,
     });
+  });
+
+  // POST /api/agent/character/inner/starter
+  // body: { videoId, characterId, t }
+  // 进入角色那一刻给 3 个"戳到此刻痛处"的开场问题，让用户不用从一张白纸开始问。
+  // 缓存键 = characterId|scene_id；同一场景同一人不重复算钱。
+  const _starterCache = new Map();
+  app.post('/api/agent/character/inner/starter', async (req, res) => {
+    try {
+      const { videoId, characterId } = req.body || {};
+      const kb = videoId ? loadKB(videoId) : null;
+      if (!kb) return res.json({ questions: [] });
+      const showId = kb.show_id || 'house-of-the-dragon';
+      const episode = resolveEpisode(kb);
+      const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
+      if (!profile) return res.json({ questions: [] });
+
+      const cursorTime = normalizeTime(req.body?.t);
+      const scene = currentScene(kb, cursorTime);
+      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}`;
+      if (_starterCache.has(cacheKey)) {
+        return res.json({ questions: _starterCache.get(cacheKey), cached: true });
+      }
+
+      // 静态兜底：LLM 不可用时给一组与角色无关但永远成立的开场
+      const fallback = ['你此刻在想什么？', '为什么不直说？', '你怕的是什么？'];
+      if (!ai.isAvailable('dialogue')) return res.json({ questions: fallback, fallback: true });
+
+      // 上下文：当前画面发生 + 同框人 + 最近 30s SRT
+      const fmtTs = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+      const currentFact = scene?.plot?.fact || '（画面里没有特别明显的事。）';
+      const onScreen = scene
+        ? (Array.isArray(scene.characters_on_screen) && scene.characters_on_screen.length
+            ? scene.characters_on_screen.map(c => c.character_id || c.id)
+            : (scene.characters || []).map(c => c.id))
+        : [];
+      const onScreenStr = Array.from(new Set(onScreen)).filter(Boolean).join('、') || '（独自一人）';
+      const cues = srtWindow(videoId, cursorTime, 30, 0);
+      const subtitleBlock = cues.length
+        ? cues.slice(-6).map(c => `${fmtTs(c.start)} | ${c.text}`).join('\n')
+        : '（这段画面没有明显对白。）';
+
+      const boundary = profile._episode_boundary || {};
+      const knowsLast = (boundary.knows || []).slice(-3).join('；');
+      const traits = (profile.core_traits_zh || []).slice(0, 3).join('、');
+
+      const system = `你正在为 HBO《龙之家族》观众设计 3 个开场问题。
+观众即将"钻进"一个角色的内心和 TA 对话。你要替观众先想好 3 个最戳到此刻痛处的问题。
+
+═══ 这 3 个问题必须满足 ═══
+1. 必须围绕"此刻这一段戏"——画面正在发生的事、刚听到的台词、TA 的表情。
+2. 必须戳到这个角色当下的真实困境/伤口/欲望，不是空泛的"你怎么想"。
+3. 三个不同角度，不重复（一个事实问、一个动机问、一个伤口问）。
+4. 每个问题中文，不超过 14 字。
+5. 不能问 TA 不知道的事（剧透红线）。
+
+═══ 输出格式（极严） ═══
+只输出三个问题，用 "|" 分隔，一行：
+q1|q2|q3
+
+不要解释。不要前后缀。不要 markdown。不要序号。`;
+
+      const user = `角色：${profile.voice_zh ? profile.voice_zh.split('。')[0] : characterId}
+气质：${traits}
+TA 此刻最近的处境：${knowsLast || '（无）'}
+
+═══ 此刻画面 ═══
+${currentFact}
+
+═══ 同框的人 ═══
+${onScreenStr}
+
+═══ 最近 30 秒画面里的台词原话 ═══
+${subtitleBlock}
+
+请生成 3 个开场问题。`;
+
+      const result = await ai.chat({
+        task: 'dialogue',
+        system,
+        messages: [{ role: 'user', content: user }],
+        maxTokens: 120,
+        temperature: 0.85,
+      });
+      const txt = String(result?.text || '').trim()
+        .replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
+      const questions = txt.split(/[|｜\n]+/)
+        .map(s => s.replace(/^[\d\.、，。\s]+/, '').trim())
+        .filter(Boolean)
+        .slice(0, 3);
+      const finalQs = questions.length === 3 ? questions : fallback;
+      _starterCache.set(cacheKey, finalQs);
+      res.json({ questions: finalQs });
+    } catch (err) {
+      console.error('[character/inner/starter] error:', err.message);
+      res.json({ questions: ['你此刻在想什么？', '为什么不直说？', '你怕的是什么？'], fallback: true });
+    }
   });
 
   // POST /api/agent/character/inner/stream

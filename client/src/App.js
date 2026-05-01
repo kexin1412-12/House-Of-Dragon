@@ -572,10 +572,11 @@ function TencentPlayer({
   const [panelMode, setPanelMode] = useState('analysis');
   const [charSelected, setCharSelected] = useState(null);     // { character_id, display_name, short_identity, core_traits }
   const [charCandidates, setCharCandidates] = useState([]);   // 当前场景里有 profile 的角色
-  const [charSceneBeat, setCharSceneBeat] = useState(null);   // { scene_id, fact, start_time, end_time }
+  const [charSceneBeat, setCharSceneBeat] = useState(null);   // { scene_id, fact, reading, start_time, end_time }
   const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
   const [charInput, setCharInput] = useState('');
   const [charSending, setCharSending] = useState(false);
+  const [charStarters, setCharStarters] = useState([]);       // 进入角色后的 3 个开场问题（LLM 按场景生成）
   const charLogRef = useRef(null);
   const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉
   const CHAR_TURN_LIMIT = 10;
@@ -948,16 +949,41 @@ function TencentPlayer({
   function clearCharMessages() {
     setCharMessages([]);
     setCharInput('');
+    // 清空对话回到开场态：恢复 starter 选项
+    if (charSelected) fetchCharStarters(charSelected);
   }
   function exitCharacter() {
     setCharSelected(null);
     setCharMessages([]);
     setCharInput('');
+    setCharStarters([]);
+  }
+  async function fetchCharStarters(c) {
+    if (!c || !aiKb) return;
+    const v = videoRef.current;
+    const t = v?.currentTime || 0;
+    try {
+      const r = await fetch(`${API}/api/agent/character/inner/starter`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId: aiKb, characterId: c.character_id, t }),
+      });
+      const d = await r.json();
+      if (Array.isArray(d.questions) && d.questions.length) {
+        setCharStarters(d.questions);
+      } else {
+        setCharStarters(['你此刻在想什么？', '为什么不直说？', '你怕的是什么？']);
+      }
+    } catch {
+      setCharStarters(['你此刻在想什么？', '为什么不直说？', '你怕的是什么？']);
+    }
   }
   function pickCharacter(c) {
     setCharSelected(c);
     setCharMessages([]);
     setCharInput('');
+    setCharStarters([]);
+    fetchCharStarters(c);
   }
 
   function clearAiMessages() {
@@ -1365,6 +1391,7 @@ function TencentPlayer({
                       selected={charSelected}
                       candidates={charCandidates}
                       sceneBeat={charSceneBeat}
+                      starters={charStarters}
                       messages={charMessages}
                       input={charInput}
                       setInput={setCharInput}
@@ -1586,6 +1613,7 @@ function TencentPlayer({
                 selected={charSelected}
                 candidates={charCandidates}
                 sceneBeat={charSceneBeat}
+                starters={charStarters}
                 messages={charMessages}
                 input={charInput}
                 setInput={setCharInput}
@@ -1879,6 +1907,7 @@ function AgentPanel({
    外观沿用 AgentPanel 的容器，避免在画面上出现风格断层。 */
 function CharacterPanel({
   selected, candidates, sceneBeat,
+  starters = [],
   messages, input, setInput,
   sending, logRef,
   onPick, onSubmit, onClear, onExit, onBackToChooser,
@@ -1887,7 +1916,10 @@ function CharacterPanel({
   const userTurns = messages.filter(m => m.role === 'user').length;
   const reachedLimit = userTurns >= turnLimit;
   const lastAgent = [...messages].reverse().find(m => m.role === 'agent' && m.parsed);
-  const suggestions = (lastAgent?.parsed?.suggestions || []).filter(Boolean);
+  const replySuggestions = (lastAgent?.parsed?.suggestions || []).filter(Boolean);
+  // 还没问过 → 用 LLM 给的开场 starters；问过一轮以上 → 用上一回回答里的 [问] 跟问
+  const showStarters = userTurns === 0 && starters.length > 0;
+  const suggestions = showStarters ? starters : replySuggestions;
   const beatTs = sceneBeat?.start_time != null
     ? `${Math.floor(sceneBeat.start_time / 60)}:${String(Math.floor(sceneBeat.start_time % 60)).padStart(2, '0')}`
     : null;
@@ -1927,10 +1959,17 @@ function CharacterPanel({
       </div>
 
       {/* 实时节拍提示：让用户看见 AI 在跟着剧走（每 2s 更新） */}
-      {sceneBeat?.fact && (
+      {(sceneBeat?.fact || sceneBeat?.reading) && (
         <div className="tx-char-beat" title="AI 此刻看到的画面情境">
           {beatTs && <span className="tx-char-beat-ts">{beatTs}</span>}
-          <span className="tx-char-beat-fact">{sceneBeat.fact}</span>
+          <div className="tx-char-beat-body">
+            {sceneBeat?.fact && (
+              <div className="tx-char-beat-fact">{sceneBeat.fact}</div>
+            )}
+            {sceneBeat?.reading && (
+              <div className="tx-char-beat-reading">{sceneBeat.reading}</div>
+            )}
+          </div>
         </div>
       )}
 
