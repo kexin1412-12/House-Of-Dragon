@@ -191,4 +191,34 @@ app.get('/api/riffs', (req, res) => {
   res.json({ video_id: videoId || null, count: riffs.length, riffs });
 });
 
+// 叙事 X 光 / Storyline —— 静态 KB 直出。每个 video_id 一个 JSON 文件。
+let _storylineCache = null;
+function loadStoryline() {
+  if (_storylineCache) return _storylineCache;
+  const dir = path.join(__dirname, 'kb', 'storyline');
+  const byVideo = {};
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        if (j.video_id) byVideo[j.video_id] = j;
+      } catch (e) {
+        console.warn(`[storyline] skip bad file ${f}:`, e.message);
+      }
+    }
+  }
+  _storylineCache = byVideo;
+  return byVideo;
+}
+
+app.get('/api/storyline', (req, res) => {
+  const videoId = req.query.videoId;
+  if (!videoId) return res.status(400).json({ error: 'videoId required' });
+  const byVideo = loadStoryline();
+  const data = byVideo[videoId];
+  if (!data) return res.status(404).json({ error: 'no storyline for video', video_id: videoId });
+  res.json(data);
+});
+
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

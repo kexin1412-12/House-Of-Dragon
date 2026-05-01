@@ -121,6 +121,24 @@
   transform: translateX(0);
 }
 
+/* Embedded mode (rendered inside StorylineXRay's "人物关系" tab body):
+   - Tree card fills the entire parent — no right-side drawer, no slide-in
+   - Lose the gradient backdrop (parent already painted one) and left edge
+   - Suppress the Witcher Senses scan-line (it's a "drawer just opened"
+     affordance, irrelevant when the user is just switching tabs)            */
+.rg-root.is-embedded .rg-focus-overlay {
+  position: absolute; inset: 0; pointer-events: auto;
+}
+.rg-root.is-embedded .rg-tree-card {
+  position: absolute; inset: 0;
+  width: 100%; max-width: none; min-width: 0;
+  border-left: 0;
+  background: transparent;
+  transform: none;
+  transition: none;
+}
+.rg-root.is-embedded .rg-scan-line { display: none; }
+
 /* Witcher Senses scan line, key-bumped on open */
 .rg-scan-line {
   position: absolute; left: -2%; right: -2%; height: 80px; pointer-events: none;

@@ -1,0 +1,145 @@
+/* Storyline X-Ray 外壳 —— 沿用 RelationshipGraph 的色板，HUD 位置与之一致 */
+
+.sx-root {
+  --sx-ink: #e8e6df;
+  --sx-ink-soft: #a9a69d;
+  --sx-ink-dim: #6b6960;
+  --sx-gold: #d4af37;
+  --sx-gold-soft: rgba(212, 175, 55, 0.55);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.sx-root *, .sx-root *::before, .sx-root *::after { box-sizing: border-box; }
+
+/* ─── HUD entry icon (right rail) — 跟 RelationshipGraph 同位置/同质感 ── */
+.sx-hud-edge {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 64px;
+  z-index: 4; pointer-events: none;
+}
+.sx-hud-icon {
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 56px;
+  background: linear-gradient(160deg, rgba(20, 14, 10, 0.78), rgba(20, 14, 10, 0.55));
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  border-radius: 8px;
+  color: var(--sx-ink);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.sx-hud-icon:hover {
+  border-color: var(--sx-gold-soft);
+  transform: translateY(-50%) translateX(-2px);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.22);
+}
+.sx-hud-icon svg { width: 22px; height: 22px; }
+.sx-hud-icon-label {
+  font-size: 10px; letter-spacing: 1px; color: var(--sx-ink-soft);
+}
+
+/* ─── Full-screen overlay ───────────────────────────────────────────── */
+.sx-overlay {
+  position: absolute; inset: 0; z-index: 8;
+  pointer-events: auto;
+}
+.sx-scrim {
+  position: absolute; inset: 0;
+  background: rgba(8, 4, 4, 0.36);
+  backdrop-filter: blur(2px);
+}
+.sx-panel {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(ellipse at top right,
+      rgba(20, 14, 10, 0.32) 0%,
+      rgba(8, 4, 4, 0.78) 60%,
+      rgba(8, 4, 4, 0.92) 100%);
+  color: var(--sx-ink);
+  animation: sxPanelIn .26s cubic-bezier(.2, .7, .2, 1);
+}
+@keyframes sxPanelIn {
+  from { opacity: 0; transform: scale(0.985); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Top bar ───────────────────────────────────────────────────────── */
+.sx-topbar {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+  padding: 0 22px;
+  background: linear-gradient(to bottom,
+    rgba(8, 4, 4, 0.85) 0%,
+    rgba(8, 4, 4, 0.55) 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+  z-index: 4;
+  flex-shrink: 0;
+}
+.sx-topbar-left {
+  display: flex; align-items: center; gap: 8px;
+  min-width: 200px;
+}
+.sx-topbar-title {
+  font-size: 16px; font-weight: 600; letter-spacing: 1.5px;
+  color: var(--sx-ink);
+}
+.sx-topbar-info {
+  font-size: 12px; color: var(--sx-ink-soft);
+  cursor: help;
+}
+.sx-topbar-tabs {
+  display: flex; gap: 4px;
+}
+.sx-tab {
+  background: transparent; border: 0;
+  color: var(--sx-ink-soft);
+  padding: 8px 14px;
+  font-size: 13px; letter-spacing: 0.5px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .15s ease, border-color .15s ease;
+}
+.sx-tab:hover { color: var(--sx-ink); }
+.sx-tab.is-active {
+  color: var(--sx-gold);
+  border-bottom-color: var(--sx-gold);
+}
+.sx-topbar-right {
+  display: flex; align-items: center; gap: 10px;
+  min-width: 200px; justify-content: flex-end;
+}
+.sx-completion-label { font-size: 12px; color: var(--sx-ink-soft); }
+.sx-completion-pct {
+  font-size: 14px; font-weight: 600; color: var(--sx-gold);
+  font-feature-settings: 'tnum';
+  min-width: 36px; text-align: right;
+}
+.sx-completion-bar {
+  display: inline-block;
+  width: 86px; height: 5px;
+  background: rgba(232, 230, 223, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sx-completion-bar-fill {
+  display: block; height: 100%;
+  background: linear-gradient(to right, rgba(212, 175, 55, 0.62), var(--sx-gold));
+  transition: width .35s ease;
+}
+.sx-topbar-close {
+  background: transparent; border: 0;
+  color: var(--sx-ink-soft);
+  width: 30px; height: 30px;
+  font-size: 22px; line-height: 1;
+  cursor: pointer; border-radius: 50%;
+  margin-left: 8px;
+}
+.sx-topbar-close:hover { color: var(--sx-ink); background: rgba(232, 230, 223, 0.08); }
+
+/* ─── Tab body container ───────────────────────────────────────────── */
+.sx-body {
+  position: relative; flex: 1 1 auto;
+  overflow: hidden;
+}

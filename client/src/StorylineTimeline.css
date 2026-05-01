@@ -1,0 +1,303 @@
+/* Storyline Timeline tab body —— 沿用 RelationshipGraph 的色板和质感 */
+
+.sx-tl-root {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  --sx-ink: #e8e6df;
+  --sx-ink-soft: #a9a69d;
+  --sx-ink-dim: #6b6960;
+  --sx-gold: #d4af37;
+  --sx-gold-soft: rgba(212, 175, 55, 0.55);
+  --sx-gold-glow: rgba(212, 175, 55, 0.85);
+  color: var(--sx-ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  user-select: none;
+}
+
+.sx-tl-empty {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--sx-ink-soft, #a9a69d); font-size: 14px;
+}
+
+/* ─── Legend (top) ─────────────────────────────────────────────────── */
+.sx-tl-legend {
+  position: absolute; top: 12px; right: 24px;
+  display: flex; gap: 22px;
+  font-size: 12px; color: var(--sx-ink-soft);
+  pointer-events: none;
+  z-index: 3;
+}
+.sx-legend-item {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.sx-legend-swatch {
+  display: inline-block; width: 16px; height: 10px;
+  border-radius: 2px;
+}
+.sx-sw-watched   { background: rgba(212, 175, 55, 0.42); border: 1px solid rgba(212, 175, 55, 0.72); }
+.sx-sw-current   { background: var(--sx-gold); box-shadow: 0 0 6px var(--sx-gold-glow); }
+.sx-sw-locked    { background: transparent; border: 1px dashed rgba(232, 230, 223, 0.32); }
+.sx-legend-mark.sx-sw-turn {
+  color: var(--sx-gold); font-size: 12px; line-height: 10px;
+}
+
+/* ─── Viewport (SVG canvas) ────────────────────────────────────────── */
+.sx-tl-viewport {
+  position: absolute; inset: 0;
+  overflow: hidden;
+  cursor: grab;
+}
+.sx-tl-viewport:active { cursor: grabbing; }
+.sx-tl-svg {
+  display: block;
+  pointer-events: visible;
+}
+
+/* ─── Edges ───────────────────────────────────────────────────────── */
+.sx-edges-main line {
+  stroke: rgba(212, 175, 55, 0.42);
+  stroke-width: 1.4;
+}
+.sx-edge-side {
+  stroke: rgba(232, 230, 223, 0.3);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 4;
+}
+.sx-edge-side.is-locked {
+  stroke: rgba(232, 230, 223, 0.18);
+}
+
+/* ─── Nodes ───────────────────────────────────────────────────────── */
+.sx-node {
+  cursor: pointer;
+  transition: filter .18s ease;
+}
+.sx-node:hover .sx-node-rect {
+  stroke: var(--sx-gold-soft);
+}
+.sx-node-rect {
+  fill: rgba(20, 14, 12, 0.78);
+  stroke: rgba(212, 175, 55, 0.36);
+  stroke-width: 1.2;
+}
+.sx-node-title {
+  fill: var(--sx-ink);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+.sx-node-time {
+  fill: var(--sx-ink-soft);
+  font-size: 11px;
+  font-feature-settings: 'tnum';
+  pointer-events: none;
+}
+.sx-node-watched {
+  fill: var(--sx-gold);
+  font-size: 11px;
+  pointer-events: none;
+}
+.sx-node-lock {
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* 已观看：略微发暗 + 金色描边轻量化 */
+.sx-node.is-watched .sx-node-rect {
+  fill: rgba(20, 14, 12, 0.55);
+  stroke: rgba(212, 175, 55, 0.55);
+}
+
+/* 当前节点：双层发光描边 */
+.sx-node.is-current .sx-node-rect {
+  fill: rgba(46, 30, 14, 0.85);
+  stroke: var(--sx-gold);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px var(--sx-gold-glow))
+          drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+}
+.sx-node.is-current .sx-node-title { fill: #fff; font-weight: 600; }
+
+/* 选中态（点击后）：橙金色更深的描边 */
+.sx-node.is-selected .sx-node-rect {
+  stroke: #ffd966;
+  stroke-width: 2;
+}
+
+/* 关键转折菱标 */
+.sx-node-turn-mark path {
+  fill: var(--sx-gold);
+  stroke: rgba(255, 217, 102, 0.9);
+  stroke-width: 1;
+  filter: drop-shadow(0 0 3px var(--sx-gold-glow));
+}
+
+/* 锁住的隐藏支线节点：虚线 + 半透明 */
+.sx-node.is-locked .sx-node-rect {
+  fill: rgba(20, 14, 12, 0.42);
+  stroke: rgba(232, 230, 223, 0.32);
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
+}
+.sx-node.is-locked .sx-node-title { fill: var(--sx-ink-dim); letter-spacing: 2px; }
+.sx-node.is-locked { cursor: default; }
+
+/* 支线节点：略小 + 字号略小（视觉上从属于主线） */
+.sx-node-side .sx-node-rect {
+  fill: rgba(20, 14, 12, 0.65);
+}
+.sx-node-side .sx-node-title { font-size: 12px; }
+
+/* ─── Zoom controls (bottom-right) ─────────────────────────────────── */
+.sx-tl-zoom {
+  position: absolute; right: 24px; bottom: 18px;
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(20, 14, 12, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  border-radius: 6px;
+  padding: 4px 6px;
+  z-index: 3;
+}
+.sx-tl-zoom button {
+  background: transparent; border: 0; color: var(--sx-ink);
+  width: 28px; height: 24px; font-size: 14px; line-height: 1;
+  cursor: pointer; border-radius: 3px;
+}
+.sx-tl-zoom button:hover { background: rgba(212, 175, 55, 0.14); }
+.sx-tl-zoom-level {
+  font-size: 11px; color: var(--sx-ink-soft);
+  min-width: 38px; text-align: center;
+  font-feature-settings: 'tnum';
+}
+.sx-tl-zoom-fit { margin-left: 4px; }
+
+/* ─── Drag hint (bottom-left) ──────────────────────────────────────── */
+.sx-tl-hint {
+  position: absolute; left: 24px; bottom: 18px;
+  font-size: 11px; color: var(--sx-ink-dim);
+  pointer-events: none;
+  z-index: 3;
+}
+.sx-tl-hint-icon { margin-right: 4px; opacity: 0.7; }
+
+/* ─── Detail side panel (right slide-in) ───────────────────────────── */
+.sx-detail-panel {
+  position: absolute; top: 56px; right: 0; bottom: 0;
+  width: 340px; max-width: 90vw;
+  background:
+    linear-gradient(to left,
+      rgba(8, 4, 4, 0.92) 0%,
+      rgba(8, 4, 4, 0.78) 60%,
+      rgba(8, 4, 4, 0.62) 100%);
+  border-left: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 20px 22px 24px;
+  overflow-y: auto;
+  animation: sxSlideIn .28s cubic-bezier(.2, .7, .2, 1);
+  z-index: 5;
+}
+@keyframes sxSlideIn {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.sx-detail-close {
+  position: absolute; top: 12px; right: 14px;
+  background: transparent; border: 0; color: var(--sx-ink-soft);
+  width: 26px; height: 26px; font-size: 18px; line-height: 1;
+  cursor: pointer; border-radius: 50%;
+}
+.sx-detail-close:hover { color: var(--sx-ink); background: rgba(232, 230, 223, 0.08); }
+
+.sx-detail-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 16px;
+  padding-right: 28px;
+}
+.sx-detail-title {
+  font-size: 18px; font-weight: 600; color: var(--sx-ink);
+  letter-spacing: 0.5px;
+}
+.sx-detail-time {
+  font-size: 13px; color: var(--sx-gold-soft);
+  font-feature-settings: 'tnum';
+}
+
+.sx-detail-section { margin-bottom: 18px; }
+.sx-detail-section-label {
+  font-size: 12px; color: var(--sx-ink-soft);
+  margin-bottom: 6px; letter-spacing: 0.5px;
+}
+.sx-detail-section-label strong { color: var(--sx-gold); font-weight: 600; }
+.sx-icon { margin-right: 4px; }
+.sx-detail-section-body {
+  font-size: 13px; line-height: 1.6; color: var(--sx-ink);
+}
+
+.sx-detail-related-chips {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+}
+.sx-chip {
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  color: var(--sx-ink);
+  padding: 6px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background .15s ease, border-color .15s ease;
+}
+.sx-chip:hover {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--sx-gold-soft);
+}
+.sx-chip-time {
+  color: var(--sx-ink-dim); font-size: 11px;
+  font-feature-settings: 'tnum';
+}
+
+.sx-detail-arrow-row {
+  display: flex; justify-content: space-between; gap: 12px;
+  margin-top: 4px;
+}
+.sx-detail-arrow {
+  background: transparent; border: 0;
+  color: var(--sx-ink-soft); font-size: 12px; cursor: pointer;
+}
+.sx-detail-arrow:hover { color: var(--sx-gold); }
+
+.sx-detail-actions {
+  margin-top: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.sx-btn {
+  display: block; width: 100%;
+  padding: 10px 14px; font-size: 13px; font-weight: 500;
+  border: 1px solid; border-radius: 6px;
+  cursor: pointer; transition: all .15s ease;
+  text-align: center;
+}
+.sx-btn-primary {
+  background: var(--sx-gold);
+  border-color: var(--sx-gold);
+  color: #1a0f0a;
+}
+.sx-btn-primary:hover {
+  background: #e8c14a;
+  border-color: #e8c14a;
+}
+.sx-btn-secondary {
+  background: transparent;
+  border-color: rgba(212, 175, 55, 0.4);
+  color: var(--sx-ink);
+}
+.sx-btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: var(--sx-gold-soft);
+}
+.sx-btn-secondary.is-active {
+  background: rgba(212, 175, 55, 0.18);
+  border-color: var(--sx-gold);
+  color: var(--sx-gold);
+}

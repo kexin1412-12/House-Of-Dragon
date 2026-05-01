@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './FavoritesView.css';
 import useMemeFavorites from './useMemeFavorites';
+import useStorylineFavorites from './useStorylineFavorites';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -46,25 +47,30 @@ function episodeTagFor(filename) {
   return '';
 }
 
-// 顶部分类 tab —— 目前只有 riff 一种可收藏对象，所以 all / 文化梗 / 经典台词 由
-// tag 过滤实现；片段还没有对应的源 UI，先占位。
+// 顶部分类 tab —— riff 类（文化梗 / 经典台词）走 tag 过滤；片段（叙事节点）
+// 走独立的 storyline 收藏存储，由"叙事 X 光"的"标记为片段"按钮写入。
 // 线索（伏笔）后续整合进剧情线视图，不走"收藏"这条路径。
 const FAV_TABS = [
   { key: 'all',     label: '全部收藏', enabled: true,  hint: '' },
   { key: 'meme',    label: '文化梗',   enabled: true,  hint: '' },
   { key: 'classic', label: '经典台词', enabled: true,  hint: '' },
-  { key: 'clip',    label: '片段',     enabled: false, hint: '播放器加"保存当前片段"按钮后启用' },
+  { key: 'clip',    label: '片段',     enabled: true,  hint: '' },
 ];
 
 function applyTabFilter(tabKey, riffs) {
   if (tabKey === 'all') return riffs;
   if (tabKey === 'meme') return riffs.filter(r => !(r.tags || []).includes('经典台词'));
   if (tabKey === 'classic') return riffs.filter(r => (r.tags || []).includes('经典台词'));
-  return []; // 人物 / 线索 / 片段 还没数据
+  return []; // 人物 / 线索 / 片段 单独渲染
 }
 
 export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
-  const { entries, count, addedAt, toggle, orderedIds } = useMemeFavorites();
+  // 文化梗收藏（riff_id → ts）
+  const { entries, count: memeCount, addedAt, toggle, orderedIds } = useMemeFavorites();
+  // 叙事节点收藏（videoId::nodeId → {addedAt, payload}）
+  const { count: clipCount, orderedList: orderedClips, toggle: toggleClip } = useStorylineFavorites();
+  const totalCount = memeCount + clipCount;
+  const count = totalCount; // 旧变量兼容，下面用了 count 的地方都希望算总数
   const [allRiffs, setAllRiffs] = useState([]);
   const [activeTag, setActiveTag] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
@@ -155,7 +161,7 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
               <button
                 className={`fv-tag-chip${activeTag === null ? ' is-active' : ''}`}
                 onClick={() => setActiveTag(null)}
-              >全部 <span className="fv-tag-count">{count}</span></button>
+              >全部 <span className="fv-tag-count">{favoritedRiffs.length}</span></button>
               {tagCounts.map(([tag, n]) => (
                 <button
                   key={tag}
@@ -179,13 +185,18 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
           </div>
         </aside>
 
-        {/* CENTER —— 卡片列表 */}
+        {/* CENTER —— 卡片列表（meme + 经典：riff 卡；片段：storyline 节点卡） */}
         <main className="fv-list">
-          {visibleRiffs.length === 0 && (
+          {visibleRiffs.length === 0 && activeTab !== 'clip' && clipCount === 0 && (
             <div className="fv-list-empty">
               {activeTab === 'all' && '没有匹配的收藏'}
               {activeTab === 'meme' && '还没有收藏文化梗类的台词'}
               {activeTab === 'classic' && '还没有收藏经典台词类的内容'}
+            </div>
+          )}
+          {activeTab === 'clip' && clipCount === 0 && (
+            <div className="fv-list-empty">
+              还没有收藏剧情片段。打开播放器右侧"叙事"X 光，点节点 → "🔖 标记为片段"。
             </div>
           )}
           {visibleRiffs.map(r => {
@@ -263,6 +274,48 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
                     )}
                   </div>
                 )}
+              </article>
+            );
+          })}
+          {/* Storyline 节点卡片：clip tab 单独显示；all tab 追加在 riff 卡片之后 */}
+          {(activeTab === 'clip' || activeTab === 'all') && orderedClips().map(({ key, addedAt: ts, payload }) => {
+            const video = videos.find(v => v.id && v.id.startsWith(payload.videoId)) || null;
+            const showName = showNameFor(video);
+            const epTag = (video?.filename ? episodeTagFor(video.filename) : '').replace(/^S0?/, 'S');
+            return (
+              <article key={key} className="fv-card fv-card-clip">
+                <div className="fv-card-row">
+                  <button
+                    className="fv-card-bookmark"
+                    onClick={() => toggleClip(payload)}
+                    title="取消收藏"
+                  >▮</button>
+                  <div className="fv-card-clip-emblem">
+                    <span className="fv-clip-fn">{payload.narrative_function}</span>
+                  </div>
+                  <div className="fv-card-body">
+                    <div className="fv-card-quote-en">{payload.title}</div>
+                    {payload.summary && (
+                      <div className="fv-card-quote-zh">{payload.summary}</div>
+                    )}
+                    <div className="fv-card-tags">
+                      <span className="fv-tag-pill">{payload.track === 'side' ? '支线' : '主线'}</span>
+                      <span className="fv-tag-pill">叙事节点</span>
+                    </div>
+                  </div>
+                  <div className="fv-card-side">
+                    <div className="fv-card-source">
+                      《{showName}》 <span className="fv-card-ep">{epTag}</span> · {formatMMSS(payload.start_time)}
+                    </div>
+                    <div className="fv-card-actions">
+                      <span className="fv-card-relative">{formatRelative(ts)}</span>
+                      <button
+                        className="fv-action fv-action-primary"
+                        onClick={() => video && onJumpToRiff(video, { anchor: { start_time: payload.start_time } }, true)}
+                      >▶ 跳转片段</button>
+                    </div>
+                  </div>
+                </div>
               </article>
             );
           })}

@@ -450,12 +450,29 @@ function useViewport(graphSize, viewportRef) {
 }
 
 // ─── Main component ─────────────────────────────────────────────────
-export default function RelationshipGraph({ videoId, videoRef }) {
+// `embedded`: when true, the component renders as a tab body inside a
+// parent overlay (StorylineXRay) — HUD button, scrim, cine-bars, top-right
+// `×`, and ESC handler are all suppressed (the parent owns those). The
+// component is effectively always-open; "close drawer" → no-op (the parent
+// closes the X-ray container). Profile-panel and conflict-highlight
+// click-outside fallbacks are PRESERVED in both modes (memory-pinned UX).
+export default function RelationshipGraph({ videoId, videoRef, embedded = false, onCloseEmbedded }) {
   const [tree, setTree] = useState(null);
   const [focusList, setFocusList] = useState(null);
   const [charEvents, setCharEvents] = useState(null);   // per-video death/spawn timing
   const [profileMap, setProfileMap] = useState(null);   // pre-built static profiles keyed by character_id
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = embedded ? true : openState;
+  const closeDrawer = useCallback(() => {
+    if (embedded) {
+      // Parent (StorylineXRay) owns the close affordance; the third "peel"
+      // layer is a no-op so blank-area click inside the graph doesn't yank
+      // the user out of the X-ray view unexpectedly.
+      onCloseEmbedded?.();
+    } else {
+      setOpenState(false);
+    }
+  }, [embedded, onCloseEmbedded]);
   const [hasNews, setHasNews] = useState(false);
   const [scanKey, setScanKey] = useState(0);
   const [error, setError] = useState(null);
@@ -520,17 +537,18 @@ export default function RelationshipGraph({ videoId, videoRef }) {
 
   useEffect(() => {
     if (!open) return;
+    if (embedded) return;  // parent owns ESC in embedded mode
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
       // Esc 与点击空白共用渐进关闭语义：profile → 高亮 → 抽屉。
       // closeOneLayer 在函数体下方定义，读取最新 state 时直接 inline 同款逻辑。
       if (profileId) { setProfileId(null); setHighlighted(null); return; }
       if (highlighted) { setHighlighted(null); return; }
-      setOpen(false);
+      setOpenState(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [open, profileId, highlighted]);
+  }, [open, embedded, profileId, highlighted]);
 
   // reset state when video changes (in case the demo bumps to a different show)
   useEffect(() => { setHighlighted(null); setFocused(null); setProfileId(null); }, [videoId]);
@@ -727,12 +745,13 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   }, [focusPos, viewport]);
 
   const openFocus = useCallback(() => {
-    setOpen(true);
+    if (embedded) return;  // standalone-only entry point; parent controls open in embedded mode
+    setOpenState(true);
     setHasNews(false);
     setScanKey(k => k + 1);
-  }, []);
+  }, [embedded]);
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => closeDrawer(), [closeDrawer]);
 
   const onCharClick = useCallback((id) => {
     setHighlighted(prev => prev === id ? null : id);
@@ -746,8 +765,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   const closeOneLayer = useCallback(() => {
     if (profileId) { setProfileId(null); setHighlighted(null); return; }
     if (highlighted) { setHighlighted(null); return; }
-    setOpen(false);
-  }, [profileId, highlighted]);
+    closeDrawer();
+  }, [profileId, highlighted, closeDrawer]);
 
   // 图内点击：在 SVG 空白 / kin 边上 click（不在角色节点上）走 closeOneLayer。
   // closest('.rg-node') 确保点头像 clip-path 内部仍算点节点本身。
@@ -797,29 +816,31 @@ export default function RelationshipGraph({ videoId, videoRef }) {
   }, [highlighted, activeConflicts]);
 
   return (
-    <div className={`rg-root ${open ? 'is-viewing' : ''}`}>
-      <div className="rg-cine-bar" />
-      <div className="rg-cine-bar rg-cine-bar-bottom" />
+    <div className={`rg-root ${open ? 'is-viewing' : ''} ${embedded ? 'is-embedded' : ''}`}>
+      {!embedded && <div className="rg-cine-bar" />}
+      {!embedded && <div className="rg-cine-bar rg-cine-bar-bottom" />}
 
-      <div className="rg-hud-edge">
-        <div
-          className={`rg-hud-icon ${hasNews ? 'has-news' : ''}`}
-          onClick={openFocus}
-          title="人物关系图谱"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="8.5" cy="8" r="2.6" />
-            <path d="M3.6 18c.5-2.6 2.6-4.4 4.9-4.4s4.4 1.8 4.9 4.4" />
-            <circle cx="16" cy="9.5" r="2.2" />
-            <path d="M13.5 18.5c.4-2.1 2.1-3.6 4-3.6s3.6 1.5 4 3.6" />
-            <line x1="9.5" y1="11" x2="14" y2="11" strokeDasharray="1 2" />
-          </svg>
-          <span className="rg-hud-icon-label">关系</span>
+      {!embedded && (
+        <div className="rg-hud-edge">
+          <div
+            className={`rg-hud-icon ${hasNews ? 'has-news' : ''}`}
+            onClick={openFocus}
+            title="人物关系图谱"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="8.5" cy="8" r="2.6" />
+              <path d="M3.6 18c.5-2.6 2.6-4.4 4.9-4.4s4.4 1.8 4.9 4.4" />
+              <circle cx="16" cy="9.5" r="2.2" />
+              <path d="M13.5 18.5c.4-2.1 2.1-3.6 4-3.6s3.6 1.5 4 3.6" />
+              <line x1="9.5" y1="11" x2="14" y2="11" strokeDasharray="1 2" />
+            </svg>
+            <span className="rg-hud-icon-label">关系</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className={`rg-focus-overlay ${open ? 'open' : ''}`}>
-        <div className="rg-scrim" onClick={closeOneLayer} />
+        {!embedded && <div className="rg-scrim" onClick={closeOneLayer} />}
         <div
           className="rg-tree-card"
           onClickCapture={(e) => {
@@ -827,7 +848,8 @@ export default function RelationshipGraph({ videoId, videoRef }) {
             // （含 header / legend / scan-line / 卡片空白）都按"渐进剥离"关一层
             // (profile → highlight → drawer)，跟 ESC 行为一致。capture 阶段跑确保
             // viewport blank click 也能命中 (与 .rg-tree-viewport 的 bubble onClick
-            // 调用同一 closeOneLayer，幂等)。
+            // 调用同一 closeOneLayer，幂等)。embedded 模式下第三层是 noop——
+            // 父级（StorylineXRay）拥有真正的"关闭"语义。
             const t = e.target;
             if (!t || !t.closest) return;
             if (t.closest('.rg-profile')) return;
@@ -838,7 +860,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
           }}
         >
           <div className="rg-scan-line" key={scanKey} />
-          <button className="rg-close" onClick={close} title="关闭 (Esc)">×</button>
+          {!embedded && <button className="rg-close" onClick={close} title="关闭 (Esc)">×</button>}
 
           <header className="rg-tree-header">
             <div className="rg-tree-title-zh">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
-import RelationshipGraph from './RelationshipGraph';
+import StorylineXRay from './StorylineXRay';
 import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
@@ -1302,8 +1302,8 @@ function TencentPlayer({
             <SymbolHotspots videoId={aiKb} videoRef={videoRef} />
 
 
-            {/* 人物关系图 v2 —— HUD 入口 + Focus Card，按真实 videoTime + 角色 KB 动态出图 */}
-            <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
+            {/* 叙事 X 光 —— HUD 入口，包"关键事件结构图" + "人物关系" 两 tab */}
+            <StorylineXRay videoId={aiKb} videoRef={videoRef} />
 
             {/* 共谋者 · 文化梗浮层 —— 4 条 riff 命中时段：底部蒙板 + HTML 字幕 + 金色高亮 + hover 浮窗 */}
             <MemeOverlay
