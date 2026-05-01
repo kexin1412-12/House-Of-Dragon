@@ -918,6 +918,186 @@ function prepareRequest(kb, bodyOrQuery = {}) {
   };
 }
 
+// ─── 人物识别：face_service + 视觉 LLM 双路并行 ─────────────
+// 老版本是「先 face_service，命中就 return；否则才 fall back 到 LLM」的串行降级，
+// face_service 慢/挂掉时 Gemini 排队等，且 face_service 只识到 1 个的话画面里
+// 其它面孔 LLM 完全没机会看到。这里改成并行：两个一起发，回来按 bbox 合并。
+// 整体延迟 ≈ max(本地, LLM)，并且开集 + 闭集结果同时拿到。
+
+async function recognizeViaFaceService({ image, db, cursor }) {
+  const url = process.env.FACE_SERVICE_URL;
+  if (!url) return null;
+  const fr = await fetch(`${url}/recognize`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image }),
+    // 服务起着 < 500ms；没起会立刻 ECONNREFUSED。3s 给冷启动留 buffer。
+    signal: AbortSignal.timeout(3000),
+  });
+  if (!fr.ok) throw new Error(`face_service HTTP ${fr.status}`);
+  const fdata = await fr.json();
+  const raw = (fdata.faces || [])
+    .filter(f => f.match && f.match.character_id)
+    .map(f => {
+      const card = charactersLib.lookupCharacter(db, f.match.character_id, cursor);
+      return {
+        character_id: f.match.character_id,
+        display_name: card?.display_name || f.match.character_id,
+        short_identity: card?.short_identity || card?.current?.title || null,
+        confidence: f.match.similarity,
+        spoiler_safety: cursor ? 'cursor_filtered' : 'baseline_only',
+        bbox: f.bbox,
+        source: 'insightface',
+      };
+    });
+  // 同一 character_id 取 similarity 最高（RetinaFace 群像偶尔重复检出）
+  const byChar = new Map();
+  for (const c of raw) {
+    const cur = byChar.get(c.character_id);
+    if (!cur || c.confidence > cur.confidence) byChar.set(c.character_id, c);
+  }
+  return Array.from(byChar.values());
+}
+
+async function recognizeViaLLM({ image, db, cursor }) {
+  if (!ai.isAvailable('vision')) return null;
+
+  const knownChars = db ? (db.characters || []).map(c => ({
+    character_id: c.character_id,
+    display_name_zh: c.display_name_zh,
+    short_identity_zh: c.short_identity_zh,
+    house: c.house,
+  })) : [];
+
+  const SYSTEM = `你是影视人物识别 Agent。看到一帧画面后识别画面里清晰可见的主要人物。
+这是 HBO 剧集《House of the Dragon》（龙之家族）/《Game of Thrones》（权力的游戏）的画面。
+
+**铁律**（违反就是 bug）：
+1. 一张脸只能对应一个角色 —— 绝对不要给同一张脸返回两个候选。
+2. 只识别能 100% 确定的角色。脸不清/侧脸/遮挡/光线差 → 跳过，不要返回。
+3. confidence < 0.75 一律不要返回。宁可整张图返回空 characters[]，不要乱猜。
+4. 一帧画面里通常只有 1-3 张清晰主要人物。返回 4+ 个几乎一定是过度推断。
+
+字段规则：
+5. display_name_zh 用中文角色名（如"科利斯·瓦列利安"），不是演员名。
+6. short_identity_zh 写最具识别度的一种身份/称号，例如 "海蛇"、"七大王国之王"、"龙骑士"，≤20 字。
+7. 命中 known character database 里的角色时把 character_id 填入；否则留空。
+8. **face_bbox**：必须给出脸部包围盒 [x1, y1, x2, y2]，0..1 相对坐标。位置不确定就跳过这个角色（别返回）。
+
+只输出严格 JSON。`;
+
+  const RESPONSE_SCHEMA = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['characters'],
+    properties: {
+      characters: {
+        type: 'array',
+        items: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['display_name_zh', 'short_identity_zh', 'character_id', 'confidence', 'face_bbox'],
+          properties: {
+            display_name_zh: { type: 'string' },
+            short_identity_zh: { type: 'string' },
+            character_id: { type: 'string' },
+            confidence: { type: 'number' },
+            face_bbox: { type: 'array', items: { type: 'number' } },
+          },
+        },
+      },
+    },
+  };
+
+  const userText = knownChars.length
+    ? `Known character database（识别到这些角色时，请把对应 character_id 填入返回结果；DB 之外的人物 character_id 留空）：\n${JSON.stringify(knownChars, null, 2)}\n\n识别下面这一帧画面里的人物：`
+    : '识别下面这一帧画面里 HBO《龙之家族》《权力的游戏》中的主要人物：';
+
+  const { data } = await ai.generateStructured({
+    task: 'vision',
+    system: SYSTEM,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', dataUrl: image, detail: 'low' },
+        { type: 'text', text: userText },
+      ],
+    }],
+    schema: RESPONSE_SCHEMA,
+    schemaName: 'face_recognize',
+    temperature: 0.1,
+  });
+
+  const out = (data.characters || []).map(c => {
+    let display_name = c.display_name_zh;
+    let short_identity = c.short_identity_zh;
+    let spoiler_safety = 'open_set';
+    let charId = c.character_id || null;
+
+    if (db) {
+      let dbEntry = null;
+      if (charId) dbEntry = (db.characters || []).find(x => x.character_id === charId);
+      if (!dbEntry && c.display_name_zh) {
+        const target = String(c.display_name_zh).replace(/\s/g, '');
+        dbEntry = (db.characters || []).find(x =>
+          String(x.display_name_zh || '').replace(/\s/g, '') === target ||
+          String(x.canonical_name || '').replace(/\s/g, '').toLowerCase() === target.toLowerCase()
+        );
+      }
+      if (dbEntry) {
+        charId = dbEntry.character_id;
+        const card = charactersLib.lookupCharacter(db, charId, cursor);
+        if (card) {
+          display_name = card.display_name;
+          short_identity = card.short_identity || card.current?.title || short_identity;
+          spoiler_safety = cursor ? 'cursor_filtered' : 'baseline_only';
+        }
+      }
+    }
+    const bbox = Array.isArray(c.face_bbox) && c.face_bbox.length === 4
+      ? c.face_bbox.map(Number).filter(n => Number.isFinite(n) && n >= 0 && n <= 1)
+      : null;
+    return {
+      character_id: charId,
+      display_name,
+      short_identity,
+      confidence: c.confidence || 0,
+      spoiler_safety,
+      bbox: (bbox && bbox.length === 4) ? bbox : null,
+      source: 'llm',
+    };
+  }).filter(c => c.confidence >= 0.7);
+
+  // LLM 内部去重（防止它给同一张脸返两个候选）
+  const dedup = [];
+  for (const c of out) {
+    const dupIdx = dedup.findIndex(x =>
+      (c.character_id && x.character_id === c.character_id) ||
+      (x.display_name === c.display_name) ||
+      bboxOverlapHigh(x.bbox, c.bbox)
+    );
+    if (dupIdx === -1) dedup.push(c);
+    else if (c.confidence > dedup[dupIdx].confidence) dedup[dupIdx] = c;
+  }
+  return dedup;
+}
+
+// 合并两路结果：face_service 优先（余弦相似度比 LLM 自报 confidence 可信），
+// LLM 仅补 face_service 漏掉的人物（开集客串 / 半遮挡 / 未入库）。
+function mergeRecognitions(faceChars, llmChars) {
+  const merged = faceChars.slice();
+  for (const lc of llmChars) {
+    const dupIdx = merged.findIndex(x =>
+      (lc.character_id && x.character_id === lc.character_id) ||
+      (x.display_name && lc.display_name && x.display_name === lc.display_name) ||
+      bboxOverlapHigh(x.bbox, lc.bbox)
+    );
+    if (dupIdx === -1) merged.push(lc);
+    // 否则 face_service 版本胜出，不替换
+  }
+  return merged;
+}
+
 function register(app) {
   app.get('/api/agent/characters/on-screen', (req, res) => {
     const { videoId, t } = req.query;
@@ -971,196 +1151,34 @@ function register(app) {
     // 没 KB 时也加载默认 show DB
     const db = kb ? getCharacterDb(kb.show_id) : getCharacterDb('house-of-the-dragon');
 
-    // ─── Stage 1: 闭集人脸匹配（如果 FACE_SERVICE_URL 已启动）─────
-    const faceServiceUrl = process.env.FACE_SERVICE_URL;
-    if (faceServiceUrl) {
-      try {
-        const fr = await fetch(`${faceServiceUrl}/recognize`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image }),
-          signal: AbortSignal.timeout(8000),
-        });
-        if (fr.ok) {
-          const fdata = await fr.json();
-          const raw = (fdata.faces || [])
-            .filter(f => f.match && f.match.character_id)
-            .map(f => {
-              const card = charactersLib.lookupCharacter(db, f.match.character_id, cursor);
-              const display_name = card?.display_name || f.match.character_id;
-              const short_identity = card?.short_identity || card?.current?.title || null;
-              return {
-                character_id: f.match.character_id,
-                display_name,
-                short_identity,
-                confidence: f.match.similarity,
-                spoiler_safety: cursor ? 'cursor_filtered' : 'baseline_only',
-                bbox: f.bbox,
-                source: 'insightface',
-              };
-            });
+    // 并行跑 face_service + 视觉 LLM；任何一边挂掉不影响另一边返回结果。
+    // 整体延迟 ≈ max(本地, LLM)，而不是两者相加。
+    const t0 = Date.now();
+    const [faceRes, llmRes] = await Promise.allSettled([
+      recognizeViaFaceService({ image, db, cursor }),
+      recognizeViaLLM({ image, db, cursor }),
+    ]);
+    const elapsed_ms = Date.now() - t0;
 
-          // 去重：相同 character_id 只保留 similarity 最高的那张脸
-          // （RetinaFace 在群像里会检出多张脸，闭集小时它们经常都对到同一个角色）
-          const byChar = new Map();
-          for (const c of raw) {
-            const cur = byChar.get(c.character_id);
-            if (!cur || c.confidence > cur.confidence) byChar.set(c.character_id, c);
-          }
-          const out = Array.from(byChar.values());
-
-          if (out.length > 0) {
-            return res.json({ characters: out, cursor_used: cursor, has_kb: !!kb, llm_ready: true, source: 'insightface' });
-          }
-          // 没命中（或全部 below threshold）→ fall through to GPT-4o
-        }
-      } catch (e) {
-        console.warn('[recognize] face service failed, falling back to GPT-4o:', e.message);
-      }
+    if (faceRes.status === 'rejected') {
+      console.warn('[recognize] face_service:', faceRes.reason?.message || faceRes.reason);
+    }
+    if (llmRes.status === 'rejected') {
+      console.error('[recognize] llm:', llmRes.reason?.message || llmRes.reason);
     }
 
-    // ─── Stage 2: 视觉兜底（默认 Gemini，可降级到 OpenAI）─────
-    if (!ai.isAvailable('vision')) return res.json({ characters: [], llm_ready: false });
+    const faceChars = faceRes.status === 'fulfilled' && Array.isArray(faceRes.value) ? faceRes.value : [];
+    const llmChars = llmRes.status === 'fulfilled' && Array.isArray(llmRes.value) ? llmRes.value : [];
+    const characters = mergeRecognitions(faceChars, llmChars);
 
-    const knownChars = db ? (db.characters || []).map(c => ({
-      character_id: c.character_id,
-      display_name_zh: c.display_name_zh,
-      short_identity_zh: c.short_identity_zh,
-      house: c.house,
-    })) : [];
-
-    const SYSTEM = `你是影视人物识别 Agent。看到一帧画面后识别画面里清晰可见的主要人物。
-这是 HBO 剧集《House of the Dragon》（龙之家族）/《Game of Thrones》（权力的游戏）的画面。
-
-**铁律**（违反就是 bug）：
-1. 一张脸只能对应一个角色 —— 绝对不要给同一张脸返回两个候选。
-2. 只识别能 100% 确定的角色。脸不清/侧脸/遮挡/光线差 → 跳过，不要返回。
-3. confidence < 0.75 一律不要返回。宁可整张图返回空 characters[]，不要乱猜。
-4. 一帧画面里通常只有 1-3 张清晰主要人物。返回 4+ 个几乎一定是过度推断。
-
-字段规则：
-5. display_name_zh 用中文角色名（如"科利斯·瓦列利安"），不是演员名。
-6. short_identity_zh 写最具识别度的一种身份/称号，例如 "海蛇"、"七大王国之王"、"龙骑士"，≤20 字。
-7. 命中 known character database 里的角色时把 character_id 填入；否则留空。
-8. **face_bbox**：必须给出脸部包围盒 [x1, y1, x2, y2]，0..1 相对坐标。位置不确定就跳过这个角色（别返回）。
-
-只输出严格 JSON。`;
-
-    const RESPONSE_SCHEMA = {
-      type: 'object',
-      additionalProperties: false,
-      required: ['characters'],
-      properties: {
-        characters: {
-          type: 'array',
-          items: {
-            type: 'object',
-            additionalProperties: false,
-            required: ['display_name_zh', 'short_identity_zh', 'character_id', 'confidence', 'face_bbox'],
-            properties: {
-              display_name_zh: { type: 'string' },
-              short_identity_zh: { type: 'string' },
-              character_id: { type: 'string' },
-              confidence: { type: 'number' },
-              face_bbox: {
-                type: 'array',
-                items: { type: 'number' },
-              },
-            },
-          },
-        },
-      },
-    };
-
-    const userText = knownChars.length
-      ? `Known character database（识别到这些角色时，请把对应 character_id 填入返回结果；DB 之外的人物 character_id 留空）：\n${JSON.stringify(knownChars, null, 2)}\n\n识别下面这一帧画面里的人物：`
-      : '识别下面这一帧画面里 HBO《龙之家族》《权力的游戏》中的主要人物：';
-
-    try {
-      const { data } = await ai.generateStructured({
-        task: 'vision',
-        system: SYSTEM,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'image', dataUrl: image, detail: 'low' },
-              { type: 'text', text: userText },
-            ],
-          },
-        ],
-        schema: RESPONSE_SCHEMA,
-        schemaName: 'face_recognize',
-        temperature: 0.1,
-      });
-
-      // cursor-safe 覆盖：先按 character_id 匹配；GPT 漏填 id 时按 display_name 兜底匹配
-      const out = (data.characters || []).map(c => {
-        let display_name = c.display_name_zh;
-        let short_identity = c.short_identity_zh;
-        let spoiler_safety = 'open_set';
-        let charId = c.character_id || null;
-
-        if (db) {
-          let dbEntry = null;
-          if (charId) dbEntry = (db.characters || []).find(x => x.character_id === charId);
-          if (!dbEntry && c.display_name_zh) {
-            // 中文名兜底：模糊匹配（去空格）
-            const target = String(c.display_name_zh).replace(/\s/g, '');
-            dbEntry = (db.characters || []).find(x =>
-              String(x.display_name_zh || '').replace(/\s/g, '') === target ||
-              String(x.canonical_name || '').replace(/\s/g, '').toLowerCase() === target.toLowerCase()
-            );
-          }
-          if (dbEntry) {
-            charId = dbEntry.character_id;
-            const card = charactersLib.lookupCharacter(db, charId, cursor);
-            if (card) {
-              display_name = card.display_name;
-              short_identity = card.short_identity || card.current?.title || short_identity;
-              spoiler_safety = cursor ? 'cursor_filtered' : 'baseline_only';
-            }
-          }
-        }
-        const bbox = Array.isArray(c.face_bbox) && c.face_bbox.length === 4
-          ? c.face_bbox.map(Number).filter(n => Number.isFinite(n) && n >= 0 && n <= 1)
-          : null;
-        return {
-          character_id: charId,
-          display_name,
-          short_identity,
-          confidence: c.confidence || 0,
-          spoiler_safety,
-          bbox: (bbox && bbox.length === 4) ? bbox : null,
-        };
-      }).filter(c => c.confidence >= 0.7);
-
-      // 去重：同一 character_id / display_name 只留 confidence 最高的；
-      // bbox 重叠（IoU > 0.5）也合并 —— 防止同一张脸返回两个候选
-      const dedup = [];
-      for (const c of out) {
-        const dupIdx = dedup.findIndex(x =>
-          (c.character_id && x.character_id === c.character_id) ||
-          (x.display_name === c.display_name) ||
-          bboxOverlapHigh(x.bbox, c.bbox)
-        );
-        if (dupIdx === -1) {
-          dedup.push(c);
-        } else if (c.confidence > dedup[dupIdx].confidence) {
-          dedup[dupIdx] = c;
-        }
-      }
-
-      res.json({
-        characters: dedup,
-        cursor_used: cursor,
-        has_kb: !!kb,
-        llm_ready: true,
-      });
-    } catch (e) {
-      console.error('recognize failed:', e.message);
-      res.status(500).json({ error: e.message, characters: [], llm_ready: true });
-    }
+    res.json({
+      characters,
+      cursor_used: cursor,
+      has_kb: !!kb,
+      llm_ready: ai.isAvailable('vision'),
+      sources: { insightface: faceChars.length, llm: llmChars.length },
+      elapsed_ms,
+    });
   });
 
   app.get('/api/agent/characters/detail', (req, res) => {
