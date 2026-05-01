@@ -247,7 +247,7 @@ export default function App() {
       {/* Feature cards row */}
       <section className="feature-cards">
         {HERO_FEATURE_CARDS.map(card => (
-          <div key={card.id} className="feature-card" onClick={enterPlayer}>
+          <div key={card.id} className="feature-card">
             <div className="feature-card-head">
               <h3>{card.title}</h3>
               <p>{card.desc}</p>
@@ -1068,19 +1068,26 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
               }}
             />
 
-            {/* top-right pill: 人物识别（按钮触发） */}
-            <button
-              className="tx-player-recognize-btn"
-              onClick={triggerRecognition}
-              disabled={aiRecognizing}
-              title="识别画面里的人物（标签 6 秒后消失）"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="8" r="4"/>
-                <path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>
-              </svg>
-              {aiRecognizing ? '识别中…' : '人物识别'}
-            </button>
+            {/* top-right toolbar: 人物识别 + 文化注释总开关（同一族 chrome，flex 排列） */}
+            <div className="tx-player-toolbar">
+              <button
+                className="tx-player-recognize-btn"
+                onClick={triggerRecognition}
+                disabled={aiRecognizing}
+                title="识别画面里的人物（标签 6 秒后消失）"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>
+                </svg>
+                {aiRecognizing ? '识别中…' : '人物识别'}
+              </button>
+              <MemeToggle
+                enabled={memeEnabled}
+                onChange={setMemeEnabled}
+                hidden={!hasRiffs}
+              />
+            </div>
 
             {/* 右边浮 icon → 展开 AgentPanel 抽屉（常驻，与关系图/对谈同族） */}
             <button
@@ -1224,13 +1231,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
 
             {/* 人物关系图 v2 —— HUD 入口 + Focus Card，按真实 videoTime + 角色 KB 动态出图 */}
             <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
-
-            {/* 文化注释总开关 —— 没 riff 不显示 */}
-            <MemeToggle
-              enabled={memeEnabled}
-              onChange={setMemeEnabled}
-              hidden={!hasRiffs}
-            />
 
             {/* 共谋者 · 文化梗浮层 —— 4 条 riff 命中时段：底部蒙板 + HTML 字幕 + 金色高亮 + hover 浮窗 */}
             <MemeOverlay

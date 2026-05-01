@@ -26,9 +26,7 @@ export default function MemeToggle({ enabled, onChange, hidden }) {
       title={enabled ? '点击关闭文化注释' : '点击开启文化注释'}
     >
       <span className="meme-toggle-spark">✦</span>
-      <span className="meme-toggle-label">
-        文化注释{enabled ? '已开启' : '已关闭'}
-      </span>
+      <span className="meme-toggle-label">文化注释</span>
     </button>
   );
 }

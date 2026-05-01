@@ -389,13 +389,6 @@ body {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.4rem 1.5rem 1.5rem;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, transform 0.2s;
-}
-.feature-card:hover {
-  border-color: rgba(245,166,35,0.32);
-  background: rgba(28, 22, 18, 0.7);
-  transform: translateY(-2px);
 }
 .feature-card-head h3 {
   font-size: 17px; font-weight: 700;
@@ -1671,8 +1664,15 @@ body {
   z-index: 3;
 }
 
+/* Top-right toolbar: 人物识别 + 文化注释 共用一个 flex 容器，避免两个独立
+   absolute pill 因为 right offset 写死而挤在一起。*/
+.tx-player-toolbar {
+  position: absolute; top: 14px; right: 16px;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 3;
+}
+
 .tx-player-recognize-btn {
-  position: absolute; top: 14px; right: 152px;
   display: flex; align-items: center; gap: 6px;
   padding: 6px 14px;
   font-size: 13px; color: rgba(255, 255, 255, 0.85);
@@ -1681,7 +1681,6 @@ body {
   border: 1px solid rgba(232, 149, 77, 0.22);
   border-radius: 20px;
   cursor: pointer;
-  z-index: 3;
   opacity: 0.75;
   transition: background 0.15s, opacity 0.15s, border-color 0.15s, color 0.15s;
 }
@@ -1805,13 +1804,13 @@ body {
    内容层刻意不在隐藏范围里。*/
 .tx-player-wrap.is-idle { cursor: none; }
 .tx-player-wrap.is-idle .tx-controls,
-.tx-player-wrap.is-idle .tx-player-recognize-btn,
+.tx-player-wrap.is-idle .tx-player-toolbar,
 .tx-player-wrap.is-idle .tx-player-aichat-btn,
 .tx-player-wrap.is-idle .rg-hud-icon {
   opacity: 0;
   pointer-events: none;
 }
-.tx-player-recognize-btn,
+.tx-player-toolbar,
 .tx-player-aichat-btn,
 .rg-hud-icon {
   transition: opacity 0.25s ease;
@@ -2880,11 +2879,9 @@ body {
   background: #f3c97a;
 }
 
-/* ─── MemeToggle — 文化注释总开关（跟 .tx-player-recognize-btn 视觉对齐）*/
+/* ─── MemeToggle — 文化注释总开关（跟 .tx-player-recognize-btn 视觉对齐，
+   两个一起挂在 .tx-player-toolbar flex 容器里）*/
 .meme-toggle {
-  position: absolute;
-  top: 14px;
-  right: 16px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2896,7 +2893,6 @@ body {
   border: 1px solid rgba(232, 149, 77, 0.22);
   border-radius: 20px;
   cursor: pointer;
-  z-index: 3;
   opacity: 0.75;
   transition: background 0.15s, opacity 0.15s, border-color 0.15s, color 0.15s;
 }
@@ -2932,8 +2928,4 @@ body {
   color: rgba(255, 255, 255, 0.4);
 }
 
-/* 鼠标 idle 时跟其他播放器 chrome 一起淡出 */
-.tx-player-wrap.is-idle .meme-toggle {
-  opacity: 0;
-  pointer-events: none;
-}
+/* 鼠标 idle 时由 .tx-player-toolbar 整体淡出，不需要再单独写 .meme-toggle */
