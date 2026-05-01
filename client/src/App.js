@@ -158,6 +158,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isNarrow, setIsNarrow] = useState(() => window.innerWidth <= 900);
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  // 鼠标长时间不动 → 隐藏底部进度条 + 顶部浮动按钮 + 鼠标本体；
+  // 任意鼠标移动 / 进入播放区都立即恢复，鼠标离开播放区也立即隐藏。
+  const [playerIdle, setPlayerIdle] = useState(false);
+  const playerWrapRef = useRef(null);
+  const idleTimerRef = useRef(null);
   useEffect(() => {
     const onFs = () => {
       const fs = !!document.fullscreenElement;
@@ -178,6 +183,32 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [aiChatOpen]);
+  // 鼠标空闲 / 离开播放区 → 隐藏控件；任何 mousemove 立即恢复 + 重置 3 秒计时。
+  useEffect(() => {
+    const wrap = playerWrapRef.current;
+    if (!wrap) return;
+    const IDLE_MS = 3000;
+    const wakeup = () => {
+      setPlayerIdle(false);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      idleTimerRef.current = setTimeout(() => setPlayerIdle(true), IDLE_MS);
+    };
+    const sleep = () => {
+      if (idleTimerRef.current) { clearTimeout(idleTimerRef.current); idleTimerRef.current = null; }
+      setPlayerIdle(true);
+    };
+    wrap.addEventListener('mousemove', wakeup);
+    wrap.addEventListener('mouseenter', wakeup);
+    wrap.addEventListener('mouseleave', sleep);
+    // 初始进入：等 3s 自动隐藏（避免开屏就盖一层 chrome）
+    wakeup();
+    return () => {
+      wrap.removeEventListener('mousemove', wakeup);
+      wrap.removeEventListener('mouseenter', wakeup);
+      wrap.removeEventListener('mouseleave', sleep);
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, [playing.id]); // 视频换了重挂监听
   const [aiSending, setAiSending] = useState(false);
   const [aiLlmReady, setAiLlmReady] = useState(false);
   const [aiOnScreenChars, setAiOnScreenChars] = useState([]);
@@ -1212,7 +1243,10 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       {/* Main */}
       <main className="tx-main">
         <div className="tx-left">
-          <div className="tx-player-wrap">
+          <div
+            ref={playerWrapRef}
+            className={`tx-player-wrap ${playerIdle ? 'is-idle' : ''}`}
+          >
             <video
               ref={videoRef}
               key={playing.id}

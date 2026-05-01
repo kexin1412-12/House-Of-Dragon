@@ -1555,6 +1555,22 @@ body {
   color: #fff;
   z-index: 4;
   user-select: none;
+  transition: opacity 0.25s ease;
+}
+
+/* 鼠标长时间不动 / 离开播放区 → 隐藏底部进度条 + 顶部浮动按钮 + cursor。
+   tx-player-recognize-btn / tx-player-aichat-btn 一同淡出，让画面"干净"。
+   关系图、字幕、识别标签等内容层不在隐藏范围里。*/
+.tx-player-wrap.is-idle { cursor: none; }
+.tx-player-wrap.is-idle .tx-controls,
+.tx-player-wrap.is-idle .tx-player-recognize-btn,
+.tx-player-wrap.is-idle .tx-player-aichat-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+.tx-player-recognize-btn,
+.tx-player-aichat-btn {
+  transition: opacity 0.25s ease;
 }
 
 .tx-controls-progress-row {
