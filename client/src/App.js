@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import axios from 'axios';
 import './App.css';
 import RelationshipGraph from './RelationshipGraph';
-import SeasonTimeline from './SeasonTimeline';
 import RoleplayDialogueDE from './RoleplayDialogueDE';
 import SymbolHotspots from './SymbolHotspots';
 import DEMO_VIDEOS from './demoVideos';
@@ -1505,9 +1504,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             {/* 人物关系图 v2 —— HUD 入口 + Focus Card，按真实 videoTime + 角色 KB 动态出图 */}
             <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
 
-            {/* 季时间轴卡 —— 独立抽屉，按 cursor 屏蔽未看集 + 前后呼应 */}
-            <SeasonTimeline videoId={aiKb} videoRef={videoRef} />
-
             <PlayerControls
               videoRef={videoRef}
               videoId={aiKb}
@@ -2414,9 +2410,9 @@ function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
     };
   }, [videoRef]);
 
-  // 复用右边 SeasonTimeline 抽屉用的同一份 key_events（来自
-  // /api/agent/timeline/season，每条带 t="MM:SS" + text + crit + from_kb），
-  // 把当前集那些 t 可解析的事件转成进度条 ticks。
+  // 拉 /api/agent/timeline/season 当前集的 key_events，每条带 t="MM:SS" +
+  // text + crit + from_kb；把 t 可解析的转成进度条 ticks。集级（无 t）
+  // 事件留给后续的「前情提要」组件处理，进度条用不上。
   // 没 videoId / 后端不可达 / 没 KB 时静默置空，进度条退化成普通 progress。
   useEffect(() => {
     if (!videoId) { setChapters([]); return; }
