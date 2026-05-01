@@ -159,4 +159,36 @@ app.delete('/api/videos/:filename', (req, res) => {
   res.json({ success: true });
 });
 
+// 文化梗 / Dialogue Riffs —— 静态 KB 直出。
+// 扫 server/kb/dialogue_riffs/*.json，flatMap 所有 riffs，按 video_id 过滤。
+// 内存缓存：进程内一次性加载，重启失效（demo 不需要 hot-reload）。
+let _riffsCache = null;
+function loadRiffs() {
+  if (_riffsCache) return _riffsCache;
+  const dir = path.join(__dirname, 'kb', 'dialogue_riffs');
+  const all = [];
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        for (const r of (j.riffs || [])) all.push(r);
+      } catch (e) {
+        console.warn(`[riffs] skip bad file ${f}:`, e.message);
+      }
+    }
+  }
+  _riffsCache = all;
+  return all;
+}
+
+app.get('/api/riffs', (req, res) => {
+  const videoId = req.query.videoId;
+  if (!videoId) return res.status(400).json({ error: 'videoId required' });
+  const riffs = loadRiffs()
+    .filter(r => r.video_id === videoId)
+    .sort((a, b) => (a.anchor?.start_time || 0) - (b.anchor?.start_time || 0));
+  res.json({ video_id: videoId, count: riffs.length, riffs });
+});
+
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
