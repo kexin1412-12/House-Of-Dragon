@@ -272,16 +272,21 @@ export default function App() {
                 </div>
               )}
               {card.id === 'graph' && (
-                <svg className="graph-sample" viewBox="0 0 280 140">
-                  <line x1="140" y1="38"  x2="80"  y2="80" />
-                  <line x1="140" y1="38"  x2="200" y2="80" />
-                  <line x1="80"  y1="80"  x2="140" y2="115" />
-                  <line x1="200" y1="80"  x2="140" y2="115" />
-                  <line x1="80"  y1="80"  x2="200" y2="80"  strokeDasharray="3 4" />
-                  <g className="graph-sample-node"><circle cx="140" cy="38"  r="14"/><text x="140" y="22">提利昂</text></g>
-                  <g className="graph-sample-node"><circle cx="80"  cy="80"  r="14"/><text x="44"  y="84">丹妮莉丝</text></g>
-                  <g className="graph-sample-node"><circle cx="200" cy="80"  r="14"/><text x="232" y="84">乔拉·莫尔蒙</text></g>
-                  <g className="graph-sample-node"><circle cx="140" cy="115" r="14"/><text x="140" y="138">小恶魔</text></g>
+                <svg className="graph-sample" viewBox="0 0 280 150">
+                  {/* 韦赛里斯（上）—雷尼拉（左）：父女 */}
+                  <line x1="140" y1="42"  x2="80"  y2="84" />
+                  {/* 韦赛里斯—阿莉森特（右）：夫妻 */}
+                  <line x1="140" y1="42"  x2="200" y2="84" />
+                  {/* 雷尼拉—戴蒙（下）：后来的婚姻 */}
+                  <line x1="80"  y1="84"  x2="140" y2="120" />
+                  {/* 阿莉森特—戴蒙：政敌 */}
+                  <line x1="200" y1="84"  x2="140" y2="120" />
+                  {/* 雷尼拉 ↔ 阿莉森特：黑绿之争（dashed） */}
+                  <line x1="80"  y1="84"  x2="200" y2="84"  strokeDasharray="3 4" />
+                  <g className="graph-sample-node"><circle cx="140" cy="42"  r="14"/><text x="140" y="24">韦赛里斯</text></g>
+                  <g className="graph-sample-node"><circle cx="80"  cy="84"  r="14"/><text x="44"  y="88">雷尼拉</text></g>
+                  <g className="graph-sample-node"><circle cx="200" cy="84"  r="14"/><text x="240" y="88">阿莉森特</text></g>
+                  <g className="graph-sample-node"><circle cx="140" cy="120" r="14"/><text x="140" y="146">戴蒙</text></g>
                 </svg>
               )}
               {card.id === 'hotspots' && (
