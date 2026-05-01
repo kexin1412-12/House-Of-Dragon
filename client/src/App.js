@@ -55,11 +55,27 @@ const HERO_FEATURE_CARDS = [
     title: '剧情热点注释',
     desc: 'AI 实时标注关键情节与伏笔，帮你不错过每个细节。',
     sample: [
-      { t: '28:12', kind: '伏笔', tone: 'crit',  text: '瑟曦的表情暗示了她对权力的渴望。' },
-      { t: '32:05', kind: '关键', tone: 'key',   text: '北境的信使带来了重要消息。' },
-      { t: '34:47', kind: '疑问', tone: 'doubt', text: '这个角色的真实身份似乎并不简单。' },
+      { t: '08:27', kind: '关键', tone: 'key',   text: '奥托·海塔尔被解除「国王之手」职务。' },
+      { t: '42:36', kind: '伏笔', tone: 'crit',  text: '阿莉森特首次身穿海塔尔家族绿色礼服入婚宴。' },
+      { t: '55:07', kind: '疑问', tone: 'doubt', text: '克里斯顿在婚宴当众打死乔弗里——失控？预谋？' },
     ],
   },
+];
+
+// 人物关系示意图：S01 核心四角 + 家族肖像
+const GRAPH_SAMPLE_NODES = [
+  { id: 'viserys',  name: '韦赛里斯',  cx: 140, cy: 42,  portrait:
+      '/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg',
+    labelX: 140, labelY: 18 },
+  { id: 'rhaenyra', name: '雷尼拉',    cx: 80,  cy: 84,  portrait:
+      '/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg',
+    labelX: 30,  labelY: 88 },
+  { id: 'alicent',  name: '阿莉森特',  cx: 200, cy: 84,  portrait:
+      '/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png',
+    labelX: 250, labelY: 88 },
+  { id: 'daemon',   name: '戴蒙',      cx: 140, cy: 120, portrait:
+      '/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png',
+    labelX: 140, labelY: 152 },
 ];
 
 function heroFeatureIcon(id) {
@@ -259,7 +275,7 @@ export default function App() {
               {card.id === 'memes' && (
                 <div className="meme-card-sample">
                   <div className="meme-card-thumb">
-                    <span className="meme-card-thumb-glyph">⚔</span>
+                    <IronThroneArt />
                   </div>
                   <div className="meme-card-body">
                     <div className="meme-card-title-row">
@@ -272,21 +288,35 @@ export default function App() {
                 </div>
               )}
               {card.id === 'graph' && (
-                <svg className="graph-sample" viewBox="0 0 280 150">
-                  {/* 韦赛里斯（上）—雷尼拉（左）：父女 */}
+                <svg className="graph-sample" viewBox="0 0 280 170">
+                  <defs>
+                    {GRAPH_SAMPLE_NODES.map(n => (
+                      <clipPath key={n.id} id={`graph-sample-clip-${n.id}`}>
+                        <circle cx={n.cx} cy={n.cy} r={15} />
+                      </clipPath>
+                    ))}
+                  </defs>
+                  {/* 实线：父女 / 夫妻 / 婚姻 / 政敌 */}
                   <line x1="140" y1="42"  x2="80"  y2="84" />
-                  {/* 韦赛里斯—阿莉森特（右）：夫妻 */}
                   <line x1="140" y1="42"  x2="200" y2="84" />
-                  {/* 雷尼拉—戴蒙（下）：后来的婚姻 */}
                   <line x1="80"  y1="84"  x2="140" y2="120" />
-                  {/* 阿莉森特—戴蒙：政敌 */}
                   <line x1="200" y1="84"  x2="140" y2="120" />
-                  {/* 雷尼拉 ↔ 阿莉森特：黑绿之争（dashed） */}
+                  {/* 虚线：雷尼拉 ↔ 阿莉森特 黑绿之争 */}
                   <line x1="80"  y1="84"  x2="200" y2="84"  strokeDasharray="3 4" />
-                  <g className="graph-sample-node"><circle cx="140" cy="42"  r="14"/><text x="140" y="24">韦赛里斯</text></g>
-                  <g className="graph-sample-node"><circle cx="80"  cy="84"  r="14"/><text x="44"  y="88">雷尼拉</text></g>
-                  <g className="graph-sample-node"><circle cx="200" cy="84"  r="14"/><text x="240" y="88">阿莉森特</text></g>
-                  <g className="graph-sample-node"><circle cx="140" cy="120" r="14"/><text x="140" y="146">戴蒙</text></g>
+                  {GRAPH_SAMPLE_NODES.map(n => (
+                    <g key={n.id} className="graph-sample-node">
+                      <circle cx={n.cx} cy={n.cy} r={17} className="graph-sample-ring" />
+                      <image
+                        href={n.portrait}
+                        xlinkHref={n.portrait}
+                        x={n.cx - 15} y={n.cy - 15}
+                        width={30} height={30}
+                        preserveAspectRatio="xMidYMid slice"
+                        clipPath={`url(#graph-sample-clip-${n.id})`}
+                      />
+                      <text x={n.labelX} y={n.labelY}>{n.name}</text>
+                    </g>
+                  ))}
                 </svg>
               )}
               {card.id === 'hotspots' && (
@@ -349,6 +379,62 @@ function IconHeroClue() {
     <path d="M12 3l9 5v8l-9 5-9-5V8z"/>
     <path d="M9 11h6 M9 14h4"/>
   </svg>);
+}
+
+/* 铁王座 stylized SVG illustration — sword crown over throne silhouette,
+   used as the 文化梗卡片 thumbnail on the landing page. */
+function IronThroneArt() {
+  return (
+    <svg className="iron-throne-art" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="throne-bg-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stopColor="#1f1a14" />
+          <stop offset="100%" stopColor="#0a0a0d" />
+        </linearGradient>
+        <linearGradient id="throne-blade-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stopColor="#d6b572" />
+          <stop offset="55%" stopColor="#b58a3e" />
+          <stop offset="100%" stopColor="#5b4220" />
+        </linearGradient>
+        <radialGradient id="throne-glow" cx="50%" cy="38%" r="55%">
+          <stop offset="0%"  stopColor="rgba(245,166,35,0.35)" />
+          <stop offset="70%" stopColor="rgba(245,166,35,0)" />
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="100" height="100" fill="url(#throne-bg-grad)" />
+      <rect x="0" y="0" width="100" height="100" fill="url(#throne-glow)" />
+
+      {/* Top crown of swords — 7 blades fanning out */}
+      <g fill="url(#throne-blade-grad)" stroke="#7a5a2a" strokeWidth="0.4" strokeLinejoin="miter">
+        <polygon points="50,10  52,38  48,38" />
+        <polygon points="38,14  44,40  40,40"  transform="rotate(-12 38 14)" />
+        <polygon points="62,14  60,40  56,40"  transform="rotate(12 62 14)" />
+        <polygon points="28,22  38,42  34,42"  transform="rotate(-22 28 22)" />
+        <polygon points="72,22  66,42  62,42"  transform="rotate(22 72 22)" />
+        <polygon points="20,32  32,46  28,46"  transform="rotate(-34 20 32)" />
+        <polygon points="80,32  72,46  68,46"  transform="rotate(34 80 32)" />
+      </g>
+
+      {/* Throne body — wide trapezoid base + armrests */}
+      <g fill="#2d2622" stroke="#7a5a2a" strokeWidth="0.6">
+        <polygon points="22,46 78,46 82,80 18,80" />
+        <rect x="20" y="62" width="8"  height="18" />
+        <rect x="72" y="62" width="8"  height="18" />
+      </g>
+
+      {/* Embedded blade slits in the throne body */}
+      <g stroke="#b58a3e" strokeWidth="0.7" strokeLinecap="round" opacity="0.85">
+        <line x1="34" y1="50" x2="34" y2="74" />
+        <line x1="42" y1="50" x2="42" y2="74" />
+        <line x1="50" y1="50" x2="50" y2="74" />
+        <line x1="58" y1="50" x2="58" y2="74" />
+        <line x1="66" y1="50" x2="66" y2="74" />
+      </g>
+
+      {/* Floor shadow */}
+      <ellipse cx="50" cy="84" rx="32" ry="3" fill="rgba(0,0,0,0.65)" />
+    </svg>
+  );
 }
 
 /* ─── Tencent Video Player Page ─────────────────────── */
