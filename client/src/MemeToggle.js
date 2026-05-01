@@ -27,6 +27,7 @@ export default function MemeToggle({ enabled, onChange, hidden }) {
     >
       <span className="meme-toggle-spark">✦</span>
       <span className="meme-toggle-label">文化注释</span>
+      <span className="meme-toggle-state">{enabled ? '开' : '关'}</span>
     </button>
   );
 }
