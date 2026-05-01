@@ -66,12 +66,16 @@ function applyTabFilter(tabKey, riffs) {
 
 export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
   // 文化梗收藏（riff_id → ts）
-  const { entries, count: memeCount, addedAt, toggle, orderedIds } = useMemeFavorites();
+  const { count: memeCount, addedAt, toggle, orderedIds } = useMemeFavorites();
   // 叙事节点收藏（videoId::nodeId → {addedAt, payload}）
   const { count: clipCount, orderedList: orderedClips, toggle: toggleClip } = useStorylineFavorites();
   const totalCount = memeCount + clipCount;
   const count = totalCount; // 旧变量兼容，下面用了 count 的地方都希望算总数
   const [allRiffs, setAllRiffs] = useState([]);
+  // 实时 storyline KB（按 videoId 索引），用于覆盖 localStorage 里旧 payload
+  // 的 start_time / title / summary / keyframe，确保收藏页显示的时间永远跟
+  // 最新 KB 一致（用户每改一次 JSON 不需要让用户清缓存）
+  const [storylineByVideo, setStorylineByVideo] = useState({});
   const [activeTag, setActiveTag] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState('recent'); // 'recent' | 'oldest'
@@ -84,6 +88,44 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
       .then(d => setAllRiffs(d.riffs || []))
       .catch(() => setAllRiffs([]));
   }, []);
+
+  // 对所有"被收藏过的 videoId"逐个拉 storyline KB，缓存到 storylineByVideo。
+  // demo 阶段只有一集，所以最多就一次请求。
+  useEffect(() => {
+    const videoIds = [...new Set(orderedClips().map(({ payload }) => payload.videoId))];
+    let cancelled = false;
+    Promise.all(videoIds.map(vid =>
+      fetch(`${API}/api/storyline?videoId=${encodeURIComponent(vid)}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => [vid, data])
+        .catch(() => [vid, null])
+    )).then(pairs => {
+      if (cancelled) return;
+      const m = {};
+      for (const [vid, data] of pairs) if (data) m[vid] = data;
+      setStorylineByVideo(m);
+    });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clipCount]);
+
+  // 给定 payload，从最新 KB 反查节点 fresh 字段；KB 不可用时降级用 payload
+  const freshClipNode = (payload) => {
+    const sl = storylineByVideo[payload.videoId];
+    if (!sl) return payload;
+    const node = (sl.nodes || []).find(n => n.node_id === payload.nodeId);
+    if (!node) return payload;
+    return {
+      ...payload,
+      title: node.title,
+      start_time: node.start_time,
+      end_time: node.end_time,
+      summary: node.summary,
+      narrative_function: node.narrative_function,
+      track: node.track,
+      keyframe: node.keyframe,
+    };
+  };
 
   // 用户实际收藏过且 KB 里还存在的 riff
   const favoritedRiffs = useMemo(() => {
@@ -110,8 +152,6 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
     if (sortBy === 'oldest') list = [...list].reverse();
     return list;
   }, [favoritedRiffs, activeTab, activeTag, sortBy]);
-
-  const activeTabDef = FAV_TABS.find(t => t.key === activeTab) || FAV_TABS[0];
 
   const recentList = favoritedRiffs.slice(0, 3);
 
@@ -279,7 +319,8 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
           })}
           {/* Storyline 节点卡片：clip tab 单独显示；all tab 追加在 riff 卡片之后 */}
           {(activeTab === 'clip' || activeTab === 'all') && orderedClips().map(({ key, addedAt: ts, payload }) => {
-            const video = videos.find(v => v.id && v.id.startsWith(payload.videoId)) || null;
+            const fresh = freshClipNode(payload);
+            const video = videos.find(v => v.id && v.id.startsWith(fresh.videoId)) || null;
             const showName = showNameFor(video);
             const epTag = (video?.filename ? episodeTagFor(video.filename) : '').replace(/^S0?/, 'S');
             return (
@@ -291,27 +332,26 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
                     title="取消收藏"
                   >▮</button>
                   <div className="fv-card-clip-emblem">
-                    <span className="fv-clip-fn">{payload.narrative_function}</span>
+                    <span className="fv-clip-fn">{fresh.narrative_function}</span>
                   </div>
                   <div className="fv-card-body">
-                    <div className="fv-card-quote-en">{payload.title}</div>
-                    {payload.summary && (
-                      <div className="fv-card-quote-zh">{payload.summary}</div>
+                    <div className="fv-card-quote-en">{fresh.title}</div>
+                    {fresh.summary && (
+                      <div className="fv-card-quote-zh">{fresh.summary}</div>
                     )}
                     <div className="fv-card-tags">
-                      <span className="fv-tag-pill">{payload.track === 'side' ? '支线' : '主线'}</span>
-                      <span className="fv-tag-pill">叙事节点</span>
+                      <span className="fv-tag-pill">{fresh.track === 'side' ? '支线' : '主线'}</span>
                     </div>
                   </div>
                   <div className="fv-card-side">
                     <div className="fv-card-source">
-                      《{showName}》 <span className="fv-card-ep">{epTag}</span> · {formatMMSS(payload.start_time)}
+                      《{showName}》 <span className="fv-card-ep">{epTag}</span> · {formatMMSS(fresh.start_time)}
                     </div>
                     <div className="fv-card-actions">
                       <span className="fv-card-relative">{formatRelative(ts)}</span>
                       <button
                         className="fv-action fv-action-primary"
-                        onClick={() => video && onJumpToRiff(video, { anchor: { start_time: payload.start_time } }, true)}
+                        onClick={() => video && onJumpToRiff(video, { anchor: { start_time: fresh.start_time } }, true)}
                       >▶ 跳转片段</button>
                     </div>
                   </div>
