@@ -23,14 +23,14 @@ function formatMMSS(seconds) {
 // SVG 画布几何 —— 主线节点等距铺开（横向 spacing 由序号决定，不按时长比例，
 // 否则前面密后面稀；参考图也是等距）。支线挂在 after_node_id 主线节点上方/下方。
 // 节点是"左缩略图 + 右标题/时间/summary"的横向卡片。
-const NODE_W = 248;
-const NODE_H = 116;
-const THUMB_W = 104;
-const THUMB_H = 96;
-const NODE_GAP = 32;        // 主线相邻节点的水平间距
-const SIDE_OFFSET_Y = 178;  // 支线节点距主线的垂直距离（节点变高，间距相应放大）
+const NODE_W = 320;
+const NODE_H = 144;
+const THUMB_W = 128;
+const THUMB_H = 120;
+const NODE_GAP = 36;        // 主线相邻节点的水平间距
+const SIDE_OFFSET_Y = 220;  // 支线节点距主线的垂直距离（节点变高，间距相应放大）
 const CANVAS_PAD_X = 60;
-const CANVAS_PAD_Y = 180;
+const CANVAS_PAD_Y = 200;
 
 // 把主线节点按 narrative_function 的连续段切成幕段，给顶部进度带用。
 function computePhases(storyline, allNodesById) {

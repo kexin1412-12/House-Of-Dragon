@@ -216,7 +216,7 @@
 }
 .sx-node-title {
   fill: var(--sx-ink);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.5px;
   pointer-events: none;
@@ -224,15 +224,15 @@
 }
 .sx-node-time {
   fill: var(--sx-gold);
-  font-size: 13px;
+  font-size: 14px;
   font-feature-settings: 'tnum';
   font-weight: 500;
   pointer-events: none;
   dominant-baseline: middle;
 }
 .sx-node-summary {
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--sx-ink-soft);
   letter-spacing: 0.3px;
   /* 三行截断 */
@@ -296,7 +296,8 @@
 .sx-node-side .sx-node-rect {
   fill: rgba(20, 14, 12, 0.65);
 }
-.sx-node-side .sx-node-title { font-size: 12px; }
+.sx-node-side .sx-node-title { font-size: 16px; }
+.sx-node-side .sx-node-summary { font-size: 12px; }
 
 /* ─── Zoom controls (now inside bottom-bar) ────────────────────────── */
 .sx-tl-zoom {
