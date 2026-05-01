@@ -48,25 +48,28 @@
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
 }
 
-/* 关键词金色描边 */
+/* 关键词高亮：金色字 + 暗金下划线，跟字幕同一视觉层级，不做按钮态 */
 .mo-highlight {
   position: relative;
-  display: inline-block;
-  padding: 0 6px;
-  margin: 0 1px;
-  border: 1px solid rgba(243, 201, 122, 0.85);
-  border-radius: 4px;
+  display: inline;
   color: #f3c97a;
-  background: rgba(243, 201, 122, 0.08);
-  box-shadow: 0 0 8px rgba(243, 201, 122, 0.25);
+  text-shadow:
+    0 0 6px rgba(243, 201, 122, 0.35),
+    0 1px 4px rgba(0, 0, 0, 0.85);
+  border-bottom: 1px dotted rgba(243, 201, 122, 0.55);
+  padding-bottom: 1px;
   cursor: help;
-  pointer-events: auto; /* 允许 hover */
-  transition: background 120ms ease, box-shadow 120ms ease;
+  pointer-events: auto;
+  transition: color 160ms ease, text-shadow 160ms ease, border-color 160ms ease;
 }
 
 .mo-highlight:hover {
-  background: rgba(243, 201, 122, 0.18);
-  box-shadow: 0 0 14px rgba(243, 201, 122, 0.45);
+  color: #ffd98a;
+  text-shadow:
+    0 0 12px rgba(255, 217, 138, 0.55),
+    0 1px 4px rgba(0, 0, 0, 0.9);
+  border-bottom-color: rgba(255, 217, 138, 0.9);
+  border-bottom-style: solid;
 }
 
 /* Popover 浮窗 */
