@@ -1625,7 +1625,7 @@ function deCharColor(id) {
 }
 
 const QUICK_QUESTIONS = [
-  '刚才发生什么',
+  '这个角色是谁',
   '解释这个镜头',
   '这是什么梗',
   '这句台词什么意思',
