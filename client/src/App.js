@@ -257,6 +257,16 @@ export default function App() {
               <span>+</span> 加入列表
             </button>
 
+            <button
+              className="hero-preview-watch"
+              onClick={(e) => { e.stopPropagation(); enterPlayer(); }}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              立刻观看
+            </button>
+
           </div>
         )}
       </section>

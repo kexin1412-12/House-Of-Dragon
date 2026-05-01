@@ -330,6 +330,28 @@ body {
 .hero-preview-add:hover { background: rgba(245,166,35,0.18); border-color: rgba(245,166,35,0.45); }
 .hero-preview-add span { font-size: 14px; line-height: 1; }
 
+/* 封面左下角主 CTA：立刻观看 —— 跟 .btn-primary 同色但更紧凑，作为 in-poster CTA */
+.hero-preview-watch {
+  position: absolute; bottom: 1.6rem; left: 1.6rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 18px;
+  background: var(--accent);
+  color: #1a1208;
+  border: 0;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(245, 166, 35, 0.35);
+  transition: filter 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.hero-preview-watch:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px rgba(245, 166, 35, 0.5);
+}
+.hero-preview-watch svg { width: 14px; height: 14px; }
+
 /* Progress bar (decorative, ~62% filled) */
 .hero-preview-progress {
   position: absolute; left: 1.4rem; right: 1.4rem;
