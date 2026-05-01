@@ -9,6 +9,7 @@ const CATEGORY_ICON = {
   omission: '◌',
   editing: '◈',
   micro_signal: '◎',
+  lore: '✦',
 };
 
 function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose }) {
