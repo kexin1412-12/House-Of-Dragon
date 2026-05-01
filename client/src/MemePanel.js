@@ -86,6 +86,57 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                   </div>
                 </div>
               </button>
+
+              {isOpen && r.tier3 && (
+                <div className="mp-item-detail">
+                  <div className="mp-detail-quote">
+                    <div className="mp-detail-quote-en">
+                      "{r.anchor.subtitle_en}"
+                    </div>
+                    {r.anchor.subtitle_zh && (
+                      <div className="mp-detail-quote-zh">
+                        {r.anchor.subtitle_zh}
+                      </div>
+                    )}
+                  </div>
+
+                  {r.tier2_punch && (
+                    <div className="mp-detail-punch">{r.tier2_punch}</div>
+                  )}
+
+                  {r.tier3.why_meme && (
+                    <section className="mp-detail-section">
+                      <h4>为什么是个梗</h4>
+                      <p>{r.tier3.why_meme}</p>
+                    </section>
+                  )}
+
+                  {Array.isArray(r.tier3.background) && r.tier3.background.length > 0 && (
+                    <section className="mp-detail-section">
+                      <h4>背景知识</h4>
+                      <ul>
+                        {r.tier3.background.map((b, idx) => (
+                          <li key={idx}>{b}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  )}
+
+                  {r.tier3.why_it_matters_now && (
+                    <section className="mp-detail-section">
+                      <h4>剧情里为什么重要</h4>
+                      <p>{r.tier3.why_it_matters_now}</p>
+                    </section>
+                  )}
+
+                  <div className="mp-detail-actions">
+                    <button
+                      className="mp-detail-jump"
+                      onClick={() => jumpTo(r.anchor.start_time)}
+                    >▶ 跳到此处</button>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
