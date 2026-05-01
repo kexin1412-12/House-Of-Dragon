@@ -68,7 +68,7 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                 {r.anchor && r.anchor.keyframe && (
                   <img
                     className="mp-item-thumb"
-                    src={`${API}/${r.anchor.keyframe}`}
+                    src={`${API}/kb/${r.anchor.keyframe}`}
                     alt=""
                   />
                 )}
