@@ -251,17 +251,11 @@ export default function App() {
                 <span className="hero-preview-ep">S1·E05</span>
               </div>
               <div className="hero-preview-sub">迎光赴礼</div>
-              <div className="hero-preview-progress-text">已观看 32:18 / 51:42</div>
             </div>
 
             <button className="hero-preview-add" onClick={(e) => e.stopPropagation()}>
               <span>+</span> 加入列表
             </button>
-
-            <div className="hero-preview-progress">
-              <div className="hero-preview-progress-fill" />
-              <div className="hero-preview-progress-thumb" />
-            </div>
 
             <div className="hero-preview-controls" onClick={(e) => e.stopPropagation()}>
               <div className="hero-preview-controls-left">
