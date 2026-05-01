@@ -118,6 +118,21 @@
   background: #f3c97a;
 }
 
+.fv-tab.is-disabled {
+  color: rgba(255, 255, 255, 0.22);
+  cursor: not-allowed;
+}
+
+.fv-tab.is-disabled::after {
+  content: '·';
+  margin-left: 4px;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.fv-tab.is-disabled:hover {
+  color: rgba(255, 255, 255, 0.4);
+}
+
 .fv-header-right {
   display: flex;
   align-items: center;

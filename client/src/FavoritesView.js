@@ -46,10 +46,29 @@ function episodeTagFor(filename) {
   return '';
 }
 
+// 顶部分类 tab —— 目前只有 riff 一种可收藏对象，所以 all / 文化梗 / 经典台词 由
+// tag 过滤实现；人物 / 线索 / 片段 还没有对应的源 UI，先占位。
+const FAV_TABS = [
+  { key: 'all',     label: '全部收藏', enabled: true,  hint: '' },
+  { key: 'meme',    label: '文化梗',   enabled: true,  hint: '' },
+  { key: 'classic', label: '经典台词', enabled: true,  hint: '' },
+  { key: 'char',    label: '人物',     enabled: false, hint: '关系图里加"收藏角色"按钮后启用' },
+  { key: 'clue',    label: '线索',     enabled: false, hint: '线索 / 伏笔系统就位后启用' },
+  { key: 'clip',    label: '片段',     enabled: false, hint: '播放器加"保存当前片段"按钮后启用' },
+];
+
+function applyTabFilter(tabKey, riffs) {
+  if (tabKey === 'all') return riffs;
+  if (tabKey === 'meme') return riffs.filter(r => !(r.tags || []).includes('经典台词'));
+  if (tabKey === 'classic') return riffs.filter(r => (r.tags || []).includes('经典台词'));
+  return []; // 人物 / 线索 / 片段 还没数据
+}
+
 export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
   const { entries, count, addedAt, toggle, orderedIds } = useMemeFavorites();
   const [allRiffs, setAllRiffs] = useState([]);
   const [activeTag, setActiveTag] = useState(null);
+  const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState('recent'); // 'recent' | 'oldest'
 
   // 拉所有视频的所有 riffs（demo 范围只有 4 条）
@@ -78,13 +97,15 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [favoritedRiffs]);
 
-  // 应用筛选 + 排序
+  // 应用 tab + 标签筛选 + 排序
   const visibleRiffs = useMemo(() => {
-    let list = favoritedRiffs;
+    let list = applyTabFilter(activeTab, favoritedRiffs);
     if (activeTag) list = list.filter(r => (r.tags || []).includes(activeTag));
     if (sortBy === 'oldest') list = [...list].reverse();
     return list;
-  }, [favoritedRiffs, activeTag, sortBy]);
+  }, [favoritedRiffs, activeTab, activeTag, sortBy]);
+
+  const activeTabDef = FAV_TABS.find(t => t.key === activeTab) || FAV_TABS[0];
 
   const recentList = favoritedRiffs.slice(0, 3);
 
@@ -110,8 +131,14 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
           <div className="fv-subtitle">找回你收藏的文化梗与经典台词</div>
         </div>
         <div className="fv-header-tabs">
-          <button className="fv-tab is-active">全部收藏</button>
-          <button className="fv-tab is-active">文化梗</button>
+          {FAV_TABS.map(t => (
+            <button
+              key={t.key}
+              className={`fv-tab${activeTab === t.key ? ' is-active' : ''}${t.enabled ? '' : ' is-disabled'}`}
+              onClick={() => t.enabled && setActiveTab(t.key)}
+              title={t.enabled ? '' : t.hint}
+            >{t.label}</button>
+          ))}
         </div>
         <div className="fv-header-right">
           <span className="fv-count">共 <strong>{count}</strong> 条收藏</span>
@@ -155,7 +182,11 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
         {/* CENTER —— 卡片列表 */}
         <main className="fv-list">
           {visibleRiffs.length === 0 && (
-            <div className="fv-list-empty">该标签下没有收藏</div>
+            <div className="fv-list-empty">
+              {activeTab === 'all' && '没有匹配的收藏'}
+              {activeTab === 'meme' && '还没有收藏文化梗类的台词'}
+              {activeTab === 'classic' && '还没有收藏经典台词类的内容'}
+            </div>
           )}
           {visibleRiffs.map(r => {
             const video = findVideoForRiff(videos, r.video_id);
