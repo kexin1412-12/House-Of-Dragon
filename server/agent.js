@@ -2587,37 +2587,41 @@ ${bp.description || '（无具体描述）'}
 
   // POST /api/agent/character/inner/starter
   // body: { videoId, characterId, t }
-  // 进入角色那一刻给 3 个"戳到此刻痛处"的开场问题，让用户不用从一张白纸开始问。
-  // 缓存键 = characterId|scene_id；同一场景同一人不重复算钱。
+  // 进入角色那一刻：先一段 4-6 行的第一人称内心独白把情绪铺出来，再给 3 个
+  // 立场化的开场问题。返回 { monologue, questions }，前端按 DE "[内心独白] +
+  // 3 个 > 选项" 的样式呈现。缓存键 = characterId|scene_id|episode。
   const _starterCache = new Map();
   app.post('/api/agent/character/inner/starter', async (req, res) => {
+    const FALLBACK_QS = [
+      { text: '你此刻在想什么？', stance: '血亲' },
+      { text: '为什么不直说？',     stance: '王者' },
+      { text: '你怕的是什么？',     stance: '审慎' },
+    ];
     try {
       const { videoId, characterId } = req.body || {};
       const kb = videoId ? loadKB(videoId) : null;
-      if (!kb) return res.json({ questions: [] });
+      if (!kb) return res.json({ monologue: '', questions: [] });
       const showId = kb.show_id || 'house-of-the-dragon';
       const episode = resolveEpisode(kb);
       const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
-      if (!profile) return res.json({ questions: [] });
+      if (!profile) return res.json({ monologue: '', questions: [] });
 
       const cursorTime = normalizeTime(req.body?.t);
       const scene = currentScene(kb, cursorTime);
       const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}`;
       if (_starterCache.has(cacheKey)) {
-        return res.json({ questions: _starterCache.get(cacheKey), cached: true });
+        const cached = _starterCache.get(cacheKey);
+        return res.json({ ...cached, cached: true });
       }
 
-      // 静态兜底：LLM 不可用时给一组与角色无关但永远成立的开场
-      const fallbackStaticInit = [
-        { text: '你此刻在想什么？', stance: '血亲' },
-        { text: '为什么不直说？',     stance: '王者' },
-        { text: '你怕的是什么？',     stance: '审慎' },
-      ];
-      if (!ai.isAvailable('dialogue')) return res.json({ questions: fallbackStaticInit, fallback: true });
+      if (!ai.isAvailable('dialogue')) {
+        return res.json({ monologue: '', questions: FALLBACK_QS, fallback: true });
+      }
 
       // 上下文：当前画面发生 + 同框人 + 最近 30s SRT
       const fmtTs = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
       const currentFact = scene?.plot?.fact || '（画面里没有特别明显的事。）';
+      const currentReading = scene?.plot?.reading || '';
       const onScreen = scene
         ? (Array.isArray(scene.characters_on_screen) && scene.characters_on_screen.length
             ? scene.characters_on_screen.map(c => c.character_id || c.id)
@@ -2630,36 +2634,50 @@ ${bp.description || '（无具体描述）'}
         : '（这段画面没有明显对白。）';
 
       const boundary = profile._episode_boundary || {};
-      const knowsLast = (boundary.knows || []).slice(-3).join('；');
-      const traits = (profile.core_traits_zh || []).slice(0, 3).join('、');
+      const knowsLast = (boundary.knows || []).slice(-4).join('；');
+      const doesNotKnow = (boundary.does_not_know || []).join('；');
+      const traits = (profile.core_traits_zh || []).slice(0, 4).join('、');
+      const speech = profile.speech_pattern_zh || '';
+      const samples = (profile.sample_quotes_zh || []).slice(0, 3).map(q => `「${q}」`).join(' ');
 
-      const system = `你正在为 HBO《龙之家族》观众设计 3 个开场问题。
-观众即将"钻进"一个角色的内心和 TA 对话。你要替观众先想好 3 个最戳到此刻痛处的问题。
+      const system = `你正在为 HBO《龙之家族》观众生成"角色内心入口"。
+观众即将"钻进"一个角色的脑子和 TA 对话。在他们开口之前，你要做两件事：
 
-═══ 这 3 个问题必须满足 ═══
-1. 必须围绕"此刻这一段戏"——画面正在发生的事、刚听到的台词、TA 的表情。
-2. 必须戳到这个角色当下的真实困境/伤口/欲望，不是空泛的"你怎么想"。
-3. 三个不同角度，不重复（一个事实问、一个动机问、一个伤口问）。
-4. 每个问题中文，不超过 14 字。
-5. 不能问 TA 不知道的事（剧透红线）。
+═══ 第一件事：4 到 6 行第一人称内心独白 ═══
+- 第一人称，"我..."。这是角色对自己说的话，没人听见。
+- 4 到 6 行，每行短，断句像意识流：一句一行，逗号截，留白。
+- 必须围绕"此刻这一段戏"——画面正在发生的事、刚听到的台词、TA 此刻被刺到的地方。
+- 必须有重量：要么戳到 TA 此刻的伤口，要么戳到 TA 不敢承认的欲望，要么是 TA 此刻真的在自言自语的话。
+- 维斯特洛贵族口吻，克制、有重量。绝不能写"作为 XX 我..."、"我感到..."这种说明书句式。
+- 不能写未来——只能用 TA 此刻已知的（见下面"已知"清单）。
 
-═══ 立场词典（每个问题选一个，三个立场必须不同）═══
+═══ 第二件事：3 个观众最可能问 TA 的问题（立场化）═══
+立场词典（每个问题选一个，三个立场必须不同）：
 ${STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n')}
 
-═══ 输出格式（极严，三行，每行一个）═══
+每个问题中文，不超过 14 字。三个不同角度。要顺着内心独白往痛处扎。
+
+═══ 输出格式（极严，按这个顺序）═══
+[独白]
+第一行
+第二行
+第三行
+（4-6 行）
+
 1. [立场] 问题
 2. [立场] 问题
 3. [立场] 问题
 
-立场只能用 ${STANCE_PALETTE.join(' / ')} 这四个词之一。
-不要解释。不要前后缀。不要 markdown。`;
+立场只能用 ${STANCE_PALETTE.join(' / ')}。不要解释。不要 markdown。不要前后缀。`;
 
       const user = `角色：${profile.voice_zh ? profile.voice_zh.split('。')[0] : characterId}
 气质：${traits}
-TA 此刻最近的处境：${knowsLast || '（无）'}
+说话方式：${speech}
+TA 平时说话的腔调（参考节奏）：${samples}
 
 ═══ 此刻画面 ═══
 ${currentFact}
+${currentReading ? '潜台词：' + currentReading : ''}
 
 ═══ 同框的人 ═══
 ${onScreenStr}
@@ -2667,43 +2685,57 @@ ${onScreenStr}
 ═══ 最近 30 秒画面里的台词原话 ═══
 ${subtitleBlock}
 
-请生成 3 个开场问题。`;
+═══ TA 此刻已知（截至本时间点）═══
+${knowsLast || '（无）'}
+
+═══ TA 还不知道的事（绝对不能在独白里提到）═══
+${doesNotKnow || '（无）'}
+
+请按格式输出 [独白] + 3 个立场化问题。`;
 
       const result = await ai.chat({
         task: 'dialogue',
         system,
         messages: [{ role: 'user', content: user }],
-        maxTokens: 120,
-        temperature: 0.85,
+        maxTokens: 400,
+        temperature: 0.88,
       });
       const txt = String(result?.text || '').trim()
         .replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
-      // 解析每行 "1. [立场] 问题" 格式
+
+      // 解析独白：[独白] 之后到第一个 "1." 之前
+      let monologue = '';
+      const monoMatch = txt.match(/\[独白\]\s*([\s\S]*?)(?=\n\s*1[\.、])/);
+      if (monoMatch) {
+        monologue = monoMatch[1].trim();
+      } else {
+        // LLM 没用 [独白] 标记 → 取第一段非 1./2./3. 的内容
+        const firstNumIdx = txt.search(/\n\s*1[\.、]/);
+        if (firstNumIdx > 0) monologue = txt.slice(0, firstNumIdx).replace(/^\[独白\]/, '').trim();
+      }
+
+      // 解析 3 个立场化问题
       const stanceRe = new RegExp(`\\[(${STANCE_PALETTE.join('|')})\\]`);
-      const lines = txt.split(/\n+/).map(l => l.trim()).filter(Boolean);
-      const questions = lines.map(line => {
-        const stripped = line.replace(/^[\d\.、，。\s]+/, '').trim();
+      const qLines = txt.split('\n').filter(l => /^\s*[1-3][\.、]/.test(l));
+      const questions = qLines.map(line => {
+        const stripped = line.replace(/^\s*[1-3][\.、:：\s]+/, '').trim();
         const m = stripped.match(stanceRe);
         const stance = m ? m[1] : null;
         const text = stripped.replace(stanceRe, '').replace(/^[\s\-:：]+/, '').trim();
         return text ? { text, stance } : null;
       }).filter(Boolean).slice(0, 3);
-      const fallbackStanced = [
-        { text: '你此刻在想什么？', stance: '血亲' },
-        { text: '为什么不直说？',     stance: '王者' },
-        { text: '你怕的是什么？',     stance: '审慎' },
-      ];
-      const finalQs = questions.length === 3 ? questions : fallbackStanced;
-      _starterCache.set(cacheKey, finalQs);
-      res.json({ questions: finalQs });
+
+      const finalPayload = {
+        monologue: monologue || '',
+        questions: questions.length === 3 ? questions : FALLBACK_QS,
+      };
+      _starterCache.set(cacheKey, finalPayload);
+      res.json(finalPayload);
     } catch (err) {
       console.error('[character/inner/starter] error:', err.message);
       res.json({
-        questions: [
-          { text: '你此刻在想什么？', stance: '血亲' },
-          { text: '为什么不直说？',     stance: '王者' },
-          { text: '你怕的是什么？',     stance: '审慎' },
-        ],
+        monologue: '',
+        questions: FALLBACK_QS,
         fallback: true,
       });
     }

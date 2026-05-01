@@ -1491,6 +1491,39 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 
+/* ─── 进入角色的开场内心独白 + CTA ─────────────────────
+   截图风格：[内心独白] 红字标题，下面 4-6 行第一人称衬线斜体，
+   最后一句 "你想问他什么？" 引导。用户问出第一个问题后 CTA 收掉，独白保留。 */
+.tx-char-opening {
+  margin: 0 0 18px;
+  padding: 14px 16px 14px 18px;
+  border-left: 2px solid rgba(196, 86, 86, 0.55);
+  background: rgba(28, 16, 14, 0.34);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+.tx-char-opening-header {
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.32em;
+  color: #c45656;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.tx-char-opening-monologue {
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 14px; line-height: 1.85;
+  font-style: italic;
+  color: #e8d8b8;
+  letter-spacing: 0.02em;
+}
+.tx-char-opening-line { margin: 0; }
+.tx-char-opening-cta {
+  margin-top: 14px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  color: rgba(232, 200, 150, 0.78);
+  font-style: italic;
+}
+
 /* ─── DE 风格：内在声音多色 ─────────────────────────────
    每个 voice 一行：左边色名（粗、ALL CAPS letter-spacing）+ 检定 [困难:成功] +
    破折号 + 正文（衬线斜体，第二人称对自己说话）。颜色严格对应 DE 调色板：

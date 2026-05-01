@@ -576,7 +576,8 @@ function TencentPlayer({
   const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
   const [charInput, setCharInput] = useState('');
   const [charSending, setCharSending] = useState(false);
-  const [charStarters, setCharStarters] = useState([]);       // 进入角色后的 3 个开场问题（LLM 按场景生成）
+  // { monologue: string, questions: [{text, stance}] } —— 进入角色那一刻的"内心独白 + 3 个开场问题"
+  const [charOpening, setCharOpening] = useState({ monologue: '', questions: [] });
   const charLogRef = useRef(null);
   const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉
   const CHAR_TURN_LIMIT = 10;
@@ -946,19 +947,24 @@ function TencentPlayer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [panelMode, aiKb, charSelected]);
 
+  const FALLBACK_OPENING_QS = [
+    { text: '你此刻在想什么？', stance: '血亲' },
+    { text: '为什么不直说？',     stance: '王者' },
+    { text: '你怕的是什么？',     stance: '审慎' },
+  ];
   function clearCharMessages() {
     setCharMessages([]);
     setCharInput('');
-    // 清空对话回到开场态：恢复 starter 选项
-    if (charSelected) fetchCharStarters(charSelected);
+    // 清空对话回到开场态：重新拉一次 opening（缓存命中即时返回）
+    if (charSelected) fetchCharOpening(charSelected);
   }
   function exitCharacter() {
     setCharSelected(null);
     setCharMessages([]);
     setCharInput('');
-    setCharStarters([]);
+    setCharOpening({ monologue: '', questions: [] });
   }
-  async function fetchCharStarters(c) {
+  async function fetchCharOpening(c) {
     if (!c || !aiKb) return;
     const v = videoRef.current;
     const t = v?.currentTime || 0;
@@ -969,21 +975,20 @@ function TencentPlayer({
         body: JSON.stringify({ videoId: aiKb, characterId: c.character_id, t }),
       });
       const d = await r.json();
-      if (Array.isArray(d.questions) && d.questions.length) {
-        setCharStarters(d.questions);
-      } else {
-        setCharStarters(['你此刻在想什么？', '为什么不直说？', '你怕的是什么？']);
-      }
+      setCharOpening({
+        monologue: typeof d.monologue === 'string' ? d.monologue : '',
+        questions: Array.isArray(d.questions) && d.questions.length ? d.questions : FALLBACK_OPENING_QS,
+      });
     } catch {
-      setCharStarters(['你此刻在想什么？', '为什么不直说？', '你怕的是什么？']);
+      setCharOpening({ monologue: '', questions: FALLBACK_OPENING_QS });
     }
   }
   function pickCharacter(c) {
     setCharSelected(c);
     setCharMessages([]);
     setCharInput('');
-    setCharStarters([]);
-    fetchCharStarters(c);
+    setCharOpening({ monologue: '', questions: [] });
+    fetchCharOpening(c);
   }
 
   function clearAiMessages() {
@@ -1391,7 +1396,7 @@ function TencentPlayer({
                       selected={charSelected}
                       candidates={charCandidates}
                       sceneBeat={charSceneBeat}
-                      starters={charStarters}
+                      opening={charOpening}
                       messages={charMessages}
                       input={charInput}
                       setInput={setCharInput}
@@ -1613,7 +1618,7 @@ function TencentPlayer({
                 selected={charSelected}
                 candidates={charCandidates}
                 sceneBeat={charSceneBeat}
-                starters={charStarters}
+                opening={charOpening}
                 messages={charMessages}
                 input={charInput}
                 setInput={setCharInput}
@@ -1964,7 +1969,7 @@ function AgentPanel({
    外观沿用 AgentPanel 的容器，避免在画面上出现风格断层。 */
 function CharacterPanel({
   selected, candidates, sceneBeat,
-  starters = [],
+  opening = { monologue: '', questions: [] },
   messages, input, setInput,
   sending, logRef,
   onPick, onSubmit, onClear, onExit, onBackToChooser,
@@ -1974,9 +1979,10 @@ function CharacterPanel({
   const reachedLimit = userTurns >= turnLimit;
   const lastAgent = [...messages].reverse().find(m => m.role === 'agent' && m.parsed);
   const replySuggestions = (lastAgent?.parsed?.suggestions || []).filter(Boolean);
-  // 还没问过 → 用 LLM 给的开场 starters；问过一轮以上 → 用上一回回答里的 [问] 跟问
-  const showStarters = userTurns === 0 && starters.length > 0;
-  const suggestions = showStarters ? starters : replySuggestions;
+  // 还没问过 → 用开场 opening.questions；问过一轮以上 → 用上一回 [问] 跟问
+  const isOpening = userTurns === 0;
+  const suggestions = isOpening ? (opening.questions || []) : replySuggestions;
+  const monologueLines = (opening.monologue || '').split('\n').map(l => l.trim()).filter(Boolean);
   const beatTs = sceneBeat?.start_time != null
     ? `${Math.floor(sceneBeat.start_time / 60)}:${String(Math.floor(sceneBeat.start_time % 60)).padStart(2, '0')}`
     : null;
@@ -2066,7 +2072,22 @@ function CharacterPanel({
         </div>
       ) : (
         <div ref={logRef} className="tx-agent-log tx-agent-de-log tx-char-log">
-          {messages.length === 0 && (
+          {/* 进入角色的开场：[内心独白] 多行 + "你想问他什么？" CTA。
+              用户问出第一个问题后，独白滚到对话流上方继续可见 */}
+          {monologueLines.length > 0 && (
+            <div className="tx-char-opening">
+              <div className="tx-char-opening-header">[内心独白]</div>
+              <div className="tx-char-opening-monologue">
+                {monologueLines.map((line, i) => (
+                  <div key={i} className="tx-char-opening-line">{line}</div>
+                ))}
+              </div>
+              {isOpening && (
+                <div className="tx-char-opening-cta">你想问他什么？</div>
+              )}
+            </div>
+          )}
+          {messages.length === 0 && monologueLines.length === 0 && (
             <div className="tx-agent-de-empty">
               问点什么 —— <em>"你恨她吗？"</em>、<em>"你为什么不直接走？"</em>。<br/>
               你看到的是 TA 此刻能告诉你的全部，再往后的事 TA 也还不知道。
