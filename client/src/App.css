@@ -2916,37 +2916,56 @@ body {
   background: #f3c97a;
 }
 
-/* ─── MemeToggle — 文化注释总开关 ────────────────── */
+/* ─── MemeToggle — 文化注释总开关（跟 .tx-player-recognize-btn 视觉对齐）*/
 .meme-toggle {
   position: absolute;
-  top: 16px;
+  top: 14px;
   right: 16px;
-  z-index: 21;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
+  padding: 6px 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(232, 149, 77, 0.08);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(243, 201, 122, 0.35);
-  color: #f3c97a;
-  font-size: 12px;
+  border: 1px solid rgba(232, 149, 77, 0.22);
+  border-radius: 20px;
   cursor: pointer;
-  transition: opacity 200ms ease, background 200ms ease;
-}
-
-.meme-toggle.is-off {
-  border-color: rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.55);
+  z-index: 3;
+  opacity: 0.75;
+  transition: background 0.15s, opacity 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .meme-toggle:hover {
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(232, 149, 77, 0.22);
+  border-color: rgba(232, 149, 77, 0.5);
+  color: #fff;
+  opacity: 1;
+}
+
+/* 关闭态：换成中性灰白，区别于"开启"，但仍是同款 chrome 形状 */
+.meme-toggle.is-off {
+  color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  opacity: 0.6;
+}
+
+.meme-toggle.is-off:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  opacity: 0.9;
 }
 
 .meme-toggle-spark {
   font-size: 13px;
+  color: rgba(232, 149, 77, 0.85); /* ✦ 保留淡橙色，作为"文化注释"的身份记号 */
+}
+
+.meme-toggle.is-off .meme-toggle-spark {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* 鼠标 idle 时跟其他播放器 chrome 一起淡出 */
