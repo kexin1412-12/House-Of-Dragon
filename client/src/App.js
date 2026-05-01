@@ -1769,7 +1769,7 @@ function parseCharacterReply(text) {
   const lines = text.split('\n');
   const out = { say: '', voices: [], sub: '', suggestions: [] };
   const stanceRe = new RegExp(`\\[(${STANCE_NAMES.join('|')})\\]`);
-  const qLineRe = /^\s*([1-3])[\.、:：]\s*(.+)$/;
+  const qLineRe = /^\s*([1-3])[.、:：]\s*(.+)$/;
 
   const bodyLines = [];
   for (const ln of lines) {
