@@ -290,14 +290,14 @@
 .sx-tab {
   background: transparent; border: 0;
   color: var(--sx-ink-soft);
-  padding: 10px 22px 12px;
-  font-size: 14px; letter-spacing: 1px;
+  padding: 8px 20px 10px;
+  font-size: 12px; letter-spacing: 0.5px;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: color .15s ease, border-color .15s ease;
   /* 竖排：icon 在上，字在下，跟参考截图视觉一致 */
-  display: inline-flex; flex-direction: column; align-items: center; gap: 4px;
-  min-width: 96px;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 3px;
+  min-width: 88px;
 }
 .sx-tab:hover { color: var(--sx-ink); }
 .sx-tab.is-active {
@@ -305,7 +305,7 @@
   border-bottom-color: var(--sx-gold);
 }
 .sx-tab-icon {
-  width: 28px; height: 28px;
+  width: 24px; height: 24px;
   flex-shrink: 0;
   opacity: 0.78;
   transition: opacity .15s ease, filter .15s ease;
