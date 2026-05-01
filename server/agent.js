@@ -1543,10 +1543,18 @@ function register(app) {
     const image = req.body?.image;
     const hasImage = image && typeof image === 'string' && image.startsWith('data:image/');
 
-    // Server-side clip extraction：从上传视频里抓 cursor 附近 3 帧
+    // Server-side clip extraction: ffmpeg 在 cursor 附近抓 3 张帧。
+    // 这一步会给前端的"思考中…"加 1.5-3s 串行延迟，对 oneline / brief 档
+    // 收益不大（前端已经送了一张当前帧），所以默认关掉，只在用户明确选
+    // 「深挖（deep）」档时才打开。前端也可以用 ?clipFrames=true /
+    // body.clipFrames=true 强制开启。
+    const requestedDepth = ['oneline', 'brief', 'deep'].includes(req.body?.depth)
+      ? req.body.depth : 'brief';
+    const wantClipFrames = requestedDepth === 'deep' || req.body?.clipFrames === true;
     const videoFile = req.body?.videoFile;
     let clipFrames = [];
-    if (videoFile && typeof videoFile === 'string' && /^[a-zA-Z0-9._\-]+$/.test(videoFile) && !videoFile.includes('..')) {
+    if (wantClipFrames && videoFile && typeof videoFile === 'string'
+        && /^[a-zA-Z0-9._\-]+$/.test(videoFile) && !videoFile.includes('..')) {
       const vp = path.join(UPLOADS_DIR, videoFile);
       try {
         clipFrames = await extractClipFrames(vp, prepared.cursorTime, 8, 3);
@@ -1865,8 +1873,8 @@ ${JSON.stringify(prepared.context, null, 2)}
     }
 
     // 三档输出（一句 / 简明 / 深挖）+ 三层标注（事实 / 解读 / 推测）
-    const depth = ['oneline', 'brief', 'deep'].includes(req.body?.depth)
-      ? req.body.depth : 'brief';
+    // depth 在前面 wantClipFrames 那段已经规整过 → 这里直接复用 requestedDepth
+    const depth = requestedDepth;
     const baseSystem = visualMode ? VISION_SYSTEM_PROMPT : SYSTEM_PROMPT;
     const systemWithSpec = baseSystem + buildAnswerSpec(depth);
 
