@@ -328,38 +328,6 @@ body {
 .hero-preview-add:hover { background: rgba(245,166,35,0.18); border-color: rgba(245,166,35,0.45); }
 .hero-preview-add span { font-size: 14px; line-height: 1; }
 
-/* Right-side floating action chips (decorative) */
-.hero-card-chips {
-  position: absolute; right: 1.2rem; top: 50%;
-  transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 0.55rem;
-  max-width: 220px;
-}
-.hero-card-chip {
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(20,22,30,0.78);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 9px 13px; border-radius: 12px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  cursor: pointer;
-}
-.hero-card-chip:hover { background: rgba(245,166,35,0.16); border-color: rgba(245,166,35,0.4); transform: translateX(-2px); }
-.hero-card-chip-icon {
-  width: 30px; height: 30px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: rgba(245,166,35,0.16);
-  border: 1px solid rgba(245,166,35,0.32);
-  color: var(--accent);
-  display: inline-flex; align-items: center; justify-content: center;
-}
-.hero-card-chip-icon svg { width: 16px; height: 16px; }
-.hero-card-chip-text { display: flex; flex-direction: column; line-height: 1.25; }
-.hero-card-chip-title { font-size: 12.5px; font-weight: 600; color: var(--text); }
-.hero-card-chip-sub { font-size: 11px; color: var(--text2); }
-
 /* Progress bar (decorative, ~62% filled) */
 .hero-preview-progress {
   position: absolute; left: 1.4rem; right: 1.4rem;
@@ -523,9 +491,6 @@ body {
 .hotspot-tag-doubt { background: rgba(96,165,250,0.14); color: #60a5fa;     border: 1px solid rgba(96,165,250,0.32); }
 .hotspot-text { color: var(--text); line-height: 1.5; }
 
-@media (max-width: 1100px) {
-  .hero-card-chips { display: none; }
-}
 @media (max-width: 960px) {
   .hero {
     grid-template-columns: 1fr;

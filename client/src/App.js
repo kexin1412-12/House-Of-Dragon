@@ -31,12 +31,6 @@ const HERO_FEATURES = [
   { id: 'clues',    label: '线索图谱' },
 ];
 
-const HERO_CARD_CHIPS = [
-  { id: 'graph', title: '人物关系', sub: '阿丽森与奈德的纠葛' },
-  { id: 'memes', title: '文化梗',   sub: '瓦雷利亚钢的历史' },
-  { id: 'tips',  title: '剧情提示', sub: '北境即将发生变故' },
-];
-
 const HERO_FEATURE_CARDS = [
   {
     id: 'memes',
@@ -83,7 +77,6 @@ function heroFeatureIcon(id) {
   if (id === 'graph')    return <IconHeroGraph />;
   if (id === 'memes')    return <IconHeroMeme />;
   if (id === 'clues')    return <IconHeroClues />;
-  if (id === 'tips')     return <IconHeroClue />;
   return null;
 }
 
@@ -229,18 +222,6 @@ export default function App() {
               <span>+</span> 加入列表
             </button>
 
-            <div className="hero-card-chips" onClick={(e) => e.stopPropagation()}>
-              {HERO_CARD_CHIPS.map(c => (
-                <div key={c.id} className="hero-card-chip">
-                  <span className="hero-card-chip-icon">{heroFeatureIcon(c.id)}</span>
-                  <span className="hero-card-chip-text">
-                    <span className="hero-card-chip-title">{c.title}</span>
-                    <span className="hero-card-chip-sub">{c.sub}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-
             <div className="hero-preview-progress">
               <div className="hero-preview-progress-fill" />
               <div className="hero-preview-progress-thumb" />
@@ -374,13 +355,6 @@ function IconHeroClues() {
     <path d="M7.6 7.5 11.2 16 M16.4 7.5 12.8 16 M8.4 6 H15.6"/>
   </svg>);
 }
-function IconHeroClue() {
-  return (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 3l9 5v8l-9 5-9-5V8z"/>
-    <path d="M9 11h6 M9 14h4"/>
-  </svg>);
-}
-
 /* 铁王座 stylized SVG illustration — sword crown over throne silhouette,
    used as the 文化梗卡片 thumbnail on the landing page. */
 function IronThroneArt() {
