@@ -103,15 +103,42 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
           <button
             className={`sx-tab${activeTab === 'events' ? ' is-active' : ''}`}
             onClick={() => setActiveTab('events')}
-          >关键事件结构图</button>
+          >
+            <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <circle cx="6" cy="12" r="1.6" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+              <circle cx="18" cy="12" r="1.6" fill="currentColor" />
+              <path d="M 12 12 L 14 7" />
+              <circle cx="14" cy="7" r="1.4" />
+              <path d="M 6 12 L 8 17" strokeDasharray="1.5 1.5" />
+              <circle cx="8" cy="17" r="1.4" fill="none" />
+            </svg>
+            <span>剧情脉络</span>
+          </button>
           <button
             className={`sx-tab${activeTab === 'graph' ? ' is-active' : ''}`}
             onClick={() => setActiveTab('graph')}
-          >人物关系</button>
+          >
+            <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="9" cy="8" r="3.2" />
+              <circle cx="17" cy="9" r="2.4" />
+              <path d="M 3 19 c 1.5 -3.5 4 -5 6 -5 s 4.5 1.5 6 5" />
+              <path d="M 14.5 18 c 1 -2.4 2.5 -3.5 4 -3.5 s 3 1.1 4 3.5" />
+            </svg>
+            <span>角色关系</span>
+          </button>
           <button
             className={`sx-tab${activeTab === 'symbols' ? ' is-active' : ''}`}
             onClick={() => setActiveTab('symbols')}
-          >本集符号</button>
+          >
+            <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="6" />
+              <line x1="15.5" y1="15.5" x2="20" y2="20" />
+              <circle cx="11" cy="11" r="1.6" fill="currentColor" stroke="none" />
+            </svg>
+            <span>关键线索</span>
+          </button>
         </nav>
         <div className="sx-topbar-right">
           <span className="sx-completion-label">本集完成度</span>
