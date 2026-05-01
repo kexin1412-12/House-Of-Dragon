@@ -50,7 +50,7 @@
         "n_father_farewell"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-002.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-001.jpg"
     },
     {
       "node_id": "n_father_farewell",
@@ -66,7 +66,7 @@
         "n_driftmark_pact"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-085.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-084.jpg"
     },
     {
       "node_id": "n_driftmark_pact",
@@ -82,7 +82,7 @@
         "n_knight_elope"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-149.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-148.jpg"
     },
     {
       "node_id": "n_knight_elope",
@@ -98,7 +98,7 @@
         "n_green_dress"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-244.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-242.jpg"
     },
     {
       "node_id": "n_green_dress",
@@ -114,7 +114,7 @@
         "n_wedding_massacre"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-326.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-325.jpg"
     },
     {
       "node_id": "n_wedding_massacre",
@@ -130,7 +130,7 @@
         "n_blood_wedding"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-393.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-392.jpg"
     },
     {
       "node_id": "n_blood_wedding",
@@ -146,7 +146,7 @@
         null
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-481.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-480.jpg"
     },
     {
       "node_id": "n_alicent_interrogate",
@@ -162,7 +162,7 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-285.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-283.jpg"
     },
     {
       "node_id": "n_daemon_disrupt",
@@ -178,7 +178,7 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-354.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-353.jpg"
     },
     {
       "node_id": "n_godswood_suicide",
@@ -194,7 +194,7 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-524.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-522.jpg"
     }
   ]
 }
