@@ -88,7 +88,7 @@ function groupParentChildren(kinEdges) {
 // ─── Pure rendering helpers ─────────────────────────────────────────
 function PillLabel({ x, y, text, kind = 'kin' }) {
   // Width is approximate — chinese chars are ~14px wide at the font size used.
-  const padX = 10, padY = 5;
+  const padX = 10;
   const w = text.length * 16 + padX * 2;
   const h = 22;
   return (
@@ -789,7 +789,10 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     viewport.onTouchStart(e);
   }, [viewport]);
 
-  const activeConflicts = highlighted ? (conflictByChar.get(highlighted) || []) : [];
+  const activeConflicts = useMemo(
+    () => highlighted ? (conflictByChar.get(highlighted) || []) : [],
+    [highlighted, conflictByChar]
+  );
 
   // When a character is highlighted, the conflict line between them and a
   // partner can pass behind unrelated portraits sitting in the middle. To

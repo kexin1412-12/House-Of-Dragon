@@ -7,10 +7,8 @@ import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
 import MemeToggle from './MemeToggle';
-import SceneHotspots from './SceneHotspots';
 import InPlayerLoreCard from './InPlayerLoreCard';
 import FavoritesView from './FavoritesView';
-import useMemeFavorites from './useMemeFavorites';
 import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -96,14 +94,12 @@ export default function App() {
   const [featured, setFeatured] = useState(null);
   const [playing, setPlaying] = useState(null);
   const [search, setSearch] = useState('');
-  const [notification, setNotification] = useState(null);
   // 我的收藏页（覆盖首页 hero+grid，不影响 player）
   const [showFavorites, setShowFavorites] = useState(false);
   // 从收藏页"跳转片段"传给 player 的初始 seek + 自动展开 riff
   const [pendingSeekTime, setPendingSeekTime] = useState(null);
   const [pendingExpandRiffId, setPendingExpandRiffId] = useState(null);
   const [pendingRightTab, setPendingRightTab] = useState(null);
-  const { count: favCount } = useMemeFavorites();
 
   const fetchVideos = useCallback(async () => {
     let list = [];
@@ -118,12 +114,7 @@ export default function App() {
     setVideos(list);
   }, []);
 
-  useEffect(() => { fetchVideos(); }, []);
-
-  function notify(msg, type = 'success') {
-    setNotification({ msg, type });
-    setTimeout(() => setNotification(null), 3000);
-  }
+  useEffect(() => { fetchVideos(); }, [fetchVideos]);
 
   const heroPreview = featured || videos[0];
   const enterPlayer = () => {
@@ -134,13 +125,6 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* Notification */}
-      {notification && (
-        <div className={`notification ${notification.type}`}>
-          {notification.type === 'success' ? '✓' : '✕'} {notification.msg}
-        </div>
-      )}
-
       {/* Navbar */}
       <nav className="navbar">
         <div className="nav-left">
@@ -588,10 +572,14 @@ function TencentPlayer({
   const [panelMode, setPanelMode] = useState('analysis');
   const [charSelected, setCharSelected] = useState(null);     // { character_id, display_name, short_identity, core_traits }
   const [charCandidates, setCharCandidates] = useState([]);   // 当前场景里有 profile 的角色
+  // eslint-disable-next-line no-unused-vars
+  const [charSceneBeat, setCharSceneBeat] = useState(null);   // { scene_id, fact, start_time, end_time } — WIP placeholder
   const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
   const [charInput, setCharInput] = useState('');
   const [charSending, setCharSending] = useState(false);
   const charLogRef = useRef(null);
+  // eslint-disable-next-line no-unused-vars
+  const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉 — WIP
   const CHAR_TURN_LIMIT = 10;
 
   // ─── 共谋者 · 机制 A：分支推演 ─────────────────────────────────
@@ -620,7 +608,7 @@ function TencentPlayer({
       const base = (playing.filename || '').replace(/\.[^.]+$/, '');
       setAiKb(list.includes(base) ? base : '');
     }).catch(() => {});
-  }, [playing.id]);
+  }, [playing.id, playing.filename]);
 
   // 拉本视频的分支决策点（共谋者机制 A）+ 让 LLM 给每个分支写一条旁白 cue
   useEffect(() => {
@@ -628,23 +616,26 @@ function TencentPlayer({
     setBranchCues({});
     if (!aiKb) { setBranchPoints([]); return; }
     let cancelled = false;
+    // 把单条 branch cue 的拉取抽成 helper，避免循环里 .then 闭包引用 cancelled
+    // 触发 eslint 的 no-loop-func 警告（const 迭代变量本身是安全的，但 cancelled 共享）
+    const fetchBranchCue = (bp) => {
+      axios
+        .get(`${API}/api/agent/branch/cue?videoId=${encodeURIComponent(aiKb)}&branchId=${encodeURIComponent(bp.branch_id)}`)
+        .then(({ data }) => {
+          if (cancelled) return;
+          if (data?.headline && data?.sub) {
+            setBranchCues(prev => ({ ...prev, [bp.branch_id]: { headline: data.headline, sub: data.sub } }));
+          }
+        })
+        .catch(() => { /* 拉不到就用 DiegeticCue 内置 fallback */ });
+    };
     axios.get(`${API}/api/agent/branch/list?videoId=${encodeURIComponent(aiKb)}`)
       .then(r => {
         if (cancelled) return;
         const pts = r.data.branch_points || [];
         setBranchPoints(pts);
         // 并行预拉每个分支的字幕旁白；返回了再 merge
-        for (const bp of pts) {
-          axios
-            .get(`${API}/api/agent/branch/cue?videoId=${encodeURIComponent(aiKb)}&branchId=${encodeURIComponent(bp.branch_id)}`)
-            .then(({ data }) => {
-              if (cancelled) return;
-              if (data?.headline && data?.sub) {
-                setBranchCues(prev => ({ ...prev, [bp.branch_id]: { headline: data.headline, sub: data.sub } }));
-              }
-            })
-            .catch(() => { /* 拉不到就用 DiegeticCue 内置 fallback */ });
-        }
+        for (const bp of pts) fetchBranchCue(bp);
       })
       .catch(() => setBranchPoints([]));
     return () => { cancelled = true; };
@@ -905,20 +896,56 @@ function TencentPlayer({
     if (charLogRef.current) charLogRef.current.scrollTop = charLogRef.current.scrollHeight;
   }, [charMessages, charSending]);
 
-  // 进入角色模态 / 没选角色时，按当前播放进度拉"有 profile 的在场角色"
+  // 角色模态：实时跟着剧走
+  // 1. 进入模态 / 切视频 → 立即拉一次
+  // 2. 视频在播 → 监听 timeupdate，scene_id 变了才重拉（避免每秒打 API）
+  // 进了角色对话流后（charSelected）保留 candidates 列表不再覆盖，避免对话中卡片消失；
+  // 但 scene_beat 仍要刷新，让用户看到 AI 正在跟剧走。
   useEffect(() => {
-    if (panelMode !== 'character' || charSelected) return;
-    if (!aiKb) { setCharCandidates([]); return; }
-    const v = videoRef.current;
-    const t = v?.currentTime || 0;
+    if (panelMode !== 'character') return;
+    if (!aiKb) { setCharCandidates([]); setCharSceneBeat(null); return; }
+
     let cancelled = false;
-    fetch(`${API}/api/agent/character/inner/list?videoId=${encodeURIComponent(aiKb)}&t=${t}`)
+    const apply = (d, { allowCandidates }) => {
+      if (cancelled) return;
+      if (allowCandidates && !charSelected) setCharCandidates(d.characters || []);
+      setCharSceneBeat(d.scene_beat || null);
+      charSceneIdRef.current = d.scene_id || null;
+    };
+
+    const v = videoRef.current;
+    const t0 = v?.currentTime || 0;
+    fetch(`${API}/api/agent/character/inner/list?videoId=${encodeURIComponent(aiKb)}&t=${t0}`)
       .then(r => r.json())
-      .then(d => { if (!cancelled) setCharCandidates(d.characters || []); })
-      .catch(() => { if (!cancelled) setCharCandidates([]); });
-    return () => { cancelled = true; };
+      .then(d => apply(d, { allowCandidates: true }))
+      .catch(() => apply({ characters: [] }, { allowCandidates: true }));
+
+    // timeupdate ~每 250ms 一次。节流：每 2s 试一次，并且只在 scene_id 真的变了时刷 candidates。
+    let lastFetchAt = Date.now();
+    const REFRESH_MS = 2000;
+    const onTime = () => {
+      const now = Date.now();
+      if (now - lastFetchAt < REFRESH_MS) return;
+      lastFetchAt = now;
+      const t = v?.currentTime || 0;
+      fetch(`${API}/api/agent/character/inner/list?videoId=${encodeURIComponent(aiKb)}&t=${t}`)
+        .then(r => r.json())
+        .then(d => {
+          if (cancelled) return;
+          const sceneChanged = d.scene_id && d.scene_id !== charSceneIdRef.current;
+          if (sceneChanged && !charSelected) setCharCandidates(d.characters || []);
+          setCharSceneBeat(d.scene_beat || null);
+          charSceneIdRef.current = d.scene_id || charSceneIdRef.current;
+        })
+        .catch(() => { /* silent */ });
+    };
+    if (v) v.addEventListener('timeupdate', onTime);
+    return () => {
+      cancelled = true;
+      if (v) v.removeEventListener('timeupdate', onTime);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panelMode, charSelected, aiKb, aiOnScreenChars]);
+  }, [panelMode, aiKb, charSelected]);
 
   function clearCharMessages() {
     setCharMessages([]);
@@ -1226,9 +1253,9 @@ function TencentPlayer({
               共谋者 <span className="logo-sep">|</span> Co-Conspirator
             </span>
           </div>
-          <a className="tx-nav-link">电视剧</a>
-          <a className="tx-nav-link">电影</a>
-          <a className="tx-nav-link">动漫 <span className="tx-caret">▾</span></a>
+          <button type="button" className="tx-nav-link">电视剧</button>
+          <button type="button" className="tx-nav-link">电影</button>
+          <button type="button" className="tx-nav-link">动漫 <span className="tx-caret">▾</span></button>
         </div>
 
         <div className="tx-search">
@@ -1339,6 +1366,7 @@ function TencentPlayer({
                     <CharacterPanel
                       selected={charSelected}
                       candidates={charCandidates}
+                      sceneBeat={charSceneBeat}
                       messages={charMessages}
                       input={charInput}
                       setInput={setCharInput}
@@ -1465,7 +1493,33 @@ function TencentPlayer({
             {/* 共谋者 · 隐藏符号热点 —— 脉冲小点 + 角标 pill，点击查看深度解读
                 共谋模式关闭时整组下线（不轮询、不渲染） */}
             {conspiratorMode && (
-              <SymbolHotspots videoId={aiKb} videoRef={videoRef} />
+              <SymbolHotspots
+                videoId={aiKb}
+                videoRef={videoRef}
+                onCta={(cta) => {
+                  // 迁移自旧 SceneHotspots 的三种行为
+                  if (!cta) return;
+                  if (cta.kind === 'lore' && cta.target_id) {
+                    if (isFullscreen) {
+                      setInlineLoreId(cta.target_id);
+                    } else {
+                      setRightTab('meme');
+                      setPendingExpandLoreId(cta.target_id);
+                    }
+                  } else if (cta.kind === 'riff' && cta.target_id) {
+                    setRightTab('meme');
+                    setPendingExpandRiffId(cta.target_id);
+                  } else if (cta.kind === 'callback') {
+                    const v = videoRef.current;
+                    if (!v) return;
+                    // 同集回看：直接 seek。跨集 demo 阶段也按本集处理（TODO: 切视频）
+                    if (cta.video_id && cta.video_id !== aiKb) {
+                      console.warn('[cta callback] cross-episode jump not wired:', cta);
+                    }
+                    v.currentTime = cta.timestamp || 0;
+                  }
+                }}
+              />
             )}
 
 
@@ -1483,41 +1537,7 @@ function TencentPlayer({
               }}
             />
 
-            {/* 共谋者 · 场景热点 —— 10 个时间锚点弹小卡，10s 退化为右上角 badge，
-                点"了解详情"全屏走画面内 InPlayerLoreCard / 非全屏走右栏 MemePanel */}
-            <SceneHotspots
-              videoId={aiKb}
-              videoRef={videoRef}
-              enabled={conspiratorMode}
-              onLoreClick={(loreId) => {
-                if (isFullscreen) {
-                  // 全屏：画面内右侧浮一张半透明 lore 卡
-                  setInlineLoreId(loreId);
-                } else {
-                  // 非全屏：切到外栏文化梗 tab + 触发设定百科展开
-                  setRightTab('meme');
-                  setPendingExpandLoreId(loreId);
-                }
-              }}
-              onRiffClick={(riffId) => {
-                setRightTab('meme');
-                setPendingExpandRiffId(riffId);
-              }}
-              onCallbackClick={(ref) => {
-                // 同集回看：直接 seek；跨集需要先切视频，本期 demo 单集就先按当前 episode 处理
-                const v = videoRef.current;
-                if (!v) return;
-                if (!ref.video_id || ref.video_id === aiKb) {
-                  v.currentTime = ref.time || 0;
-                } else {
-                  // TODO 跨集回看：需要先切到 ref.video_id，再 seek。demo 阶段先打个 console
-                  console.warn('[scene-hotspot callback] cross-episode jump not wired yet:', ref);
-                  v.currentTime = ref.time || 0;
-                }
-              }}
-            />
-
-            {/* 全屏模式下 SceneHotspots 触发的设定百科浮层 —— 半透明、画面内右侧 */}
+            {/* 全屏模式下 cta 触发的设定百科浮层 —— 半透明、画面内右侧 */}
             <InPlayerLoreCard
               videoId={aiKb}
               loreId={isFullscreen ? inlineLoreId : null}
@@ -1567,6 +1587,7 @@ function TencentPlayer({
               <CharacterPanel
                 selected={charSelected}
                 candidates={charCandidates}
+                sceneBeat={charSceneBeat}
                 messages={charMessages}
                 input={charInput}
                 setInput={setCharInput}
@@ -1859,7 +1880,7 @@ function AgentPanel({
    未选角色 → 渲染 chooser；选定后 → 渲染对话流 + 三个跟问选项。
    外观沿用 AgentPanel 的容器，避免在画面上出现风格断层。 */
 function CharacterPanel({
-  selected, candidates,
+  selected, candidates, sceneBeat,
   messages, input, setInput,
   sending, logRef,
   onPick, onSubmit, onClear, onExit, onBackToChooser,
@@ -1869,6 +1890,9 @@ function CharacterPanel({
   const reachedLimit = userTurns >= turnLimit;
   const lastAgent = [...messages].reverse().find(m => m.role === 'agent' && m.parsed);
   const suggestions = (lastAgent?.parsed?.suggestions || []).filter(Boolean);
+  const beatTs = sceneBeat?.start_time != null
+    ? `${Math.floor(sceneBeat.start_time / 60)}:${String(Math.floor(sceneBeat.start_time % 60)).padStart(2, '0')}`
+    : null;
 
   return (
     <div className="tx-agent-de tx-char-mode">
@@ -1904,12 +1928,20 @@ function CharacterPanel({
         )}
       </div>
 
+      {/* 实时节拍提示：让用户看见 AI 在跟着剧走（每 2s 更新） */}
+      {sceneBeat?.fact && (
+        <div className="tx-char-beat" title="AI 此刻看到的画面情境">
+          {beatTs && <span className="tx-char-beat-ts">{beatTs}</span>}
+          <span className="tx-char-beat-fact">{sceneBeat.fact}</span>
+        </div>
+      )}
+
       {/* 中区：未选 → chooser；已选 → narrative log */}
       {!selected ? (
         <div className="tx-char-chooser">
           {candidates.length === 0 ? (
             <div className="tx-agent-de-empty">
-              当前场景里暂时没有可进入内心的角色。换个时间点再试，或先回到<em>解析模式</em>。
+              当前画面里暂时没有可进入内心的角色。继续看下去，或回到<em>解析模式</em>。
             </div>
           ) : (
             <div className="tx-char-grid">
@@ -1917,10 +1949,14 @@ function CharacterPanel({
                 <button
                   key={c.character_id}
                   type="button"
-                  className="tx-char-card"
+                  className={`tx-char-card${c.in_frame ? ' is-in-frame' : ''}`}
                   onClick={() => onPick(c)}
+                  title={c.in_frame ? '此刻就在画面里' : '在最近这段戏里出现过'}
                 >
-                  <div className="tx-char-card-name">{c.display_name}</div>
+                  <div className="tx-char-card-name">
+                    {c.display_name}
+                    {c.in_frame && <span className="tx-char-card-pulse" aria-hidden="true">●</span>}
+                  </div>
                   {c.short_identity && (
                     <div className="tx-char-card-id">{c.short_identity}</div>
                   )}
