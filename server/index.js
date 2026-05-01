@@ -237,44 +237,8 @@ app.get('/api/lore', (req, res) => {
   res.json({ show: show || null, count: cards.length, groups });
 });
 
-// 场景热点 / Scene Hotspots —— 时间锚定的"该看哪张卡"索引。
-// 命中后前端弹小卡，3 秒不点淡出留小角标，引用 lore / riff / callback。
-let _hotspotsCache = null;
-let _hotspotsDefaultWindow = 8;
-function loadHotspots() {
-  if (_hotspotsCache) return _hotspotsCache;
-  const dir = path.join(__dirname, 'kb', 'scene_hotspots');
-  const all = [];
-  if (fs.existsSync(dir)) {
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.json')) continue;
-      try {
-        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-        if (typeof j.default_window_seconds === 'number') {
-          _hotspotsDefaultWindow = j.default_window_seconds;
-        }
-        for (const h of (j.hotspots || [])) all.push(h);
-      } catch (e) {
-        console.warn(`[hotspots] skip bad file ${f}:`, e.message);
-      }
-    }
-  }
-  _hotspotsCache = all;
-  return all;
-}
-
-app.get('/api/scene-hotspots', (req, res) => {
-  const videoId = req.query.videoId;
-  const all = loadHotspots();
-  const hotspots = (videoId ? all.filter(h => h.video_id === videoId) : all)
-    .sort((a, b) => (a.time || 0) - (b.time || 0));
-  res.json({
-    video_id: videoId || null,
-    count: hotspots.length,
-    default_window_seconds: _hotspotsDefaultWindow,
-    hotspots,
-  });
-});
+// （旧 /api/scene-hotspots 已下线 —— 那 10 条已迁移到 server/kb/symbols/<show>.json
+//  里，由 SymbolHotspots + 新 CTA 系统统一渲染。迁移脚本和原 JSON 都删了。）
 
 // 叙事 X 光 / Storyline —— 静态 KB 直出。每个 video_id 一个 JSON 文件。
 let _storylineCache = null;
