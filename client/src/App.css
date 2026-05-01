@@ -1765,7 +1765,6 @@ body {
 .tx-controls-progress-tick-crit::before {
   width: 8px; height: 8px;
   background: #e8954d;
-  box-shadow: 0 0 6px rgba(232, 149, 77, 0.7);
 }
 .tx-controls-progress-tick:hover::before {
   width: 10px; height: 10px;
