@@ -40,7 +40,7 @@
       "node_id": "n_kill_wife",
       "title": "开场杀妻",
       "start_time": 165,
-      "end_time": 340,
+      "end_time": 373,
       "track": "main",
       "narrative_function": "铺垫",
       "summary": "开场即定调：这集没人是干净的。",
@@ -55,8 +55,8 @@
     {
       "node_id": "n_father_farewell",
       "title": "父女诀别",
-      "start_time": 340,
-      "end_time": 735,
+      "start_time": 373,
+      "end_time": 1072,
       "track": "main",
       "narrative_function": "铺垫",
       "summary": "亚莉森的立场从这一刻开始动摇。",
@@ -66,13 +66,13 @@
         "n_driftmark_pact"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-084.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-089.jpg"
     },
     {
       "node_id": "n_driftmark_pact",
       "title": "潮汐堡谈判",
-      "start_time": 735,
-      "end_time": 1230,
+      "start_time": 1072,
+      "end_time": 1417,
       "track": "main",
       "narrative_function": "推进",
       "summary": "两个棋子试图在棋盘上找到自己的空间。",
@@ -82,13 +82,13 @@
         "n_knight_elope"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-148.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-224.jpg"
     },
     {
       "node_id": "n_knight_elope",
       "title": "骑士求私奔",
-      "start_time": 1230,
-      "end_time": 1860,
+      "start_time": 1417,
+      "end_time": 2552,
       "track": "main",
       "narrative_function": "关键转折",
       "summary": "骑士的浪漫幻想撞上公主的政治现实，裂痕不可逆转。",
@@ -98,13 +98,13 @@
         "n_green_dress"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-242.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-261.jpg"
     },
     {
       "node_id": "n_green_dress",
       "title": "绿裙登场",
-      "start_time": 1860,
-      "end_time": 2325,
+      "start_time": 2552,
+      "end_time": 3307,
       "track": "main",
       "narrative_function": "推进",
       "summary": "无声宣战，阵营从此划定。",
@@ -114,13 +114,13 @@
         "n_wedding_massacre"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-325.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-454.jpg"
     },
     {
       "node_id": "n_wedding_massacre",
       "title": "婚宴血案",
-      "start_time": 2325,
-      "end_time": 2660,
+      "start_time": 3307,
+      "end_time": 3367,
       "track": "main",
       "narrative_function": "高潮",
       "summary": "婚宴变屠场，莱诺崩溃。",
@@ -130,12 +130,12 @@
         "n_blood_wedding"
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-392.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-661.jpg"
     },
     {
       "node_id": "n_blood_wedding",
       "title": "血色婚礼",
-      "start_time": 2660,
+      "start_time": 3367,
       "end_time": 3587.96,
       "track": "main",
       "narrative_function": "收束",
@@ -146,13 +146,13 @@
         null
       ],
       "is_hidden": false,
-      "keyframe": "frames/house_of_dragon_05/scene-480.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-680.jpg"
     },
     {
       "node_id": "n_alicent_interrogate",
       "title": "亚莉森审问骑士",
-      "start_time": 1570,
-      "end_time": 1660,
+      "start_time": 1918,
+      "end_time": 2008,
       "track": "side",
       "narrative_function": "推进",
       "summary": "亚莉森获得了关键把柄。",
@@ -162,13 +162,13 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-283.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-331.jpg"
     },
     {
       "node_id": "n_daemon_disrupt",
       "title": "戴蒙搅局",
-      "start_time": 2120,
-      "end_time": 2210,
+      "start_time": 3182,
+      "end_time": 3272,
       "track": "side",
       "narrative_function": "推进",
       "summary": "韦赛里斯目睹一切，无力阻止。",
@@ -178,13 +178,13 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-353.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-611.jpg"
     },
     {
       "node_id": "n_godswood_suicide",
       "title": "神木林自杀",
-      "start_time": 2810,
-      "end_time": 2900,
+      "start_time": 3463,
+      "end_time": 3553,
       "track": "side",
       "narrative_function": "收束",
       "summary": "拥王者的起点——从此骑士不再效忠公主，而是效忠王后。",
@@ -194,7 +194,7 @@
         null
       ],
       "is_hidden": true,
-      "keyframe": "frames/house_of_dragon_05/scene-522.jpg"
+      "keyframe": "frames/house_of_dragon_05/scene-699.jpg"
     }
   ]
 }
