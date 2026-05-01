@@ -442,7 +442,9 @@ function getShotAnalysis(kb, t) {
 }
 
 function getPlotContext(kb, t) {
-  return scenesUpTo(kb, t).slice(-5).map(s => ({
+  // 12 段≈30-90s 的剧情纵深，足够 LLM 看出"五分钟前刚发生了 X，所以这一刻 Y"。
+  // 之前是 5，对 70 分钟 recap 太短，AI 解读容易飘成"百科介绍"。
+  return scenesUpTo(kb, t).slice(-12).map(s => ({
     scene_id: s.scene_id,
     t: s.start_time,
     fact: s.plot?.fact,
@@ -1772,8 +1774,8 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
       const previousFromKb = kb && Array.isArray(kb.scenes)
         ? kb.scenes
             .filter(s => s.end_time <= prepared.cursorTime && s.plot?.fact)
-            .slice(-6)
-            .map(s => ({ t: s.start_time, scene_id: s.scene_id, summary: s.plot.fact }))
+            .slice(-12)   // 6 → 12：30-90s 的剧情纵深，避免回答漂成"百科介绍"
+            .map(s => ({ t: s.start_time, scene_id: s.scene_id, summary: s.plot.fact, reading: s.plot?.reading || null }))
         : [];
       const conversation = exchanges.map(e => ({
         role: e.role === 'user' ? 'user' : 'agent',
@@ -1816,11 +1818,83 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
           }).join('、')
         : null;
 
+      // 当前 scene 的"政治切片"：plot/shot/tags/foreshadow + 在场角色之间的
+      // cursor-filtered 关系（夫妻/父子/政敌/暧昧 等）。让 LLM 回答"这俩人
+      // 什么关系"或"她为什么生气"时有具体的人事可以引用，不再是百科。
+      const currentSceneSlice = scene ? {
+        scene_id: scene.scene_id,
+        time_range: [scene.start_time, scene.end_time],
+        plot_fact: scene.plot?.fact || null,
+        plot_reading: scene.plot?.reading || null,
+        narrative: scene.narrative || null,
+        shot_intent: scene.shot?.intent || null,
+        shot_emotion: scene.shot?.emotion || null,
+        shot_framing: scene.shot?.framing || null,
+        tags: scene.tags || [],
+        foreshadow_setup_hint: scene.foreshadow?.setup_hint || null,
+        characters_on_screen: [...sceneCharIds].map(cid => {
+          const e = (db?.characters || []).find(c => c.character_id === cid);
+          return {
+            character_id: cid,
+            display_name: e?.display_name_zh || cid,
+            short_identity: e?.short_identity_zh || null,
+            house: e?.house || null,
+          };
+        }),
+      } : null;
+
+      // 在场角色两两之间的关系（cursor-filtered，去重）
+      const onScreenList = [...sceneCharIds];
+      const onScreenRelations = [];
+      if (db && onScreenList.length >= 2) {
+        const seen = new Set();
+        for (const aId of onScreenList) {
+          const aRels = charactersLib.lookupRelationships(db, aId, cursor);
+          for (const r of aRels) {
+            if (!sceneCharIds.has(r.with)) continue;
+            const pairKey = [aId, r.with].sort().join('|');
+            if (seen.has(pairKey)) continue;
+            seen.add(pairKey);
+            const aName = ((db.characters || []).find(c => c.character_id === aId))?.display_name_zh || aId;
+            const bName = ((db.characters || []).find(c => c.character_id === r.with))?.display_name_zh || r.with;
+            onScreenRelations.push({
+              between: [aName, bName],
+              relation: r.relation || r.relation_kind || '关系',
+              kind: r.relation_kind || null,
+              summary: r.summary || null,
+            });
+          }
+        }
+      }
+
+      // 当前 cursor 在哪个 arc / 集 —— 提供叙事坐标
+      let episodeArc = null;
+      if (kb?.show_id && cursor) {
+        try {
+          const seasonMeta = seasonLib.loadSeason(kb.show_id, kb.season || 1);
+          const epNum = parseInt(String(cursor).match(/^S\d{2}E(\d{2})$/)?.[1] || '0', 10);
+          if (seasonMeta?.arcs && epNum) {
+            const arc = seasonMeta.arcs.find(a => epNum >= a.ep_range[0] && epNum <= a.ep_range[1]);
+            if (arc) {
+              episodeArc = {
+                episode: cursor,
+                arc_label: arc.label_zh,
+                arc_subtitle: arc.subtitle_zh,
+                arc_id: arc.id,
+              };
+            }
+          }
+        } catch { /* season meta missing — non-fatal */ }
+      }
+
       const agentInput = {
         current_time_s: Math.floor(prepared.cursorTime),
         user_mode: prepared.mode || 'casual',
         user_behavior: prepared.behavior || 'normal',
         clip_window: clipDescription,
+        episode_arc: episodeArc,
+        current_scene: currentSceneSlice,
+        on_screen_relations: onScreenRelations,
         previous_context: {
           from_prior_agent_observations: previousFromAgent,
           from_kb_scenes_before_now: previousFromKb,
