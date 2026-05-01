@@ -806,11 +806,12 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setAiInput('');
     setAiSending(true);
 
-    // Buffer deltas and flush in phrase-level chunks — smoother than raw per-token.
-    // Flush on Chinese/ASCII sentence/clause punctuation, or when the buffer grows past MAX_BUF.
-    const PUNCT = /[。！？，、；：\n.!?,]/;
-    const MAX_BUF = 24;
-    let pending = '';
+    // Typewriter: 不再等标点凑齐才刷一整段。把进来的 delta 推进队列，
+    // 每 ~22ms 吐 1 个字符到 UI；队列堆积时按比例加速，避免后端突然
+    // 喷一大段时把用户卡在那等"再等一段"。stream 收尾时一次性 flush 剩余。
+    const TYPE_INTERVAL_MS = 22;       // ~45 chars/sec at base speed
+    let queue = '';
+    let typing = false;
     const flushChunk = (chunk) => setAiMessages(prev => {
       const copy = prev.slice();
       const last = copy[copy.length - 1];
@@ -819,21 +820,24 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       }
       return copy;
     });
-    const appendDelta = (delta) => {
-      pending += delta;
-      let lastPunct = -1;
-      for (let i = pending.length - 1; i >= 0; i--) {
-        if (PUNCT.test(pending[i])) { lastPunct = i; break; }
-      }
-      if (lastPunct >= 0) {
-        flushChunk(pending.slice(0, lastPunct + 1));
-        pending = pending.slice(lastPunct + 1);
-      } else if (pending.length > MAX_BUF) {
-        flushChunk(pending);
-        pending = '';
-      }
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      // 队列越长每帧吐越多，避免长回复尾巴拖太久
+      const n = Math.min(queue.length, Math.max(1, Math.ceil(queue.length / 30)));
+      flushChunk(queue.slice(0, n));
+      queue = queue.slice(n);
+      typing = true;
+      setTimeout(tick, TYPE_INTERVAL_MS);
     };
-    const flushPending = () => { if (pending) { flushChunk(pending); pending = ''; } };
+    const appendDelta = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const flushPending = () => {
+      if (queue.length) { flushChunk(queue); queue = ''; }
+      typing = false;
+    };
 
     const finalizeMsg = (patch) => {
       flushPending();
@@ -957,10 +961,11 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setRoleplayChoices([]);
     setRoleplayChoicesLoading(false);
 
-    let pending = '';
     let finalAgentText = '';                  // 累计最终台词，用于 voices 调用
-    const PUNCT = /[。！？，、；：\n.!?,]/;
-    const MAX_BUF = 16;
+    // Typewriter pacing — see notes in submitAiQuestion above.
+    const TYPE_INTERVAL_MS = 22;
+    let queue = '';
+    let typing = false;
     const flushChunk = (chunk) => setRoleplayMessages(prev => {
       const copy = prev.slice();
       const last = copy[copy.length - 1];
@@ -971,21 +976,23 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       }
       return copy;
     });
-    const appendDelta = (delta) => {
-      pending += delta;
-      let lastPunct = -1;
-      for (let i = pending.length - 1; i >= 0; i--) {
-        if (PUNCT.test(pending[i])) { lastPunct = i; break; }
-      }
-      if (lastPunct >= 0) {
-        flushChunk(pending.slice(0, lastPunct + 1));
-        pending = pending.slice(lastPunct + 1);
-      } else if (pending.length > MAX_BUF) {
-        flushChunk(pending);
-        pending = '';
-      }
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      const n = Math.min(queue.length, Math.max(1, Math.ceil(queue.length / 30)));
+      flushChunk(queue.slice(0, n));
+      queue = queue.slice(n);
+      typing = true;
+      setTimeout(tick, TYPE_INTERVAL_MS);
     };
-    const flushPending = () => { if (pending) { flushChunk(pending); pending = ''; } };
+    const appendDelta = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const flushPending = () => {
+      if (queue.length) { flushChunk(queue); queue = ''; }
+      typing = false;
+    };
     const finalizeMsg = (patch) => {
       flushPending();
       setRoleplayMessages(prev => {
