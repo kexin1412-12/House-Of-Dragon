@@ -1,0 +1,28 @@
+# Fly.io app config for the HotD face-recognition service.
+# After `fly launch --no-deploy --copy-config` Fly will rewrite `app =` with
+# a globally-unique slug; that's expected.
+
+app = "hotd-face-service"
+primary_region = "sjc"  # close to Vercel's default us-west-1
+
+[build]
+  # Run from repo root: `fly deploy --config face-service/fly.toml`
+  # Build context = cwd (repo root), so COPY paths in the Dockerfile
+  # resolve to server/scripts/face_service.py + face_gallery.json correctly.
+  dockerfile = "face-service/Dockerfile"
+  ignorefile = "face-service/.flyignore"
+
+[http_service]
+  internal_port = 5001
+  force_https = true
+  # Keep one machine warm so /recognize stays under the Node-side 3s timeout.
+  # Flip to "stop" + min_machines_running = 0 if you want scale-to-zero
+  # (saves ~$5/mo) and bump the timeout in agent.js to ~8s.
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 2048   # TF + ArcFace + RetinaFace need ~1.3 GB at peak
