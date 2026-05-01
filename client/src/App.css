@@ -145,6 +145,8 @@ body {
 }
 .nav-link:hover { color: var(--text); }
 .nav-link.is-active { color: var(--accent); }
+.nav-link.is-disabled { cursor: default; opacity: 0.55; }
+.nav-link.is-disabled:hover { color: var(--text2); }
 
 .searchbar { position: relative; }
 .searchbar-kbd {
@@ -714,16 +716,6 @@ body {
 .tx-nav-section { display: flex; align-items: center; }
 .tx-nav-left { gap: 24px; flex-shrink: 0; }
 .tx-nav-right { gap: 4px; margin-left: auto; flex-shrink: 0; }
-
-.tx-logo { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-.tx-logo-icon {
-  width: 28px; height: 28px; border-radius: 6px;
-  background: linear-gradient(135deg, #0078ff, #00c2ff);
-  display: flex; align-items: center; justify-content: center;
-  color: #fff;
-}
-.tx-logo-icon svg { width: 16px; height: 16px; }
-.tx-logo-text { font-size: 17px; font-weight: 700; letter-spacing: 0.5px; }
 
 .tx-nav-link {
   font-size: 15px; color: #d9d9d9; cursor: pointer;

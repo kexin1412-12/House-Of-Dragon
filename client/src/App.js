@@ -24,7 +24,13 @@ function resolveVideoSrc(url) {
   return `${VIDEO_CDN}${url}`;
 }
 
-const HOME_NAV = ['首页', '发现', '我的列表', '社区'];
+const HOME_NAV = [
+  { label: '首页',     view: 'home' },
+  { label: '发现',     view: null },
+  { label: '我的收藏', view: 'favorites' },
+  { label: '我的列表', view: null },
+  { label: '社区',     view: null },
+];
 
 const HERO_FEATURES = [
   { id: 'hotspots', label: '剧情热点' },
@@ -154,11 +160,24 @@ export default function App() {
           </div>
         </div>
         <div className="nav-center">
-          {HOME_NAV.map((label, i) => (
-            <span key={label} className={`nav-link ${i === 0 ? 'is-active' : ''}`}>
-              {label}
-            </span>
-          ))}
+          {HOME_NAV.map(item => {
+            const isActive =
+              (item.view === 'favorites' && showFavorites) ||
+              (item.view === 'home' && !showFavorites);
+            const clickable = item.view !== null;
+            return (
+              <span
+                key={item.label}
+                className={`nav-link${isActive ? ' is-active' : ''}${clickable ? '' : ' is-disabled'}`}
+                onClick={() => {
+                  if (item.view === 'favorites') setShowFavorites(true);
+                  if (item.view === 'home') setShowFavorites(false);
+                }}
+              >
+                {item.label}
+              </span>
+            );
+          })}
         </div>
         <div className="nav-right">
           <button
@@ -1066,7 +1085,7 @@ function TencentPlayer({
       {/* Nav */}
       <nav className="tx-nav">
         <div className="tx-nav-section tx-nav-left">
-          <div className="tx-logo logo" onClick={onClose}>
+          <div className="logo" onClick={onClose}>
             <span className="logo-play">▶</span>
             <span className="logo-text">
               共谋者 <span className="logo-sep">|</span> Co-Conspirator
