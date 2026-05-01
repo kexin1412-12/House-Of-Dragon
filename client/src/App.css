@@ -1571,16 +1571,22 @@ body {
   position: absolute; top: 14px; right: 152px;
   display: flex; align-items: center; gap: 6px;
   padding: 6px 14px;
-  font-size: 13px; color: #fff;
-  background: rgba(232, 149, 77, 0.18);
+  font-size: 13px; color: rgba(255, 255, 255, 0.85);
+  background: rgba(232, 149, 77, 0.08);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(232, 149, 77, 0.45);
+  border: 1px solid rgba(232, 149, 77, 0.22);
   border-radius: 20px;
   cursor: pointer;
   z-index: 3;
-  transition: background 0.15s;
+  opacity: 0.75;
+  transition: background 0.15s, opacity 0.15s, border-color 0.15s, color 0.15s;
 }
-.tx-player-recognize-btn:hover:not(:disabled) { background: rgba(232, 149, 77, 0.32); }
+.tx-player-recognize-btn:hover:not(:disabled) {
+  background: rgba(232, 149, 77, 0.22);
+  border-color: rgba(232, 149, 77, 0.5);
+  color: #fff;
+  opacity: 1;
+}
 .tx-player-recognize-btn:disabled { opacity: 0.55; cursor: progress; }
 .tx-player-recognize-btn svg { width: 16px; height: 16px; }
 
