@@ -85,6 +85,73 @@
       }
     },
     {
+      "riff_id": "marry_for_love_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 1506.76,
+        "end_time": 1512.76,
+        "subtitle_en": "A marriage for love, not for the crown.",
+        "subtitle_zh": "一场为爱，不为王座的婚姻。",
+        "highlight": "for love",
+        "keyframe": "frames/house_of_dragon_05/scene-274.jpg"
+      },
+      "tags": ["经典台词", "角色弧"],
+      "tier2_punch": "Criston Cole 把整段感情压成一句话——为爱可以放弃王冠。这是他向 Rhaenyra 提出私奔时的关键句，也是他这个角色一切后续选择的原点。",
+      "tier3": {
+        "why_meme": "这是 Criston 整条人物线的种子。他把骑士身份、白袍誓约、未来全压上来要换一个回应。Rhaenyra 紧接着的回答是\"我就是王冠\"——直接把这条路堵死。两句话连起来就是绿党黑党分裂的私人起点。",
+        "background": [
+          "前情：Criston 是 Rhaenyra 的私下恋人，但作为国王禁卫军成员发了禁欲誓。"
+        ],
+        "why_it_matters_now": "他被这一刻的拒绝刻进骨子里，从这一秒开始从骑士变成怨夫——后续整剧他作为绿党最锋利的剑，根都扎在这句话被否定的那一刻。"
+      }
+    },
+    {
+      "riff_id": "vale_men_answer_for_crimes_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 2834.0,
+        "end_time": 2845.0,
+        "subtitle_en": "In the Vale, men are made to answer for their crimes. Even Targaryens.",
+        "subtitle_zh": "在艾林谷，男人要为自己的罪行负责。坦格利安也不例外。",
+        "highlight": "the Vale",
+        "keyframe": "frames/house_of_dragon_05/scene-530.jpg"
+      },
+      "tags": ["经典台词", "地域制度对照"],
+      "tier2_punch": "Ser Gerold Royce 当面指控 Daemon 杀妻。一句话点破维斯特洛核心矛盾：地方法理 vs 王室特权——艾林谷是少数敢公开把这话甩给坦格利安的家族。",
+      "tier3": {
+        "why_meme": "这种当众挑战王室成员在维斯特洛极少见。罗伊斯家族（青铜符文盔甲那一支）一直是 First Men 古老法理的代表，与坦格利安的\"凌驾法律\"传统天然对立。Royce 这一句把私人复仇说成了制度对抗。",
+        "background": [
+          "Daemon 的妻子 Rhea Royce 不久前\"坠马身亡\"——观众已知是 Daemon 亲手杀的。",
+          "Daemon 的回应是把对方羞辱为\"old bronze cunts\"，把法理之争降格成人身攻击——典型坦格利安做派。"
+        ],
+        "why_it_matters_now": "这一刻是 Daemon 形象的关键反衬：他可以杀人，但维斯特洛仍有人敢当面叫他出来对账。也提醒观众，王室再大，地方法理仍有牙齿。"
+      }
+    },
+    {
+      "riff_id": "kept_safe_so_are_we_all_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 3115.0,
+        "end_time": 3126.0,
+        "subtitle_en": "...because if those are kept safe, then so are we all.",
+        "subtitle_zh": "……只要那些秘密守得住，我们彼此就都安全。",
+        "highlight": "safe",
+        "keyframe": "frames/house_of_dragon_05/scene-591.jpg"
+      },
+      "tags": ["经典台词", "戏剧反讽"],
+      "tier2_punch": "Joffrey Lonmouth 跟 Criston Cole 提议互相守密——你保护雷妮拉的，我保护 Laenor 的。**几分钟后他就被 Criston 当众打死**。\"safe\"这一刻的反讽密度全集最高。",
+      "tier3": {
+        "why_meme": "Joffrey 把自己的安危亲手递给了那个最有动机也最有能力杀他的人。剧本在这一句之后立刻让观众见证那个人选择了什么——这种「刚说完保护就被杀掉」的结构在文学里叫 ritual irony。",
+        "background": [
+          "Joffrey 是 Laenor 的男情人。婚礼宴会上他想跟同样有公主秘密的 Criston 结成「互守密」的小同盟。"
+        ],
+        "why_it_matters_now": "他的死直接把 Rhaenyra 与 Laenor 的婚姻推进了一个伪装阶段，也彻底激活了 Criston 内心被 Rhaenyra 拒绝后的破坏欲——这场暴打不是即兴，是他选择把「骑士」身份扔在地上踩。"
+      }
+    },
+    {
       "riff_id": "good_song_in_a_hundred_years_e05",
       "video_id": "house_of_dragon_05",
       "episode": "S01E05",
