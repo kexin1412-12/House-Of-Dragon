@@ -1938,7 +1938,7 @@ ${JSON.stringify(prepared.context, null, 2)}
     const displayName = dbCard?.display_name_zh || dbCard?.canonical_name || characterId;
     const subtitleLine = dbCard?.short_identity_zh || profile?.subtitle || '';
 
-    if (!ai.isAvailable('chat')) {
+    if (!ai.isAvailable('perspective') && !ai.isAvailable('chat')) {
       return res.status(503).json({ error: 'no llm available' });
     }
 
@@ -2070,7 +2070,9 @@ label 必须从安全表（看到/判断/风险/立场/关系/代价）里挑 3 
 
     try {
       const result = await ai.chat({
-        task: 'chat',
+        // Routes to gemini-2.5-pro by default (see lib/ai/router.js).
+        // Falls back to chat task / openai if gemini key is missing.
+        task: ai.isAvailable('perspective') ? 'perspective' : 'chat',
         system,
         messages: [{ role: 'user', content: user }],
         maxTokens: 500,

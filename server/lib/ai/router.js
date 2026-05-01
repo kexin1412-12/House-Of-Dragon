@@ -76,6 +76,18 @@ const TASK_CONFIG = {
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
   },
 
+  // 平行视角 HUD（perspective）·点角色头像后弹出的 3 张极短卡片
+  // 走 Gemini 2.5 Pro：上下文里有完整 scene 切片 + cursor-过滤关系 + 角色 profile，
+  // 需要更强的 reasoning 才能挑出"具体的人和事"而不是套模板。openai gpt-4o 兜底。
+  // 注意：Gemini 2.5-* 默认 thinking_budget=0；Pro 需要 ≥128 才有效，部署时
+  // 设 GEMINI_THINKING_BUDGET=512（或更高）才能拿到 Pro 该有的推理质感。
+  perspective: {
+    provider: process.env.AI_PERSPECTIVE_PROVIDER || 'gemini',
+    model: process.env.AI_PERSPECTIVE_MODEL || 'gemini-2.5-pro',
+    fallback: 'openai',
+    fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
+  },
+
   // 字幕/语音转文本
   transcription: {
     provider: process.env.AI_TRANSCRIPTION_PROVIDER || 'openai',
