@@ -2623,4 +2623,41 @@ body {
                   'STSong', 'SimSun', '宋体', Georgia, serif;
 }
 
+/* ─── 右栏 tab 切换 ─────────────────────────────────── */
+.tx-right-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
 
+.tx-right-tab {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 10px 14px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  transition: color 120ms ease;
+}
+
+.tx-right-tab:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.tx-right-tab.is-active {
+  color: #f3c97a;
+}
+
+.tx-right-tab.is-active::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: -1px;
+  height: 2px;
+  background: #f3c97a;
+}

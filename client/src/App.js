@@ -152,6 +152,10 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
   const [aiChatOpen, setAiChatOpen] = useState(false);
+  // 右栏 tab：'agent'（AI 助手）| 'meme'（文化梗）
+  const [rightTab, setRightTab] = useState('agent');
+  // 当 MemeOverlay 触发"展开详情"时，设置这个 id；MemePanel 监听后自动展开 + 滚动
+  const [pendingExpandRiffId, setPendingExpandRiffId] = useState(null);
   // 鼠标长时间不动 → 隐藏底部进度条 + 顶部浮动按钮 + 鼠标本体；
   // 任意鼠标移动 / 进入播放区都立即恢复，鼠标离开播放区也立即隐藏。
   const [playerIdle, setPlayerIdle] = useState(false);
@@ -962,18 +966,37 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             </span>
           </div>
 
-          <AgentPanel
-            behavior={aiBehavior}
-            messages={aiMessages}
-            input={aiInput}
-            setInput={setAiInput}
-            sending={aiSending}
-            onSubmit={submitAiQuestion}
-            logRef={aiLogRef}
-            depth={aiDepth}
-            setDepth={setAiDepth}
-            onClear={clearAiMessages}
-          />
+          {/* 右栏 tab 切换 */}
+          <div className="tx-right-tabs">
+            <button
+              className={`tx-right-tab${rightTab === 'agent' ? ' is-active' : ''}`}
+              onClick={() => setRightTab('agent')}
+            >AI 助手</button>
+            <button
+              className={`tx-right-tab${rightTab === 'meme' ? ' is-active' : ''}`}
+              onClick={() => setRightTab('meme')}
+            >文化梗</button>
+          </div>
+
+          {rightTab === 'agent' && (
+            <AgentPanel
+              behavior={aiBehavior}
+              messages={aiMessages}
+              input={aiInput}
+              setInput={setAiInput}
+              sending={aiSending}
+              onSubmit={submitAiQuestion}
+              logRef={aiLogRef}
+              depth={aiDepth}
+              setDepth={setAiDepth}
+              onClear={clearAiMessages}
+            />
+          )}
+          {rightTab === 'meme' && (
+            <div style={{ padding: 16, color: '#888' }}>
+              文化梗面板待接入（Task 4-6）
+            </div>
+          )}
         </aside>
       </main>
 
