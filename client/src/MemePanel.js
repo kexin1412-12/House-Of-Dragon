@@ -74,7 +74,7 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                   <div className="mp-item-thumb-wrap">
                     <img
                       className="mp-item-thumb"
-                      src={`${API}/kb/${r.anchor.keyframe}`}
+                      src={`/kb/${r.anchor.keyframe}`}
                       alt=""
                     />
                     {isFav(r.riff_id) && (
