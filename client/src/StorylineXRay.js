@@ -62,6 +62,73 @@ function writeInlineOpen(v) {
   try { window.localStorage.setItem(INLINE_OPEN_KEY, v ? '1' : '0'); } catch (_) {}
 }
 
+function fmtMMSS(s) {
+  const t = Math.max(0, Math.floor(s || 0));
+  return `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+}
+
+// 折叠态的节点卡条：横排主线节点缩略卡。点卡片就跳到那个时刻。
+function NodeCardStrip({ storyline, currentTime, onJumpTo, onExpand }) {
+  const ids = storyline?.main_track_node_ids || [];
+  const byId = useMemo(() => {
+    const m = {};
+    for (const n of (storyline?.nodes || [])) m[n.node_id] = n;
+    return m;
+  }, [storyline]);
+
+  if (ids.length === 0) return null;
+
+  return (
+    <div className="sx-strip">
+      <div className="sx-strip-rail" aria-hidden="true" />
+      <div className="sx-strip-cards">
+        {ids.map((id, i) => {
+          const n = byId[id];
+          if (!n) return null;
+          const watched = currentTime >= (n.end_time || 0);
+          const current = currentTime >= (n.start_time || 0) && currentTime < (n.end_time || 0);
+          const cls = [
+            'sx-strip-card',
+            watched ? 'is-watched' : '',
+            current ? 'is-current' : '',
+          ].filter(Boolean).join(' ');
+          const num = String(i + 1).padStart(2, '0');
+          return (
+            <button
+              key={id}
+              className={cls}
+              onClick={() => {
+                onJumpTo?.(Math.max(0, (n.start_time || 0) - 1));
+              }}
+              onDoubleClick={() => onExpand?.()}
+              title={`${n.title} · ${fmtMMSS(n.start_time)}（双击展开整图）`}
+            >
+              <span className="sx-strip-card-num">{num}</span>
+              {n.keyframe ? (
+                <img
+                  className="sx-strip-card-thumb"
+                  src={`${API}/kb/${n.keyframe}`}
+                  alt=""
+                  loading="lazy"
+                />
+              ) : (
+                <span className="sx-strip-card-thumb is-placeholder" />
+              )}
+              <span className="sx-strip-card-body">
+                <span className="sx-strip-card-title-row">
+                  <span className="sx-strip-card-title">{n.title}</span>
+                  <span className="sx-strip-card-time">{fmtMMSS(n.start_time)}</span>
+                </span>
+                <span className="sx-strip-card-summary">{n.summary || ''}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function StorylineXRay({ videoId, videoRef, inline = false }) {
   const [open, setOpen] = useState(false);
   const [inlineOpen, setInlineOpen] = useState(() => readInlineOpen());
@@ -74,6 +141,15 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
   const toggleInline = useCallback(() => {
     setInlineOpen(v => { writeInlineOpen(!v); return !v; });
   }, []);
+
+  // tab 点击：切 tab；如果 inline 折叠态，顺便把面板展开（参考截图行为）。
+  const handleTabClick = useCallback((tabId) => {
+    setActiveTab(tabId);
+    if (inline && !inlineOpen) {
+      writeInlineOpen(true);
+      setInlineOpen(true);
+    }
+  }, [inline, inlineOpen]);
 
   // 完成度：已观看主线节点数 / 主线总数
   const completion = useMemo(() => {
@@ -126,11 +202,10 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
           <span className="sx-topbar-title">叙事 X 光</span>
           <span className="sx-topbar-info" title="本集关键叙事节点 + 人物关系全景">ⓘ</span>
         </button>
-        {!inlineCollapsed && (
         <nav className="sx-topbar-tabs">
           <button
             className={`sx-tab${activeTab === 'events' ? ' is-active' : ''}`}
-            onClick={() => setActiveTab('events')}
+            onClick={() => handleTabClick('events')}
           >
             <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="3" y1="12" x2="21" y2="12" />
@@ -146,7 +221,7 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
           </button>
           <button
             className={`sx-tab${activeTab === 'graph' ? ' is-active' : ''}`}
-            onClick={() => setActiveTab('graph')}
+            onClick={() => handleTabClick('graph')}
           >
             <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="9" cy="8" r="3.2" />
@@ -158,7 +233,7 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
           </button>
           <button
             className={`sx-tab${activeTab === 'symbols' ? ' is-active' : ''}`}
-            onClick={() => setActiveTab('symbols')}
+            onClick={() => handleTabClick('symbols')}
           >
             <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="6" />
@@ -168,17 +243,12 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
             <span>关键线索</span>
           </button>
         </nav>
-        )}
         <div className="sx-topbar-right">
-          {!inlineCollapsed && (
-            <>
-              <span className="sx-completion-label">本集完成度</span>
-              <span className="sx-completion-pct">{completion.pct}%</span>
-              <span className="sx-completion-bar">
-                <span className="sx-completion-bar-fill" style={{ width: `${completion.pct}%` }} />
-              </span>
-            </>
-          )}
+          <span className="sx-completion-label">本集完成度</span>
+          <span className="sx-completion-pct">{completion.pct}%</span>
+          <span className="sx-completion-bar">
+            <span className="sx-completion-bar-fill" style={{ width: `${completion.pct}%` }} />
+          </span>
           {inline ? (
             <button
               className="sx-topbar-toggle"
@@ -186,14 +256,23 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
               title={inlineOpen ? '收起面板' : '展开面板'}
               aria-expanded={inlineOpen}
             >
-              <span className={`sx-topbar-toggle-caret${inlineOpen ? ' is-open' : ''}`}>▾</span>
-              <span className="sx-topbar-toggle-label">{inlineOpen ? '收起' : '展开'}</span>
+              <span className={`sx-topbar-toggle-caret${inlineOpen ? ' is-open' : ''}`}>⌃</span>
+              <span className="sx-topbar-toggle-label">{inlineOpen ? '下滑收起' : '上滑展开'}</span>
             </button>
           ) : (
             <button className="sx-topbar-close" onClick={() => setOpen(false)} title="关闭 (Esc)">×</button>
           )}
         </div>
       </header>
+
+      {inlineCollapsed && (
+        <NodeCardStrip
+          storyline={storyline}
+          currentTime={currentTime}
+          onJumpTo={onJumpTo}
+          onExpand={() => { writeInlineOpen(true); setInlineOpen(true); }}
+        />
+      )}
 
       {!inlineCollapsed && (
       <div className="sx-body">
