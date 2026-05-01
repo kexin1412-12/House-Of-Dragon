@@ -17,12 +17,12 @@ const CATEGORY_LABEL = {
   color_code: '色码',
   omission: '缺席',
   editing: '剪辑',
-  micro_signal: '微信号',
+  micro_signal: '暗示',
   lore: '文化',
 };
 
 const ALL_TAB = '全部';
-const TAB_ORDER = [ALL_TAB, '道具', '剪辑', '微信号', '色码', '缺席', '文化'];
+const TAB_ORDER = [ALL_TAB, '道具', '剪辑', '暗示', '色码', '缺席', '文化'];
 
 const fmt = (s) => {
   const t = Math.max(0, Math.floor(s || 0));
