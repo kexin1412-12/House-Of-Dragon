@@ -20,6 +20,51 @@ function deriveShowFromVideoId(videoId) {
   return null;
 }
 
+// 设定百科分类图标——内联 SVG，跟整体金边深底审美一致；不再用 emoji。
+// （JSON 里仍有 category_icon 字段，但渲染层忽略它）
+const LORE_CATEGORY_ICON = {
+  // 地点与建筑：城堡轮廓
+  place: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 20 L3 11 L6 11 L6 8 L9 8 L9 11 L12 11 L12 6 L15 6 L15 11 L18 11 L18 8 L21 8 L21 20 Z" />
+      <line x1="3" y1="20" x2="21" y2="20" />
+      <line x1="11" y1="20" x2="11" y2="15" />
+      <line x1="13" y1="20" x2="13" y2="15" />
+    </svg>
+  ),
+  // 制度与传统：王冠
+  institution: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 17 L4 8 L9 12 L12 6 L15 12 L20 8 L21 17 Z" />
+      <line x1="3" y1="20" x2="21" y2="20" />
+      <circle cx="4" cy="8" r="0.9" fill="currentColor" />
+      <circle cx="20" cy="8" r="0.9" fill="currentColor" />
+      <circle cx="12" cy="6" r="0.9" fill="currentColor" />
+    </svg>
+  ),
+  // 龙与龙骑：飞翼龙剪影
+  dragon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 13 C 5 10 8 9 11 11 L 13 11 C 16 9 19 10 21 13" />
+      <path d="M11 11 L 12 16 L 14 18 L 16 17" />
+      <path d="M5 13 L 7 16" />
+      <path d="M19 13 L 17 16" />
+      <circle cx="13" cy="11" r="0.7" fill="currentColor" />
+    </svg>
+  ),
+  // 家族与阵营：交叉双剑
+  house: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="5" x2="15" y2="15" />
+      <line x1="19" y1="5" x2="9" y2="15" />
+      <path d="M14 14 L 16 14 L 16 16 L 14 16 Z" />
+      <path d="M8 14 L 10 14 L 10 16 L 8 16 Z" />
+      <line x1="12" y1="17" x2="12" y2="20" />
+      <line x1="10" y1="20" x2="14" y2="20" />
+    </svg>
+  ),
+};
+
 export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeExpand }) {
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
@@ -76,8 +121,101 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
     return <div className="mp-empty">本集无文化梗</div>;
   }
 
+  // 设定百科段独立渲染——拎出来好让它在「台词梗」之上下灵活放置。
+  const loreSection = loreTotal > 0 && (
+    <div className="mp-lore-section">
+      <button
+        className={`mp-lore-toggle${loreOpen ? ' is-open' : ''}`}
+        onClick={() => setLoreOpen(o => !o)}
+        aria-expanded={loreOpen}
+      >
+        <span className="mp-lore-caret">{loreOpen ? '▼' : '▶'}</span>
+        <span className="mp-lore-toggle-label">设定百科</span>
+        <span className="mp-lore-count">{loreTotal}</span>
+      </button>
+
+      {loreOpen && (
+        <div className="mp-lore-groups">
+          {loreGroups.map(g => {
+            const catOpen = !!loreCatOpen[g.category];
+            return (
+              <div key={g.category} className={`mp-lore-group${catOpen ? ' is-open' : ''}`}>
+                <button
+                  className="mp-lore-group-toggle"
+                  onClick={() => setLoreCatOpen(s => ({ ...s, [g.category]: !s[g.category] }))}
+                  aria-expanded={catOpen}
+                >
+                  <span className="mp-lore-caret mp-lore-caret-sm">{catOpen ? '▼' : '▶'}</span>
+                  {LORE_CATEGORY_ICON[g.category] && (
+                    <span className="mp-lore-group-icon" aria-hidden="true">
+                      {LORE_CATEGORY_ICON[g.category]}
+                    </span>
+                  )}
+                  <span className="mp-lore-group-label">{g.label}</span>
+                  <span className="mp-lore-group-count">{g.cards.length}</span>
+                </button>
+
+                {catOpen && (
+                  <div className="mp-lore-cards">
+                    {g.cards.map(c => {
+                      const cardOpen = loreCardOpen === c.lore_id;
+                      return (
+                        <div key={c.lore_id} className={`mp-lore-card${cardOpen ? ' is-open' : ''}`}>
+                          <div className="mp-lore-card-head">
+                            <div className="mp-lore-card-title">
+                              {c.title}
+                              {c.title_en && (
+                                <span className="mp-lore-card-title-en">（{c.title_en}）</span>
+                              )}
+                              {c.tag && <span className="mp-tag mp-lore-tag">{c.tag}</span>}
+                            </div>
+                            <div className="mp-lore-card-summary">{c.summary}</div>
+                            {!cardOpen && (
+                              <button
+                                className="mp-lore-detail-link"
+                                onClick={() => setLoreCardOpen(c.lore_id)}
+                              >查看详情 →</button>
+                            )}
+                          </div>
+
+                          {cardOpen && (
+                            <div className="mp-lore-card-detail">
+                              <p className="mp-lore-card-body">{c.detail}</p>
+                              {Array.isArray(c.see_also) && c.see_also.length > 0 && (
+                                <div className="mp-lore-see-also">
+                                  <span className="mp-lore-see-also-label">延伸：</span>
+                                  {c.see_also.map((s, idx) => (
+                                    <React.Fragment key={idx}>
+                                      {idx > 0 && <span className="mp-lore-see-also-sep"> / </span>}
+                                      <span className="mp-lore-see-also-item">{s}</span>
+                                    </React.Fragment>
+                                  ))}
+                                </div>
+                              )}
+                              <button
+                                className="mp-lore-collapse-link"
+                                onClick={() => setLoreCardOpen(null)}
+                              >↑ 收起</button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div className="mp-root">
+      {/* ─── 段 B：设定百科（移到顶部，按用户反馈） ─────────────── */}
+      {loreSection}
+
       {/* ─── 段 A：台词梗 ──────────────────── */}
       {riffs.length > 0 && (
         <>
@@ -192,91 +330,6 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
         </>
       )}
 
-      {/* ─── 段 B：设定百科（默认折叠） ─────────────────── */}
-      {loreTotal > 0 && (
-        <div className="mp-lore-section">
-          <button
-            className={`mp-lore-toggle${loreOpen ? ' is-open' : ''}`}
-            onClick={() => setLoreOpen(o => !o)}
-            aria-expanded={loreOpen}
-          >
-            <span className="mp-lore-caret">{loreOpen ? '▼' : '▶'}</span>
-            <span className="mp-lore-toggle-label">设定百科</span>
-            <span className="mp-lore-count">{loreTotal}</span>
-          </button>
-
-          {loreOpen && (
-            <div className="mp-lore-groups">
-              {loreGroups.map(g => {
-                const catOpen = !!loreCatOpen[g.category];
-                return (
-                  <div key={g.category} className={`mp-lore-group${catOpen ? ' is-open' : ''}`}>
-                    <button
-                      className="mp-lore-group-toggle"
-                      onClick={() => setLoreCatOpen(s => ({ ...s, [g.category]: !s[g.category] }))}
-                      aria-expanded={catOpen}
-                    >
-                      <span className="mp-lore-caret mp-lore-caret-sm">{catOpen ? '▼' : '▶'}</span>
-                      {g.icon && <span className="mp-lore-group-icon">{g.icon}</span>}
-                      <span className="mp-lore-group-label">{g.label}</span>
-                      <span className="mp-lore-group-count">{g.cards.length}</span>
-                    </button>
-
-                    {catOpen && (
-                      <div className="mp-lore-cards">
-                        {g.cards.map(c => {
-                          const cardOpen = loreCardOpen === c.lore_id;
-                          return (
-                            <div key={c.lore_id} className={`mp-lore-card${cardOpen ? ' is-open' : ''}`}>
-                              <div className="mp-lore-card-head">
-                                <div className="mp-lore-card-title">
-                                  {c.title}
-                                  {c.title_en && (
-                                    <span className="mp-lore-card-title-en">（{c.title_en}）</span>
-                                  )}
-                                  {c.tag && <span className="mp-tag mp-lore-tag">{c.tag}</span>}
-                                </div>
-                                <div className="mp-lore-card-summary">{c.summary}</div>
-                                {!cardOpen && (
-                                  <button
-                                    className="mp-lore-detail-link"
-                                    onClick={() => setLoreCardOpen(c.lore_id)}
-                                  >查看详情 →</button>
-                                )}
-                              </div>
-
-                              {cardOpen && (
-                                <div className="mp-lore-card-detail">
-                                  <p className="mp-lore-card-body">{c.detail}</p>
-                                  {Array.isArray(c.see_also) && c.see_also.length > 0 && (
-                                    <div className="mp-lore-see-also">
-                                      <span className="mp-lore-see-also-label">延伸：</span>
-                                      {c.see_also.map((s, idx) => (
-                                        <React.Fragment key={idx}>
-                                          {idx > 0 && <span className="mp-lore-see-also-sep"> / </span>}
-                                          <span className="mp-lore-see-also-item">{s}</span>
-                                        </React.Fragment>
-                                      ))}
-                                    </div>
-                                  )}
-                                  <button
-                                    className="mp-lore-collapse-link"
-                                    onClick={() => setLoreCardOpen(null)}
-                                  >↑ 收起</button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
