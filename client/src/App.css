@@ -196,11 +196,15 @@ body {
   max-width: calc(100% - 2.8rem);
 }
 .hero-preview-pill {
-  font-size: 11px; font-weight: 700; letter-spacing: 0.6px;
+  position: absolute;
+  left: 1.4rem; bottom: 1.4rem;
+  font-size: 16px; font-weight: 700; letter-spacing: 0.8px;
   color: #0d0e14;
   background: var(--accent);
-  padding: 4px 11px;
+  padding: 9px 20px;
   border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(232, 149, 77, 0.35);
+  pointer-events: none;
 }
 .hero-preview-name {
   font-size: clamp(1.6rem, 2.6vw, 2.4rem);

@@ -119,9 +119,9 @@ export default function App() {
             />
             <div className="hero-preview-mask" />
             <div className="hero-preview-meta">
-              <span className="hero-preview-pill">▶ 正在播放</span>
               <span className="hero-preview-name">{heroPreview.name}</span>
             </div>
+            <span className="hero-preview-pill">▶ 正在播放</span>
           </div>
         )}
       </section>
