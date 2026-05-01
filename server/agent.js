@@ -924,11 +924,15 @@ function prepareRequest(kb, bodyOrQuery = {}) {
   };
 }
 
-// ─── 人物识别：face_service + 视觉 LLM 双路并行 ─────────────
-// 老版本是「先 face_service，命中就 return；否则才 fall back 到 LLM」的串行降级，
-// face_service 慢/挂掉时 Gemini 排队等，且 face_service 只识到 1 个的话画面里
-// 其它面孔 LLM 完全没机会看到。这里改成并行：两个一起发，回来按 bbox 合并。
-// 整体延迟 ≈ max(本地, LLM)，并且开集 + 闭集结果同时拿到。
+// ─── 人物识别：face_service 优先 + 智能跳过 LLM ─────────────
+// 思路：face_service 跑完知道画面里**总检出多少张脸 + 匹配上多少张**。
+// 检出 N 张 = 匹配 N 张 → 整帧已识完，直接返回，不调 LLM（这是最大头：
+// 命中场景下从 ~2s 降到 ~200ms）。否则（face_service 没起 / 没检出脸 /
+// 半匹配）才调 Gemini 兜底，再按 bbox 合并 face_service 已匹配的部分。
+//
+// 代价：相比纯并行版，半匹配/face_service down 时多串行一段 ~200ms；但
+// 这种场景下 LLM 调用本来 ~2s 起步，多几百毫秒整体感受不出来 —— 而完全
+// 命中的常见路径却能省掉一整个 Gemini 调用 + 它的 token 成本。
 
 async function recognizeViaFaceService({ image, db, cursor }) {
   const url = process.env.FACE_SERVICE_URL;
@@ -942,7 +946,8 @@ async function recognizeViaFaceService({ image, db, cursor }) {
   });
   if (!fr.ok) throw new Error(`face_service HTTP ${fr.status}`);
   const fdata = await fr.json();
-  const raw = (fdata.faces || [])
+  const allFaces = fdata.faces || [];
+  const raw = allFaces
     .filter(f => f.match && f.match.character_id)
     .map(f => {
       const card = charactersLib.lookupCharacter(db, f.match.character_id, cursor);
@@ -962,7 +967,12 @@ async function recognizeViaFaceService({ image, db, cursor }) {
     const cur = byChar.get(c.character_id);
     if (!cur || c.confidence > cur.confidence) byChar.set(c.character_id, c);
   }
-  return Array.from(byChar.values());
+  const matched = Array.from(byChar.values());
+  // 跳过 LLM 的判定要的是「总检出脸数 vs 匹配脸数」，不是去重后的角色数
+  // —— 多张脸都对到同一个角色（双胞胎特写、镜像）算"全部识出"。
+  const totalDetected = allFaces.length;
+  const rawMatchedCount = raw.length;
+  return { matched, totalDetected, rawMatchedCount };
 }
 
 async function recognizeViaLLM({ image, db, cursor }) {
@@ -1157,24 +1167,45 @@ function register(app) {
     // 没 KB 时也加载默认 show DB
     const db = kb ? getCharacterDb(kb.show_id) : getCharacterDb('house-of-the-dragon');
 
-    // 并行跑 face_service + 视觉 LLM；任何一边挂掉不影响另一边返回结果。
-    // 整体延迟 ≈ max(本地, LLM)，而不是两者相加。
+    // face_service 先跑，全识到就跳过 LLM；半匹配/没起/没检出才调 Gemini。
+    // 见 recognizeViaFaceService 上方注释里的设计说明。
     const t0 = Date.now();
-    const [faceRes, llmRes] = await Promise.allSettled([
-      recognizeViaFaceService({ image, db, cursor }),
-      recognizeViaLLM({ image, db, cursor }),
-    ]);
-    const elapsed_ms = Date.now() - t0;
-
-    if (faceRes.status === 'rejected') {
-      console.warn('[recognize] face_service:', faceRes.reason?.message || faceRes.reason);
-    }
-    if (llmRes.status === 'rejected') {
-      console.error('[recognize] llm:', llmRes.reason?.message || llmRes.reason);
+    let faceResult = null;
+    try {
+      faceResult = await recognizeViaFaceService({ image, db, cursor });
+    } catch (e) {
+      console.warn('[recognize] face_service:', e?.message || e);
     }
 
-    const faceChars = faceRes.status === 'fulfilled' && Array.isArray(faceRes.value) ? faceRes.value : [];
-    const llmChars = llmRes.status === 'fulfilled' && Array.isArray(llmRes.value) ? llmRes.value : [];
+    const faceChars = faceResult?.matched || [];
+    const totalDetected = faceResult?.totalDetected ?? 0;
+    const rawMatchedCount = faceResult?.rawMatchedCount ?? 0;
+
+    // 跳 LLM 的硬条件：face_service 起着 + 检出 ≥1 张脸 + 检出全部都匹配上
+    const fullyResolved = faceResult !== null
+      && totalDetected > 0
+      && rawMatchedCount === totalDetected;
+
+    if (fullyResolved) {
+      return res.json({
+        characters: faceChars,
+        cursor_used: cursor,
+        has_kb: !!kb,
+        llm_ready: ai.isAvailable('vision'),
+        sources: { insightface: faceChars.length, llm: 0, faces_detected: totalDetected },
+        skipped: 'llm_unneeded_face_service_full_match',
+        elapsed_ms: Date.now() - t0,
+      });
+    }
+
+    // 否则 LLM 兜底（face_service 没起 / 没检出脸 / 半匹配都走这里）
+    let llmChars = [];
+    try {
+      llmChars = (await recognizeViaLLM({ image, db, cursor })) || [];
+    } catch (e) {
+      console.error('[recognize] llm:', e?.message || e);
+    }
+
     const characters = mergeRecognitions(faceChars, llmChars);
 
     res.json({
@@ -1182,8 +1213,8 @@ function register(app) {
       cursor_used: cursor,
       has_kb: !!kb,
       llm_ready: ai.isAvailable('vision'),
-      sources: { insightface: faceChars.length, llm: llmChars.length },
-      elapsed_ms,
+      sources: { insightface: faceChars.length, llm: llmChars.length, faces_detected: totalDetected },
+      elapsed_ms: Date.now() - t0,
     });
   });
 
