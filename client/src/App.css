@@ -1558,18 +1558,22 @@ body {
   transition: opacity 0.25s ease;
 }
 
-/* 鼠标长时间不动 / 离开播放区 → 隐藏底部进度条 + 顶部浮动按钮 + cursor。
-   tx-player-recognize-btn / tx-player-aichat-btn 一同淡出，让画面"干净"。
-   关系图、字幕、识别标签等内容层不在隐藏范围里。*/
+/* 鼠标长时间不动 / 离开播放区 → 隐藏所有 chrome（底栏 + 四个浮动按钮）+
+   鼠标本体，让画面"干净"。识别标签、字幕、关系图打开后的抽屉、模态等
+   内容层刻意不在隐藏范围里。*/
 .tx-player-wrap.is-idle { cursor: none; }
 .tx-player-wrap.is-idle .tx-controls,
 .tx-player-wrap.is-idle .tx-player-recognize-btn,
-.tx-player-wrap.is-idle .tx-player-aichat-btn {
+.tx-player-wrap.is-idle .tx-player-aichat-btn,
+.tx-player-wrap.is-idle .rg-hud-icon,
+.tx-player-wrap.is-idle .tx-roleplay-edge-btn {
   opacity: 0;
   pointer-events: none;
 }
 .tx-player-recognize-btn,
-.tx-player-aichat-btn {
+.tx-player-aichat-btn,
+.rg-hud-icon,
+.tx-roleplay-edge-btn {
   transition: opacity 0.25s ease;
 }
 
