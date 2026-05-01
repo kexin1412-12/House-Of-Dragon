@@ -131,7 +131,10 @@ function useViewport(graphSize, viewportRef) {
     setView({ tx, ty, scale: s });
   }, [graphSize, viewportRef]);
 
+  // 滚轮事件：必须按住 Ctrl/Cmd 才触发缩放，平时让浏览器正常滚页面。
+  // 否则用户上下翻页时鼠标飘过画布，scroll 会被劫持成缩放——非常烦。
   const onWheel = useCallback((e) => {
+    if (!(e.ctrlKey || e.metaKey)) return;   // 让事件冒泡，浏览器按页面滚动处理
     e.preventDefault();
     const rect = viewportRef.current?.getBoundingClientRect();
     const ax = rect ? e.clientX - rect.left : 0;
