@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
 import RelationshipGraph from './RelationshipGraph';
@@ -145,18 +145,13 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const [search, setSearch] = useState('');
 
   const videoRef = useRef(null);
-  const [aiKbList, setAiKbList] = useState([]);
   const [aiKb, setAiKb] = useState('');
-  const [aiMode, setAiMode] = useState('casual');
   const [aiBehavior, setAiBehavior] = useState('normal');
-  const [aiCards, setAiCards] = useState([]);
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [aiDepth, setAiDepth] = useState('brief'); // 'oneline' | 'brief' | 'deep'
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isNarrow, setIsNarrow] = useState(() => window.innerWidth <= 900);
   const [aiChatOpen, setAiChatOpen] = useState(false);
   // 鼠标长时间不动 → 隐藏底部进度条 + 顶部浮动按钮 + 鼠标本体；
   // 任意鼠标移动 / 进入播放区都立即恢复，鼠标离开播放区也立即隐藏。
@@ -165,17 +160,10 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const idleTimerRef = useRef(null);
   useEffect(() => {
     const onFs = () => {
-      const fs = !!document.fullscreenElement;
-      setIsFullscreen(fs);
-      if (!fs) setAiChatOpen(false); // 离开全屏自动关抽屉
+      if (!document.fullscreenElement) setAiChatOpen(false);
     };
     document.addEventListener('fullscreenchange', onFs);
     return () => document.removeEventListener('fullscreenchange', onFs);
-  }, []);
-  useEffect(() => {
-    const onResize = () => setIsNarrow(window.innerWidth <= 900);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
   }, []);
   useEffect(() => {
     if (!aiChatOpen) return;
@@ -210,7 +198,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     };
   }, [playing.id]); // 视频换了重挂监听
   const [aiSending, setAiSending] = useState(false);
-  const [aiLlmReady, setAiLlmReady] = useState(false);
   const [aiOnScreenChars, setAiOnScreenChars] = useState([]);
   const [aiHoveredCharId, setAiHoveredCharId] = useState(null);
   const [aiFirstTimeChars, setAiFirstTimeChars] = useState({}); // { charId: timestamp }
@@ -222,8 +209,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const aiLogRef = useRef(null);
   const aiPrevTimeRef = useRef(0);
   const aiBehaviorTimerRef = useRef(null);
-  const aiLastCardSceneRef = useRef(null);
-  const aiLastSceneIdRef = useRef(null);
 
   // ─── 共谋者 · 机制 B：角色对谈 ─────────────────────────────────
   const [roleplayCast, setRoleplayCast] = useState([]);            // [{character_id, display_name, ready_for_episode}]
@@ -239,7 +224,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const roleplayLogRef = useRef(null);
   // 右边缘"对谈入口"图标 + cast picker
   const [roleplayPickerOpen, setRoleplayPickerOpen] = useState(false);
-  // ESC 关 picker（roleplay 自己的 ESC 仍由 RoleplayOverlay 处理）
+  // ESC 关 picker（roleplay 自己的 ESC 仍由对谈面板处理）
   useEffect(() => {
     if (!roleplayPickerOpen) return;
     const onKey = (e) => { if (e.key === 'Escape') setRoleplayPickerOpen(false); };
@@ -339,8 +324,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   useEffect(() => {
     axios.get(`${API}/api/agent/kb`).then(r => {
       const list = r.data.videos || [];
-      setAiKbList(list);
-      setAiLlmReady(!!r.data.llm_ready);
       const base = (playing.filename || '').replace(/\.[^.]+$/, '');
       setAiKb(list.includes(base) ? base : '');
     }).catch(() => {});
@@ -536,38 +519,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       if (aiBehaviorTimerRef.current) clearTimeout(aiBehaviorTimerRef.current);
     };
   }, []);
-
-  // Poll passive cards at the current playback time. Dedup via lastCardSceneId:
-  // if server returns empty (same scene as last card), keep existing cards on screen.
-  useEffect(() => {
-    if (!aiKb) return;
-    let cancelled = false;
-    const fetchCards = async () => {
-      const t = videoRef.current?.currentTime || 0;
-      const params = new URLSearchParams({
-        videoId: aiKb, t: String(t), mode: aiMode,
-      });
-      if (aiLastCardSceneRef.current) {
-        params.set('lastCardSceneId', aiLastCardSceneRef.current);
-      }
-      try {
-        const { data } = await axios.get(`${API}/api/agent/cards?${params}`);
-        if (cancelled) return;
-        if (!data.scene_id) {
-          setAiCards([]);
-          aiLastCardSceneRef.current = null;
-          return;
-        }
-        if (data.cards && data.cards.length > 0) {
-          setAiCards(data.cards);
-          aiLastCardSceneRef.current = data.scene_id;
-        }
-      } catch { /* server probably not running */ }
-    };
-    fetchCards();
-    const id = setInterval(fetchCards, 2000);
-    return () => { cancelled = true; clearInterval(id); };
-  }, [aiKb, aiMode]);
 
   // 人物识别改为按钮触发：点一次跑一次，标签自动 6 秒后消失。
   // 不再自动轮询 → 不会自动弹名字 / 状态变化 popup。
@@ -811,7 +762,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
           previousTime: aiPrevTimeRef.current,
           question: q,
           behavior: aiBehavior,
-          mode: aiMode,
+          mode: 'casual',
           depth: aiDepth,
           image: imageDataUrl,
           session: { last_questions: lastQuestions, last_exchanges: lastExchanges },
@@ -1309,7 +1260,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
                 <div className="tx-player-aichat-drawer" onClick={e => e.stopPropagation()}>
                   <AgentPanel
                     behavior={aiBehavior}
-                    cards={[]}                 /* 全屏不需要 passive 卡片 */
                     messages={aiMessages}
                     input={aiInput}
                     setInput={setAiInput}
@@ -1566,7 +1516,6 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
 
           <AgentPanel
             behavior={aiBehavior}
-            cards={[]}
             messages={aiMessages}
             input={aiInput}
             setInput={setAiInput}
@@ -1663,33 +1612,6 @@ function parseTaggedAnswer(text) {
 
 // 三层标注 → 用字体色（+ 推测斜体）区分。Disco Elysium 风格：去掉小标签和左 border，
 // 让回答像台词流动，而不是 UI 表格。
-const TAG_COLORS = {
-  '事实': '#e8e6dd',  // 奶白：直接观察，无情感倾向
-  '解读': '#8fc8e8',  // 信号蓝：观点判断
-  '推测': '#e8b85a',  // 琥珀：不确定（同时斜体）
-};
-
-/* ─── Disco Elysium 风格 · 角色对谈调色板 ──────────────────────────
-   每条"声音"（玩家自己的内心技能 / 角色台词 / 旁白 / 场景）有专属颜色。
-   未知声音 fallback 走玩家色（cream），保证至少能渲染。 */
-const DE_VOICE_COLOR = {
-  YOU:                '#e8dcc4',                  // 玩家
-  NARRATION:          'rgba(232,220,196,0.55)',   // 灰白旁白
-  SCENE:              'rgba(232,220,196,0.55)',   // 同 NARRATION
-  // 玩家内心 / 技能 / 人格
-  LOGIC:              '#7fc7d6',                  // 青：分析
-  EMPATHY:            '#e8a5b8',                  // 粉：共情
-  AUTHORITY:          '#e6a96b',                  // 橙：威压
-  VOLITION:           '#d4af37',                  // 金：意志
-  RHETORIC:           '#d4af37',
-  SUGGESTION:         '#4dd0d0',                  // 蓝绿：暗示
-  COMPOSURE:          '#a8b894',                  // 苔绿：镇定
-  PERCEPTION:         '#9ec5cf',                  // 浅青：感知
-  'INLAND EMPIRE':    '#b58ae8',                  // 紫：直觉/梦境
-  'ESPRIT DE CORPS':  '#86efac',                  // 绿：群体感
-  'SAVOIR FAIRE':     '#f5c47a',
-  'INNER VOICE':      'rgba(232,220,196,0.85)',
-};
 
 /* 人物名（角色台词色）从一个 6 色调色板按 character_id 哈希取色，
    保证同一角色每次出现颜色一致，且色差足够辨认。 */
@@ -1699,39 +1621,6 @@ function deCharColor(id) {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
   return DE_CHAR_PALETTE[h % DE_CHAR_PALETTE.length];
-}
-function deVoiceColor(name) {
-  if (!name) return DE_VOICE_COLOR.YOU;
-  const key = name.toUpperCase().trim();
-  return DE_VOICE_COLOR[key] || DE_VOICE_COLOR['INNER VOICE'];
-}
-
-/* 解析 agent 回复：识别行首的 [VOICE] 标签，把"内心声音"与"角色台词"分开。
-   - `[LOGIC] 她在闪躲。`  → { kind:'voice', voice:'LOGIC', text:'她在闪躲。' }
-   - 其余文本视为角色台词（speech）。
-   兼容空回复 / 纯台词（无 VOICE 行）—— 这两种情况返回的就是单个 speech 段。*/
-function parseRoleplayVoices(text) {
-  if (!text) return [];
-  const out = [];
-  let speech = '';
-  const flushSpeech = () => {
-    const t = speech.trim();
-    if (t) out.push({ kind: 'speech', text: t });
-    speech = '';
-  };
-  for (const raw of text.split('\n')) {
-    const line = raw.trim();
-    // 中英方括号都接受；voice 名 1-20 字（中文 / 大写 / 空格）
-    const m = /^[\[【]\s*([A-Z一-龥][A-Z一-龥\s]{0,19})\s*[\]】]\s*(.+)$/.exec(line);
-    if (m) {
-      flushSpeech();
-      out.push({ kind: 'voice', voice: m[1].trim().toUpperCase(), text: m[2].trim() });
-    } else if (line) {
-      speech += (speech ? '\n' : '') + line;
-    }
-  }
-  flushSpeech();
-  return out;
 }
 
 const QUICK_QUESTIONS = [
@@ -1777,7 +1666,7 @@ function DELine({ message }) {
 }
 
 function AgentPanel({
-  cards, messages, input, setInput,
+  messages, input, setInput,
   sending, behavior, onSubmit, logRef,
   depth = 'brief', setDepth = () => {},
   onClear,
@@ -1795,13 +1684,6 @@ function AgentPanel({
 
       {behaviorLabel && (
         <div className="tx-agent-de-behavior">{behaviorLabel}</div>
-      )}
-
-      {cards.length > 0 && (
-        <div className="tx-agent-de-cards">
-          <div className="tx-agent-de-eyebrow">当前解读</div>
-          {cards.map((c, i) => <AgentCard key={i} card={c} />)}
-        </div>
       )}
 
       {/* 上半区：纯阅读，纵向叙事流 —— scrollbar 走 .tx-agent-log（DE 风格 4px 细金线） */}
@@ -1866,261 +1748,6 @@ function AgentPanel({
           >发送</button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function AgentCard({ card }) {
-  const colors = {
-    shot: { bg: '#1e2f3f', accent: '#5ab8e8' },
-    'foreshadow-setup': { bg: '#3f2a1e', accent: '#e8954d' },
-    'foreshadow-payoff': { bg: '#2a1e3f', accent: '#b55ae8' },
-  };
-  const c = colors[card.type] || { bg: '#2a2a2a', accent: '#888' };
-  return (
-    <div style={{
-      padding: '8px 10px', borderRadius: 6,
-      background: c.bg, borderLeft: `3px solid ${c.accent}`,
-    }}>
-      <div style={{ fontSize: 11, color: c.accent, fontWeight: 600, marginBottom: 3 }}>
-        {card.title}
-      </div>
-      <div style={{ fontSize: 13, color: '#e0e0e0', lineHeight: 1.4 }}>
-        {card.body}
-      </div>
-      {card.meta && (
-        <div style={{ fontSize: 10, color: '#888', marginTop: 3 }}>{card.meta}</div>
-      )}
-    </div>
-  );
-}
-
-/* ─── 共谋者 · 角色对谈 · 画面内透明浮层（不接管全屏） ──────── */
-/* ─── Disco Elysium 风格 · 角色对谈 ───────────────────────────────
-   - 右侧"古旧纸面"对话面板：人物名 ALL CAPS + 角色色，台词带引号
-   - 玩家"内心声音"（LOGIC / EMPATHY / INLAND EMPIRE …）斜体 + 专属色
-   - 数字编号选项（1-4）—— 键盘可直接按 1/2/3/4 触发
-   - 自由输入框保留（"自己开口"），不强制走选项
-   - The Last of Us 风格底部辅助字幕：显示当下角色台词，不挡画面 */
-function RoleplayOverlay({
-  character, messages, input, setInput, sending, onSubmit, onExit,
-  side = 'right', intro = null, introLoading = false,
-}) {
-  const inputRef = useRef(null);
-  const logRef = useRef(null);
-  const [inputFocused, setInputFocused] = useState(false);
-
-  const turns = useMemo(() => {
-    const out = [];
-    for (let i = 0; i < messages.length; i++) {
-      const m = messages[i];
-      if (m.role === 'user') {
-        const next = messages[i + 1];
-        const agent = (next && next.role === 'agent') ? next : null;
-        out.push({ user: m, agent });
-        if (agent) i++;
-      } else if (m.role === 'agent') {
-        out.push({ user: null, agent: m });
-      }
-    }
-    return out;
-  }, [messages]);
-
-  const charColor = deCharColor(character.character_id);
-  const charNameUpper = (character.display_name || '').toUpperCase();
-
-  const suggestions = Array.isArray(intro?.suggested_questions)
-    ? intro.suggested_questions.filter(Boolean).slice(0, 4)
-    : [];
-
-  // ESC 离开 + 1-N 键盘选项（input 聚焦或正在发送时不响应数字快捷键）
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') { onExit(); return; }
-      if (sending || inputFocused) return;
-      const idx = parseInt(e.key, 10);
-      if (!Number.isNaN(idx) && idx >= 1 && idx <= suggestions.length) {
-        e.preventDefault();
-        onSubmit(suggestions[idx - 1]);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onExit, sending, inputFocused, suggestions, onSubmit]);
-
-  useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-  }, [messages, sending]);
-
-  // 最近一条角色台词 → LOTU 风底部字幕
-  const lastAgent = [...messages].reverse().find(m => m.role === 'agent');
-  const ambientSpeech = (() => {
-    if (!lastAgent) return null;
-    const segs = parseRoleplayVoices(lastAgent.text || '');
-    const speech = segs.find(s => s.kind === 'speech');
-    if (speech?.text) return speech.text;
-    if (lastAgent.streaming && lastAgent.text) return lastAgent.text;
-    return null;
-  })();
-
-  return (
-    <div className="de-rp-overlay" data-side={side}>
-      <div className="de-rp-vignette" />
-      {/* Scrim：覆盖 panel 之外的整片区域（含 video），抓"画面外点击"关掉对话。
-          与 panel 同级，panel 由 z-index 浮在 scrim 上面。*/}
-      <div className="de-rp-scrim" onClick={onExit} title="点空白处关闭" />
-
-      {/* The Last of Us 风格底部辅助字幕：显示当下角色台词，不挡画面
-          字幕是装饰，clicks 透过它落到 overlay → 关闭对话。*/}
-      {ambientSpeech && (
-        <div className="de-rp-subtitle">
-          <span className="de-rp-subtitle-name" style={{ color: charColor }}>
-            {character.display_name}
-          </span>
-          <span className="de-rp-subtitle-text">{ambientSpeech}</span>
-        </div>
-      )}
-
-      {/* DE 风格右侧对话面板 —— 与 scrim 同级；scrim 抓外侧点击 */}
-      <aside className={`de-rp-panel de-rp-panel-${side}`}>
-        <button className="de-rp-close" onClick={onExit} title="ESC 离开">×</button>
-
-        <header className="de-rp-header">
-          <div className="de-rp-header-meta">RELATIONSHIP DIALOGUE · 共谋者对谈</div>
-          {/* 名字保留 GoT 标题卡式金色金属渐变（CSS 处理）；不再用角色色覆盖。
-              角色专属色仍出现在底部 LOTU 字幕和对话日志的人物名牌上。*/}
-          <div className="de-rp-header-name">{charNameUpper}</div>
-          {character.short_identity && (
-            <div className="de-rp-header-id">— {character.short_identity}</div>
-          )}
-        </header>
-
-        <section className="de-rp-log" ref={logRef}>
-          {turns.length === 0 && (
-            <div className="de-rp-prelude">
-              {introLoading && !intro ? (
-                <div className="de-rp-prelude-loading">…</div>
-              ) : intro?.hero_line ? (
-                <>
-                  <DeVoiceLine voice="SCENE" italic text={intro.hero_line} />
-                  {intro.sub_line && <DeVoiceLine voice="NARRATION" italic dim text={intro.sub_line} />}
-                  {intro.prompt_line && <DeVoiceLine voice="NARRATION" italic dim text={intro.prompt_line} />}
-                </>
-              ) : (
-                <DeVoiceLine
-                  voice="NARRATION"
-                  italic
-                  dim
-                  text={character.short_identity
-                    ? `${character.display_name}｜${character.short_identity}`
-                    : character.display_name}
-                />
-              )}
-            </div>
-          )}
-
-          {turns.map((turn, i) => (
-            <DeTurn
-              key={i}
-              turn={turn}
-              charColor={charColor}
-              charNameUpper={charNameUpper}
-            />
-          ))}
-        </section>
-
-        <footer className="de-rp-footer">
-          {suggestions.length > 0 && (
-            <ol className="de-rp-choices" aria-label="可选回应">
-              {suggestions.map((q, i) => (
-                <li key={i}>
-                  <button
-                    type="button"
-                    className="de-rp-choice"
-                    disabled={sending}
-                    onClick={() => onSubmit(q)}
-                    title="点击 / 按数字键直接说出"
-                  >
-                    <span className="de-rp-choice-num">{i + 1}.</span>
-                    <span className="de-rp-choice-dash">—</span>
-                    <span className="de-rp-choice-text">"{q}"</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          )}
-
-          <div className={`de-rp-input-row ${inputFocused ? 'is-focused' : ''} ${sending ? 'is-sending' : ''}`}>
-            <span className="de-rp-input-prompt" style={{ color: DE_VOICE_COLOR.YOU }}>YOU —</span>
-            <input
-              ref={inputRef}
-              className="de-rp-input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onFocus={() => setInputFocused(true)}
-              onBlur={() => setInputFocused(false)}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSubmit(); } }}
-              placeholder={sending ? `${character.display_name} 在想……` : '自己开口……'}
-              disabled={sending}
-            />
-          </div>
-
-        </footer>
-      </aside>
-    </div>
-  );
-}
-
-/* 单条声音行：左侧 ALL CAPS 名牌 + 右侧文本，颜色由 voice 决定。 */
-function DeVoiceLine({ voice, text, italic = false, dim = false, color }) {
-  const c = color || deVoiceColor(voice);
-  return (
-    <div className={`de-voice-line ${italic ? 'is-italic' : ''} ${dim ? 'is-dim' : ''}`}>
-      {voice && voice !== 'SCENE' && (
-        <span className="de-voice-name" style={{ color: c }}>{voice}</span>
-      )}
-      <span className="de-voice-text" style={{ color: c }}>{text}</span>
-    </div>
-  );
-}
-
-/* 一个回合：玩家选择 → [可选] 内心声音 → 角色台词。 */
-function DeTurn({ turn, charColor, charNameUpper }) {
-  const { user, agent } = turn;
-  const segs = agent ? parseRoleplayVoices(agent.text || '') : [];
-  const inlineVoices = segs.filter(s => s.kind === 'voice');
-  const speech = segs.find(s => s.kind === 'speech');
-  const streaming = !!agent?.streaming;
-
-  // 服务端独立 endpoint 送来的内心声音 + 解析自台词内 [VOICE] 行的合并
-  const sideVoices = Array.isArray(agent?.voices) ? agent.voices : [];
-  const allVoices = [...sideVoices, ...inlineVoices];
-
-  const speechText = speech?.text
-    || (streaming && !inlineVoices.length ? agent?.text || '' : '');
-
-  return (
-    <div className="de-turn">
-      {user && (
-        <div className="de-voice-line de-voice-line-you">
-          <span className="de-voice-name" style={{ color: DE_VOICE_COLOR.YOU }}>YOU</span>
-          <span className="de-voice-text" style={{ color: DE_VOICE_COLOR.YOU }}>"{user.text}"</span>
-        </div>
-      )}
-      {allVoices.map((v, i) => (
-        <DeVoiceLine key={i} voice={v.voice} text={v.text} italic dim />
-      ))}
-      {(speechText || streaming) && (
-        <div className="de-voice-line de-voice-line-speech">
-          <span className="de-voice-name" style={{ color: charColor }}>{charNameUpper}</span>
-          <span className="de-voice-text" style={{ color: '#f0e6d2' }}>
-            {speechText
-              ? <>"{speechText}{streaming && <span className="de-caret">▌</span>}"</>
-              : <span className="de-thinking">……</span>
-            }
-          </span>
-        </div>
-      )}
     </div>
   );
 }
