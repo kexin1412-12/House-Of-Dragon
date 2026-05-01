@@ -2661,3 +2661,42 @@ body {
   height: 2px;
   background: #f3c97a;
 }
+
+/* ─── MemeToggle — 文化注释总开关 ────────────────── */
+.meme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 21;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(243, 201, 122, 0.35);
+  color: #f3c97a;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+
+.meme-toggle.is-off {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.meme-toggle:hover {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.meme-toggle-spark {
+  font-size: 13px;
+}
+
+/* 鼠标 idle 时跟其他播放器 chrome 一起淡出 */
+.tx-player-wrap.is-idle .meme-toggle {
+  opacity: 0;
+  pointer-events: none;
+}

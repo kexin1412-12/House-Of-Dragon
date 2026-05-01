@@ -5,6 +5,7 @@ import RelationshipGraph from './RelationshipGraph';
 import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
 import MemeOverlay from './MemeOverlay';
+import MemeToggle from './MemeToggle';
 import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -158,6 +159,10 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const [rightTab, setRightTab] = useState('agent');
   // 当 MemeOverlay 触发"展开详情"时，设置这个 id；MemePanel 监听后自动展开 + 滚动
   const [pendingExpandRiffId, setPendingExpandRiffId] = useState(null);
+  // 文化注释总开关（localStorage 由 MemeToggle 自维护初值）
+  const [memeEnabled, setMemeEnabled] = useState(true);
+  // 没有 riffs 时直接隐藏 toggle —— fetch 一次同样的端点判断
+  const [hasRiffs, setHasRiffs] = useState(false);
   // 鼠标长时间不动 → 隐藏底部进度条 + 顶部浮动按钮 + 鼠标本体；
   // 任意鼠标移动 / 进入播放区都立即恢复，鼠标离开播放区也立即隐藏。
   const [playerIdle, setPlayerIdle] = useState(false);
@@ -202,6 +207,14 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     };
   }, [playing.id]); // 视频换了重挂监听
+  // 检测本视频是否有 riffs，决定 MemeToggle 是否显示
+  useEffect(() => {
+    if (!aiKb) { setHasRiffs(false); return; }
+    fetch(`${API}/api/riffs?videoId=${encodeURIComponent(aiKb)}`)
+      .then(r => r.json())
+      .then(d => setHasRiffs((d.riffs || []).length > 0))
+      .catch(() => setHasRiffs(false));
+  }, [aiKb]);
   const [aiSending, setAiSending] = useState(false);
   const [aiOnScreenChars, setAiOnScreenChars] = useState([]);
   const [aiHoveredCharId, setAiHoveredCharId] = useState(null);
@@ -942,11 +955,18 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
             {/* 人物关系图 v2 —— HUD 入口 + Focus Card，按真实 videoTime + 角色 KB 动态出图 */}
             <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
 
+            {/* 文化注释总开关 —— 没 riff 不显示 */}
+            <MemeToggle
+              enabled={memeEnabled}
+              onChange={setMemeEnabled}
+              hidden={!hasRiffs}
+            />
+
             {/* 共谋者 · 文化梗浮层 —— 4 条 riff 命中时段：底部蒙板 + HTML 字幕 + 金色高亮 + hover 浮窗 */}
             <MemeOverlay
               videoId={aiKb}
               videoRef={videoRef}
-              enabled={true}
+              enabled={memeEnabled}
               onExpandRequest={(riffId) => {
                 setRightTab('meme');
                 setPendingExpandRiffId(riffId);
