@@ -1,0 +1,113 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "台词梗 / Dialogue Riffs —— 给前端 MemeOverlay + MemePanel 使用的静态知识库。",
+    "anchor.start_time / end_time 单位为秒。落入区间时前端启用 overlay。",
+    "subtitle_zh 是基于英文台词的文学化翻译，不是从烧录字幕逐字抄的；",
+    "  如果要跟视频里烧录字幕一字不差对上，需要用户播放对应时间点抄入。",
+    "highlight 是要套金色描边的关键词。前端用 subtitle_en.indexOf(highlight) 取首处出现。",
+    "tags 在右栏列表显示，详情卡里不再重复（避免冗余）。"
+  ],
+  "show": "house-of-the-dragon",
+  "season_canon": "S01",
+  "riffs": [
+    {
+      "riff_id": "moon_tea_innuendo_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 690.76,
+        "end_time": 698.76,
+        "subtitle_en": "...the Grand Maester delivered a tea to the Princess's chambers.",
+        "subtitle_zh": "……那一晚大学士亲自给公主的寝宫送了一壶茶。",
+        "highlight": "tea",
+        "keyframe": "frames/house_of_dragon_05/scene-146.jpg"
+      },
+      "tags": ["隐喻", "暗指"],
+      "tier2_punch": "Larys 嘴里这\"茶\"不是普通的茶——是 moon tea，月亮茶，维斯特洛的堕胎药。他在向阿莉森特暗示雷妮拉那一晚的私情，却用了宫廷里能装糊涂的措辞。",
+      "tier3": {
+        "why_meme": "整场对话 Larys 不说一个露骨的字，全程用\"送茶\"\"我可能弄错了\"\"何等幸事我错了\"这种句式把消息塞进对方耳朵。被告知方阿莉森特一旦消化清楚\"茶\"指的是什么，意味着她已被默认参与了这场政治流言——而 Larys 没留下任何把柄。这是 GoT/HoD 谋士台词的典型范式：信息含量极高，可否认性也极高。",
+        "background": [
+          "moon tea（月亮茶）= 维斯特洛社会里的避孕/堕胎草药。镜头一旦给到这杯茶，就在确认当事女性近期发生过性关系，且当事方不希望此事公开。",
+          "在剧集体系里 moon tea 的出现几乎等同于\"丑闻已经被家族高层掌握并悄悄止损\"。",
+          "本集 Larys 的对话紧接着前一场韦赛里斯派人送茶到雷妮拉寝宫的镜头——观众已经看见，所以 Larys 一开口阿莉森特就明白他在说什么。",
+          "本剧 KB 的 `kb/symbols/house-of-the-dragon.json` 里 `moon_tea` 符号条目记录了视觉上的同一个梗——这条台词是它的语言版。"
+        ],
+        "why_it_matters_now": "这场对话是绿党联盟的起点之一。Larys 借送茶这件事向阿莉森特表态\"我看在眼里、我可以为你所用\"，是他从一个无声跛脚弟弟变成绿党核心情报源的第一步。阿莉森特从这一刻起，开始有了不属于韦赛里斯也不属于雷妮拉的私人情报渠道。"
+      }
+    },
+    {
+      "riff_id": "duck_to_goose_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 1098.76,
+        "end_time": 1108.76,
+        "subtitle_en": "I prefer roast duck to goose. I cannot say why.",
+        "subtitle_zh": "比起烧鹅，我更偏爱烤鸭。说不上为什么。",
+        "highlight": "goose",
+        "keyframe": "frames/house_of_dragon_05/scene-227.jpg"
+      },
+      "tags": ["双关", "时代委婉语"],
+      "tier2_punch": "Laenor 用\"喜欢烤鸭还是烤鹅\"向未婚妻委婉出柜。维多利亚到中世纪欧洲贵族圈用食物隐喻指性偏好的传统在这里被剧组直接复刻——\"goose\"对应他的真实取向，\"duck\"是他不得不履行的婚姻义务。",
+      "tier3": {
+        "why_meme": "这一句是 HoD 粉丝圈反复回味的经典——它不是一个段子，而是 Laenor 这个人物的悲剧压缩。他没法在父亲、王座、贵族体面这些压力面前说一个直接的词，只能借餐桌的小节制玩笑把真相递给雷妮拉。雷妮拉听懂了，没戳破，反过来用同一种委婉语回应他（\"也有人喜欢烤鹅\"\"我嫌它太腻\"）。两个被父辈塞进政治婚姻的年轻人，在公开场合用代号确认了彼此的真实状态——并默契达成了\"对外完成婚约、对内各自吃自己想吃的\"。",
+        "background": [
+          "用食物/动物隐喻性取向是西方文学的古老传统。Polari（19-20 世纪英国 LGBT 地下黑话）、维多利亚时代的暗号文化都在使用类似的替代词。",
+          "GoT 编剧曾在采访中确认这场对话是有意为之的 coming-out scene；Laenor 的演员 John Macmillan 拍这场戏前重点排演了\"装作无意\"的语气。",
+          "中文圈把这场戏戏称为\"鸭鹅之约\"——成为粉丝圈识别同好的暗号。"
+        ],
+        "why_it_matters_now": "这一刻确立了雷妮拉与 Laenor 婚姻的实质：它不是一场感情结合，而是一场政治契约下的私人协议。也直接铺垫了下一场 Rhaenyra 对 Criston Cole 的话——既然婚姻只是政治履约，那她和 Criston 的私人关系也可以\"按 Laenor 模式\"延续。Criston 听不懂这个新规则，悲剧由此开始。"
+      }
+    },
+    {
+      "riff_id": "i_am_the_crown_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 1530.76,
+        "end_time": 1543.76,
+        "subtitle_en": "I am the crown, Ser Criston. Or I will be.",
+        "subtitle_zh": "我就是王冠，克里斯顿爵士。或者说，我即将是。",
+        "highlight": "the crown",
+        "keyframe": "frames/house_of_dragon_05/scene-278.jpg"
+      },
+      "tags": ["转喻", "身份宣告"],
+      "tier2_punch": "路易十四\"L'État, c'est moi\"（朕即国家）的回响。Rhaenyra 用\"王冠\"代指自己，把 Criston Cole 提议的\"为爱私奔、放弃王座\"那条路当场堵死——她不是在拒绝爱情，她是在拒绝\"自己可以不是王冠\"这个前提。",
+      "tier3": {
+        "why_meme": "Rhaenyra 这一句不是耍嘴皮，是她整条角色弧的一句话压缩。在此之前她可以是\"被父亲推上王位的女儿\"\"被家族联姻摆布的公主\"——是别人施加在她身上的角色。这一刻她第一次主动声明：王冠不是我背负的负担，王冠就是我本人。这句话从此把她从\"被动继承人\"翻译成了\"主动君主\"。代价是 Criston Cole——他听到的是\"她选择了王座而不是我\"——从骑士变成怨夫，最终成为绿党手里最锋利的一把剑。",
+        "background": [
+          "\"L'État, c'est moi\"（朕即国家）是路易十四 1655 年在巴黎高等法院说出的名言，把君主与国家这一抽象政治实体在语言上彻底等同。Rhaenyra 这句的句法和气口与之高度对位。",
+          "在文学修辞学里这种用法叫\"转喻\"（metonymy）——用一个相关物代指另一个。\"王冠\"代指君主权力／君主本人是西方政治话语里最古老的转喻之一。",
+          "对应同场戏 Criston Cole 上一句\"a marriage for love, not for the crown\"——两人用同一个\"the crown\"分别指代两种相反的价值取向。这句对白是整段对话的收束。"
+        ],
+        "why_it_matters_now": "这是 Rhaenyra 角色质变的瞬间。在此之前她的 agency 是反应式的——回应韦赛里斯的安排、回应 Daemon 的诱惑、回应婚姻的压力。从此以后她是主动的——她开始把自己当作权力主体来思考、说话、行动。也是 Criston Cole 转向绿党的种子时刻：他这一刻被她的话刺中，余下整剧他都在尝试报复这一刻的羞辱。"
+      }
+    },
+    {
+      "riff_id": "good_song_in_a_hundred_years_e05",
+      "video_id": "house_of_dragon_05",
+      "episode": "S01E05",
+      "anchor": {
+        "start_time": 2084.76,
+        "end_time": 2095.76,
+        "subtitle_en": "It hardly makes a good song, does it, to be sung at feasts in a hundred years.",
+        "subtitle_zh": "这可作不成传唱百年的好歌，对吧——百年盛宴上无人歌咏。",
+        "highlight": "a good song",
+        "keyframe": "frames/house_of_dragon_05/scene-351.jpg"
+      },
+      "tags": ["经典台词", "戏剧反讽", "演员高光"],
+      "tier2_punch": "Paddy Considine 的封神台词。一个自知不配伟大、却仍想被记住的国王，用\"作不成传唱百年的歌\"概括自己的一生。最辛辣的一层是：他死后爆发的\"龙之舞\"内战，恰恰会成为传唱百年的史诗——也就是观众正在看的这部剧本身。",
+      "tier3": {
+        "why_meme": "这场独白是 Paddy Considine 整季的口碑顶点。台词从\"我会被记成一个好国王吗？\"开始，韦赛里斯一层一层把自己拆开：没打过仗、没征服过、没经历过大败。\"有些人会说这是福气\"——他几乎要说服自己。但接着是这一句——他承认自己最深的恐惧不是被骂，是被遗忘。再下一句他说\"另一个国王可能会鼓励我说我能像征服者伊耿那样崛起，给我一个机会\"——他知道现在没人会这么说他。整段独白没有一个戏剧性的反转，只有一个温和的人在私下面对自己的平庸。这种戏在长剧里是最难演的——没有冲突没有金句，全靠演员的克制。",
+        "background": [
+          "中世纪欧洲贵族的史观高度依赖 chanson de geste（武功歌）和 minstrel（吟游诗人）传统——一个国王是否值得被记住，几乎等同于他是否有歌可唱。",
+          "GRRM 原著系列名《A Song of Ice and Fire》（冰与火之歌）正是这一传统的回响。维斯特洛的历史是被学士写下、被歌手传唱出来的——所以\"作不成歌\"在这个宇宙里几乎等于\"不存在\"。",
+          "韦赛里斯死后真正爆发的\"龙之舞\"（Dance of the Dragons）是维斯特洛历史上最惨烈的内战之一，也是这部剧（HoD）整体改编的源头。它确实成为了维斯特洛传唱百年的史诗。",
+          "这一层戏剧反讽是\"meta-irony\"——韦赛里斯担心自己不会被歌咏，而观众正在通过一部 HBO 剧观看关于他的歌。"
+        ],
+        "why_it_matters_now": "这场独白点破了韦赛里斯整个统治的内核：他是个温和、犹豫、想做对事的人，但他的时代需要的是杀伐果断的君主。他自知不配，却没有路退出。这种自知和无力感，是他后续在继承权问题上反复摇摆、最后说出那一句被听错的临终遗言（\"应许王子\"）的心理底色。"
+      }
+    }
+  ]
+}
