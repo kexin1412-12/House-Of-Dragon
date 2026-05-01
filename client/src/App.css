@@ -1496,6 +1496,26 @@ body {
   background: rgba(232, 149, 77, 0.85);
 }
 .tx-player-aichat-btn svg { width: 20px; height: 20px; }
+/* 旁标：默认隐藏，hover 浮出（与对谈/关系图旁标同款交互） */
+.tx-player-aichat-btn-label {
+  position: absolute;
+  right: 54px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--de-font-caps);
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(216, 200, 168, 0.85);
+  opacity: 0;
+  transition: opacity 0.3s ease, right 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+.tx-player-aichat-btn:hover .tx-player-aichat-btn-label { opacity: 1; right: 60px; }
+/* 抽屉打开时（按钮往左移到 right: 432px），不显示旁标 —— 否则会跑到画面中间 */
+.tx-player-aichat-btn.is-open .tx-player-aichat-btn-label { display: none; }
 
 /* 画面 scrim：抽屉打开时盖住视频区域，捕获点击关闭抽屉（与关系图 .rg-scrim 同款）。 */
 .tx-player-aichat-scrim {
@@ -1713,39 +1733,38 @@ body {
   white-space: nowrap;
 }
 
-/* 章节 ticks：act 灰条、branch 橙条；hover 区比视觉条宽，方便鼠标命中 */
+/* 章节 ticks：act 灰圆点、branch 橙圆点；hover 区比视觉点大，方便鼠标命中 */
 .tx-controls-progress-tick {
   position: absolute; top: 50%;
-  width: 10px; height: 14px;
+  width: 14px; height: 14px;
   transform: translate(-50%, -50%);
   background: transparent;
   cursor: pointer;
   z-index: 2;
 }
-/* 视觉条画在 ::before 上 —— 真正的命中区是上面的透明 10px 包络 */
+/* 视觉点画在 ::before 上 —— 真正的命中区是上面的透明 10px 包络 */
 .tx-controls-progress-tick::before {
   content: '';
   position: absolute; left: 50%; top: 50%;
-  width: 2px; height: 100%;
+  width: 6px; height: 6px;
   transform: translate(-50%, -50%);
-  border-radius: 1px;
-  transition: width 0.15s, height 0.15s;
+  border-radius: 50%;
+  transition: width 0.15s, height 0.15s, background 0.15s, box-shadow 0.15s;
 }
-/* kb = 来自 KB 自动 enrich 的场景级事件（白细条）
-   manual = 编辑手写的事件（白细条同款）
-   crit = manual 中标了 crit:true 的关键节点（橙粗条 + 发光） */
+/* kb = 来自 KB 自动 enrich 的场景级事件（白圆点）
+   manual = 编辑手写的事件（白圆点同款）
+   crit = manual 中标了 crit:true 的关键节点（橙圆点 + 发光） */
 .tx-controls-progress-tick-kb::before,
 .tx-controls-progress-tick-manual::before {
   background: rgba(255, 255, 255, 0.55);
 }
 .tx-controls-progress-tick-crit::before {
-  width: 3px;
+  width: 8px; height: 8px;
   background: #e8954d;
-  box-shadow: 0 0 4px rgba(232, 149, 77, 0.6);
+  box-shadow: 0 0 6px rgba(232, 149, 77, 0.7);
 }
 .tx-controls-progress-tick:hover::before {
-  width: 4px;
-  height: 18px;
+  width: 10px; height: 10px;
   background: #fff;
 }
 .tx-controls-progress-tick-crit:hover::before {
