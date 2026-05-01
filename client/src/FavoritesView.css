@@ -269,9 +269,6 @@
 
 .fv-card {
   position: relative;
-  display: grid;
-  grid-template-columns: 160px 1fr 220px;
-  gap: 18px;
   padding: 16px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -282,6 +279,17 @@
 .fv-card:hover {
   border-color: rgba(243, 201, 122, 0.3);
   background: rgba(255, 255, 255, 0.05);
+}
+
+.fv-card.is-note-open {
+  border-color: rgba(243, 201, 122, 0.45);
+  background: rgba(243, 201, 122, 0.04);
+}
+
+.fv-card-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 220px;
+  gap: 18px;
 }
 
 .fv-card-bookmark {
@@ -416,6 +424,50 @@
   background: rgba(243, 201, 122, 0.22);
   border-color: rgba(243, 201, 122, 0.75);
   color: #fff8e6;
+}
+
+.fv-action.is-on {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+}
+
+/* ─── 卡片内联展开的"注释" */
+.fv-card-notes {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(243, 201, 122, 0.2);
+}
+
+.fv-note-section {
+  margin: 14px 0;
+}
+
+.fv-note-section h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f3c97a;
+  letter-spacing: 0.5px;
+}
+
+.fv-note-section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.fv-note-section ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.fv-note-section li {
+  margin: 4px 0;
 }
 
 /* ─── 右：最近收藏 */

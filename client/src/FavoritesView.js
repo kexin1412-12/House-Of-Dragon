@@ -47,12 +47,11 @@ function episodeTagFor(filename) {
 }
 
 // 顶部分类 tab —— 目前只有 riff 一种可收藏对象，所以 all / 文化梗 / 经典台词 由
-// tag 过滤实现；人物 / 线索 / 片段 还没有对应的源 UI，先占位。
+// tag 过滤实现；线索 / 片段 还没有对应的源 UI，先占位。
 const FAV_TABS = [
   { key: 'all',     label: '全部收藏', enabled: true,  hint: '' },
   { key: 'meme',    label: '文化梗',   enabled: true,  hint: '' },
   { key: 'classic', label: '经典台词', enabled: true,  hint: '' },
-  { key: 'char',    label: '人物',     enabled: false, hint: '关系图里加"收藏角色"按钮后启用' },
   { key: 'clue',    label: '线索',     enabled: false, hint: '线索 / 伏笔系统就位后启用' },
   { key: 'clip',    label: '片段',     enabled: false, hint: '播放器加"保存当前片段"按钮后启用' },
 ];
@@ -70,6 +69,7 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
   const [activeTag, setActiveTag] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
   const [sortBy, setSortBy] = useState('recent'); // 'recent' | 'oldest'
+  const [openNoteId, setOpenNoteId] = useState(null); // 哪张卡片的"查看注释"展开了
 
   // 拉所有视频的所有 riffs（demo 范围只有 4 条）
   useEffect(() => {
@@ -192,47 +192,77 @@ export default function FavoritesView({ videos, onClose, onJumpToRiff }) {
             const video = findVideoForRiff(videos, r.video_id);
             const showName = showNameFor(video);
             const epTag = (r.episode || episodeTagFor(video?.filename)).replace(/^S0?/, 'S');
+            const noteOpen = openNoteId === r.riff_id;
             return (
-              <article key={r.riff_id} className="fv-card">
-                <button
-                  className="fv-card-bookmark"
-                  onClick={() => toggle(r.riff_id)}
-                  title="取消收藏"
-                >▮</button>
-                <div className="fv-card-thumb-wrap">
-                  {r.anchor?.keyframe && (
-                    <img className="fv-card-thumb" src={`/kb/${r.anchor.keyframe}`} alt="" />
-                  )}
-                </div>
-                <div className="fv-card-body">
-                  <div className="fv-card-quote-en">"{r.anchor?.subtitle_en}"</div>
-                  {r.anchor?.subtitle_zh && (
-                    <div className="fv-card-quote-zh">{r.anchor.subtitle_zh}</div>
-                  )}
-                  {r.tier2_punch && (
-                    <div className="fv-card-punch">{r.tier2_punch}</div>
-                  )}
-                  <div className="fv-card-tags">
-                    {(r.tags || []).map(t => (
-                      <span key={t} className="fv-tag-pill">{t}</span>
-                    ))}
+              <article key={r.riff_id} className={`fv-card${noteOpen ? ' is-note-open' : ''}`}>
+                <div className="fv-card-row">
+                  <button
+                    className="fv-card-bookmark"
+                    onClick={() => toggle(r.riff_id)}
+                    title="取消收藏"
+                  >▮</button>
+                  <div className="fv-card-thumb-wrap">
+                    {r.anchor?.keyframe && (
+                      <img className="fv-card-thumb" src={`/kb/${r.anchor.keyframe}`} alt="" />
+                    )}
+                  </div>
+                  <div className="fv-card-body">
+                    <div className="fv-card-quote-en">"{r.anchor?.subtitle_en}"</div>
+                    {r.anchor?.subtitle_zh && (
+                      <div className="fv-card-quote-zh">{r.anchor.subtitle_zh}</div>
+                    )}
+                    {r.tier2_punch && (
+                      <div className="fv-card-punch">{r.tier2_punch}</div>
+                    )}
+                    <div className="fv-card-tags">
+                      {(r.tags || []).map(t => (
+                        <span key={t} className="fv-tag-pill">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="fv-card-side">
+                    <div className="fv-card-source">
+                      《{showName}》 <span className="fv-card-ep">{epTag}</span> · {formatMMSS(r.anchor?.start_time || 0)}
+                    </div>
+                    <div className="fv-card-actions">
+                      <button
+                        className={`fv-action fv-action-secondary${noteOpen ? ' is-on' : ''}`}
+                        onClick={() => setOpenNoteId(noteOpen ? null : r.riff_id)}
+                      >{noteOpen ? '收起注释' : '查看注释'}</button>
+                      <button
+                        className="fv-action fv-action-primary"
+                        onClick={() => video && onJumpToRiff(video, r, true)}
+                      >▶ 跳转片段</button>
+                    </div>
                   </div>
                 </div>
-                <div className="fv-card-side">
-                  <div className="fv-card-source">
-                    《{showName}》 <span className="fv-card-ep">{epTag}</span> · {formatMMSS(r.anchor?.start_time || 0)}
+
+                {noteOpen && r.tier3 && (
+                  <div className="fv-card-notes">
+                    {r.tier3.why_meme && (
+                      <section className="fv-note-section">
+                        <h4>为什么是个梗</h4>
+                        <p>{r.tier3.why_meme}</p>
+                      </section>
+                    )}
+                    {Array.isArray(r.tier3.background) && r.tier3.background.length > 0 && (
+                      <section className="fv-note-section">
+                        <h4>背景知识</h4>
+                        <ul>
+                          {r.tier3.background.map((b, idx) => (
+                            <li key={idx}>{b}</li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
+                    {r.tier3.why_it_matters_now && (
+                      <section className="fv-note-section">
+                        <h4>剧情里为什么重要</h4>
+                        <p>{r.tier3.why_it_matters_now}</p>
+                      </section>
+                    )}
                   </div>
-                  <div className="fv-card-actions">
-                    <button
-                      className="fv-action fv-action-secondary"
-                      onClick={() => video && onJumpToRiff(video, r, false)}
-                    >查看注释</button>
-                    <button
-                      className="fv-action fv-action-primary"
-                      onClick={() => video && onJumpToRiff(video, r, true)}
-                    >▶ 跳转片段</button>
-                  </div>
-                </div>
+                )}
               </article>
             );
           })}
