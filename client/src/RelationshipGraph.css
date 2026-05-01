@@ -62,6 +62,24 @@
 .rg-hud-icon:hover { background: rgba(232, 149, 77, 0.6); }
 .rg-hud-icon svg { width: 20px; height: 20px; color: currentColor; }
 .rg-hud-icon.has-news { box-shadow: 0 0 0 1px rgba(212,175,55,.55), 0 0 18px rgba(212,175,55,.35); }
+/* 旁标：默认隐藏，hover 浮出（与对谈/解说图标同款交互） */
+.rg-hud-icon-label {
+  position: absolute;
+  right: 54px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--de-font-caps, 'Cinzel', 'Noto Serif SC', 'Songti SC', serif);
+  font-size: 11px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(216, 200, 168, 0.85);
+  opacity: 0;
+  transition: opacity 0.3s ease, right 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+.rg-hud-icon:hover .rg-hud-icon-label { opacity: 1; right: 60px; }
 
 /* ─── Full-screen overlay ────────────────────────────────────────── */
 .rg-focus-overlay {

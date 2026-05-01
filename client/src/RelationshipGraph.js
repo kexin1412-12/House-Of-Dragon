@@ -799,7 +799,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
         <div
           className={`rg-hud-icon ${hasNews ? 'has-news' : ''}`}
           onClick={openFocus}
-          title="关系"
+          title="人物关系图谱"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="8.5" cy="8" r="2.6" />
@@ -808,6 +808,7 @@ export default function RelationshipGraph({ videoId, videoRef }) {
             <path d="M13.5 18.5c.4-2.1 2.1-3.6 4-3.6s3.6 1.5 4 3.6" />
             <line x1="9.5" y1="11" x2="14" y2="11" strokeDasharray="1 2" />
           </svg>
+          <span className="rg-hud-icon-label">关系</span>
         </div>
       </div>
 
