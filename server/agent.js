@@ -2519,6 +2519,45 @@ ${bp.description || '（无具体描述）'}
     });
   });
 
+  // 列出整集所有 symbol 出现位置——给"本集符号"汇总 tab 用。
+  // 每个 (scene, symbol) pair 返回一行，按 scene_start 升序。
+  app.get('/api/agent/episode/symbols', (req, res) => {
+    const { videoId } = req.query;
+    const kb = loadKB(videoId);
+    if (!kb) return res.json({ has_kb: false });
+
+    const showId = kb.show_id || 'house-of-the-dragon';
+    const symPath = path.join(KB_DIR, 'symbols', `${showId}.json`);
+    let symMap = {};
+    if (fs.existsSync(symPath)) {
+      try {
+        const d = JSON.parse(fs.readFileSync(symPath, 'utf8'));
+        for (const s of (d.symbols || [])) symMap[s.symbol_id] = s;
+      } catch (e) { /* ignore */ }
+    }
+
+    const items = [];
+    for (const scene of (kb.scenes || [])) {
+      for (const sym of (scene.symbols || [])) {
+        const dict = symMap[sym.symbol_id] || {};
+        items.push({
+          symbol_id: sym.symbol_id,
+          scene_id: scene.scene_id,
+          scene_start: scene.start_time,
+          scene_end: scene.end_time,
+          keyframe: scene.keyframe || null,
+          category: dict.category || null,
+          meaning_zh: sym.meaning_zh || dict.meaning_zh || null,
+          viewer_takeaway: sym.viewer_takeaway || dict.viewer_takeaway || null,
+          evidence_in_frame: sym.evidence_in_frame || null,
+          confidence: sym.confidence || null,
+        });
+      }
+    }
+    items.sort((a, b) => a.scene_start - b.scene_start);
+    res.json({ has_kb: true, items });
+  });
+
   // ─── Hotspot generation (scene-analyst agent) ─────────────────────
   // 用户在前端给某 scene 加一个剧情符号热点：可以从词典挑 symbol_id，或只给一句模糊
   // 描述（hint），agent 会用 ToolBox 查证后写出完整的 symbol entry（evidence/meaning/...）。

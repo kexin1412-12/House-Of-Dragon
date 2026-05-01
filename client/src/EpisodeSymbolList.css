@@ -1,0 +1,172 @@
+/* EpisodeSymbolList — 嵌在 StorylineXRay 的第三个 tab 里，沿用 sx- 色板 */
+
+.esl-root {
+  --esl-ink: #e8e6df;
+  --esl-ink-soft: #a9a69d;
+  --esl-ink-dim: #6b6960;
+  --esl-gold: #d4af37;
+  --esl-gold-soft: rgba(212, 175, 55, 0.55);
+  --esl-rule: rgba(212, 175, 55, 0.16);
+  height: 100%;
+  display: flex; flex-direction: column;
+  color: var(--esl-ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+.esl-loading,
+.esl-error,
+.esl-empty {
+  padding: 40px 28px;
+  color: var(--esl-ink-soft);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+.esl-error { color: #b66; }
+
+/* ─── header (blurb + completion) ─── */
+.esl-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 24px;
+  padding: 22px 28px 14px;
+  border-bottom: 1px solid var(--esl-rule);
+  flex-shrink: 0;
+}
+.esl-header-blurb {
+  font-size: 13px; line-height: 1.7;
+  color: var(--esl-ink-soft);
+  max-width: 640px;
+}
+.esl-header-blurb em {
+  font-style: normal; color: var(--esl-ink);
+}
+.esl-header-spoiler {
+  display: inline-block; margin-left: 6px;
+  color: var(--esl-ink-dim);
+}
+.esl-completion {
+  display: flex; flex-direction: column; align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.esl-comp-label {
+  font-size: 11px; letter-spacing: 1.4px;
+  color: var(--esl-ink-dim);
+}
+.esl-comp-pct {
+  font-size: 18px; letter-spacing: 1px;
+  color: var(--esl-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── category tabs ─── */
+.esl-tabs {
+  display: flex; gap: 2px;
+  padding: 10px 28px 0;
+  border-bottom: 1px solid var(--esl-rule);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.esl-tab {
+  background: transparent; border: 0;
+  color: var(--esl-ink-soft);
+  padding: 8px 14px 10px;
+  font-size: 12px; letter-spacing: 0.6px;
+  cursor: pointer;
+  border-bottom: 1.5px solid transparent;
+  transition: color .14s ease, border-color .14s ease;
+  white-space: nowrap;
+}
+.esl-tab:hover { color: var(--esl-ink); }
+.esl-tab.is-active {
+  color: var(--esl-gold);
+  border-bottom-color: var(--esl-gold-soft);
+}
+.esl-tab-count {
+  display: inline-block; margin-left: 6px;
+  font-size: 10px; color: var(--esl-ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.esl-tab.is-active .esl-tab-count { color: var(--esl-gold-soft); }
+
+/* ─── list ─── */
+.esl-list {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px 0 32px;
+  list-style: none;
+}
+.esl-list::-webkit-scrollbar { width: 4px; }
+.esl-list::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.18); border-radius: 2px; }
+
+.esl-item {
+  display: grid;
+  grid-template-columns: 32px 56px 1fr 18px;
+  align-items: start;
+  gap: 12px;
+  padding: 14px 28px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.06);
+  cursor: pointer;
+  transition: background .14s ease;
+}
+.esl-item:hover {
+  background: rgba(212, 175, 55, 0.05);
+}
+.esl-item.is-upcoming {
+  opacity: 0.55;
+}
+.esl-item.is-upcoming:hover {
+  opacity: 0.85;
+  background: rgba(212, 175, 55, 0.04);
+}
+
+.esl-cat {
+  font-size: 16px;
+  color: var(--esl-gold);
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.esl-cat-color_code { color: #c9a85d; }
+.esl-cat-omission   { color: #8e8a7d; }
+.esl-cat-editing    { color: #b59a4d; }
+.esl-cat-micro_signal { color: #d2b56a; }
+.esl-cat-lore       { color: #e0c279; }
+
+.esl-time {
+  font-size: 12px; letter-spacing: 0.5px;
+  color: var(--esl-ink-soft);
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+
+.esl-body {
+  display: flex; flex-direction: column; gap: 6px;
+  min-width: 0;
+}
+.esl-takeaway {
+  font-size: 14px; line-height: 1.5;
+  color: var(--esl-ink);
+  letter-spacing: 0.2px;
+}
+.esl-veil {
+  color: var(--esl-ink-dim);
+  font-style: italic;
+  letter-spacing: 0.4px;
+}
+.esl-meaning {
+  font-size: 12.5px; line-height: 1.7;
+  color: var(--esl-ink-soft);
+  letter-spacing: 0.1px;
+}
+
+.esl-status {
+  font-size: 13px;
+  color: var(--esl-gold-soft);
+  text-align: right;
+  padding-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.esl-item.is-upcoming .esl-status {
+  color: var(--esl-ink-dim);
+}

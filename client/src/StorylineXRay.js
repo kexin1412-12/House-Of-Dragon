@@ -3,6 +3,7 @@ import axios from 'axios';
 import './StorylineXRay.css';
 import StorylineTimeline from './StorylineTimeline';
 import RelationshipGraph from './RelationshipGraph';
+import EpisodeSymbolList from './EpisodeSymbolList';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -50,7 +51,7 @@ function useCurrentTime(videoRef, active) {
 
 export default function StorylineXRay({ videoId, videoRef }) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph'
+  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph' | 'symbols'
   const { storyline } = useStoryline(videoId);
   // 即使没打开也轻量轮询 currentTime——这样 HUD 按钮可以常显进度（暂未做），
   // 同时关掉再开会立刻显示正确状态。但只在 open=true 时才真的拉。
@@ -139,6 +140,10 @@ export default function StorylineXRay({ videoId, videoRef }) {
                   className={`sx-tab${activeTab === 'graph' ? ' is-active' : ''}`}
                   onClick={() => setActiveTab('graph')}
                 >人物关系</button>
+                <button
+                  className={`sx-tab${activeTab === 'symbols' ? ' is-active' : ''}`}
+                  onClick={() => setActiveTab('symbols')}
+                >本集符号</button>
               </nav>
               <div className="sx-topbar-right">
                 <span className="sx-completion-label">本集完成度</span>
@@ -166,6 +171,13 @@ export default function StorylineXRay({ videoId, videoRef }) {
                   videoRef={videoRef}
                   embedded
                   onCloseEmbedded={() => setOpen(false)}
+                />
+              )}
+              {activeTab === 'symbols' && (
+                <EpisodeSymbolList
+                  videoId={videoId}
+                  currentTime={currentTime}
+                  onJumpTo={onJumpTo}
                 />
               )}
             </div>
