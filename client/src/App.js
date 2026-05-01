@@ -149,7 +149,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
   const [aiBehavior, setAiBehavior] = useState('normal');
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
-  const [aiDepth, setAiDepth] = useState('brief'); // 'oneline' | 'brief' | 'deep'
+  const [aiDepth, setAiDepth] = useState('brief'); // 'brief' | 'deep'
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
   const [aiChatOpen, setAiChatOpen] = useState(false);
@@ -1631,9 +1631,8 @@ const QUICK_QUESTIONS = [
 ];
 
 const DEPTH_OPTIONS = [
-  { id: 'oneline', label: '一句' },
-  { id: 'brief',   label: '简明' },
-  { id: 'deep',    label: '深挖' },
+  { id: 'brief', label: '简明' },
+  { id: 'deep',  label: '深挖' },
 ];
 
 /* DE 风格 · 一行叙事（user / agent） —— 不要气泡，平面文本流。
