@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import './App.css';
+import RelationshipGraph from './RelationshipGraph';
 import StorylineXRay from './StorylineXRay';
 import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
@@ -478,7 +479,6 @@ function TencentPlayer({
 
   const videoRef = useRef(null);
   const [aiKb, setAiKb] = useState('');
-  const [aiBehavior, setAiBehavior] = useState('normal');
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [aiDepth, setAiDepth] = useState('brief'); // 'brief' | 'deep'
@@ -568,8 +568,6 @@ function TencentPlayer({
   const aiCharStateRef = useRef(new Map()); // charId → last seen short_identity（用于检测状态变化）
   const aiLastPopupAtRef = useRef(new Map()); // charId → ms timestamp of last popup（cooldown）
   const aiLogRef = useRef(null);
-  const aiPrevTimeRef = useRef(0);
-  const aiBehaviorTimerRef = useRef(null);
 
   // ─── 共谋者 · 机制 A：分支推演 ─────────────────────────────────
   const [branchPoints, setBranchPoints] = useState([]);            // [{branch_id, timestamp, label, options, ...}]
@@ -740,38 +738,6 @@ function TencentPlayer({
     if (branchInvitationTimerRef.current) clearTimeout(branchInvitationTimerRef.current);
   }, [playing.id]);
 
-  // Track user-behavior signals (skip / fast_forward / rewind / pause) so
-  // the agent can explain what was missed. Resets to 'normal' after 10s idle.
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const bumpBehavior = (b) => {
-      setAiBehavior(b);
-      if (aiBehaviorTimerRef.current) clearTimeout(aiBehaviorTimerRef.current);
-      aiBehaviorTimerRef.current = setTimeout(() => setAiBehavior('normal'), 10000);
-    };
-    const onTime = () => { aiPrevTimeRef.current = v.currentTime; };
-    const onSeeked = () => {
-      const delta = v.currentTime - aiPrevTimeRef.current;
-      if (Math.abs(delta) < 2) return;
-      bumpBehavior(delta > 0 ? 'skip' : 'rewind');
-    };
-    const onRate = () => {
-      if (v.playbackRate > 1) bumpBehavior('fast_forward');
-    };
-    const onPause = () => bumpBehavior('pause');
-    v.addEventListener('timeupdate', onTime);
-    v.addEventListener('seeked', onSeeked);
-    v.addEventListener('ratechange', onRate);
-    v.addEventListener('pause', onPause);
-    return () => {
-      v.removeEventListener('timeupdate', onTime);
-      v.removeEventListener('seeked', onSeeked);
-      v.removeEventListener('ratechange', onRate);
-      v.removeEventListener('pause', onPause);
-      if (aiBehaviorTimerRef.current) clearTimeout(aiBehaviorTimerRef.current);
-    };
-  }, []);
 
   // 人物识别改为按钮触发：点一次跑一次，标签自动 6 秒后消失。
   // 不再自动轮询 → 不会自动弹名字 / 状态变化 popup。
@@ -1012,9 +978,7 @@ function TencentPlayer({
           videoId: aiKb || null,
           videoFile: playing.filename,
           t,
-          previousTime: aiPrevTimeRef.current,
           question: q,
-          behavior: aiBehavior,
           mode: 'casual',
           depth: aiDepth,
           image: imageDataUrl,
@@ -1190,7 +1154,6 @@ function TencentPlayer({
                 />
                 <div className="tx-player-aichat-drawer" onClick={e => e.stopPropagation()}>
                   <AgentPanel
-                    behavior={aiBehavior}
                     messages={aiMessages}
                     input={aiInput}
                     setInput={setAiInput}
@@ -1302,6 +1265,9 @@ function TencentPlayer({
             <SymbolHotspots videoId={aiKb} videoRef={videoRef} />
 
 
+            {/* 人物关系图 —— 独立 HUD 入口（X 光内的"人物关系"tab 也保留） */}
+            <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
+
             {/* 叙事 X 光 —— HUD 入口，包"关键事件结构图" + "人物关系" 两 tab */}
             <StorylineXRay videoId={aiKb} videoRef={videoRef} />
 
@@ -1356,7 +1322,6 @@ function TencentPlayer({
 
           {rightTab === 'agent' && (
             <AgentPanel
-              behavior={aiBehavior}
               messages={aiMessages}
               input={aiInput}
               setInput={setAiInput}
@@ -1421,15 +1386,6 @@ function episodeTag(filename) {
   if (m2) return `S01E${m2[1].padStart(2, '0')}`;
   return null;
 }
-
-const BEHAVIOR_LABEL = {
-  normal: null,
-  pause: '已暂停',
-  skip: '刚快进',
-  rewind: '刚回看',
-  fast_forward: '倍速中',
-  replay: '重看',
-};
 
 // 把 [事实]/[解读]/[推测] 标签的回答切成段。任何 tag 之前的纯文本视为 [事实]。
 // 同一 tag 重复出现的话取第一段（system prompt 里要求每个 tag 最多一次）。
@@ -1506,12 +1462,10 @@ function DELine({ message }) {
 
 function AgentPanel({
   messages, input, setInput,
-  sending, behavior, onSubmit, logRef,
+  sending, onSubmit, logRef,
   depth = 'brief', setDepth = () => {},
   onClear,
 }) {
-  const behaviorLabel = BEHAVIOR_LABEL[behavior];
-  // 决策位的"重量"提示：深挖模式下选项标记成 weighted（橙红）
   const weighted = depth === 'deep';
 
   return (
@@ -1521,15 +1475,11 @@ function AgentPanel({
         <span className="tx-agent-de-page">S01·A05·{String(messages.length).padStart(2, '0')}</span>
       </div>
 
-      {behaviorLabel && (
-        <div className="tx-agent-de-behavior">{behaviorLabel}</div>
-      )}
-
       {/* 上半区：纯阅读，纵向叙事流 —— scrollbar 走 .tx-agent-log（DE 风格 4px 细金线） */}
       <div ref={logRef} className="tx-agent-log tx-agent-de-log">
         {messages.length === 0 && (
           <div className="tx-agent-de-empty">
-            随时问点什么，比如<em>"这个镜头什么意思"</em>、<em>"我刚才错过了什么"</em>
+            随时问点什么，比如<em>"这个镜头什么意思"</em>、<em>"她为什么沉默"</em>
           </div>
         )}
         {messages.map((m, i) => <DELine key={i} message={m} />)}

@@ -1093,17 +1093,6 @@ body {
   text-transform: uppercase;
 }
 
-.tx-agent-de-behavior {
-  align-self: flex-start;
-  padding: 2px 10px;
-  margin-bottom: 10px;
-  background: rgba(232, 149, 77, 0.14);
-  color: #e8b85a;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-size: 10px; letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
 .tx-agent-de-cards { margin-bottom: 14px; }
 .tx-agent-de-eyebrow {
   font-family: 'Noto Sans SC', system-ui, sans-serif;

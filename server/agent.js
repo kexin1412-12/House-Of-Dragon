@@ -466,47 +466,20 @@ function buildToolBundle(kb, t, question) {
   };
 }
 
-function getMissedScenes(kb, previousTime, currentTime) {
-  if (previousTime == null) return [];
-
-  return scenesBetween(kb, previousTime, currentTime)
-    .filter(s => {
-      const importance = s.narrative?.importance || 0;
-      const shotImportance = s.shot?.importance || 0;
-      const hasForeshadow = !!s.foreshadow?.setup_hint;
-      return importance >= 0.65 || shotImportance >= 0.7 || hasForeshadow;
-    })
-    .map(s => ({
-      scene_id: s.scene_id,
-      t: s.start_time,
-      fact: s.plot?.fact,
-      shot_intent: s.shot?.intent,
-      setup_hint: s.foreshadow?.setup_hint,
-      importance: s.narrative?.importance
-    }));
-}
-
 function buildContext(kb, params) {
   const {
     cursorTime,
-    previousTime,
     question,
-    behavior = 'normal',
     mode = 'casual',
     session = {}
   } = params;
 
   const scene = currentScene(kb, cursorTime);
   const toolBundle = buildToolBundle(kb, cursorTime, question);
-  const missed = behavior === 'skip' || behavior === 'fast_forward'
-    ? getMissedScenes(kb, previousTime, cursorTime)
-    : [];
 
   return {
     video_title: kb.title,
     current_time: cursorTime,
-    previous_time: previousTime ?? null,
-    behavior,
     mode,
     current_scene: scene ? {
       scene_id: scene.scene_id,
@@ -520,7 +493,6 @@ function buildContext(kb, params) {
       tags: scene.tags || []
     } : null,
     recent_plot: getPlotContext(kb, cursorTime),
-    missed_scenes: missed,
     tool_bundle: toolBundle,
     conversation_memory: {
       last_questions: session.last_questions || [],
@@ -698,9 +670,8 @@ const SYSTEM_PROMPT = `
 7. 如果 mode 是 detective，只给提示，不直接给结论。
 8. 如果 mode 是 casual，用朋友聊天的方式解释。
 9. 如果 mode 是 study，可以分成"镜头 / 情绪 / 叙事作用"三小句，但仍然简洁。
-10. 如果用户刚刚发生 skip、倍速、回看、暂停等行为，要优先解释他可能错过了什么，或者为什么这一段值得看。
-11. 当用户问"这是谁/他俩什么关系/他现在什么身份"时，使用 current_scene.characters[] 里的 display_name / house / current_status / relationships 作答；只引用字段里实际存在的称号、立场、关系；relationships 已按当前进度过滤，可放心使用。如果某字段为 null，说明此刻还看不出来，直接说"这段暂时还看不出来"。
-12. 关键：如果用户消息附带了画面图像，那个图像才是当前真正发生的事实。Context 里的 KB 数据可能是粗略骨架或老的预处理结果，**只能作为人物词典/家族关系的背景参考**。如果 KB 描述与图像明显冲突（人物对不上、动作对不上、地点对不上），相信图像，按图像描述当前画面，并对识别到的角色用 KB 里的身份/关系信息补充。如果图像里的人物 KB 里查不到，就用你对该剧的常识识别其角色名 + 简短身份。
+10. 当用户问"这是谁/他俩什么关系/他现在什么身份"时，使用 current_scene.characters[] 里的 display_name / house / current_status / relationships 作答；只引用字段里实际存在的称号、立场、关系；relationships 已按当前进度过滤，可放心使用。如果某字段为 null，说明此刻还看不出来，直接说"这段暂时还看不出来"。
+11. 关键：如果用户消息附带了画面图像，那个图像才是当前真正发生的事实。Context 里的 KB 数据可能是粗略骨架或老的预处理结果，**只能作为人物词典/家族关系的背景参考**。如果 KB 描述与图像明显冲突（人物对不上、动作对不上、地点对不上），相信图像，按图像描述当前画面，并对识别到的角色用 KB 里的身份/关系信息补充。如果图像里的人物 KB 里查不到，就用你对该剧的常识识别其角色名 + 简短身份。
 
 输出要求：
 只输出自然语言，不要 JSON，不要代码块，不要说"根据上下文"。
@@ -737,14 +708,6 @@ function generateTemplate(context, question) {
 
   if (!scene) return '这段暂时还看不出来，可能需要等画面信息更明确一点。';
 
-  if (context.behavior === 'skip' || context.behavior === 'fast_forward') {
-    const missed = context.missed_scenes || [];
-    if (missed.length) {
-      const m = missed[missed.length - 1];
-      return `你刚刚跳过的这段有个关键点：${m.setup_hint || m.shot_intent || m.fact}`;
-    }
-  }
-
   if (primary === 'shot' && scene.shot?.intent) {
     return `这个镜头主要在表达${scene.shot.emotion || '情绪变化'}。${scene.shot.intent}`;
   }
@@ -766,26 +729,20 @@ function generateTemplate(context, question) {
 
 function prepareRequest(kb, bodyOrQuery = {}) {
   const cursorTime = normalizeTime(bodyOrQuery.t);
-  const previousTime = bodyOrQuery.previousTime != null ? normalizeTime(bodyOrQuery.previousTime) : null;
   const question = String(bodyOrQuery.question || '').trim();
-  const behavior = bodyOrQuery.behavior || 'normal';
   const mode = bodyOrQuery.mode || 'casual';
   const session = bodyOrQuery.session || {};
 
   const context = buildContext(kb, {
     cursorTime,
-    previousTime,
     question,
-    behavior,
     mode,
     session
   });
 
   return {
     cursorTime,
-    previousTime,
     question,
-    behavior,
     mode,
     context
   };
@@ -1274,7 +1231,6 @@ function register(app) {
       has_kb: true,
       source,
       cursor_time: prepared.cursorTime,
-      behavior: prepared.behavior,
       mode: prepared.mode,
       primary_intent: prepared.context.tool_bundle.primary,
       intents: prepared.context.tool_bundle.intents
@@ -1310,9 +1266,7 @@ function register(app) {
     // prepared 在无 KB 时构造一个最小壳，让后续代码不崩
     const prepared = kb ? prepareRequest(kb, req.body) : {
       cursorTime: normalizeTime(req.body?.t),
-      previousTime: req.body?.previousTime != null ? normalizeTime(req.body.previousTime) : null,
       question: String(req.body?.question || '').trim(),
-      behavior: req.body?.behavior || 'normal',
       mode: req.body?.mode || 'casual',
       context: { current_scene: null, tool_bundle: { primary: null, intents: {} } },
     };
@@ -1320,7 +1274,6 @@ function register(app) {
     send('meta', {
       has_kb: !!kb,
       cursor_time: prepared.cursorTime,
-      behavior: prepared.behavior,
       mode: prepared.mode,
       primary_intent: prepared.context.tool_bundle?.primary || null,
       intents: prepared.context.tool_bundle?.intents || {},
@@ -1720,7 +1673,6 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
       const agentInput = {
         current_time_s: Math.floor(prepared.cursorTime),
         user_mode: prepared.mode || 'casual',
-        user_behavior: prepared.behavior || 'normal',
         clip_window: clipDescription,
         episode_arc: episodeArc,
         current_scene: currentSceneSlice,
