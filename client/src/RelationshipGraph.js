@@ -823,18 +823,18 @@ export default function RelationshipGraph({ videoId, videoRef }) {
         <div
           className="rg-tree-card"
           onClickCapture={(e) => {
-            // 兜底：profile 打开时，点击 panel / 角色节点 / zoom 按钮 / 关闭 ×
-            // 之外的任何位置（含 header / legend / scan-line / 卡片空白）都关 profile。
-            // 用 capture 阶段跑，确保它在子级 onClick (clearOverlays 的 closeOneLayer)
-            // 之前命中 — 否则父子两层都触发 closeOneLayer 会一次剥两层（profile + highlight）。
-            if (!profileId) return;
+            // 兜底：点 panel / 角色节点 / zoom 按钮 / 关闭 × 之外的任何位置
+            // （含 header / legend / scan-line / 卡片空白）都按"渐进剥离"关一层
+            // (profile → highlight → drawer)，跟 ESC 行为一致。capture 阶段跑确保
+            // viewport blank click 也能命中 (与 .rg-tree-viewport 的 bubble onClick
+            // 调用同一 closeOneLayer，幂等)。
             const t = e.target;
             if (!t || !t.closest) return;
             if (t.closest('.rg-profile')) return;
             if (t.closest('.rg-node')) return;
             if (t.closest('.rg-zoom-controls')) return;
             if (t.closest('.rg-close')) return;
-            setProfileId(null);
+            closeOneLayer();
           }}
         >
           <div className="rg-scan-line" key={scanKey} />
