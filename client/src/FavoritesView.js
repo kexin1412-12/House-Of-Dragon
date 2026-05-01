@@ -47,12 +47,12 @@ function episodeTagFor(filename) {
 }
 
 // 顶部分类 tab —— 目前只有 riff 一种可收藏对象，所以 all / 文化梗 / 经典台词 由
-// tag 过滤实现；线索 / 片段 还没有对应的源 UI，先占位。
+// tag 过滤实现；片段还没有对应的源 UI，先占位。
+// 线索（伏笔）后续整合进剧情线视图，不走"收藏"这条路径。
 const FAV_TABS = [
   { key: 'all',     label: '全部收藏', enabled: true,  hint: '' },
   { key: 'meme',    label: '文化梗',   enabled: true,  hint: '' },
   { key: 'classic', label: '经典台词', enabled: true,  hint: '' },
-  { key: 'clue',    label: '线索',     enabled: false, hint: '线索 / 伏笔系统就位后启用' },
   { key: 'clip',    label: '片段',     enabled: false, hint: '播放器加"保存当前片段"按钮后启用' },
 ];
 
