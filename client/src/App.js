@@ -834,19 +834,25 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       queue += delta;
       if (!typing) tick();
     };
-    // 不在 stream 结束时立即 dump 剩余 —— 用户要"打字感"，让 tick 把队列敲完。
-    const flushPending = () => {};
-
+    // stream 结束后让打字机自然敲完，不在 stream done 时立刻砸完。
+    // finalize 等到队列真正排空 + 当前 tick 不在跑了，再把消息标记为
+    // streaming=false（这时光标 / loading 才真正消失）。
     const finalizeMsg = (patch) => {
-      flushPending();
-      setAiMessages(prev => {
-        const copy = prev.slice();
-        const last = copy[copy.length - 1];
-        if (last?.role === 'agent' && last.streaming) {
-          copy[copy.length - 1] = { ...last, streaming: false, ...patch };
-        }
-        return copy;
-      });
+      const apply = () => {
+        setAiMessages(prev => {
+          const copy = prev.slice();
+          const last = copy[copy.length - 1];
+          if (last?.role === 'agent' && last.streaming) {
+            copy[copy.length - 1] = { ...last, streaming: false, ...patch };
+          }
+          return copy;
+        });
+      };
+      const wait = () => {
+        if (queue.length || typing) setTimeout(wait, 40);
+        else apply();
+      };
+      wait();
     };
 
     // 抓当前画面一起送给 LLM —— 让回答以图像为事实，KB 只作背景参考
@@ -960,8 +966,8 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     setRoleplayChoicesLoading(false);
 
     let finalAgentText = '';                  // 累计最终台词，用于 voices 调用
-    // Typewriter pacing — see notes in submitAiQuestion above.
-    const TYPE_INTERVAL_MS = 22;
+    // 严格打字机节奏 — 见 submitAiQuestion 的同款注释。
+    const TYPE_INTERVAL_MS = 18;
     let queue = '';
     let typing = false;
     const flushChunk = (chunk) => setRoleplayMessages(prev => {
@@ -976,7 +982,7 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
     });
     const tick = () => {
       if (!queue.length) { typing = false; return; }
-      const n = Math.min(queue.length, Math.max(1, Math.ceil(queue.length / 30)));
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
       flushChunk(queue.slice(0, n));
       queue = queue.slice(n);
       typing = true;
@@ -987,20 +993,22 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
       queue += delta;
       if (!typing) tick();
     };
-    const flushPending = () => {
-      if (queue.length) { flushChunk(queue); queue = ''; }
-      typing = false;
-    };
     const finalizeMsg = (patch) => {
-      flushPending();
-      setRoleplayMessages(prev => {
-        const copy = prev.slice();
-        const last = copy[copy.length - 1];
-        if (last?.role === 'agent' && last.streaming) {
-          copy[copy.length - 1] = { ...last, streaming: false, ...patch };
-        }
-        return copy;
-      });
+      const apply = () => {
+        setRoleplayMessages(prev => {
+          const copy = prev.slice();
+          const last = copy[copy.length - 1];
+          if (last?.role === 'agent' && last.streaming) {
+            copy[copy.length - 1] = { ...last, streaming: false, ...patch };
+          }
+          return copy;
+        });
+      };
+      const wait = () => {
+        if (queue.length || typing) setTimeout(wait, 40);
+        else apply();
+      };
+      wait();
     };
 
     // 抓当前画面给角色"看"——让他能感知此刻气氛（非必须，profile 缺图也能跑）
