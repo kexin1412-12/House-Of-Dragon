@@ -109,6 +109,28 @@
   letter-spacing: 0.5px;
 }
 
+.mo-popover-fav {
+  margin-left: auto;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0 2px;
+  font-size: 16px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: color 120ms ease, transform 120ms ease;
+}
+
+.mo-popover-fav:hover {
+  color: #ff8aa8;
+  transform: scale(1.15);
+}
+
+.mo-popover-fav.is-on {
+  color: #ff5b8a;
+}
+
 .mo-popover-spark {
   font-size: 14px;
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './MemeOverlay.css';
+import useMemeFavorites from './useMemeFavorites';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -112,6 +113,8 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
 }
 
 function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand }) {
+  const { isFav, toggle: toggleFav } = useMemeFavorites();
+  const fav = isFav(riff.riff_id);
   return (
     <div
       className="mo-popover"
@@ -122,6 +125,13 @@ function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand }) {
       <div className="mo-popover-head">
         <span className="mo-popover-spark">✦</span>
         <span>文化梗</span>
+        <button
+          className={`mo-popover-fav${fav ? ' is-on' : ''}`}
+          onClick={() => toggleFav(riff.riff_id)}
+          title={fav ? '取消收藏' : '收藏这条梗'}
+        >
+          {fav ? '♥' : '♡'}
+        </button>
       </div>
       {riff.tier2_punch && (
         <div className="mo-popover-body">{riff.tier2_punch}</div>

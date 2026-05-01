@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './MemePanel.css';
+import useMemeFavorites from './useMemeFavorites';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -15,6 +16,7 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const itemRefs = useRef({}); // riff_id -> DOM node
+  const { isFav, toggle: toggleFav, count: favCount } = useMemeFavorites();
 
   useEffect(() => {
     if (!videoId) { setRiffs([]); return; }
@@ -50,6 +52,9 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
     <div className="mp-root">
       <div className="mp-header">
         本集检测到 <strong>{riffs.length}</strong> 个文化梗
+        {favCount > 0 && (
+          <span className="mp-header-fav">· 已收藏 {favCount}</span>
+        )}
       </div>
       <div className="mp-list">
         {riffs.map((r, i) => {
@@ -66,11 +71,16 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
               >
                 <span className="mp-item-num">{i + 1}</span>
                 {r.anchor && r.anchor.keyframe && (
-                  <img
-                    className="mp-item-thumb"
-                    src={`${API}/kb/${r.anchor.keyframe}`}
-                    alt=""
-                  />
+                  <div className="mp-item-thumb-wrap">
+                    <img
+                      className="mp-item-thumb"
+                      src={`${API}/kb/${r.anchor.keyframe}`}
+                      alt=""
+                    />
+                    {isFav(r.riff_id) && (
+                      <span className="mp-item-fav-badge" title="已收藏">♥</span>
+                    )}
+                  </div>
                 )}
                 <div className="mp-item-body">
                   <div className="mp-item-quote">
@@ -134,6 +144,13 @@ export default function MemePanel({ videoId, videoRef, expandRiffId, onConsumeEx
                       className="mp-detail-jump"
                       onClick={() => jumpTo(r.anchor.start_time)}
                     >▶ 跳到此处</button>
+                    <button
+                      className={`mp-detail-fav${isFav(r.riff_id) ? ' is-on' : ''}`}
+                      onClick={() => toggleFav(r.riff_id)}
+                      title={isFav(r.riff_id) ? '取消收藏' : '收藏这条梗'}
+                    >
+                      {isFav(r.riff_id) ? '♥ 已收藏' : '♡ 收藏'}
+                    </button>
                   </div>
                 </div>
               )}
