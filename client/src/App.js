@@ -4,6 +4,7 @@ import './App.css';
 import RelationshipGraph from './RelationshipGraph';
 import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
+import MemeOverlay from './MemeOverlay';
 import DEMO_VIDEOS from './demoVideos';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -940,6 +941,17 @@ function TencentPlayer({ playing, videos, onClose, onSelect }) {
 
             {/* 人物关系图 v2 —— HUD 入口 + Focus Card，按真实 videoTime + 角色 KB 动态出图 */}
             <RelationshipGraph videoId={aiKb} videoRef={videoRef} />
+
+            {/* 共谋者 · 文化梗浮层 —— 4 条 riff 命中时段：底部蒙板 + HTML 字幕 + 金色高亮 + hover 浮窗 */}
+            <MemeOverlay
+              videoId={aiKb}
+              videoRef={videoRef}
+              enabled={true}
+              onExpandRequest={(riffId) => {
+                setRightTab('meme');
+                setPendingExpandRiffId(riffId);
+              }}
+            />
 
             <PlayerControls
               videoRef={videoRef}
