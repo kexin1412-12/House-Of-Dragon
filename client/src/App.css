@@ -1829,10 +1829,14 @@ body {
   border-radius: 1px;
   transition: width 0.15s, height 0.15s;
 }
-.tx-controls-progress-tick-act::before {
+/* kb = 来自 KB 自动 enrich 的场景级事件（白细条）
+   manual = 编辑手写的事件（白细条同款）
+   crit = manual 中标了 crit:true 的关键节点（橙粗条 + 发光） */
+.tx-controls-progress-tick-kb::before,
+.tx-controls-progress-tick-manual::before {
   background: rgba(255, 255, 255, 0.55);
 }
-.tx-controls-progress-tick-branch::before {
+.tx-controls-progress-tick-crit::before {
   width: 3px;
   background: #e8954d;
   box-shadow: 0 0 4px rgba(232, 149, 77, 0.6);
@@ -1842,7 +1846,7 @@ body {
   height: 18px;
   background: #fff;
 }
-.tx-controls-progress-tick-branch:hover::before {
+.tx-controls-progress-tick-crit:hover::before {
   background: #ffb37a;
 }
 
@@ -1866,7 +1870,7 @@ body {
   z-index: 3;
   border-left: 3px solid rgba(255, 255, 255, 0.45);
 }
-.tx-controls-progress-chapter-tip-branch {
+.tx-controls-progress-chapter-tip-crit {
   border-left-color: #e8954d;
 }
 .tx-controls-progress-chapter-tip-time {

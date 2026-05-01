@@ -27,13 +27,8 @@ export default function App() {
   const [videos, setVideos] = useState([]);
   const [featured, setFeatured] = useState(null);
   const [playing, setPlaying] = useState(null);
-  const [showUpload, setShowUpload] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
   const [search, setSearch] = useState('');
   const [notification, setNotification] = useState(null);
-  const fileInputRef = useRef(null);
 
   const fetchVideos = useCallback(async () => {
     let list = [];
@@ -53,40 +48,6 @@ export default function App() {
   function notify(msg, type = 'success') {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 3000);
-  }
-
-  async function handleUpload(file) {
-    if (!file) return;
-    if (!file.type.startsWith('video/')) {
-      notify('请选择视频文件', 'error');
-      return;
-    }
-    const fd = new FormData();
-    fd.append('video', file);
-    setUploading(true);
-    setProgress(0);
-    try {
-      const { data } = await axios.post(`${API}/api/upload`, fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: e => setProgress(Math.round((e.loaded * 100) / e.total)),
-      });
-      setShowUpload(false);
-      notify(`"${data.name}" 上传成功！`);
-      await fetchVideos();
-    } catch {
-      notify('上传失败，请确保服务器已启动', 'error');
-    } finally {
-      setUploading(false);
-      setProgress(0);
-    }
-  }
-
-  function onDragOver(e) { e.preventDefault(); setDragOver(true); }
-  function onDragLeave() { setDragOver(false); }
-  function onDrop(e) {
-    e.preventDefault();
-    setDragOver(false);
-    handleUpload(e.dataTransfer.files[0]);
   }
 
   const heroPreview = featured || videos[0];
@@ -2522,13 +2483,38 @@ function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
     };
   }, [videoRef]);
 
-  // 拉这一集的章节锚点；videoId 变了重拉。后端不可达 / 没 KB 时静默置空。
+  // 复用右边 SeasonTimeline 抽屉用的同一份 key_events（来自
+  // /api/agent/timeline/season，每条带 t="MM:SS" + text + crit + from_kb），
+  // 把当前集那些 t 可解析的事件转成进度条 ticks。
+  // 没 videoId / 后端不可达 / 没 KB 时静默置空，进度条退化成普通 progress。
   useEffect(() => {
     if (!videoId) { setChapters([]); return; }
     let cancelled = false;
-    axios.get(`${API}/api/agent/timeline/chapters`, { params: { videoId }, timeout: 8000 })
-      .then(r => { if (!cancelled) setChapters(r.data?.chapters || []); })
-      .catch(() => { if (!cancelled) setChapters([]); });
+    axios.get(`${API}/api/agent/timeline/season`, {
+      params: { videoId, t: '0', showId: 'house-of-the-dragon', season: 1 },
+      timeout: 8000,
+    }).then(r => {
+      if (cancelled) return;
+      const cursor = r.data?.cursor_used;
+      const ep = (r.data?.episodes || []).find(e =>
+        cursor && String(cursor).endsWith(`E${String(e.ep_num).padStart(2, '0')}`)
+      );
+      const events = ep?.key_events || [];
+      const ticks = [];
+      for (const ev of events) {
+        const m = typeof ev.t === 'string' && ev.t.match(/^(\d{1,2}):(\d{2})$/);
+        if (!m) continue; // 没时间戳的集级事件跳过 —— 它们没法落到进度条上
+        const sec = parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+        ticks.push({
+          t: sec,
+          label: ev.text || '',
+          kind: ev.crit ? 'crit' : (ev.from_kb ? 'kb' : 'manual'),
+          scene_id: ev.scene_id || null,
+        });
+      }
+      ticks.sort((a, b) => a.t - b.t);
+      setChapters(ticks);
+    }).catch(() => { if (!cancelled) setChapters([]); });
     return () => { cancelled = true; };
   }, [videoId]);
 
