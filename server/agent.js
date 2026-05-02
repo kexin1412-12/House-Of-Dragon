@@ -110,6 +110,24 @@ const ANALYSIS_PATTERNS = [
   '同一动作两人对照剪辑 → 暗示二人未来命运对照或对立',
 ];
 
+// 视觉脸识别在角色躺着 / 闭眼 / 背身时常漏检（典型例：韦赛里斯躺床上 → 没标到）。
+// 扫 plot.fact + plot.reading 看候选角色 given name 是否被点名，作为兜底"在场"信号。
+function mentionedCharIdsInScene(scene, candidateIds, db) {
+  if (!scene || !Array.isArray(candidateIds) || !candidateIds.length) return new Set();
+  const txt = `${scene.plot?.fact || ''} ${scene.plot?.reading || ''}`;
+  if (!txt.trim()) return new Set();
+  const found = new Set();
+  for (const id of candidateIds) {
+    const card = db ? charactersLib.findCharacter(db, id) : null;
+    const dn = card?.display_name_zh || '';
+    if (!dn) continue;
+    // "韦赛里斯一世·坦格利安" → "韦赛里斯"（去除·后段 + 一世/二世数字尾）
+    const given = dn.split('·')[0].replace(/[一二三四五六七八九十]+世$/, '');
+    if (given && txt.includes(given)) found.add(id);
+  }
+  return found;
+}
+
 const characterDbCache = new Map();
 function getCharacterDb(showId) {
   if (!showId) return null;
@@ -2783,8 +2801,8 @@ ${bp.description || '（无具体描述）'}
 
       const cursorTime = normalizeTime(req.body?.t);
       const scene = currentScene(kb, cursorTime);
-      // v4: 段落更短（100-150 字）+ 流式 SSE 改造
-      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v4`;
+      // v5: 同框人加上文本兜底（脸识别漏检的躺床/闭眼角色也算在场）
+      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v5`;
 
       // 缓存命中：把缓存的 raw 一次性 emit + done。前端依然能跑打字机。
       if (_starterCache.has(cacheKey)) {
@@ -2810,7 +2828,12 @@ ${bp.description || '（无具体描述）'}
             ? scene.characters_on_screen.map(c => c.character_id || c.id)
             : (scene.characters || []).map(c => c.id))
         : [];
-      const onScreenStr = Array.from(new Set(onScreen)).filter(Boolean).join('、') || '（独自一人）';
+      // 文本兜底：脸识别漏的角色（躺床 / 闭眼 / 背身）也算在场
+      const allProfileIds = Object.keys((charactersLib.loadRoleplayProfiles(showId) || {}).profiles || {});
+      const dbForMentions = getCharacterDb(showId);
+      const mentionedIds = mentionedCharIdsInScene(scene, allProfileIds, dbForMentions);
+      const onScreenAll = Array.from(new Set([...onScreen, ...mentionedIds])).filter(Boolean);
+      const onScreenStr = onScreenAll.join('、') || '（独自一人）';
       const cues = srtWindow(videoId, cursorTime, 30, 0);
       const subtitleBlock = cues.length
         ? cues.slice(-6).map(c => `${fmtTs(c.start)} | ${c.text}`).join('\n')
@@ -2994,7 +3017,11 @@ ${doesNotKnow || '（无）'}
           ? scene.characters_on_screen.map(c => c.character_id || c.id)
           : (scene.characters || []).map(c => c.id))
       : [];
-    const onScreenList = Array.from(new Set(onScreen)).filter(Boolean);
+    // 文本兜底：脸识别漏的角色（躺床 / 闭眼 / 背身）也算在场
+    const allProfileIds = Object.keys((charactersLib.loadRoleplayProfiles(showId) || {}).profiles || {});
+    const dbForMentions = getCharacterDb(showId);
+    const mentionedIds = mentionedCharIdsInScene(scene, allProfileIds, dbForMentions);
+    const onScreenList = Array.from(new Set([...onScreen, ...mentionedIds])).filter(Boolean);
     // 当前 character 在场景里 KB 标注的情绪 / 动机变化（如果有）
     const meInScene = (scene?.characters || []).find(c => c.id === characterId) || null;
     const myEmotion = meInScene?.emotion || null;
