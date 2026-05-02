@@ -512,6 +512,82 @@ function TencentPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   // 全屏 / 放大模式下被 SceneHotspots 触发的设定百科 id（独立于外栏的 pendingExpandLoreId）
   const [inlineLoreId, setInlineLoreId] = useState(null);
+
+  // ─── 立场追踪 / Stance Tracking ───────────────────────────────────────
+  // 关键转折点（如 S1E5 绿裙登场 49min）触发立场选择卡。选择存 localStorage。
+  // recall 类型在剧情打脸时回头挑战旧选择。季末可看立场轨迹图。
+  const stance = useStanceTriggers({ videoId: aiKb, videoRef, enabled: true });
+  const [stanceOptInOpen, setStanceOptInOpen] = useState(false);
+  const [trajectoryOpen, setTrajectoryOpen] = useState(false);
+  const stanceWasPlayingRef = useRef(false);
+
+  // trigger 触发：opt-in 状态决定先弹 opt-in 还是直接弹卡
+  useEffect(() => {
+    if (!stance.activeTrigger) return;
+    const v = videoRef.current;
+    stanceWasPlayingRef.current = !!(v && !v.paused);
+    if (v && !v.paused) v.pause();
+    if (stance.optIn === null) setStanceOptInOpen(true);
+  }, [stance.activeTrigger, stance.optIn]);
+
+  function resumeAfterStance() {
+    const v = videoRef.current;
+    if (v && v.paused && stanceWasPlayingRef.current) {
+      v.play().catch(() => {});
+    }
+    stanceWasPlayingRef.current = false;
+  }
+
+  function handleStanceOptInAccept() {
+    setStanceOptIn('yes');
+    stance.refresh();
+    setStanceOptInOpen(false);
+    // 用户接受 → 当前激活的 trigger 顺势继续显示（StanceCard 仍挂着）
+  }
+
+  function handleStanceOptInDecline() {
+    setStanceOptIn('no');
+    stance.refresh();
+    setStanceOptInOpen(false);
+    stance.dismiss();
+    resumeAfterStance();
+  }
+
+  function handleStanceChoose(option) {
+    const tg = stance.activeTrigger;
+    if (!tg) return;
+    if (tg.type === 'recall') {
+      const modifier = option.score_delta_modifier
+        || (option.id === 'defect_to_other' ? 'flip'
+          : option.id === 'shaken_drift' ? 'halve'
+          : null);
+      recordRecallResolution({
+        trigger_id: tg.trigger_id,
+        video_id: aiKb,
+        prior_trigger_id: tg.requires_prior_choice,
+        option_id: option.id,
+        modifier,
+        scene_label: tg.scene_label,
+      });
+    } else {
+      recordFactionChoice({
+        trigger_id: tg.trigger_id,
+        video_id: aiKb,
+        option_id: option.id,
+        score: option.score || 0,
+        faction: option.faction || 'neutral',
+        scene_label: tg.scene_label,
+      });
+    }
+    stance.dismiss();
+    resumeAfterStance();
+  }
+
+  function handleStanceDismiss() {
+    stance.dismiss();
+    resumeAfterStance();
+  }
+
   useEffect(() => {
     const onFs = () => {
       const fs = !!document.fullscreenElement;
@@ -1437,6 +1513,19 @@ function TencentPlayer({
                 onChange={setConspiratorMode}
                 hidden={!hasRiffs}
               />
+              <button
+                className="tx-player-stance-btn"
+                onClick={() => setTrajectoryOpen(true)}
+                title="查看你的立场轨迹"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 17l4-4 4 3 6-7 4 4"/>
+                  <circle cx="7" cy="13" r="1.4" fill="currentColor"/>
+                  <circle cx="11" cy="16" r="1.4" fill="currentColor"/>
+                  <circle cx="17" cy="9" r="1.4" fill="currentColor"/>
+                </svg>
+                立场轨迹
+              </button>
             </div>
 
             {/* 右边浮 icon → 展开 AgentPanel 抽屉（常驻，与关系图/对谈同族） */}
@@ -1649,6 +1738,23 @@ function TencentPlayer({
               onClose={() => setInlineLoreId(null)}
             />
 
+            {/* 立场追踪 opt-in 模态（首次触发立场卡前弹一次） */}
+            <StanceOptInModal
+              open={stanceOptInOpen}
+              onAccept={handleStanceOptInAccept}
+              onDecline={handleStanceOptInDecline}
+            />
+
+            {/* 立场抉择卡 / 回顾卡 —— opt-in='yes' 且无 opt-in 模态时显示 */}
+            {stance.optIn === 'yes' && !stanceOptInOpen && stance.activeTrigger && (
+              <StanceCard
+                trigger={stance.activeTrigger}
+                priorChoice={stance.priorChoice}
+                onChoose={handleStanceChoose}
+                onDismiss={handleStanceDismiss}
+              />
+            )}
+
             <PlayerControls
               videoRef={videoRef}
               videoId={aiKb}
@@ -1757,6 +1863,13 @@ function TencentPlayer({
       )}
 
       {/* 机制 B/C 不再全屏 —— 改成画面内浮层，挂在 .tx-player-wrap 里 */}
+
+      {/* 立场轨迹图 —— body 级模态，从工具栏入口打开 */}
+      <TrajectoryChart
+        open={trajectoryOpen}
+        show="house-of-the-dragon"
+        onClose={() => setTrajectoryOpen(false)}
+      />
     </div>
   );
 }

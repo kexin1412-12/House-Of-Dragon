@@ -1,0 +1,167 @@
+/* 立场抉择卡 / 回顾卡 —— 与 InPlayerLoreCard 同族（半透明、画面内浮层） */
+
+.stc-root {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(8, 10, 16, 0.55);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: stc-fade-in 200ms ease;
+}
+
+@keyframes stc-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.stc-card {
+  width: min(640px, 90%);
+  max-height: 85%;
+  overflow-y: auto;
+  background: linear-gradient(180deg, rgba(20, 16, 12, 0.96) 0%, rgba(12, 10, 14, 0.96) 100%);
+  border: 1px solid rgba(190, 150, 80, 0.35);
+  border-radius: 6px;
+  padding: 28px 32px 22px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(190,150,80,0.08) inset;
+  color: #e8e2d3;
+  font-family: "Noto Serif SC", "PingFang SC", serif;
+  animation: stc-rise 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes stc-rise {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.stc-headline {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  color: #c9a55c;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stc-scene-label {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #8a8275;
+  letter-spacing: 0.06em;
+}
+
+.stc-prompt {
+  margin: 18px 0 22px;
+  border-left: 2px solid rgba(190,150,80,0.3);
+  padding-left: 14px;
+}
+
+.stc-recall-prior {
+  font-size: 13px;
+  color: #b59c6a;
+  font-style: italic;
+  line-height: 1.7;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed rgba(190,150,80,0.18);
+  margin-bottom: 12px;
+}
+
+.stc-prompt-line {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #e6dfc8;
+}
+.stc-prompt-line:last-child { margin-bottom: 0; }
+
+/* 选项 */
+.stc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stc-option {
+  text-align: left;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  padding: 12px 14px;
+  color: #e6dfc8;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 160ms ease, border-color 160ms ease, transform 80ms ease;
+}
+.stc-option:hover,
+.stc-option.is-hovered {
+  background: rgba(255,255,255,0.07);
+  transform: translateX(2px);
+}
+.stc-option:active { transform: translateX(0); }
+
+/* 阵营色边 */
+.stc-option-black   { border-left-color: #b04a4a; }
+.stc-option-green   { border-left-color: #4a8a5e; }
+.stc-option-neutral { border-left-color: #94835a; }
+
+/* recall 模式的三档反应 */
+.stc-option-flip   { border-left-color: #c08653; }   /* 改投 */
+.stc-option-shake  { border-left-color: #94835a; }   /* 动摇 */
+/* hold_position 用 neutral 色 */
+
+.stc-option-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.stc-option-label {
+  color: #f3ecd5;
+}
+
+.stc-option-sublabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: #b8a87f;
+}
+
+.stc-option-voice {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #a89a76;
+  font-style: italic;
+}
+
+/* 底部 */
+.stc-footer {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(190,150,80,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.stc-skip {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #8a8275;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.stc-skip:hover { color: #c9c0a4; border-color: rgba(255,255,255,0.25); }
+.stc-hint { color: #56503f; letter-spacing: 0.08em; }
+
+/* recall 整体加一层金色更浓 */
+.stc-root.is-recall .stc-card {
+  border-color: rgba(220, 170, 90, 0.45);
+}
+.stc-root.is-recall .stc-headline { color: #dba953; }

@@ -1,0 +1,100 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "立场追踪 / Stance Tracking 触发点 —— 每集 1-2 个真正具有阵营张力的时刻。",
+    "trigger_type=faction_choice 是核心；recall 是对前一次选择的剧情打脸。",
+    "score: 站黑党 +1 / 观望 0 / 站绿党 -1。累积形成轨迹。"
+  ],
+  "video_id": "house_of_dragon_05",
+  "show_id": "house-of-the-dragon",
+  "episode": "S01E05",
+  "triggers": [
+    {
+      "trigger_id": "s1e5_green_dress_arrival",
+      "type": "faction_choice",
+      "timestamp": 2940,
+      "scene_label": "婚宴 · 阿莉森穿绿裙登场",
+      "headline": "⚔️ 阵营抉择",
+      "prompt_lines": [
+        "阿莉森穿着海塔尔家族的绿裙，迟迟入场。",
+        "从这一刻起，绿黑两党的旗号被划下。",
+        "如果你是红堡里的一位领主——",
+        "你会起身向她行礼，还是坐着不动？"
+      ],
+      "options": [
+        {
+          "id": "stand_for_alicent",
+          "label": "起身行礼",
+          "sublabel": "站亚莉森",
+          "inner_voice": "她父亲被驱逐，她带着孩子站在国王对面。她的孩子确实有危险——雷尼拉登基那天，谁也保不了他们。",
+          "score": -1,
+          "faction": "green"
+        },
+        {
+          "id": "stay_seated_for_rhaenyra",
+          "label": "纹丝不动",
+          "sublabel": "站雷妮拉",
+          "inner_voice": "她是国王亲封的继承人。誓言就是誓言。今天为绿裙起立，明天就会为更糟的事起立。",
+          "score": 1,
+          "faction": "black"
+        },
+        {
+          "id": "raise_cup_neutral",
+          "label": "端起酒杯假装没看见",
+          "sublabel": "观望",
+          "inner_voice": "现在选边太早了。聪明人等尘埃落定，等谁更可能赢的时候再选。",
+          "score": 0,
+          "faction": "neutral"
+        }
+      ],
+      "recall_targets": [
+        {
+          "recall_in_video_id": "house_of_dragon_05",
+          "recall_at_timestamp": 3320,
+          "recall_id": "s1e5_post_wedding_bloodbath",
+          "trigger_when_choice": ["stand_for_alicent", "raise_cup_neutral", "stay_seated_for_rhaenyra"]
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_post_wedding_bloodbath",
+      "type": "recall",
+      "timestamp": 3320,
+      "requires_prior_choice": "s1e5_green_dress_arrival",
+      "scene_label": "婚宴 · 克里斯顿当众打死乔弗里",
+      "headline": "🪞 立场回顾",
+      "prompt_lines": [
+        "克里斯顿·科尔——绿党女王的卫士——刚在婚宴上当众打死了一个人。",
+        "婚宴变成血案。雷尼拉的丈夫还没娶到家，她的盟友就先死了。"
+      ],
+      "recall_messages_by_prior": {
+        "stand_for_alicent": "你刚刚为亚莉森起身行礼。但她的卫士此刻正站在血泊里。她让你信誓旦旦的'孩子有危险'，是不是只是给暴力找的理由？",
+        "stay_seated_for_rhaenyra": "你坐着没动，因为你相信誓言。但那个把宴会变成屠杀的人，是绿党的剑。誓言这次似乎押对了——但赢得也太脏了。",
+        "raise_cup_neutral": "你端着酒杯观望。现在血溅到了你的鞋上。还想继续观望吗？"
+      },
+      "options": [
+        {
+          "id": "hold_position",
+          "label": "坚守原立场",
+          "sublabel": "我没看错",
+          "inner_voice": "一桩血案不改变我的判断。立场是关于人，不是关于某一个夜晚。",
+          "score_delta": 0
+        },
+        {
+          "id": "shaken_drift",
+          "label": "动摇了",
+          "sublabel": "但还没换边",
+          "inner_voice": "我开始怀疑自己最初的理由。但还没到要倒戈的地步。",
+          "score_delta_modifier": "halve"
+        },
+        {
+          "id": "defect_to_other",
+          "label": "改投另一边",
+          "sublabel": "我看错了",
+          "inner_voice": "今晚之后，我没法再装作什么都没看见。",
+          "score_delta_modifier": "flip"
+        }
+      ]
+    }
+  ]
+}

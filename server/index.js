@@ -270,4 +270,66 @@ app.get('/api/storyline', (req, res) => {
   res.json(data);
 });
 
+// 立场追踪 / Stance Tracking —— 静态 KB 直出。
+// 触发点按 video_id 组织（每集一个 JSON）；类型目录按 show_id 组织（整剧一份）。
+// 选择本身不入服务器：anonymous + 无 DB，全部存在 client 的 localStorage。
+let _stanceTriggersCache = null;
+function loadStanceTriggers() {
+  if (_stanceTriggersCache) return _stanceTriggersCache;
+  const dir = path.join(__dirname, 'kb', 'stance');
+  const byVideo = {};
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      if (f.includes('.types.')) continue;  // types 文件单独走
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        if (j.video_id) byVideo[j.video_id] = j;
+      } catch (e) {
+        console.warn(`[stance] skip bad triggers file ${f}:`, e.message);
+      }
+    }
+  }
+  _stanceTriggersCache = byVideo;
+  return byVideo;
+}
+
+let _stanceTypesCache = null;
+function loadStanceTypes() {
+  if (_stanceTypesCache) return _stanceTypesCache;
+  const dir = path.join(__dirname, 'kb', 'stance');
+  const byShow = {};
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.types.json')) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        if (j.show_id) byShow[j.show_id] = j;
+      } catch (e) {
+        console.warn(`[stance] skip bad types file ${f}:`, e.message);
+      }
+    }
+  }
+  _stanceTypesCache = byShow;
+  return byShow;
+}
+
+app.get('/api/stance/triggers', (req, res) => {
+  const videoId = req.query.videoId;
+  if (!videoId) return res.status(400).json({ error: 'videoId required' });
+  const byVideo = loadStanceTriggers();
+  const data = byVideo[videoId];
+  if (!data) return res.json({ video_id: videoId, triggers: [] });
+  res.json(data);
+});
+
+app.get('/api/stance/types', (req, res) => {
+  const show = req.query.show;
+  if (!show) return res.status(400).json({ error: 'show required' });
+  const byShow = loadStanceTypes();
+  const data = byShow[show];
+  if (!data) return res.status(404).json({ error: 'no types catalog for show', show });
+  res.json(data);
+});
+
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

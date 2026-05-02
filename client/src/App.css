@@ -2050,6 +2050,27 @@ body {
 .tx-player-recognize-btn:disabled { opacity: 0.55; cursor: progress; }
 .tx-player-recognize-btn svg { width: 16px; height: 16px; }
 
+/* 立场轨迹入口 —— 跟 recognize-btn 视觉对齐，金色调（与立场卡同族色） */
+.tx-player-stance-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px; color: rgba(255, 255, 255, 0.85);
+  background: rgba(201, 165, 92, 0.10);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(201, 165, 92, 0.28);
+  border-radius: 20px;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: background 0.15s, opacity 0.15s, border-color 0.15s, color 0.15s;
+}
+.tx-player-stance-btn:hover {
+  background: rgba(201, 165, 92, 0.22);
+  border-color: rgba(201, 165, 92, 0.55);
+  color: #fff;
+  opacity: 1;
+}
+.tx-player-stance-btn svg { width: 16px; height: 16px; }
+
 /* 全屏模式：右侧浮动 AI 解说 icon + 抽屉
    位置：右边缘中线下方一个图标位（关系图 icon 占着 top: 50%，本图标错开到下方）。
    计算：50% + (44px 自身 / 2) + 12px 间距 + (44px 关系图 / 2) = 50% + 56px。 */
