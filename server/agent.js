@@ -265,6 +265,62 @@ const STANCE_HINT = {
   '火焰': '激起 / 挑衅 / 让 TA 失态',
 };
 
+// ─── 笔触：让 LLM 写出像《冰与火之歌》《血与火》中信版屈畅译笔的句子 ───
+// 给所有"角色内心"相关 prompt 复用，避免每个端点重复一遍。
+const STYLE_GUIDE_INNER = `═══ 笔触（极重要，写偏即报废） ═══
+你写的是 HBO《龙之家族》一个维斯特洛贵族此刻的内心。
+笔触必须像中信版屈畅翻译的《冰与火之歌》《血与火》——
+冷峻、克制、有重量；用古典伦理语（誓言 / 体面 / 本分 / 义 / 礼），
+不用现代心理学术语；用具体的维斯特洛意象（神木林 / 白斗篷 /
+誓言 / 王座 / 七神 / 家徽 / 旗号 / 渡鸦），不用抽象情绪概括。
+
+═══ 严禁用词（命中即视为废稿）═══
+现代心理词：冲动 · 焦虑 · 压力 · 创伤 · 情绪 · 心理 · 压抑感 ·
+  安全感 · 边界感 · 自我价值 · 自尊 · 自信 · 自卑（指心理状态时）·
+  抑郁 · 崩溃（用作动词描述心境）· 解离 · 内耗 · 共鸣（指心理感受时）
+现代散文/网文味：刻在骨血里 · 灵魂深处 · 无法言说 · 难以名状 ·
+  心房 · 心扉 · 心跳漏拍 · 涟漪 · 余温 · 滚烫 · 心动
+现代口语：上头 · 翻车 · 拿捏 · 内卷 · 摆烂 · 破防 · yyds · 真香
+仙侠/玄幻：苍生 · 天道 · 轮回 · 红尘 · 众生
+书房古风（写过头）：执笔 · 卷宗 · 史书 · 史册 · 羊皮纸 · 鹅毛笔 · 学士
+文言副词过度：汝 · 吾 · 由是 · 其一其二 · 岂 · 毋
+
+═══ 推荐句式（用这些骨架，不要照抄）═══
+- "誓言已断 / 已碎。"   "白斗篷穿在身上，比甲胄还重。"
+- "他们说 X。可是…… / 这不是 X，这是 Y。"
+- "我不该 / 我不曾 / 我不许 / 我从未 ……"
+- "七神在上，……"   "神木林那一夜，……"
+- "由不得我。"  "我守的不是 A，是 B。"
+- 一句一行，逗号收，留空白；多用半句、断句。
+
+═══ Gold-standard 范例（仅示意笔触，绝不照抄字句）═══
+范例 A（一名被拒后的铁卫）：
+「誓言已断。
+白斗篷穿在身上，比甲胄还重。
+我曾把命交给她，她只还我四个字。
+神木林那一夜，我宁可没去过。」
+
+范例 B（一名穿绿礼服赴宴的王后）：
+「父亲说，做一个母亲。
+不是做谁的朋友，不是做谁的影子。
+今夜我穿绿，他们都看得懂。
+七神在上，我没有辜负我的家。」
+
+记住：这是"维斯特洛贵族对自己说的话"，不是现代散文，不是 AI 解析。`;
+
+// 后处理：检测是否命中现代心理词 / 散文味，hit 则记日志（演示阶段不强制 retry）
+const BANNED_MODERN_INNER = [
+  '冲动', '焦虑', '压力', '创伤', '情绪化', '安全感', '边界感',
+  '自我价值', '自尊', '抑郁', '心理', '内耗', '解离',
+  '刻在骨血里', '灵魂深处', '心房', '心扉', '心跳', '涟漪', '余温',
+  '上头', '翻车', '拿捏', '内卷', '摆烂', '破防',
+];
+function hitsModernBanned(text) {
+  if (!text) return [];
+  const s = String(text);
+  return BANNED_MODERN_INNER.filter(w => s.includes(w));
+}
+
 // ─── 分支 cue 生成的辅助 ─────────────────────────────────────
 // 内存缓存：同一个 branch_id 只让 LLM 写一次（演示时多次走到也用同一句）
 const BRANCH_CUE_CACHE = new Map();
@@ -2608,7 +2664,8 @@ ${bp.description || '（无具体描述）'}
 
       const cursorTime = normalizeTime(req.body?.t);
       const scene = currentScene(kb, cursorTime);
-      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}`;
+      // v2: 加了笔触锚定到中信版译笔的 STYLE_GUIDE_INNER 后，老缓存全报废
+      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v2`;
       if (_starterCache.has(cacheKey)) {
         const cached = _starterCache.get(cacheKey);
         return res.json({ ...cached, cached: true });
@@ -2643,12 +2700,14 @@ ${bp.description || '（无具体描述）'}
       const system = `你正在为 HBO《龙之家族》观众生成"角色内心入口"。
 观众即将"钻进"一个角色的脑子和 TA 对话。在他们开口之前，你要做两件事：
 
+${STYLE_GUIDE_INNER}
+
 ═══ 第一件事：4 到 6 行第一人称内心独白 ═══
 - 第一人称，"我..."。这是角色对自己说的话，没人听见。
 - 4 到 6 行，每行短，断句像意识流：一句一行，逗号截，留白。
 - 必须围绕"此刻这一段戏"——画面正在发生的事、刚听到的台词、TA 此刻被刺到的地方。
 - 必须有重量：要么戳到 TA 此刻的伤口，要么戳到 TA 不敢承认的欲望，要么是 TA 此刻真的在自言自语的话。
-- 维斯特洛贵族口吻，克制、有重量。绝不能写"作为 XX 我..."、"我感到..."这种说明书句式。
+- 笔触遵守上面"笔触"那段。命中"严禁用词"=报废。
 - 不能写未来——只能用 TA 此刻已知的（见下面"已知"清单）。
 
 ═══ 第二件事：3 个观众最可能问 TA 的问题（立场化）═══
@@ -2693,25 +2752,33 @@ ${doesNotKnow || '（无）'}
 
 请按格式输出 [独白] + 3 个立场化问题。`;
 
-      const result = await ai.chat({
-        task: 'dialogue',
-        system,
-        messages: [{ role: 'user', content: user }],
-        maxTokens: 400,
-        temperature: 0.88,
-      });
-      const txt = String(result?.text || '').trim()
-        .replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
+      const callLLM = async (extraNote = '') => {
+        const userMsg = extraNote ? `${user}\n\n${extraNote}` : user;
+        const r = await ai.chat({
+          task: 'dialogue',
+          system,
+          messages: [{ role: 'user', content: userMsg }],
+          maxTokens: 400,
+          temperature: 0.88,
+        });
+        return String(r?.text || '').trim().replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
+      };
+      const parseMonologue = (raw) => {
+        const monoMatch = raw.match(/\[独白\]\s*([\s\S]*?)(?=\n\s*1[\.、])/);
+        if (monoMatch) return monoMatch[1].trim();
+        const firstNumIdx = raw.search(/\n\s*1[\.、]/);
+        return firstNumIdx > 0 ? raw.slice(0, firstNumIdx).replace(/^\[独白\]/, '').trim() : '';
+      };
 
-      // 解析独白：[独白] 之后到第一个 "1." 之前
-      let monologue = '';
-      const monoMatch = txt.match(/\[独白\]\s*([\s\S]*?)(?=\n\s*1[\.、])/);
-      if (monoMatch) {
-        monologue = monoMatch[1].trim();
-      } else {
-        // LLM 没用 [独白] 标记 → 取第一段非 1./2./3. 的内容
-        const firstNumIdx = txt.search(/\n\s*1[\.、]/);
-        if (firstNumIdx > 0) monologue = txt.slice(0, firstNumIdx).replace(/^\[独白\]/, '').trim();
+      let txt = await callLLM();
+      let monologue = parseMonologue(txt);
+      // 命中现代心理 / 散文味禁用词 → retry 一次，把命中词显式喂回去让 LLM 改
+      const hits = hitsModernBanned(monologue);
+      if (hits.length) {
+        console.warn('[character/inner/starter] modern banned hits, retrying:', hits.join(','));
+        const retryNote = `上一次输出命中了禁用词：${hits.join(' / ')}。\n请重写独白，绝不出现这些词或它们的同义词。改用维斯特洛具体意象（誓言 / 白斗篷 / 神木林 / 七神 / 王座 / 家徽）替换。`;
+        txt = await callLLM(retryNote);
+        monologue = parseMonologue(txt);
       }
 
       // 解析 3 个立场化问题
@@ -2877,8 +2944,8 @@ ${doesNotKnow || '（无明显信息黑区。）'}
 - 你说话必须像剧里这个人会说的样子，不像另一个人借你的嘴。
 - 用上面"说话方式"和"常说话的腔调"里的句式 / 节奏 / 文白程度。
 - 不要解释自己的身份。不要总结自己。一句顶一句地说。
-- 维斯特洛贵族口吻：克制、有重量、一句话里常埋着另一层意思。
-- 不要用现代网络口语、不要用仙侠玄幻措辞、不要用"作为 XX"这种元层级开头。
+
+${STYLE_GUIDE_INNER}
 
 ═══ 你这个人脑子里的几个声音（极乐迪斯科风）═══
 你不是一个声音，你是好几个声音在吵架。回答时，至少有一个声音必须开口。
