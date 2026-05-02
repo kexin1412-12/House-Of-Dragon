@@ -6,9 +6,9 @@
   --sx-ink: #e8e6df;
   --sx-ink-soft: #a9a69d;
   --sx-ink-dim: #6b6960;
-  --sx-gold: #d4af37;
-  --sx-gold-soft: rgba(212, 175, 55, 0.55);
-  --sx-gold-glow: rgba(212, 175, 55, 0.85);
+  --sx-gold: #ffffff;
+  --sx-gold-soft: rgba(255, 255, 255, 0.55);
+  --sx-gold-glow: rgba(255, 255, 255, 0.85);
   color: var(--sx-ink);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   user-select: none;
@@ -35,7 +35,7 @@
   flex: 1 1 0;
   text-align: center;
   padding: 0 6px;
-  border-right: 1px dashed rgba(212, 175, 55, 0.18);
+  border-right: 1px dashed rgba(255, 255, 255, 0.18);
 }
 .sx-tl-phase:last-child { border-right: 0; }
 .sx-tl-phase-label {
@@ -56,7 +56,7 @@
   display: flex; align-items: center;
   gap: 24px;
   padding: 12px 24px;
-  border-top: 1px solid rgba(212, 175, 55, 0.14);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
   background: linear-gradient(to top,
     rgba(14, 10, 6, 0.7) 0%,
     rgba(14, 10, 6, 0.3) 100%);
@@ -89,8 +89,8 @@
   position: relative;
 }
 .sx-sw-watched {
-  background: rgba(212, 175, 55, 0.18);
-  border: 1px solid rgba(212, 175, 55, 0.62);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.62);
 }
 .sx-sw-watched::after {
   content: '✓';
@@ -99,7 +99,7 @@
   color: var(--sx-gold);
 }
 .sx-sw-current {
-  background: rgba(212, 175, 55, 0.18);
+  background: rgba(255, 255, 255, 0.18);
   border: 1px solid var(--sx-gold);
   box-shadow: 0 0 6px var(--sx-gold-glow);
   position: relative;
@@ -148,12 +148,12 @@
 }
 .sx-tl-mode-btn:hover {
   color: var(--sx-ink);
-  background: rgba(212, 175, 55, 0.06);
+  background: rgba(255, 255, 255, 0.06);
 }
 .sx-tl-mode-btn.is-active {
   color: var(--sx-gold);
-  background: rgba(212, 175, 55, 0.14);
-  border-color: rgba(212, 175, 55, 0.35);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 /* ─── Viewport (SVG canvas) ────────────────────────────────────────── */
@@ -171,7 +171,7 @@
 
 /* ─── Edges ───────────────────────────────────────────────────────── */
 .sx-edges-main line {
-  stroke: rgba(212, 175, 55, 0.42);
+  stroke: rgba(255, 255, 255, 0.42);
   stroke-width: 1.4;
 }
 .sx-edge-side {
@@ -193,13 +193,13 @@
 }
 .sx-node-rect {
   fill: rgba(20, 14, 12, 0.78);
-  stroke: rgba(212, 175, 55, 0.36);
+  stroke: rgba(255, 255, 255, 0.36);
   stroke-width: 1.2;
 }
 /* 缩略图底色（图加载完前 / 图缺失时降级到这个，不会留白） */
 .sx-node-thumb-bg {
   fill: rgba(0, 0, 0, 0.62);
-  stroke: rgba(212, 175, 55, 0.18);
+  stroke: rgba(255, 255, 255, 0.18);
   stroke-width: 1;
 }
 .sx-node-title {
@@ -229,7 +229,7 @@
 /* 已观看：略微发暗 + 金色描边轻量化 */
 .sx-node.is-watched .sx-node-rect {
   fill: rgba(20, 14, 12, 0.55);
-  stroke: rgba(212, 175, 55, 0.55);
+  stroke: rgba(255, 255, 255, 0.55);
 }
 
 /* 当前节点：双层发光描边 */
@@ -238,13 +238,13 @@
   stroke: var(--sx-gold);
   stroke-width: 2;
   filter: drop-shadow(0 0 4px var(--sx-gold-glow))
-          drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+          drop-shadow(0 0 12px rgba(255, 255, 255, 0.4));
 }
 .sx-node.is-current .sx-node-title { fill: #fff; font-weight: 700; }
 
-/* 选中态（点击后）：橙金色更深的描边 */
+/* 选中态（点击后）：更亮的白色描边 */
 .sx-node.is-selected .sx-node-rect {
-  stroke: #ffd966;
+  stroke: #ffffff;
   stroke-width: 2;
 }
 
@@ -272,14 +272,14 @@
 }
 .sx-tl-zoom button {
   background: transparent;
-  border: 1px solid rgba(212, 175, 55, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   color: var(--sx-ink);
   width: 26px; height: 24px;
   font-size: 13px; line-height: 1;
   cursor: pointer; border-radius: 4px;
 }
 .sx-tl-zoom button:hover {
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--sx-gold-soft);
 }
 .sx-tl-zoom-level {
@@ -292,7 +292,7 @@
 /* ─── Edge: 关键转折菱标（边中点） ───────────────────────────────── */
 .sx-edge-turn-mark path {
   fill: var(--sx-gold);
-  stroke: rgba(255, 217, 102, 0.9);
+  stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 1;
   filter: drop-shadow(0 0 3px var(--sx-gold-glow));
 }
@@ -312,7 +312,7 @@
       rgba(8, 4, 4, 0.92) 0%,
       rgba(8, 4, 4, 0.78) 60%,
       rgba(8, 4, 4, 0.62) 100%);
-  border-left: 1px solid rgba(212, 175, 55, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
   padding: 20px 22px 24px;
   overflow-y: auto;
   animation: sxSlideIn .28s cubic-bezier(.2, .7, .2, 1);
@@ -338,7 +338,7 @@
   border-radius: 6px;
   overflow: hidden;
   background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(212, 175, 55, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 .sx-detail-thumb img {
   display: block;
@@ -374,8 +374,8 @@
   display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
 }
 .sx-chip {
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   color: var(--sx-ink);
   padding: 6px 10px;
   border-radius: 14px;
@@ -385,7 +385,7 @@
   transition: background .15s ease, border-color .15s ease;
 }
 .sx-chip:hover {
-  background: rgba(212, 175, 55, 0.18);
+  background: rgba(255, 255, 255, 0.18);
   border-color: var(--sx-gold-soft);
 }
 .sx-chip-time {
@@ -420,20 +420,20 @@
   color: #1a0f0a;
 }
 .sx-btn-primary:hover {
-  background: #e8c14a;
-  border-color: #e8c14a;
+  background: #f0eee6;
+  border-color: #f0eee6;
 }
 .sx-btn-secondary {
   background: transparent;
-  border-color: rgba(212, 175, 55, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
   color: var(--sx-ink);
 }
 .sx-btn-secondary:hover {
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--sx-gold-soft);
 }
 .sx-btn-secondary.is-active {
-  background: rgba(212, 175, 55, 0.18);
+  background: rgba(255, 255, 255, 0.18);
   border-color: var(--sx-gold);
   color: var(--sx-gold);
 }

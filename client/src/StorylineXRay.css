@@ -4,8 +4,8 @@
   --sx-ink: #e8e6df;
   --sx-ink-soft: #a9a69d;
   --sx-ink-dim: #6b6960;
-  --sx-gold: #d4af37;
-  --sx-gold-soft: rgba(212, 175, 55, 0.55);
+  --sx-gold: #ffffff;
+  --sx-gold-soft: rgba(255, 255, 255, 0.55);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 .sx-root *, .sx-root *::before, .sx-root *::after { box-sizing: border-box; }
@@ -19,7 +19,7 @@
   position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
   width: 44px; height: 56px;
   background: linear-gradient(160deg, rgba(20, 14, 10, 0.78), rgba(20, 14, 10, 0.55));
-  border: 1px solid rgba(212, 175, 55, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: 8px;
   color: var(--sx-ink);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -31,7 +31,7 @@
 .sx-hud-icon:hover {
   border-color: var(--sx-gold-soft);
   transform: translateY(-50%) translateX(-2px);
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.22);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.22);
 }
 .sx-hud-icon svg { width: 22px; height: 22px; }
 .sx-hud-icon-label {
@@ -79,7 +79,7 @@
   min-height: 540px;
   max-width: 1600px;
   margin: 0 auto;
-  border: 1px solid rgba(212, 175, 55, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 10px;
   /* 暖灰棕基底：比页面 #0d0e14 亮一档，跟 HotD 烛火/羊皮调一致；
      右上角微聚光，让面板读起来像一张浮起的卡片，而不是融进页面的黑洞 */
@@ -90,7 +90,7 @@
       rgba(20, 14, 10, 0.98) 100%),
     #1a130d;
   box-shadow:
-    0 1px 0 rgba(212, 175, 55, 0.06) inset,
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
     0 18px 40px rgba(0, 0, 0, 0.45);
   overflow: hidden;            /* 圆角裁切顶栏 */
   animation: sxPanelIn .22s cubic-bezier(.2, .7, .2, 1);
@@ -120,7 +120,7 @@
   position: absolute;
   top: 16px; left: 50px; right: 50px;
   height: 1px;
-  background: rgba(212, 175, 55, 0.28);
+  background: rgba(255, 255, 255, 0.28);
   pointer-events: none;
 }
 .sx-strip-cards {
@@ -132,7 +132,7 @@
 }
 .sx-strip-cards::-webkit-scrollbar { height: 6px; }
 .sx-strip-cards::-webkit-scrollbar-thumb {
-  background: rgba(212, 175, 55, 0.22); border-radius: 3px;
+  background: rgba(255, 255, 255, 0.22); border-radius: 3px;
 }
 
 .sx-strip-card {
@@ -144,7 +144,7 @@
   gap: 12px;
   padding: 10px 12px;
   background: rgba(20, 14, 10, 0.62);
-  border: 1px solid rgba(212, 175, 55, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
   color: var(--sx-ink);
   cursor: pointer;
@@ -154,13 +154,13 @@
 }
 .sx-strip-card:hover {
   background: rgba(46, 30, 14, 0.78);
-  border-color: rgba(212, 175, 55, 0.55);
+  border-color: rgba(255, 255, 255, 0.55);
   transform: translateY(-1px);
 }
 .sx-strip-card.is-current {
   border-color: var(--sx-gold);
-  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.45),
-              0 0 18px rgba(212, 175, 55, 0.18);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45),
+              0 0 18px rgba(255, 255, 255, 0.18);
 }
 .sx-strip-card.is-watched .sx-strip-card-thumb {
   filter: brightness(0.7) saturate(0.8);
@@ -173,7 +173,7 @@
   width: 100%;
   text-align: center;
   font-size: 11px; letter-spacing: 1.5px;
-  color: rgba(212, 175, 55, 0.78);
+  color: rgba(255, 255, 255, 0.78);
   font-feature-settings: 'tnum';
 }
 .sx-strip-card-num::after {
@@ -183,12 +183,12 @@
   width: 7px; height: 7px;
   border-radius: 50%;
   background: rgba(20, 14, 10, 0.95);
-  border: 1px solid rgba(212, 175, 55, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 .sx-strip-card.is-current .sx-strip-card-num { color: var(--sx-gold); }
 .sx-strip-card.is-current .sx-strip-card-num::after {
   background: var(--sx-gold);
-  box-shadow: 0 0 6px rgba(212, 175, 55, 0.85);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.85);
 }
 
 .sx-strip-card-thumb {
@@ -200,7 +200,7 @@
 }
 .sx-strip-card-thumb.is-placeholder {
   background: linear-gradient(135deg, rgba(46, 30, 14, 0.6), rgba(20, 14, 10, 0.9));
-  border: 1px dashed rgba(212, 175, 55, 0.22);
+  border: 1px dashed rgba(255, 255, 255, 0.22);
 }
 
 .sx-strip-card-body {
@@ -218,7 +218,7 @@
   flex: 1 1 auto; min-width: 0;
 }
 .sx-strip-card-time {
-  font-size: 11px; color: rgba(212, 175, 55, 0.7);
+  font-size: 11px; color: rgba(255, 255, 255, 0.7);
   font-feature-settings: 'tnum';
   flex-shrink: 0;
 }
@@ -235,7 +235,7 @@
 .sx-topbar-toggle {
   display: inline-flex; align-items: center; gap: 6px;
   background: transparent;
-  border: 1px solid rgba(212, 175, 55, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   color: var(--sx-ink);
   padding: 6px 14px;
   border-radius: 18px;
@@ -245,7 +245,7 @@
   transition: background .14s ease, border-color .14s ease;
 }
 .sx-topbar-toggle:hover {
-  background: rgba(212, 175, 55, 0.12);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--sx-gold-soft);
 }
 .sx-topbar-toggle-caret {
@@ -265,7 +265,7 @@
   background: linear-gradient(to bottom,
     rgba(14, 10, 6, 0.88) 0%,
     rgba(20, 14, 10, 0.42) 100%);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.22);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
   z-index: 4;
   flex-shrink: 0;
 }
@@ -319,7 +319,7 @@
 .sx-tab:hover .sx-tab-icon { opacity: 0.95; }
 .sx-tab.is-active .sx-tab-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.45));
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.45));
 }
 .sx-topbar-right {
   display: flex; align-items: center; gap: 10px;
@@ -340,14 +340,14 @@
 }
 .sx-completion-bar-fill {
   display: block; height: 100%;
-  background: linear-gradient(to right, rgba(212, 175, 55, 0.62), var(--sx-gold));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.62), var(--sx-gold));
   transition: width .35s ease;
 }
 /* inline 模式的展开/收起按钮 —— 替代 close × */
 .sx-topbar-toggle {
   appearance: none;
   background: transparent;
-  border: 1px solid rgba(212, 175, 55, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   color: var(--sx-ink-soft);
   padding: 5px 10px 5px 8px;
   font-size: 12px; line-height: 1;
@@ -360,8 +360,8 @@
 }
 .sx-topbar-toggle:hover {
   color: var(--sx-gold);
-  border-color: rgba(212, 175, 55, 0.6);
-  background: rgba(212, 175, 55, 0.06);
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
 }
 .sx-topbar-toggle-caret {
   display: inline-block;
