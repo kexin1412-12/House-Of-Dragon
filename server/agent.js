@@ -2701,31 +2701,74 @@ ${bp.description || '（无具体描述）'}
   // 3 个 > 选项" 的样式呈现。缓存键 = characterId|scene_id|episode。
   const _starterCache = new Map();
   app.post('/api/agent/character/inner/starter', async (req, res) => {
+    // SSE 流式：表层 / 深层一边出一边写出来（打字机感），选项在 done 事件
+    // 一次性给前端，不打字。
     const FALLBACK_QS = [
       { text: '你此刻在想什么？', stance: '血亲' },
       { text: '为什么不直说？',     stance: '王者' },
       { text: '你怕的是什么？',     stance: '审慎' },
     ];
+
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+    const parseMonologue = (raw) => {
+      const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[\.、]|$)/);
+      const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[\.、]|$)/);
+      return {
+        surface: surfaceMatch ? surfaceMatch[1].trim() : '',
+        depth: depthMatch ? depthMatch[1].trim() : '',
+      };
+    };
+    const parseQuestions = (raw) => {
+      const stanceRe = new RegExp(`\\[(${STANCE_PALETTE.join('|')})\\]`);
+      const qLines = raw.split('\n').filter(l => /^\s*[1-3][\.、]/.test(l));
+      return qLines.map(line => {
+        const stripped = line.replace(/^\s*[1-3][\.、:：\s]+/, '').trim();
+        const m = stripped.match(stanceRe);
+        const stance = m ? m[1] : null;
+        const text = stripped.replace(stanceRe, '').replace(/^[\s\-:：]+/, '').trim();
+        return text ? { text, stance } : null;
+      }).filter(Boolean).slice(0, 3);
+    };
+
     try {
       const { videoId, characterId } = req.body || {};
       const kb = videoId ? loadKB(videoId) : null;
-      if (!kb) return res.json({ surface: '', depth: '', questions: [] });
+      if (!kb) {
+        send('done', { surface: '', depth: '', questions: [] });
+        return res.end();
+      }
       const showId = kb.show_id || 'house-of-the-dragon';
       const episode = resolveEpisode(kb);
       const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
-      if (!profile) return res.json({ surface: '', depth: '', questions: [] });
+      if (!profile) {
+        send('done', { surface: '', depth: '', questions: [] });
+        return res.end();
+      }
 
       const cursorTime = normalizeTime(req.body?.t);
       const scene = currentScene(kb, cursorTime);
-      // v3: 改成两段散文（[表层] + [深层]）+ 4 色调色板，老缓存（短句金句版）全报废
-      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v3`;
+      // v4: 段落更短（100-150 字）+ 流式 SSE 改造
+      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v4`;
+
+      // 缓存命中：把缓存的 raw 一次性 emit + done。前端依然能跑打字机。
       if (_starterCache.has(cacheKey)) {
         const cached = _starterCache.get(cacheKey);
-        return res.json({ ...cached, cached: true });
+        const fakeRaw = `[表层]\n${cached.surface}\n\n[深层]\n${cached.depth}\n\n` +
+          (cached.questions || []).map((q, i) => `${i+1}. [${q.stance || ''}] ${q.text}`).join('\n');
+        send('text', { delta: fakeRaw });
+        send('done', { ...cached, cached: true });
+        return res.end();
       }
 
       if (!ai.isAvailable('dialogue')) {
-        return res.json({ surface: '', depth: '', questions: FALLBACK_QS, fallback: true });
+        send('done', { surface: '', depth: '', questions: FALLBACK_QS, fallback: true });
+        return res.end();
       }
 
       // 上下文：当前画面发生 + 同框人 + 最近 30s SRT
@@ -2757,24 +2800,22 @@ ${STYLE_GUIDE_INNER}
 
 ═══ 第一件事：写两段第三人称过去时的内心独白 ═══
 
-按 POV 章节的写法生成两段：
+按 POV 章节的写法生成两段，但要**简洁**——这是片头节奏，不是长章。
 
-[表层]
-160-260 字（中文计），第三人称过去时。
+[表层] 100-150 字（中文计），第三人称过去时。
 角色此刻看到 / 听到 / 触摸到的具体感官细节做开头（丝绸、烛光、雨、铁器、酒…）。
-角色在给自己找理由 / 自我说服。多复合长句，破折号衔接从句，绝不短句排比。
-必须是马丁笔触——参考上面 STYLE_GUIDE_INNER 的范例段落。
+角色在给自己找理由 / 自我说服。两到三个复合长句，用破折号 / 分号衔接从句。
+必须是马丁笔触，参考上面 STYLE_GUIDE_INNER 的范例。**绝不短句排比**。
 
-[深层]
-160-260 字（中文计），第三人称过去时，可切到第二人称反问。
-角色不愿正视的那部分浮上来：表层的理由被另一个声音拆穿。
+[深层] 100-150 字（中文计），第三人称过去时，可切到第二人称反问。
+角色不愿正视的那部分浮上来，把表层的理由拆穿。
 "可是另一个声音一直在问她……"、"如果……今天的理由还能成立吗"——
-这一段是表层之所以撑不住的原因。
+两到三个复合长句，篇幅和表层相当。
 
 两段加起来必须：
 - 围绕此刻这一段戏（画面正在发生 / 刚听到的台词）
-- 至少 2 个具体感官锚点（不是抽象情绪词）
-- 表层 vs 深层有真正的张力，深层在拆穿表层
+- 至少 2 个具体感官锚点
+- 表层 vs 深层有真正的张力
 - 不剧透（只能用 TA 已知的）
 - 命中"严禁用词"或"短句堆砌"= 整段报废
 
@@ -2783,15 +2824,15 @@ ${STYLE_GUIDE_INNER}
 立场词典（每个问题选一个，三个立场必须不同）：
 ${STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n')}
 
-每个问题中文，不超过 14 字。要顺着深层那一刀往痛处扎。
+每个问题中文，不超过 14 字。顺着深层往痛处扎。
 
-═══ 输出格式（极严，按这个顺序）═══
+═══ 输出格式（极严）═══
 
 [表层]
-（一段 160-260 字的长句叙事，按上面要求）
+（一段 100-150 字长句叙事）
 
 [深层]
-（一段 160-260 字的长句叙事，拆穿表层）
+（一段 100-150 字长句叙事）
 
 1. [立场] 问题
 2. [立场] 问题
@@ -2822,71 +2863,48 @@ ${doesNotKnow || '（无）'}
 
 请按格式输出 [表层] + [深层] + 3 个立场化问题。`;
 
-      const callLLM = async (extraNote = '') => {
-        const userMsg = extraNote ? `${user}\n\n${extraNote}` : user;
-        const r = await ai.chat({
-          task: 'dialogue',
-          system,
-          messages: [{ role: 'user', content: userMsg }],
-          maxTokens: 1100, // 两段 ~200 字 + 3 个问题：1100 给足
-          temperature: 0.85,
-        });
-        return String(r?.text || '').trim().replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
-      };
-      const parseMonologue = (raw) => {
-        // 抽 [表层] 和 [深层] 两块
-        const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[\.、]|$)/);
-        const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[\.、]|$)/);
-        const surface = surfaceMatch ? surfaceMatch[1].trim() : '';
-        const depth = depthMatch ? depthMatch[1].trim() : '';
-        return { surface, depth };
-      };
+      const controller = new AbortController();
+      res.on('close', () => { if (!res.writableEnded) controller.abort(); });
 
-      let txt = await callLLM();
-      let mono = parseMonologue(txt);
-      // 验证：命中禁用词 / 短句堆 → retry 一次，把问题点喂回 LLM
-      const surfaceHits = hitsModernBanned(mono.surface);
-      const depthHits = hitsModernBanned(mono.depth);
-      const surfaceChoppy = feelsLikeShortChoppyMonologue(mono.surface);
-      const depthChoppy = feelsLikeShortChoppyMonologue(mono.depth);
-      if (surfaceHits.length || depthHits.length || surfaceChoppy || depthChoppy) {
-        const reasons = [];
-        if (surfaceHits.length) reasons.push(`[表层] 命中禁用词：${surfaceHits.join(' / ')}`);
-        if (depthHits.length) reasons.push(`[深层] 命中禁用词：${depthHits.join(' / ')}`);
-        if (surfaceChoppy) reasons.push('[表层] 全是短句排比，违反"长句缠绕"规则');
-        if (depthChoppy) reasons.push('[深层] 全是短句排比，违反"长句缠绕"规则');
-        console.warn('[character/inner/starter] retry:', reasons.join('; '));
-        const retryNote = `上一次输出有问题：\n${reasons.join('\n')}\n\n请按 STYLE_GUIDE_INNER 的范例段落重写——长句缠绕、破折号衔接从句、每段至少一个具体感官锚点、第三人称过去时、表层在自圆其说而深层在拆穿。绝不要短句金句感。`;
-        txt = await callLLM(retryNote);
-        mono = parseMonologue(txt);
+      const stream = ai.chatStream({
+        task: 'dialogue',
+        system,
+        messages: [{ role: 'user', content: user }],
+        maxTokens: 700, // 两段 ~120 字 + 3 个问题
+        temperature: 0.85,
+        signal: controller.signal,
+      });
+
+      let raw = '';
+      for await (const chunk of stream) {
+        if (chunk.type === 'text' && chunk.delta) {
+          raw += chunk.delta;
+          send('text', { delta: chunk.delta });
+        }
       }
 
-      // 解析 3 个立场化问题
-      const stanceRe = new RegExp(`\\[(${STANCE_PALETTE.join('|')})\\]`);
-      const qLines = txt.split('\n').filter(l => /^\s*[1-3][\.、]/.test(l));
-      const questions = qLines.map(line => {
-        const stripped = line.replace(/^\s*[1-3][\.、:：\s]+/, '').trim();
-        const m = stripped.match(stanceRe);
-        const stance = m ? m[1] : null;
-        const text = stripped.replace(stanceRe, '').replace(/^[\s\-:：]+/, '').trim();
-        return text ? { text, stance } : null;
-      }).filter(Boolean).slice(0, 3);
-
+      const mono = parseMonologue(raw);
+      const questions = parseQuestions(raw);
       const finalPayload = {
         surface: mono.surface || '',
         depth: mono.depth || '',
         questions: questions.length === 3 ? questions : FALLBACK_QS,
       };
       _starterCache.set(cacheKey, finalPayload);
-      res.json(finalPayload);
+      send('done', finalPayload);
+      res.end();
     } catch (err) {
       console.error('[character/inner/starter] error:', err.message);
-      res.json({
-        surface: '',
-        depth: '',
-        questions: FALLBACK_QS,
-        fallback: true,
-      });
+      try {
+        send('done', {
+          surface: '',
+          depth: '',
+          questions: FALLBACK_QS,
+          fallback: true,
+          error: err.message,
+        });
+      } catch { /* response already closed */ }
+      try { res.end(); } catch {}
     }
   });
 

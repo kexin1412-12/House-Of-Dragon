@@ -1305,7 +1305,7 @@ body {
 .tx-char-back {
   background: transparent; border: 0;
   color: rgba(212, 196, 168, 0.6);
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px; letter-spacing: 0.16em;
   padding: 4px 0; cursor: pointer;
   flex-shrink: 0;
@@ -1326,7 +1326,7 @@ body {
 }
 .tx-char-status {
   margin-top: 4px;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px; letter-spacing: 0.18em;
   color: rgba(184, 196, 206, 0.78);
   text-transform: none;
@@ -1336,7 +1336,7 @@ body {
 .tx-char-switch {
   background: transparent; border: 0;
   color: rgba(184, 196, 206, 0.55);
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px; letter-spacing: 0.12em;
   padding: 4px 0; cursor: pointer;
   flex-shrink: 0;
@@ -1358,7 +1358,7 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
 .tx-char-beat-ts {
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 10.5px; letter-spacing: 0.16em;
   color: rgba(184, 196, 206, 0.7);
   flex-shrink: 0;
@@ -1435,7 +1435,7 @@ body {
   margin-bottom: 4px;
 }
 .tx-char-card-id {
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 10.5px; letter-spacing: 0.14em;
   color: rgba(184, 196, 206, 0.78);
   margin-bottom: 6px;
@@ -1456,7 +1456,7 @@ body {
 .tx-char-layer { font-size: 13px; line-height: 1.7; letter-spacing: 0.02em; }
 .tx-char-layer-name {
   display: inline;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-weight: 600; font-size: 12.5px;
   letter-spacing: 0.08em;
   color: #e8c896;
@@ -1464,7 +1464,7 @@ body {
 }
 .tx-char-tag {
   display: inline-block;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 10px; font-weight: 500; letter-spacing: 0.24em;
   color: #6b9bd1;
   padding: 1px 7px;
@@ -1492,74 +1492,71 @@ body {
 }
 
 /* ─── 进入角色的开场内心独白 + CTA ─────────────────────
-   马丁式 POV 章节：[内心独白] 红字标题 + 表层长段散文，💭 深层意识 紫字
-   标题 + 深层长段散文。两段都是衬线 / 第三人称过去时 / 长句缠绕。
+   马丁式 POV 章节：[内心独白] 红字标题 + 表层短段散文，💭 深层意识 紫字
+   标题 + 深层短段散文。统一 Noto Serif SC，字号收紧，行高收紧。
    用户问出第一个问题后 CTA 收掉，两段独白本身保留。 */
 .tx-char-opening {
-  margin: 0 0 18px;
-  padding: 16px 18px 16px 20px;
+  margin: 0 0 14px;
+  padding: 14px 16px 14px 18px;
   border-left: 2px solid rgba(196, 86, 86, 0.55);
   background: rgba(28, 16, 14, 0.34);
   text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
 }
 .tx-char-opening-header {
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.32em;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.18em;
   color: #c45656;
-  text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .tx-char-opening-header-depth {
-  margin-top: 18px;
+  margin-top: 14px;
   color: #b48ae0;
   display: flex; align-items: center; gap: 6px;
 }
 .tx-char-opening-bullet { font-size: 13px; letter-spacing: 0; }
-/* 表层意识：暖米色衬线长段，~14px / 1.95 行高，给散文足够呼吸 */
+/* 表层意识：暖米色衬线短段，~12.5px / 1.75 行高 */
 .tx-char-opening-surface {
   font-family: 'Noto Serif SC', 'Songti SC', serif;
-  font-size: 14px; line-height: 1.95;
+  font-size: 12.5px; line-height: 1.75;
   color: #ead8b8;
   letter-spacing: 0.015em;
   text-indent: 2em;
-  /* 段落整体气质：不是诗，不是格言，是叙事 —— 不要 italic，不要居中 */
 }
 /* 深层意识：稍冷一档紫调，区分"另一个声音在说话" */
 .tx-char-opening-depth {
   font-family: 'Noto Serif SC', 'Songti SC', serif;
-  font-size: 14px; line-height: 1.95;
+  font-size: 12.5px; line-height: 1.75;
   color: rgba(220, 200, 232, 0.92);
   letter-spacing: 0.015em;
   text-indent: 2em;
   font-style: italic;
 }
 .tx-char-opening-cta {
-  margin-top: 18px;
+  margin-top: 14px;
   font-family: 'Noto Serif SC', serif;
-  font-size: 13px;
+  font-size: 12.5px;
   color: rgba(232, 200, 150, 0.82);
   font-style: italic;
 }
 
 /* ─── 4 类内在声音多色（理性蓝 / 情感紫 / 本能红 / 直觉琥珀）────
-   每个 voice 一段散文：左边色名（粗、ALL CAPS letter-spacing）+ 紧跟一段
-   长句叙事（衬线、第三人称过去时）。声音之间通过颜色对比让用户看到
-   "两种心态在打架"。检定标签 [困难:成功] 已废弃，不再渲染。 */
+   每个 voice 一段散文：左边色名 + 紧跟一段长句叙事。
+   全部 Noto Serif SC 衬线统一，字号收紧。 */
 .tx-char-voice {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 13.5px; line-height: 1.85;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 12.5px; line-height: 1.7;
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-  margin: 8px 0;
-  padding: 6px 0 6px 14px;
+  margin: 6px 0;
+  padding: 4px 0 4px 12px;
   border-left: 1px solid currentColor;
 }
 .tx-char-voice-name {
   display: block;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-weight: 600; font-size: 11.5px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-weight: 600; font-size: 11px;
+  letter-spacing: 0.18em;
+  margin-bottom: 3px;
 }
 .tx-char-voice-body {
   display: block;
@@ -1584,10 +1581,10 @@ body {
 .tx-char-option {
   position: relative;
   display: flex; align-items: baseline; gap: 10px;
-  padding: 5px 0 5px 14px;
+  padding: 4px 0 4px 12px;
   cursor: pointer;
-  font-family: 'Noto Serif SC', serif;
-  font-size: 13.5px; line-height: 1.55;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 12.5px; line-height: 1.55;
   transition: background 0.15s ease, transform 0.12s ease;
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
 }
@@ -1599,13 +1596,13 @@ body {
 .tx-char-option:hover::before { opacity: 0.85; }
 .tx-char-option:hover { background: rgba(232, 200, 150, 0.05); }
 .tx-char-option-num {
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-size: 13px; font-weight: 500;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 12.5px; font-weight: 500;
   flex-shrink: 0; min-width: 14px;
   color: rgba(232, 200, 150, 0.85);
 }
 .tx-char-option-stance {
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
   font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
   flex-shrink: 0;
   /* 颜色由 stance modifier 覆盖 */

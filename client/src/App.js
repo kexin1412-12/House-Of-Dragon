@@ -10,6 +10,15 @@ import MemeToggle from './MemeToggle';
 import InPlayerLoreCard from './InPlayerLoreCard';
 import FavoritesView from './FavoritesView';
 import DEMO_VIDEOS from './demoVideos';
+import StanceCard from './StanceCard';
+import StanceOptInModal from './StanceOptInModal';
+import TrajectoryChart from './TrajectoryChart';
+import useStanceTriggers from './useStanceTriggers';
+import {
+  setOptIn as setStanceOptIn,
+  recordFactionChoice,
+  recordRecallResolution,
+} from './stanceStore';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 // 视频源 CDN：生产环境一般是 Cloudflare R2；不设时回落到本地 Express 的 /uploads
@@ -965,23 +974,87 @@ function TencentPlayer({
     setCharInput('');
     setCharOpening({ surface: '', depth: '', questions: [] });
   }
+  // 流式拉开场：SSE 一边收 raw 文本一边解析 [表层]/[深层] 渲染（打字机），
+  // 选项在 done 事件一次性 set，不打字。
   async function fetchCharOpening(c) {
     if (!c || !aiKb) return;
     const v = videoRef.current;
     const t = v?.currentTime || 0;
+
+    // 内部打字机队列：拿到的 raw 增量先排队，每 18ms 吐 1-3 个字。
+    // 即使 LLM 一次性把整段 flush 过来（缓存命中场景），前端也按"敲字"节奏呈现。
+    let raw = '';
+    let queue = '';
+    let typing = false;
+    const TYPE_INTERVAL_MS = 18;
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
+      raw += queue.slice(0, n);
+      queue = queue.slice(n);
+      typing = true;
+      const mono = parseStreamingMonologue(raw);
+      // 流式过程中只更新 surface/depth；questions 等 done
+      setCharOpening(prev => ({ ...prev, surface: mono.surface, depth: mono.depth }));
+      setTimeout(tick, TYPE_INTERVAL_MS);
+    };
+    const enqueue = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const waitTypewriterDone = () => new Promise(resolve => {
+      const check = () => {
+        if (!queue.length && !typing) resolve();
+        else setTimeout(check, 30);
+      };
+      check();
+    });
+
     try {
-      const r = await fetch(`${API}/api/agent/character/inner/starter`, {
+      const resp = await fetch(`${API}/api/agent/character/inner/starter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ videoId: aiKb, characterId: c.character_id, t }),
       });
-      const d = await r.json();
-      setCharOpening({
-        surface: typeof d.surface === 'string' ? d.surface : '',
-        depth: typeof d.depth === 'string' ? d.depth : '',
-        questions: Array.isArray(d.questions) && d.questions.length ? d.questions : FALLBACK_OPENING_QS,
-      });
-    } catch {
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let donePayload = null;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) !== -1) {
+          const evtBlock = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+          let evtType = 'message', dataStr = '';
+          for (const line of evtBlock.split('\n')) {
+            if (line.startsWith('event: ')) evtType = line.slice(7).trim();
+            else if (line.startsWith('data: ')) dataStr += line.slice(6);
+          }
+          if (!dataStr) continue;
+          let d;
+          try { d = JSON.parse(dataStr); } catch { continue; }
+          if (evtType === 'text') enqueue(d.delta || '');
+          else if (evtType === 'done') donePayload = d;
+        }
+      }
+
+      // 等打字机敲完最后一波再吐选项 —— 这样选项是"答完才出"的感觉
+      await waitTypewriterDone();
+      const finalQs = (donePayload && Array.isArray(donePayload.questions) && donePayload.questions.length)
+        ? donePayload.questions : FALLBACK_OPENING_QS;
+      setCharOpening(prev => ({
+        surface: donePayload?.surface || prev.surface,
+        depth: donePayload?.depth || prev.depth,
+        questions: finalQs,
+      }));
+    } catch (err) {
+      console.warn('[fetchCharOpening] failed:', err?.message || err);
       setCharOpening({ surface: '', depth: '', questions: FALLBACK_OPENING_QS });
     }
   }
@@ -1763,6 +1836,19 @@ const VOICE_CAT = {
   '权衡': 'blue', '旧账': 'purple', '不祥': 'amber',
 };
 const STANCE_NAMES = ['王者', '血亲', '审慎', '火焰'];
+
+// 进入角色的开场流式 raw → { surface, depth }。每来一个 delta 都会调一次，
+// 必须容忍部分输出（[深层] 还没出现 / 1./2./3. 还没出现）。
+function parseStreamingMonologue(raw) {
+  if (!raw) return { surface: '', depth: '' };
+  // [表层] 之后到 [深层] 或 行首 1. 或文末
+  const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[\.、]|$)/);
+  const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[\.、]|$)/);
+  return {
+    surface: surfaceMatch ? surfaceMatch[1].trim() : '',
+    depth: depthMatch ? depthMatch[1].trim() : '',
+  };
+}
 
 // 角色内心 reply 解析。格式：
 //   [说] outer line
