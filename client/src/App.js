@@ -576,8 +576,9 @@ function TencentPlayer({
   const [charMessages, setCharMessages] = useState([]);       // [{role, text, parsed, streaming, t}]
   const [charInput, setCharInput] = useState('');
   const [charSending, setCharSending] = useState(false);
-  // { monologue: string, questions: [{text, stance}] } —— 进入角色那一刻的"内心独白 + 3 个开场问题"
-  const [charOpening, setCharOpening] = useState({ monologue: '', questions: [] });
+  // { surface: string, depth: string, questions: [{text, stance}] }
+  // 进入角色那一刻的"表层意识 + 💭 深层意识 + 3 个开场问题"（Martin POV 章节风）
+  const [charOpening, setCharOpening] = useState({ surface: '', depth: '', questions: [] });
   const charLogRef = useRef(null);
   const charSceneIdRef = useRef(null);                        // 节流 refetch：只有 scene_id 变了才重拉
   const CHAR_TURN_LIMIT = 10;
@@ -962,7 +963,7 @@ function TencentPlayer({
     setCharSelected(null);
     setCharMessages([]);
     setCharInput('');
-    setCharOpening({ monologue: '', questions: [] });
+    setCharOpening({ surface: '', depth: '', questions: [] });
   }
   async function fetchCharOpening(c) {
     if (!c || !aiKb) return;
@@ -976,18 +977,19 @@ function TencentPlayer({
       });
       const d = await r.json();
       setCharOpening({
-        monologue: typeof d.monologue === 'string' ? d.monologue : '',
+        surface: typeof d.surface === 'string' ? d.surface : '',
+        depth: typeof d.depth === 'string' ? d.depth : '',
         questions: Array.isArray(d.questions) && d.questions.length ? d.questions : FALLBACK_OPENING_QS,
       });
     } catch {
-      setCharOpening({ monologue: '', questions: FALLBACK_OPENING_QS });
+      setCharOpening({ surface: '', depth: '', questions: FALLBACK_OPENING_QS });
     }
   }
   function pickCharacter(c) {
     setCharSelected(c);
     setCharMessages([]);
     setCharInput('');
-    setCharOpening({ monologue: '', questions: [] });
+    setCharOpening({ surface: '', depth: '', questions: [] });
     fetchCharOpening(c);
   }
 
@@ -1744,28 +1746,34 @@ const QUICK_QUESTIONS = [
   '这句台词什么意思',
 ];
 
-// 内在声音 → 颜色 kind 映射（和后端 CHAR_VOICES 的 kind 字段保持一致）
-// 名称在所有角色之间唯一，所以 kind 可以按名字直接查
-const VOICE_KIND = {
-  '龙血': 'blood',
-  '王座': 'authority', '王': 'authority', '父训': 'authority', '骑士誓言': 'authority',
-  '挑衅': 'instinct', '直觉': 'empathy',
-  '私心': 'shame', '旧情': 'shame', '旧伤': 'shame', '病躯': 'shame',
-  '母性': 'warmth', '父爱': 'warmth',
-  '阴影': 'shame', '本心': 'authority', // 兜底通用名
+// 内在声音 → 4 类色块（和后端 VOICE_CATEGORY / CHAR_VOICES.cat 保持一致）
+//   blue  理性   purple 情感   red 本能   amber 直觉
+const VOICE_CAT = {
+  // rhaenyra
+  '王座算计': 'blue',  '龙血': 'red', '戴蒙留下的印': 'purple',
+  // daemon
+  '王座饥渴': 'blue', '哥哥的脸': 'purple',
+  // alicent
+  '父亲的钉子': 'blue', '母兽': 'red', '雷妮拉的旧脸': 'purple',
+  // criston
+  '誓言之锁': 'blue', '神木林之伤': 'purple', '白斗篷的重': 'red',
+  // viserys
+  '王者本分': 'blue', '衰朽': 'red', '父爱': 'purple',
+  // 通用兜底
+  '权衡': 'blue', '旧账': 'purple', '不祥': 'amber',
 };
 const STANCE_NAMES = ['王者', '血亲', '审慎', '火焰'];
 
-// 角色内心 reply 解析。新格式：
+// 角色内心 reply 解析。格式：
 //   [说] outer line
-//   [VOICE_NAME] [困难:成功] inner voice
-//   [ANOTHER_VOICE] [中等:失败] another voice
+//   [VOICE_NAME] inner voice paragraph
+//   [VOICE_NAME] another voice paragraph (different cat)
 //   [潜] subconscious (optional)
 //   1. [立场] q1
 //   2. [立场] q2
 //   3. [立场] q3
 //
-// 流式中也要稳定渲染（每多收一个字符都重新解析一次，不能崩）
+// 流式中也要稳定渲染（每多收一个字符都重新解析一次）
 function parseCharacterReply(text) {
   const empty = { say: '', voices: [], sub: '', suggestions: [] };
   if (!text) return empty;
@@ -1791,7 +1799,7 @@ function parseCharacterReply(text) {
   out.suggestions = out.suggestions.slice(0, 3);
 
   const body = bodyLines.join('\n');
-  // 在 body 里找所有 [TAG] 位置；TAG 可以是"说"、"潜"、或任意中文 voice 名
+  // 找所有 [TAG] 位置（可能是"说"、"潜"、或任意中文 voice 名）
   const tagRe = /\[([^\]\n]{1,8})\]/g;
   const positions = [];
   let m;
@@ -1802,38 +1810,30 @@ function parseCharacterReply(text) {
     out.say = body.trim();
     return out;
   }
-  // 第一个 tag 之前的裸文本归 say
   if (positions[0].start > 0) {
     const lead = body.slice(0, positions[0].start).trim();
     if (lead) out.say = lead;
   }
 
-  // skill-check 标签 [困难:成功] 紧跟在 voice 名后面
-  const checkRe = /^\s*\[(困难|中等|容易):(成功|失败)\]\s*/;
+  // 旧检定标签 [困难:成功] 已废弃；如果还出现就剥掉
+  const oldCheckRe = /^\s*\[(困难|中等|容易):(成功|失败)\]\s*/;
 
   for (let i = 0; i < positions.length; i++) {
     const p = positions[i];
     const next = positions[i + 1];
     const segEnd = next ? next.start : body.length;
     let raw = body.slice(p.end, segEnd);
-    // 这个 tag 后紧跟的 [挑战度:结果] 算 voice 的检定，不是新一段
-    let check = null;
-    const cm = raw.match(checkRe);
-    if (cm) {
-      check = { difficulty: cm[1], result: cm[2] };
-      raw = raw.slice(cm[0].length);
-    }
+    raw = raw.replace(oldCheckRe, ''); // 容错：把残留的检定标签洗掉
     const seg = raw.trim();
+    // 跳过纯检定标签 tag（不该是 voice）
+    if (/^(困难|中等|容易):(成功|失败)$/.test(p.tag)) continue;
     if (p.tag === '说') {
       out.say = seg;
     } else if (p.tag === '潜') {
       out.sub = seg;
-    } else if (checkRe.test(`[${p.tag}]${body.slice(p.end, segEnd)}`) || VOICE_KIND[p.tag] || /^[一-龥]{1,4}$/.test(p.tag)) {
-      // 任意中文 1-4 字命名都视为 voice（即使没在 VOICE_KIND 里也允许，颜色用 fallback）
-      // 排除：[说] [潜]（已处理）+ skill-check 标签
-      if (!/^(困难|中等|容易):(成功|失败)$/.test(p.tag)) {
-        if (seg) out.voices.push({ name: p.tag, kind: VOICE_KIND[p.tag] || 'instinct', check, text: seg });
-      }
+    } else if (/^[一-龥]{1,8}$/.test(p.tag)) {
+      // 任意中文 1-8 字命名都视为 voice；颜色找不到时落 amber 兜底
+      if (seg) out.voices.push({ name: p.tag, cat: VOICE_CAT[p.tag] || 'amber', text: seg });
     }
   }
   return out;
@@ -1982,7 +1982,9 @@ function CharacterPanel({
   // 还没问过 → 用开场 opening.questions；问过一轮以上 → 用上一回 [问] 跟问
   const isOpening = userTurns === 0;
   const suggestions = isOpening ? (opening.questions || []) : replySuggestions;
-  const monologueLines = (opening.monologue || '').split('\n').map(l => l.trim()).filter(Boolean);
+  const surface = (opening.surface || '').trim();
+  const depth = (opening.depth || '').trim();
+  const hasOpening = !!(surface || depth);
   const beatTs = sceneBeat?.start_time != null
     ? `${Math.floor(sceneBeat.start_time / 60)}:${String(Math.floor(sceneBeat.start_time % 60)).padStart(2, '0')}`
     : null;
@@ -2072,22 +2074,31 @@ function CharacterPanel({
         </div>
       ) : (
         <div ref={logRef} className="tx-agent-log tx-agent-de-log tx-char-log">
-          {/* 进入角色的开场：[内心独白] 多行 + "你想问他什么？" CTA。
-              用户问出第一个问题后，独白滚到对话流上方继续可见 */}
-          {monologueLines.length > 0 && (
+          {/* 进入角色的开场：[表层] 长段散文 + 💭 [深层] 长段散文 + "你想问他什么？" CTA。
+              用户问出第一个问题后 CTA 收掉，独白本身保留在对话流上方。 */}
+          {hasOpening && (
             <div className="tx-char-opening">
-              <div className="tx-char-opening-header">[内心独白]</div>
-              <div className="tx-char-opening-monologue">
-                {monologueLines.map((line, i) => (
-                  <div key={i} className="tx-char-opening-line">{line}</div>
-                ))}
-              </div>
+              {surface && (
+                <>
+                  <div className="tx-char-opening-header">[内心独白]</div>
+                  <div className="tx-char-opening-surface">{surface}</div>
+                </>
+              )}
+              {depth && (
+                <>
+                  <div className="tx-char-opening-header tx-char-opening-header-depth">
+                    <span className="tx-char-opening-bullet" aria-hidden="true">💭</span>
+                    深层意识
+                  </div>
+                  <div className="tx-char-opening-depth">{depth}</div>
+                </>
+              )}
               {isOpening && (
                 <div className="tx-char-opening-cta">你想问他什么？</div>
               )}
             </div>
           )}
-          {messages.length === 0 && monologueLines.length === 0 && (
+          {messages.length === 0 && !hasOpening && (
             <div className="tx-agent-de-empty">
               问点什么 —— <em>"你恨她吗？"</em>、<em>"你为什么不直接走？"</em>。<br/>
               你看到的是 TA 此刻能告诉你的全部，再往后的事 TA 也还不知道。
@@ -2192,14 +2203,8 @@ function CharLine({ message, speakerName }) {
         </div>
       )}
       {(p.voices || []).map((v, i) => (
-        <div key={i} className={`tx-char-layer tx-char-voice tx-char-voice-${v.kind || 'instinct'}`}>
+        <div key={i} className={`tx-char-layer tx-char-voice tx-char-voice-${v.cat || 'amber'}`}>
           <span className="tx-char-voice-name">{v.name}</span>
-          {v.check && (
-            <span className={`tx-char-check tx-char-check-${v.check.result === '成功' ? 'pass' : 'fail'}`}>
-              [{v.check.difficulty}: {v.check.result}]
-            </span>
-          )}
-          <span className="de-dash">—</span>
           <span className="tx-char-voice-body">{v.text}</span>
           {showCursor && lastIdx === `voice-${i}` && <span className="de-cursor">▍</span>}
         </div>

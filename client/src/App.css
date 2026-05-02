@@ -1492,11 +1492,12 @@ body {
 }
 
 /* ─── 进入角色的开场内心独白 + CTA ─────────────────────
-   截图风格：[内心独白] 红字标题，下面 4-6 行第一人称衬线斜体，
-   最后一句 "你想问他什么？" 引导。用户问出第一个问题后 CTA 收掉，独白保留。 */
+   马丁式 POV 章节：[内心独白] 红字标题 + 表层长段散文，💭 深层意识 紫字
+   标题 + 深层长段散文。两段都是衬线 / 第三人称过去时 / 长句缠绕。
+   用户问出第一个问题后 CTA 收掉，两段独白本身保留。 */
 .tx-char-opening {
   margin: 0 0 18px;
-  padding: 14px 16px 14px 18px;
+  padding: 16px 18px 16px 20px;
   border-left: 2px solid rgba(196, 86, 86, 0.55);
   background: rgba(28, 16, 14, 0.34);
   text-shadow: 0 1px 2px rgba(0,0,0,0.85);
@@ -1508,65 +1509,72 @@ body {
   text-transform: uppercase;
   margin-bottom: 10px;
 }
-.tx-char-opening-monologue {
-  font-family: 'Noto Serif SC', 'Songti SC', serif;
-  font-size: 14px; line-height: 1.85;
-  font-style: italic;
-  color: #e8d8b8;
-  letter-spacing: 0.02em;
+.tx-char-opening-header-depth {
+  margin-top: 18px;
+  color: #b48ae0;
+  display: flex; align-items: center; gap: 6px;
 }
-.tx-char-opening-line { margin: 0; }
+.tx-char-opening-bullet { font-size: 13px; letter-spacing: 0; }
+/* 表层意识：暖米色衬线长段，~14px / 1.95 行高，给散文足够呼吸 */
+.tx-char-opening-surface {
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 14px; line-height: 1.95;
+  color: #ead8b8;
+  letter-spacing: 0.015em;
+  text-indent: 2em;
+  /* 段落整体气质：不是诗，不是格言，是叙事 —— 不要 italic，不要居中 */
+}
+/* 深层意识：稍冷一档紫调，区分"另一个声音在说话" */
+.tx-char-opening-depth {
+  font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 14px; line-height: 1.95;
+  color: rgba(220, 200, 232, 0.92);
+  letter-spacing: 0.015em;
+  text-indent: 2em;
+  font-style: italic;
+}
 .tx-char-opening-cta {
-  margin-top: 14px;
+  margin-top: 18px;
   font-family: 'Noto Serif SC', serif;
   font-size: 13px;
-  color: rgba(232, 200, 150, 0.78);
+  color: rgba(232, 200, 150, 0.82);
   font-style: italic;
 }
 
-/* ─── DE 风格：内在声音多色 ─────────────────────────────
-   每个 voice 一行：左边色名（粗、ALL CAPS letter-spacing）+ 检定 [困难:成功] +
-   破折号 + 正文（衬线斜体，第二人称对自己说话）。颜色严格对应 DE 调色板：
-   empathy 蓝 / instinct 紫 / blood 红 / authority 金 / shame 紫红 / warmth 暖玫瑰 */
+/* ─── 4 类内在声音多色（理性蓝 / 情感紫 / 本能红 / 直觉琥珀）────
+   每个 voice 一段散文：左边色名（粗、ALL CAPS letter-spacing）+ 紧跟一段
+   长句叙事（衬线、第三人称过去时）。声音之间通过颜色对比让用户看到
+   "两种心态在打架"。检定标签 [困难:成功] 已废弃，不再渲染。 */
 .tx-char-voice {
   font-family: 'Noto Serif SC', serif;
-  font-size: 13px; line-height: 1.7;
+  font-size: 13.5px; line-height: 1.85;
   text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  margin: 8px 0;
+  padding: 6px 0 6px 14px;
+  border-left: 1px solid currentColor;
 }
 .tx-char-voice-name {
-  display: inline;
+  display: block;
   font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: 11.5px;
   letter-spacing: 0.32em;
-  margin-right: 8px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
-.tx-char-voice-body { font-style: italic; }
-.tx-char-check {
-  display: inline-block;
-  font-family: 'Noto Sans SC', system-ui, sans-serif;
-  font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
-  margin-right: 8px;
-  padding: 1px 6px;
-  border: 1px solid currentColor;
-  border-radius: 1px;
-  vertical-align: 1px;
-  opacity: 0.8;
+.tx-char-voice-body {
+  display: block;
+  letter-spacing: 0.015em;
 }
-.tx-char-check-pass { color: #8aa67a; }   /* 暗绿 = 成功 */
-.tx-char-check-fail { color: #c8857a; }   /* 暗红 = 失败 */
 
-.tx-char-voice-empathy   .tx-char-voice-name { color: #6b9bd1; }
-.tx-char-voice-empathy   .tx-char-voice-body { color: rgba(140, 175, 210, 0.92); }
-.tx-char-voice-instinct  .tx-char-voice-name { color: #b08adb; }
-.tx-char-voice-instinct  .tx-char-voice-body { color: rgba(190, 165, 220, 0.92); }
-.tx-char-voice-blood     .tx-char-voice-name { color: #d68080; }
-.tx-char-voice-blood     .tx-char-voice-body { color: rgba(220, 160, 160, 0.94); }
-.tx-char-voice-authority .tx-char-voice-name { color: #d8b07a; }
-.tx-char-voice-authority .tx-char-voice-body { color: rgba(220, 192, 150, 0.94); }
-.tx-char-voice-shame     .tx-char-voice-name { color: #c485a8; }
-.tx-char-voice-shame     .tx-char-voice-body { color: rgba(200, 160, 184, 0.92); }
-.tx-char-voice-warmth    .tx-char-voice-name { color: #d6938a; }
-.tx-char-voice-warmth    .tx-char-voice-body { color: rgba(220, 170, 160, 0.94); }
+/* 4 色调色板 */
+.tx-char-voice-blue   { color: #6b9bd1; }
+.tx-char-voice-blue   .tx-char-voice-body { color: rgba(180, 205, 230, 0.94); font-style: normal; }
+.tx-char-voice-purple { color: #b48ae0; }
+.tx-char-voice-purple .tx-char-voice-body { color: rgba(210, 192, 232, 0.94); font-style: italic; }
+.tx-char-voice-red    { color: #d68080; }
+.tx-char-voice-red    .tx-char-voice-body { color: rgba(228, 178, 178, 0.94); font-style: normal; }
+.tx-char-voice-amber  { color: #d8b07a; }
+.tx-char-voice-amber  .tx-char-voice-body { color: rgba(228, 200, 158, 0.94); font-style: italic; }
 
 /* ─── 立场化的玩家选项（编号 1./2./3. + [立场] + 文案）─── */
 .tx-char-options {

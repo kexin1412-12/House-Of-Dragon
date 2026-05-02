@@ -218,41 +218,53 @@ function srtWindow(videoId, centerT, backS = 30, forwardS = 0) {
   return cues.filter(c => c.end >= lo && c.start <= hi);
 }
 
-// ─── 角色"内在声音"调色板（DE 风格：每个角色有 3 个不同维度的内心声音）───
-// kind 字段映射到前端的颜色类（empathy/instinct/blood/authority/shame/warmth）
-// 每次 LLM 回应必须从这 3 个里选 1-2 个，让回答有"多个自我在吵架"的层次感
+// ─── 4 类内在声音 · 龙之家族版调色板 ───
+// 对应极乐迪斯科 4 种 stat 颜色：
+//   blue   理性 — 在分析局势、权衡利弊（亚莉森计算穿绿裙的政治后果）
+//   purple 情感 — 情绪反应 / 记忆涌上来（亚莉森想起和雷妮拉从前的友谊）
+//   red    本能 — 身体反应 / 恐惧 / 愤怒（克里斯顿打死乔弗里前的肾上腺素）
+//   amber  直觉 — 说不清但隐约感知到的事（雷尼拉婚宴上"今晚会出事"）
+const VOICE_CATEGORY = {
+  blue:   { label: '理性', tagline: '权衡 · 计算 · 史鉴',  hint: '冷静、合乎逻辑、以家族 / 王朝利益为先' },
+  purple: { label: '情感', tagline: '记忆 · 旧情 · 心结',  hint: '过去涌上来，带着柔软或带着怨' },
+  red:    { label: '本能', tagline: '血脉 · 火 · 肉身',     hint: '身体反应、肾上腺素、直接到不顾后果' },
+  amber:  { label: '直觉', tagline: '风声 · 不祥 · 隐约',  hint: '说不清的预感、风向、第六感的不安' },
+};
+
+// 每个角色 3 个具名声音，每个挂在 4 类中的一类。
+// LLM 一次回答必须挑 2 个不同 cat 的声音，让"两种颜色的色块同时说话"。
 const CHAR_VOICES = {
   rhaenyra_targaryen: [
-    { name: '龙血', kind: 'blood',     hint: '坦格利安血脉里的火与骄' },
-    { name: '王座', kind: 'authority', hint: '继承人这个身份的重量' },
-    { name: '私心', kind: 'shame',     hint: '她真正想要、却不敢说的' },
+    { name: '王座算计',     cat: 'blue',   hint: '继承人的计算、父王的教诲、铁王座的重量' },
+    { name: '龙血',         cat: 'red',    hint: '坦格利安血脉里的火、对羞辱的本能反扑' },
+    { name: '戴蒙留下的印', cat: 'purple', hint: '叔叔在她心里那一条没法说出口的线' },
   ],
   daemon_targaryen: [
-    { name: '龙血', kind: 'blood',     hint: '挑衅、暴力、瓦雷利亚的火' },
-    { name: '挑衅', kind: 'instinct',  hint: '不肯低头的脾气' },
-    { name: '王座', kind: 'authority', hint: '哥哥与铁王座之间的影子' },
+    { name: '王座饥渴',  cat: 'blue',   hint: '哥哥与铁王座之间那道他从不肯承认的影子' },
+    { name: '龙血',      cat: 'red',    hint: '挑衅、暴力、瓦雷利亚的火、不肯低头' },
+    { name: '哥哥的脸',  cat: 'purple', hint: '韦赛里斯在他心里残留的那一点温情与怨' },
   ],
   alicent_hightower: [
-    { name: '母性', kind: 'warmth',    hint: '为伊耿守住的那条防线' },
-    { name: '父训', kind: 'authority', hint: '奥托·海塔尔从未停过的耳语' },
-    { name: '旧情', kind: 'shame',     hint: '她对雷尼拉的友谊残留' },
+    { name: '父亲的钉子',   cat: 'blue',   hint: '奥托·海塔尔从未停过的耳语，把利害敲进她脑子' },
+    { name: '母兽',         cat: 'red',    hint: '为伊耿守住的那条血肉防线，被逼急时会咬人' },
+    { name: '雷妮拉的旧脸', cat: 'purple', hint: '她们曾是朋友，那张脸还没从她记忆里走干净' },
   ],
   criston_cole: [
-    { name: '骑士誓言', kind: 'authority', hint: '白斗篷与那句"无论将来如何"' },
-    { name: '旧伤',     kind: 'shame',     hint: '神木林那夜被拒的羞辱' },
-    { name: '直觉',     kind: 'empathy',   hint: '他读懂这一房间的能力' },
+    { name: '誓言之锁',     cat: 'blue',   hint: '白斗篷与那句"无论将来如何"，铁卫的本分' },
+    { name: '神木林之伤',   cat: 'purple', hint: '那一夜被拒的羞辱，她说他不过是工具' },
+    { name: '白斗篷的重',   cat: 'red',    hint: '身体里压不下去的怒，迟早会找一个出口' },
   ],
   viserys_targaryen: [
-    { name: '王',   kind: 'authority', hint: '坦格利安第五任国王的责任' },
-    { name: '病躯', kind: 'shame',     hint: '一年比一年坏的身体' },
-    { name: '父爱', kind: 'warmth',    hint: '对雷尼拉真心的偏爱' },
+    { name: '王者本分', cat: 'blue',   hint: '坦格利安第五任国王的责任，杰赫里斯的影子' },
+    { name: '衰朽',     cat: 'red',    hint: '一年比一年坏的身体，伤口烂着不愈合' },
+    { name: '父爱',     cat: 'purple', hint: '对雷尼拉真心的偏爱、对阿莉森特的歉疚' },
   ],
 };
 function voicesFor(characterId) {
   return CHAR_VOICES[characterId] || [
-    { name: '直觉', kind: 'empathy',   hint: '当下的本能反应' },
-    { name: '阴影', kind: 'shame',     hint: '心底不愿正视的那一处' },
-    { name: '本心', kind: 'authority', hint: '真正的立场' },
+    { name: '权衡', cat: 'blue',   hint: '此刻的盘算' },
+    { name: '旧账', cat: 'purple', hint: '过去涌上来的那部分' },
+    { name: '不祥', cat: 'amber',  hint: '说不清的预感' },
   ];
 }
 
@@ -265,60 +277,101 @@ const STANCE_HINT = {
   '火焰': '激起 / 挑衅 / 让 TA 失态',
 };
 
-// ─── 笔触：让 LLM 写出像《冰与火之歌》《血与火》中信版屈畅译笔的句子 ───
-// 给所有"角色内心"相关 prompt 复用，避免每个端点重复一遍。
+// ─── 笔触：让 LLM 写出像《冰与火之歌》《血与火》屈畅译笔的散文 ───
+// 给所有"角色内心"相关 prompt 复用。彻底改成第三人称过去时长句叙事，
+// 不再写"短句金句感"的现代诗。
 const STYLE_GUIDE_INNER = `═══ 笔触（极重要，写偏即报废） ═══
-你写的是 HBO《龙之家族》一个维斯特洛贵族此刻的内心。
-笔触必须像中信版屈畅翻译的《冰与火之歌》《血与火》——
-冷峻、克制、有重量；用古典伦理语（誓言 / 体面 / 本分 / 义 / 礼），
-不用现代心理学术语；用具体的维斯特洛意象（神木林 / 白斗篷 /
-誓言 / 王座 / 七神 / 家徽 / 旗号 / 渡鸦），不用抽象情绪概括。
+
+你写的是 HBO《龙之家族》一个维斯特洛 POV 章节那种**第三人称过去时全知叙事**，
+模仿乔治·R·R·马丁《冰与火之歌》《血与火》中信版屈畅译笔。
+
+不是现代诗。不是格言。不是抒情散文。
+是马丁的笔——长句、缓慢堆叠、充满细节、自我说服与自我怀疑缠绕。
+
+═══ 五条硬规则（每条都必须遵守）═══
+
+1) 第三人称过去时
+   用"她知道 / 他记得 / 她想起"，不要"我..."第一人称。这是叙事者在转述
+   角色此刻的心声，像一段 POV 章节里的内心独白段落。深层意识可以切到
+   第二人称反问（"如果那天晚上她没有骗你..."），让自我审问的距离更近。
+
+2) 句子长度 — 长句缠绕，禁止短句排列
+   每段至少 2-3 个复合长句，用逗号、破折号、分号衔接从句，模拟思维的
+   缠绕。绝对不要连续三个以上的短句排比。"她知道 X。她不曾 Y。她已经 Z。"
+   这种节奏一律视为废稿。
+
+3) 细节锚定 — 每段至少一个具体感官细节
+   丝绸的触感、烛光的颜色、雨夜的温度、檀木的气味、铁器的冷、酒杯里
+   摇晃的影子。马丁的写法是用物理世界的细节来传递情绪，不是直接说
+   "她很害怕"。没有感官锚点的段落 = 废稿。
+
+4) 自我说服 vs 自我怀疑交替
+   表层意识在给自己找理由（"这是为了伊耿、为了王朝、为了…"），
+   深层意识在拆穿这些理由（"可是另一个声音一直在问她..."）。
+   一段里要有犹豫、回到、再说服。绝不是直线。
+
+5) 禁止现代口语和金句感
+   不出现提炼过度的格言式短语：体面 · 恩宠 · 应尽之义 · 灵魂深处 ·
+   刻在骨血里。马丁的角色不说格言，他们絮叨、犹豫、在脑子里跟自己吵架。
 
 ═══ 严禁用词（命中即视为废稿）═══
+
 现代心理词：冲动 · 焦虑 · 压力 · 创伤 · 情绪 · 心理 · 压抑感 ·
-  安全感 · 边界感 · 自我价值 · 自尊 · 自信 · 自卑（指心理状态时）·
-  抑郁 · 崩溃（用作动词描述心境）· 解离 · 内耗 · 共鸣（指心理感受时）
+  安全感 · 边界感 · 自我价值 · 自尊 · 抑郁 · 内耗 · 解离 · 共鸣
 现代散文/网文味：刻在骨血里 · 灵魂深处 · 无法言说 · 难以名状 ·
-  心房 · 心扉 · 心跳漏拍 · 涟漪 · 余温 · 滚烫 · 心动
-现代口语：上头 · 翻车 · 拿捏 · 内卷 · 摆烂 · 破防 · yyds · 真香
+  心房 · 心扉 · 心跳漏拍 · 涟漪 · 余温 · 滚烫 · 心动 · 应尽之义 ·
+  恩宠 · 体面（作格言时）
+现代口语：上头 · 翻车 · 拿捏 · 内卷 · 摆烂 · 破防
 仙侠/玄幻：苍生 · 天道 · 轮回 · 红尘 · 众生
-书房古风（写过头）：执笔 · 卷宗 · 史书 · 史册 · 羊皮纸 · 鹅毛笔 · 学士
-文言副词过度：汝 · 吾 · 由是 · 其一其二 · 岂 · 毋
+书房古风（过度）：执笔 · 卷宗 · 史书 · 史册 · 羊皮纸 · 鹅毛笔 · 学士
+文言副词（过度）：汝 · 吾 · 由是 · 其一其二 · 岂 · 毋
 
-═══ 推荐句式（用这些骨架，不要照抄）═══
-- "誓言已断 / 已碎。"   "白斗篷穿在身上，比甲胄还重。"
-- "他们说 X。可是…… / 这不是 X，这是 Y。"
-- "我不该 / 我不曾 / 我不许 / 我从未 ……"
-- "七神在上，……"   "神木林那一夜，……"
-- "由不得我。"  "我守的不是 A，是 B。"
-- 一句一行，逗号收，留空白；多用半句、断句。
+═══ Gold-standard 段落（仅示意笔触，绝不照抄字句）═══
 
-═══ Gold-standard 范例（仅示意笔触，绝不照抄字句）═══
-范例 A（一名被拒后的铁卫）：
-「誓言已断。
-白斗篷穿在身上，比甲胄还重。
-我曾把命交给她，她只还我四个字。
-神木林那一夜，我宁可没去过。」
+范例（一名穿绿礼服赴宴的王后，表层意识）：
 
-范例 B（一名穿绿礼服赴宴的王后）：
-「父亲说，做一个母亲。
-不是做谁的朋友，不是做谁的影子。
-今夜我穿绿，他们都看得懂。
-七神在上，我没有辜负我的家。」
+「绿色的丝绸被举到烛光下时泛着一层冷冽的光泽，像是旧镇港口冬天早晨的海面。
+她知道这不是一件裙子，或者说这从来就不只是一件裙子——当海塔尔灯塔点燃绿色
+火焰的时候，从旧镇到蜜酒河沿岸的每一个领主都知道那意味着什么。她的父亲
+在离开的那个雨夜把这些话像钉子一样敲进她脑子里，而她花了整整三天试图拔掉
+它们，可是每拔一颗就流更多的血。现在她站在镜子前面，看着镜中那个穿绿裙
+的女人，心想这个人什么时候变成了自己。」
 
-记住：这是"维斯特洛贵族对自己说的话"，不是现代散文，不是 AI 解析。`;
+（深层意识）：
 
-// 后处理：检测是否命中现代心理词 / 散文味，hit 则记日志（演示阶段不强制 retry）
+「她反复告诉自己这是为了伊耿，为了赫拉伊娜，为了还在摇篮里的伊蒙德——如果
+雷妮拉坐上铁王座的那一天真的来临，她的孩子们会面临什么？父亲说的是"他们
+会被视为威胁"，但他真正的意思是"他们会死"，他只是不愿意把那个字说出来。
+可是另一个声音一直在问她：如果那天晚上雷妮拉没有骗她，如果她看着她的
+眼睛说出了真话，今天穿这件裙子的理由还是否成立？她不确定。她厌恶自己的
+不确定。一个即将宣战的人不应该不确定。」
+
+记住：长句缠绕、感官锚点、说服与怀疑交替、第三人称过去时——
+这就是马丁笔下维斯特洛的灵魂。`;
+
+// 后处理：检测是否命中现代心理词 / 散文味
 const BANNED_MODERN_INNER = [
   '冲动', '焦虑', '压力', '创伤', '情绪化', '安全感', '边界感',
   '自我价值', '自尊', '抑郁', '心理', '内耗', '解离',
   '刻在骨血里', '灵魂深处', '心房', '心扉', '心跳', '涟漪', '余温',
   '上头', '翻车', '拿捏', '内卷', '摆烂', '破防',
+  '应尽之义', '恩宠', // 这些"格言短语"也要拦
 ];
 function hitsModernBanned(text) {
   if (!text) return [];
   const s = String(text);
   return BANNED_MODERN_INNER.filter(w => s.includes(w));
+}
+// 后处理：检测段落是不是被切碎成短句金句感（违反"句子长度"规则）
+// 启发式：如果一段超过 60 字但 70% 以上的句子都很短（≤12 字），判定为"短句堆"
+function feelsLikeShortChoppyMonologue(text) {
+  if (!text) return false;
+  const s = String(text).trim();
+  if (s.length < 80) return false;
+  const sents = s.split(/[。？！\n]+/).map(x => x.trim()).filter(Boolean);
+  if (sents.length < 4) return false;
+  const shortCount = sents.filter(x => x.length <= 12).length;
+  return shortCount / sents.length >= 0.7;
 }
 
 // ─── 分支 cue 生成的辅助 ─────────────────────────────────────
@@ -2656,23 +2709,23 @@ ${bp.description || '（无具体描述）'}
     try {
       const { videoId, characterId } = req.body || {};
       const kb = videoId ? loadKB(videoId) : null;
-      if (!kb) return res.json({ monologue: '', questions: [] });
+      if (!kb) return res.json({ surface: '', depth: '', questions: [] });
       const showId = kb.show_id || 'house-of-the-dragon';
       const episode = resolveEpisode(kb);
       const profile = charactersLib.lookupRoleplayProfile(showId, characterId, episode);
-      if (!profile) return res.json({ monologue: '', questions: [] });
+      if (!profile) return res.json({ surface: '', depth: '', questions: [] });
 
       const cursorTime = normalizeTime(req.body?.t);
       const scene = currentScene(kb, cursorTime);
-      // v2: 加了笔触锚定到中信版译笔的 STYLE_GUIDE_INNER 后，老缓存全报废
-      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v2`;
+      // v3: 改成两段散文（[表层] + [深层]）+ 4 色调色板，老缓存（短句金句版）全报废
+      const cacheKey = `${characterId}|${scene?.scene_id || 'no-scene'}|${episode}|v3`;
       if (_starterCache.has(cacheKey)) {
         const cached = _starterCache.get(cacheKey);
         return res.json({ ...cached, cached: true });
       }
 
       if (!ai.isAvailable('dialogue')) {
-        return res.json({ monologue: '', questions: FALLBACK_QS, fallback: true });
+        return res.json({ surface: '', depth: '', questions: FALLBACK_QS, fallback: true });
       }
 
       // 上下文：当前画面发生 + 同框人 + 最近 30s SRT
@@ -2702,26 +2755,43 @@ ${bp.description || '（无具体描述）'}
 
 ${STYLE_GUIDE_INNER}
 
-═══ 第一件事：4 到 6 行第一人称内心独白 ═══
-- 第一人称，"我..."。这是角色对自己说的话，没人听见。
-- 4 到 6 行，每行短，断句像意识流：一句一行，逗号截，留白。
-- 必须围绕"此刻这一段戏"——画面正在发生的事、刚听到的台词、TA 此刻被刺到的地方。
-- 必须有重量：要么戳到 TA 此刻的伤口，要么戳到 TA 不敢承认的欲望，要么是 TA 此刻真的在自言自语的话。
-- 笔触遵守上面"笔触"那段。命中"严禁用词"=报废。
-- 不能写未来——只能用 TA 此刻已知的（见下面"已知"清单）。
+═══ 第一件事：写两段第三人称过去时的内心独白 ═══
+
+按 POV 章节的写法生成两段：
+
+[表层]
+160-260 字（中文计），第三人称过去时。
+角色此刻看到 / 听到 / 触摸到的具体感官细节做开头（丝绸、烛光、雨、铁器、酒…）。
+角色在给自己找理由 / 自我说服。多复合长句，破折号衔接从句，绝不短句排比。
+必须是马丁笔触——参考上面 STYLE_GUIDE_INNER 的范例段落。
+
+[深层]
+160-260 字（中文计），第三人称过去时，可切到第二人称反问。
+角色不愿正视的那部分浮上来：表层的理由被另一个声音拆穿。
+"可是另一个声音一直在问她……"、"如果……今天的理由还能成立吗"——
+这一段是表层之所以撑不住的原因。
+
+两段加起来必须：
+- 围绕此刻这一段戏（画面正在发生 / 刚听到的台词）
+- 至少 2 个具体感官锚点（不是抽象情绪词）
+- 表层 vs 深层有真正的张力，深层在拆穿表层
+- 不剧透（只能用 TA 已知的）
+- 命中"严禁用词"或"短句堆砌"= 整段报废
 
 ═══ 第二件事：3 个观众最可能问 TA 的问题（立场化）═══
+
 立场词典（每个问题选一个，三个立场必须不同）：
 ${STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n')}
 
-每个问题中文，不超过 14 字。三个不同角度。要顺着内心独白往痛处扎。
+每个问题中文，不超过 14 字。要顺着深层那一刀往痛处扎。
 
 ═══ 输出格式（极严，按这个顺序）═══
-[独白]
-第一行
-第二行
-第三行
-（4-6 行）
+
+[表层]
+（一段 160-260 字的长句叙事，按上面要求）
+
+[深层]
+（一段 160-260 字的长句叙事，拆穿表层）
 
 1. [立场] 问题
 2. [立场] 问题
@@ -2750,7 +2820,7 @@ ${knowsLast || '（无）'}
 ═══ TA 还不知道的事（绝对不能在独白里提到）═══
 ${doesNotKnow || '（无）'}
 
-请按格式输出 [独白] + 3 个立场化问题。`;
+请按格式输出 [表层] + [深层] + 3 个立场化问题。`;
 
       const callLLM = async (extraNote = '') => {
         const userMsg = extraNote ? `${user}\n\n${extraNote}` : user;
@@ -2758,27 +2828,37 @@ ${doesNotKnow || '（无）'}
           task: 'dialogue',
           system,
           messages: [{ role: 'user', content: userMsg }],
-          maxTokens: 400,
-          temperature: 0.88,
+          maxTokens: 1100, // 两段 ~200 字 + 3 个问题：1100 给足
+          temperature: 0.85,
         });
         return String(r?.text || '').trim().replace(/^[\s`*]+/, '').replace(/[\s`*]+$/, '');
       };
       const parseMonologue = (raw) => {
-        const monoMatch = raw.match(/\[独白\]\s*([\s\S]*?)(?=\n\s*1[\.、])/);
-        if (monoMatch) return monoMatch[1].trim();
-        const firstNumIdx = raw.search(/\n\s*1[\.、]/);
-        return firstNumIdx > 0 ? raw.slice(0, firstNumIdx).replace(/^\[独白\]/, '').trim() : '';
+        // 抽 [表层] 和 [深层] 两块
+        const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[\.、]|$)/);
+        const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[\.、]|$)/);
+        const surface = surfaceMatch ? surfaceMatch[1].trim() : '';
+        const depth = depthMatch ? depthMatch[1].trim() : '';
+        return { surface, depth };
       };
 
       let txt = await callLLM();
-      let monologue = parseMonologue(txt);
-      // 命中现代心理 / 散文味禁用词 → retry 一次，把命中词显式喂回去让 LLM 改
-      const hits = hitsModernBanned(monologue);
-      if (hits.length) {
-        console.warn('[character/inner/starter] modern banned hits, retrying:', hits.join(','));
-        const retryNote = `上一次输出命中了禁用词：${hits.join(' / ')}。\n请重写独白，绝不出现这些词或它们的同义词。改用维斯特洛具体意象（誓言 / 白斗篷 / 神木林 / 七神 / 王座 / 家徽）替换。`;
+      let mono = parseMonologue(txt);
+      // 验证：命中禁用词 / 短句堆 → retry 一次，把问题点喂回 LLM
+      const surfaceHits = hitsModernBanned(mono.surface);
+      const depthHits = hitsModernBanned(mono.depth);
+      const surfaceChoppy = feelsLikeShortChoppyMonologue(mono.surface);
+      const depthChoppy = feelsLikeShortChoppyMonologue(mono.depth);
+      if (surfaceHits.length || depthHits.length || surfaceChoppy || depthChoppy) {
+        const reasons = [];
+        if (surfaceHits.length) reasons.push(`[表层] 命中禁用词：${surfaceHits.join(' / ')}`);
+        if (depthHits.length) reasons.push(`[深层] 命中禁用词：${depthHits.join(' / ')}`);
+        if (surfaceChoppy) reasons.push('[表层] 全是短句排比，违反"长句缠绕"规则');
+        if (depthChoppy) reasons.push('[深层] 全是短句排比，违反"长句缠绕"规则');
+        console.warn('[character/inner/starter] retry:', reasons.join('; '));
+        const retryNote = `上一次输出有问题：\n${reasons.join('\n')}\n\n请按 STYLE_GUIDE_INNER 的范例段落重写——长句缠绕、破折号衔接从句、每段至少一个具体感官锚点、第三人称过去时、表层在自圆其说而深层在拆穿。绝不要短句金句感。`;
         txt = await callLLM(retryNote);
-        monologue = parseMonologue(txt);
+        mono = parseMonologue(txt);
       }
 
       // 解析 3 个立场化问题
@@ -2793,7 +2873,8 @@ ${doesNotKnow || '（无）'}
       }).filter(Boolean).slice(0, 3);
 
       const finalPayload = {
-        monologue: monologue || '',
+        surface: mono.surface || '',
+        depth: mono.depth || '',
         questions: questions.length === 3 ? questions : FALLBACK_QS,
       };
       _starterCache.set(cacheKey, finalPayload);
@@ -2801,7 +2882,8 @@ ${doesNotKnow || '（无）'}
     } catch (err) {
       console.error('[character/inner/starter] error:', err.message);
       res.json({
-        monologue: '',
+        surface: '',
+        depth: '',
         questions: FALLBACK_QS,
         fallback: true,
       });
@@ -2894,11 +2976,16 @@ ${doesNotKnow || '（无）'}
       .map(([k, v]) => `· ${k}：${v}`)
       .join('\n');
 
-    // DE 风格的内在声音 + 立场调色板
+    // 龙之家族 4 类内在声音 + 立场调色板
     const voiceList = voicesFor(characterId);
-    const voiceListStr = voiceList.map(v => `· [${v.name}]：${v.hint}`).join('\n');
+    const voiceListStr = voiceList.map(v =>
+      `· [${v.name}] · ${VOICE_CATEGORY[v.cat].label}（${VOICE_CATEGORY[v.cat].tagline}）—— ${v.hint}`
+    ).join('\n');
     const voiceNames = voiceList.map(v => v.name).join(' / ');
     const stanceListStr = STANCE_PALETTE.map(s => `· [${s}] = ${STANCE_HINT[s]}`).join('\n');
+    // 把 categories 都列出来给 LLM 看
+    const catLegend = Object.entries(VOICE_CATEGORY)
+      .map(([_, c]) => `· ${c.label}（${c.tagline}）`).join('\n');
 
     const system = `${voice}
 
@@ -2947,29 +3034,45 @@ ${doesNotKnow || '（无明显信息黑区。）'}
 
 ${STYLE_GUIDE_INNER}
 
-═══ 你这个人脑子里的几个声音（极乐迪斯科风）═══
-你不是一个声音，你是好几个声音在吵架。回答时，至少有一个声音必须开口。
+═══ 你这个人脑子里的几个声音 ═══
+
+你不是一个声音，你是好几个声音在吵架。每个声音都属于下面 4 个色系之一：
+
+${catLegend}
+
+你这个角色身上 3 个具名声音：
 ${voiceListStr}
 
-每开一个声音，都要带一个"内心检定"标签，格式 [挑战度:结果]：
-- 挑战度：困难 / 中等 / 容易（这件事让你思考起来有多难）
-- 结果：成功 / 失败（这个声音这次说服没说服自己）
-"困难:成功"很难得；"中等:失败"是这个声音被另一个声音压下去了。
-让标签真的反映你内心的拉扯，不要每次都写"中等:成功"。
+═══ 关键规则：声音必须吵架 ═══
+
+每次回答，必须开**两个不同色系**的声音。（不能两个都是蓝色 / 两个都是红色。）
+两个声音在同一段对话里直接对立——蓝色在权衡时紫色就在搅动，红色在
+冲动时蓝色就在拉缰。两种颜色的色块同时说话，让用户在它们之间选择立场。
+
+每个声音说出来的话也要按 STYLE_GUIDE_INNER 的笔触：第三人称过去时、
+长句缠绕、有感官锚点。声音不是吐金句，声音是在脑子里絮叨、犹豫、
+跟自己吵。
 
 ═══ 输出格式（极严，按下面顺序，每块独占一行）═══
 
-[说] 你真正会对对方说出口的话。第一人称，带引号或不带引号都行，但必须像剧里这个人会说的。一两句。
-[${voiceNames.split(' / ')[0]}] [挑战度:结果] 第一个内心声音。从上面 ${voiceNames} 选 1 个。第二人称对自己说话，比如"你在……" / "别忘了……"。
-[${voiceNames.split(' / ')[1] || voiceNames.split(' / ')[0]}] [挑战度:结果] 可选 —— 第二个不同名字的内心声音。让两个声音在打架。这一行没必要时省略。
-[潜] 一句话点出你这反应背后的真正源头（恐惧 / 旧伤 / 自我怀疑）。这一刻没什么潜意识可挖时省略整行。
+[说] 角色真正会对对方说出口的话。第一人称，可带引号。一两句，必须和此刻
+   场景的情绪相称。
 
-接着是 3 个对方可能跟问的问题，用 1. 2. 3. 编号，每个带一个立场标签：
+[VOICE_A] 第一个内心声音。一段长句叙事（60-150 字），第三人称过去时，
+   絮叨里带感官锚点。从上面 3 个具名声音里选一个。
+
+[VOICE_B] 第二个内心声音，必须和 VOICE_A 不同色系。一段长句叙事
+   （60-150 字），跟 VOICE_A 形成真正的张力（拆穿、反对、补一刀）。
+
+[潜] 可选。一句长一点的话点出 VOICE_A 和 VOICE_B 共同回避的那个根源。
+   没有可挖的时候省略整行。
+
+接下来 3 个对方可能跟问的问题：
 
 立场词典：
 ${stanceListStr}
 
-格式（严格三行，每行一个）：
+格式：
 1. [立场] 问题（不超过 14 字）
 2. [立场] 问题（不同立场）
 3. [立场] 问题（再不同立场）
@@ -2977,15 +3080,26 @@ ${stanceListStr}
 ═══ 绝对不要写 ═══
 - 任何 markdown / 代码框 / 解释自己在做什么
 - "作为 XX 我会说"、"我是一个虚构角色"、"陛下" 这种把对方当宫里人的措辞 —— 对方是观众
-- 内心声音用了上面词典之外的名字
+- 内心声音用了 ${voiceNames} 之外的名字
+- 两个声音都用了同一个色系
 - 立场用了 ${STANCE_PALETTE.join(' / ')} 之外的词
+- 检定标签 [困难:成功] —— 已废弃，绝不要写
 - 任何标签之外的多余前后缀
+- 短句金句感（参考 STYLE_GUIDE_INNER 范例长句结构）
 
 ═══ 例（仅示意结构，不要照抄字句）═══
 [说] "这话我现在不能答你。"
-[${voiceList[0].name}] [中等:成功] 你抓住了诺言的边——这就是你今天还能站住的全部。
-[${voiceList[1].name}] [困难:失败] 别装了。你想说的早就在嘴边了。
-[潜] 你从来没被允许只为你自己活过。
+
+[${voiceList[0].name}] 她抓住了诺言的边——那是父亲临走前在烛光下用半句话
+钉在她心里的最后一颗钉子，她一直告诉自己这就是她今天还能站住的全部，
+不是因为她相信，而是因为她不敢去想"如果不是的话"会怎样。
+
+[${voiceList[1].name}] 可是她记得很清楚，她不是天生就会装哑的人，那一年
+在神木林里她还会笑出声，还会信誓言，还会以为风也是好的——那个版本的她
+是什么时候让位给了这个站在镜子前的女人？
+
+[潜] 她从来没被允许只为她自己活过——这话她从未对任何人说出口，连对自己也没有。
+
 1. [王者] 你怕的是谁？
 2. [血亲] 那如果没有他们呢？
 3. [审慎] 你愿意把这命换出去吗？`;
@@ -3007,7 +3121,7 @@ ${stanceListStr}
         task: 'dialogue',
         system,
         messages,
-        maxTokens: 600,
+        maxTokens: 1100, // 两段长句 voice + 跟问，给足
         temperature: 0.85,
         signal: controller.signal,
       });
