@@ -72,6 +72,9 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
   const lastSceneIdRef = useRef(null);
   // 当前 symbolData 第一次显示时的 video.currentTime —— 用来算最小停留剩余时长
   const symbolShownAtRef = useRef(null);
+  // 请求序号：seek 时常常多个 fetch 同时在飞，必须只信"最后一发"的回执，
+  // 否则旧请求晚到会把 otto_dismissal 这种 8 分钟的 badge 钉到 50 分钟去。
+  const reqSeqRef = useRef(0);
 
   useEffect(() => {
     if (!videoId) return;
@@ -80,10 +83,13 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
       const v = videoRef.current;
       if (!v) return;
       const t = Math.floor(v.currentTime);
+      const mySeq = ++reqSeqRef.current;
 
       fetch(`${API}/api/agent/scene/symbols?videoId=${encodeURIComponent(videoId)}&t=${t}`)
         .then(r => r.json())
         .then(data => {
+          // 新一轮 tick 已经发出，本次响应作废 —— 防止旧 scene 的结果盖掉新 scene
+          if (mySeq !== reqSeqRef.current) return;
           if (!data.has_kb) {
             setSymbolData(null);
             symbolShownAtRef.current = null;
@@ -120,9 +126,20 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
         .catch(() => {});
     };
 
+    // seek 时立即作废所有在飞请求 + 立刻补一发
+    const v = videoRef.current;
+    const onSeeked = () => {
+      reqSeqRef.current++; // 把所有在飞请求踢成 stale
+      tick();
+    };
+    if (v) v.addEventListener('seeked', onSeeked);
+
     const id = setInterval(tick, 600);
     tick();
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      if (v) v.removeEventListener('seeked', onSeeked);
+    };
   }, [videoId, videoRef, symbolData]);
 
   if (!symbolData) return null;
