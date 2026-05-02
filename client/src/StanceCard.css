@@ -1,151 +1,134 @@
-/* 立场抉择卡 / 回顾卡 —— 与 InPlayerLoreCard 同族（半透明、画面内浮层） */
+/* 立场抉择卡 / 回顾卡 ——
+   inline 形态：画面左下角小浮层。
+   不蒙黑 / 不暂停 / 不抢焦。视频继续播，用户继续看，看见就选，没看见就过。
+   位置：bottom: 110px（PlayerControls 上方一点，跟 .diegetic-cue 同高）；
+        left: 24px。 */
 
-.stc-root {
+.stc-inline {
   position: absolute;
-  inset: 0;
+  bottom: 110px;
+  left: 24px;
+  width: 360px;
+  max-width: calc(100% - 48px);
+  z-index: 6;
+  background: rgba(20, 16, 12, 0.82);
+  border: 1px solid rgba(190, 150, 80, 0.32);
+  border-radius: 6px;
+  padding: 14px 16px 12px;
+  color: #e6dfc8;
+  font-family: "Noto Serif SC", "PingFang SC", serif;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  animation: stc-inline-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  pointer-events: auto;
+}
+
+@keyframes stc-inline-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.stc-inline.is-recall {
+  border-color: rgba(220, 170, 90, 0.45);
+}
+
+.stc-inline-head {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 50;
-  background: rgba(8, 10, 16, 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  animation: stc-fade-in 200ms ease;
+  justify-content: space-between;
 }
 
-@keyframes stc-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.stc-card {
-  width: min(640px, 90%);
-  max-height: 85%;
-  overflow-y: auto;
-  background: linear-gradient(180deg, rgba(20, 16, 12, 0.96) 0%, rgba(12, 10, 14, 0.96) 100%);
-  border: 1px solid rgba(190, 150, 80, 0.35);
-  border-radius: 6px;
-  padding: 28px 32px 22px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(190,150,80,0.08) inset;
-  color: #e8e2d3;
-  font-family: "Noto Serif SC", "PingFang SC", serif;
-  animation: stc-rise 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-@keyframes stc-rise {
-  from { transform: translateY(12px); opacity: 0; }
-  to   { transform: translateY(0); opacity: 1; }
-}
-
-.stc-headline {
-  font-size: 13px;
-  letter-spacing: 0.18em;
+.stc-inline-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.16em;
   color: #c9a55c;
   font-weight: 600;
   text-transform: uppercase;
 }
 
-.stc-scene-label {
-  margin-top: 4px;
-  font-size: 12px;
+.stc-inline-close {
+  background: none;
+  border: none;
+  color: #6b5c3d;
+  font-size: 18px;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: background 140ms ease, color 140ms ease;
+}
+.stc-inline-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #d8cfb6;
+}
+
+.stc-inline-scene {
+  margin-top: 2px;
+  font-size: 11px;
   color: #8a8275;
   letter-spacing: 0.06em;
 }
 
-.stc-prompt {
-  margin: 18px 0 22px;
-  border-left: 2px solid rgba(190,150,80,0.3);
-  padding-left: 14px;
+.stc-inline-prompt {
+  margin: 10px 0 12px;
 }
 
-.stc-recall-prior {
-  font-size: 13px;
+.stc-inline-recall-prior {
+  font-size: 12px;
   color: #b59c6a;
   font-style: italic;
-  line-height: 1.7;
-  padding-bottom: 12px;
-  border-bottom: 1px dashed rgba(190,150,80,0.18);
-  margin-bottom: 12px;
+  line-height: 1.65;
+  padding: 6px 0 8px;
+  border-bottom: 1px dashed rgba(190, 150, 80, 0.18);
+  margin-bottom: 8px;
 }
 
-.stc-prompt-line {
-  margin: 0 0 8px;
-  font-size: 15px;
-  line-height: 1.7;
+.stc-inline-line {
+  margin: 0 0 4px;
+  font-size: 13.5px;
+  line-height: 1.65;
   color: #e6dfc8;
 }
-.stc-prompt-line:last-child { margin-bottom: 0; }
+.stc-inline-line:last-child { margin-bottom: 0; }
 
 /* 选项 */
-.stc-options {
+.stc-inline-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
-.stc-option {
+.stc-inline-option {
   text-align: left;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: 4px;
-  padding: 12px 14px;
+  padding: 8px 10px;
   color: #e6dfc8;
   cursor: pointer;
   font-family: inherit;
-  transition: background 160ms ease, border-color 160ms ease, transform 80ms ease;
+  transition: background 140ms ease, border-color 140ms ease;
 }
-.stc-option:hover,
-.stc-option.is-hovered {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(190,150,80,0.35);
-  transform: translateX(2px);
+.stc-inline-option:hover,
+.stc-inline-option.is-hovered {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(190, 150, 80, 0.4);
 }
-.stc-option:active { transform: translateX(0); }
 
-.stc-option-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 15px;
+.stc-inline-option-label {
+  color: #f3ecd5;
+  font-size: 13.5px;
   font-weight: 600;
 }
 
-.stc-option-label {
-  color: #f3ecd5;
-}
-
-.stc-option-voice {
-  margin-top: 6px;
-  font-size: 13px;
+.stc-inline-option-voice {
+  margin-top: 4px;
+  font-size: 12px;
   line-height: 1.6;
   color: #a89a76;
   font-style: italic;
 }
 
-/* 底部 */
-.stc-footer {
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(190,150,80,0.15);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-}
-.stc-skip {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #8a8275;
-  padding: 5px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-family: inherit;
-}
-.stc-skip:hover { color: #c9c0a4; border-color: rgba(255,255,255,0.25); }
-.stc-hint { color: #56503f; letter-spacing: 0.08em; }
-
-/* recall 整体加一层金色更浓 */
-.stc-root.is-recall .stc-card {
-  border-color: rgba(220, 170, 90, 0.45);
-}
-.stc-root.is-recall .stc-headline { color: #dba953; }
+/* 鼠标 idle / 离开播放区时跟着 toolbar 一起淡 —— 在 App.css 里加规则 */

@@ -1,11 +1,13 @@
 // 立场追踪 / Stance Tracking —— localStorage 状态层
 //
 // 后端不存选择（anonymous + 无 DB）。所有 user state 在浏览器里：
-//   hotd.stance.v1 = { optin, choices }
+//   hotd.stance.v1 = { choices }
 //
 // 不打分、不归类、不聚合。choices 就是一个按时间排序的事件流，
 // 每条记录"在哪场戏 / 你选了哪一个 / 你当时的内心理由"。
 // 选择本身就是产物，不再派生出"+N 黑党 / X 类型"这种二次产物。
+//
+// 开关由 conspiratorMode（共谋模式）统一控制，本 store 不再保管 opt-in。
 
 const KEY = 'hotd.stance.v1';
 
@@ -30,22 +32,9 @@ function writeRaw(state) {
 function ensureState() {
   const cur = readRaw();
   if (cur && typeof cur === 'object') return cur;
-  const init = { optin: null, choices: [] };
+  const init = { choices: [] };
   writeRaw(init);
   return init;
-}
-
-// ─── opt-in ──────────────────────────────────────────────────────────────
-
-export function getOptIn() {
-  const s = ensureState();
-  return s.optin;  // 'yes' | 'no' | null
-}
-
-export function setOptIn(value) {
-  const s = ensureState();
-  s.optin = value;
-  writeRaw(s);
 }
 
 // ─── choices ─────────────────────────────────────────────────────────────
@@ -96,5 +85,5 @@ export function isTriggerHandled(triggerId) {
 
 // 整个 store 重置（"重置我的轨迹"按钮用）
 export function resetAll() {
-  writeRaw({ optin: null, choices: [] });
+  writeRaw({ choices: [] });
 }
