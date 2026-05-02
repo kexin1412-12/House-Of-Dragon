@@ -34,19 +34,22 @@ function resolveVideoSrc(url) {
   return `${VIDEO_CDN}${url}`;
 }
 
-// 从 allTriggers + eligibleIds + localStorage 选择记录拼出 AgentPanel
-// 那栏 "你的立场推演" 要展示的入口列表。
-// 一项 = { trigger, choice }，choice 来自 stanceStore 的当前最新记录。
-function computeSpeculationEntries(allTriggers, eligibleIds) {
-  if (!allTriggers || !eligibleIds || eligibleIds.length === 0) return [];
+// 从 allTriggers + localStorage 选择记录拼出 AgentPanel "你的立场推演" 入口列表。
+// 一项 = { trigger, choice }；只收 (a) trigger 配了 speculation.by_option (b) 用户
+// 投的那个 option_id 在 by_option 里 —— 即 "与剧情不一样" 的选项。投了 canonical
+// 那项不入这里。
+function computeSpeculationEntries(allTriggers) {
+  if (!allTriggers || allTriggers.length === 0) return [];
   const choices = getStanceChoices();
   const choiceByTrigger = {};
   for (const c of choices) choiceByTrigger[c.trigger_id] = c;
   const out = [];
   for (const tg of allTriggers) {
-    if (!eligibleIds.includes(tg.trigger_id)) continue;
+    const byOpt = tg.speculation?.by_option;
+    if (!byOpt) continue;
     const ch = choiceByTrigger[tg.trigger_id];
     if (!ch) continue;
+    if (!byOpt[ch.option_id]) continue;  // canonical / 非 by_option → 跳过
     out.push({ trigger: tg, choice: ch });
   }
   return out;
@@ -539,18 +542,9 @@ function TencentPlayer({
   const [trajectoryOpen, setTrajectoryOpen] = useState(false);
 
   // 立场推演 / SpeculationView state —— 当前正在展开"如果走这条路"的 trigger+choice
+  // 推演的 per-option eligibility 直接从 trigger.speculation.by_option 读，不再
+  // 走单独的 endpoint —— useStanceTriggers 拉的 trigger 配置里已经有这个字段。
   const [speculationFor, setSpeculationFor] = useState(null);
-  // 哪些 trigger 在后端有可推演的 speculation —— 拉一次缓存
-  const [speculationEligibleIds, setSpeculationEligibleIds] = useState([]);
-  useEffect(() => {
-    if (!aiKb) { setSpeculationEligibleIds([]); return; }
-    let cancelled = false;
-    fetch(`${API}/api/agent/stance/speculate/eligibility?videoId=${encodeURIComponent(aiKb)}`)
-      .then(r => r.ok ? r.json() : { eligible_triggers: [] })
-      .then(d => { if (!cancelled) setSpeculationEligibleIds(d.eligible_triggers || []); })
-      .catch(() => { if (!cancelled) setSpeculationEligibleIds([]); });
-    return () => { cancelled = true; };
-  }, [aiKb]);
 
   // 用户在 StanceCard 里选完 —— 立刻落盘（不论后续会不会展开推演）
   function handleStanceChoose(option) {
@@ -1593,7 +1587,7 @@ function TencentPlayer({
                       setDepth={setAiDepth}
                       onClear={clearAiMessages}
                       onEnterCharacterMode={() => setPanelMode('character')}
-                      speculationEntries={computeSpeculationEntries(stance.allTriggers, speculationEligibleIds)}
+                      speculationEntries={computeSpeculationEntries(stance.allTriggers)}
                       onOpenSpeculation={handleOpenSpeculation}
                     />
                   )}
@@ -1748,12 +1742,13 @@ function TencentPlayer({
               onClose={() => setInlineLoreId(null)}
             />
 
-            {/* 立场抉择卡 / 回顾卡 —— inline 浮层，挂在共谋模式下 */}
+            {/* 立场抉择卡 / 回顾卡 —— inline 浮层，挂在共谋模式下。
+                StanceCard 自己根据 trigger.speculation.by_option[pickedId] 决定
+                投后是否显示"展开推演"CTA —— 投了 canonical 选项不出 CTA。 */}
             {conspiratorMode && stance.activeTrigger && (
               <StanceCard
                 trigger={stance.activeTrigger}
                 priorChoice={stance.priorChoice}
-                speculationEligible={speculationEligibleIds.includes(stance.activeTrigger.trigger_id)}
                 onChoose={handleStanceChoose}
                 onDismiss={handleStanceDismiss}
                 onOpenSpeculation={(trigger, choice) => handleOpenSpeculation(trigger, choice)}

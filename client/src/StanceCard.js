@@ -25,9 +25,11 @@ const POST_PICK_DISMISS_MS = 1500;
 
 export default function StanceCard({
   trigger, priorChoice,
-  speculationEligible = false,
   onChoose, onDismiss, onOpenSpeculation,
 }) {
+  // per-option 推演判定：投了 canonical 选项 → 不出 CTA；投了 by_option 里有
+  // hint 的（与剧情不一样的选项）→ 出 CTA。
+  const speculationByOption = trigger?.speculation?.by_option || {};
   const [revealedIdx, setRevealedIdx] = useState(null);
   const [pickedId, setPickedId] = useState(null);
   const [remainingMs, setRemainingMs] = useState(AUTO_DISMISS_MS);
@@ -58,13 +60,16 @@ export default function StanceCard({
   }, [trigger?.trigger_id, pickedId, onDismiss]);
 
   // post-vote no-speculation：1.5s 后自动收
+  // canSpeculate 走的是当前 pick 的 option_id 是否在 by_option 里
   useEffect(() => {
-    if (!pickedId || speculationEligible) return;
+    if (!pickedId) return;
+    if (speculationByOption[pickedId]) return;  // 可推演 → 让用户决定
     const t = setTimeout(() => {
       onDismiss && onDismiss();
     }, POST_PICK_DISMISS_MS);
     return () => clearTimeout(t);
-  }, [pickedId, speculationEligible, onDismiss]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pickedId, onDismiss]);
 
   // ESC dismiss
   useEffect(() => {
@@ -178,7 +183,7 @@ export default function StanceCard({
             <div className="stc-pill-postvote-voice">"{pickedOpt.inner_voice}"</div>
           )}
 
-          {speculationEligible && (
+          {speculationByOption[pickedId] && (
             <div className="stc-pill-cta">
               <div className="stc-pill-cta-text">
                 <span className="stc-pill-cta-icon">🔀</span>

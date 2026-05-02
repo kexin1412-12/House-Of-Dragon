@@ -3479,15 +3479,17 @@ ${stanceListStr}
       send('done', { source: 'error' });
       return res.end();
     }
-    if (!trigger.speculation?.eligible) {
-      send('text', { delta: '这一处选择没有可推演的另类世界线。' });
-      send('done', { source: 'error' });
-      return res.end();
-    }
     const option = (trigger.options || []).find(o => o.id === optionId);
     if (!option) {
       send('text', { delta: '未找到该选项。' });
       send('done', { source: 'error' });
+      return res.end();
+    }
+    // 推演只对"与剧情不一样的选项"有效。canonical 选项（剧情在发生的）
+    // 没必要展开 —— by_option 里没有它的 hint 就直接拦掉。
+    if (!trigger.speculation?.by_option?.[optionId]) {
+      send('text', { delta: '这个选项就是剧情在发生的事 —— 没有平行世界线可以推演。' });
+      send('done', { source: 'canonical' });
       return res.end();
     }
 
@@ -3568,19 +3570,23 @@ ${convergence ? `【收束方向（最后一段要落到这个意思上）】${c
   });
 
   // GET /api/agent/stance/speculate/eligibility?videoId=xxx
-  // 返回这个视频里所有 speculation_eligible 的 trigger_id 列表。前端用来在
-  // AgentPanel 决定哪些已投选项能展开"如果走这条路"按钮。
+  // 返回这个视频里所有可推演的 trigger 及其 per-option 可推演 ID 列表。
+  // 形如：{ video_id, eligibility: { trigger_id: [option_id, option_id], ... } }
+  // 前端用来判断"用户投了 X 选项"之后是否要弹"展开推演"CTA。
   app.get('/api/agent/stance/speculate/eligibility', (req, res) => {
     const videoId = req.query.videoId;
     if (!videoId) return res.status(400).json({ error: 'videoId required' });
     const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
     let cfg;
     try { cfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); }
-    catch { return res.json({ video_id: videoId, eligible_triggers: [] }); }
-    const eligibleIds = (cfg.triggers || [])
-      .filter(t => t.speculation?.eligible)
-      .map(t => t.trigger_id);
-    res.json({ video_id: videoId, eligible_triggers: eligibleIds });
+    catch { return res.json({ video_id: videoId, eligibility: {} }); }
+    const eligibility = {};
+    for (const t of (cfg.triggers || [])) {
+      const byOpt = t.speculation?.by_option || {};
+      const ids = Object.keys(byOpt);
+      if (ids.length > 0) eligibility[t.trigger_id] = ids;
+    }
+    res.json({ video_id: videoId, eligibility });
   });
 }
 
