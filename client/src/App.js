@@ -1955,8 +1955,8 @@ const STANCE_NAMES = ['王者', '血亲', '审慎', '火焰'];
 function parseStreamingMonologue(raw) {
   if (!raw) return { surface: '', depth: '' };
   // [表层] 之后到 [深层] 或 行首 1. 或文末
-  const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[\.、]|$)/);
-  const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[\.、]|$)/);
+  const surfaceMatch = raw.match(/\[表层\]\s*([\s\S]*?)(?=\n\s*\[深层\]|\n\s*1[.、]|$)/);
+  const depthMatch = raw.match(/\[深层\]\s*([\s\S]*?)(?=\n\s*1[.、]|$)/);
   return {
     surface: surfaceMatch ? surfaceMatch[1].trim() : '',
     depth: depthMatch ? depthMatch[1].trim() : '',
