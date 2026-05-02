@@ -43,8 +43,9 @@ export default function TrajectoryChart({ open, show = 'house-of-the-dragon', on
   if (!open) return null;
 
   const total = trajectory.reduce((s, p) => s + p.effective_score, 0);
-  const factionLabel = total > 0 ? '黑党' : (total < 0 ? '绿党' : '中立');
+  const factionLabel = total > 0 ? '黑党' : (total < 0 ? '绿党' : '中立 / 摇摆');
   const factionColor = total > 0 ? '#b04a4a' : (total < 0 ? '#4a8a5e' : '#94835a');
+  const waveredCount = trajectory.filter(p => p.had_recall && p.recall_outcome !== 'hold_position').length;
 
   function handleReset() {
     if (!window.confirm('确定要清空你所有的立场选择？此操作不可撤销。')) return;
@@ -75,21 +76,21 @@ export default function TrajectoryChart({ open, show = 'house-of-the-dragon', on
 
             <div className="trc-summary">
               <div className="trc-summary-item">
-                <span className="trc-summary-label">最终阵营</span>
+                <span className="trc-summary-label">你站</span>
                 <span className="trc-summary-value" style={{ color: factionColor }}>
-                  {factionLabel} ({total > 0 ? '+' : ''}{total})
+                  {factionLabel}
                 </span>
               </div>
               <div className="trc-summary-item">
-                <span className="trc-summary-label">触发点</span>
-                <span className="trc-summary-value">{trajectory.length}</span>
+                <span className="trc-summary-label">做了选择</span>
+                <span className="trc-summary-value">{trajectory.length} 次</span>
               </div>
-              <div className="trc-summary-item">
-                <span className="trc-summary-label">动摇 / 倒戈</span>
-                <span className="trc-summary-value">
-                  {trajectory.filter(p => p.had_recall && p.recall_outcome !== 'hold_position').length} 次
-                </span>
-              </div>
+              {waveredCount > 0 && (
+                <div className="trc-summary-item">
+                  <span className="trc-summary-label">动摇过</span>
+                  <span className="trc-summary-value">{waveredCount} 次</span>
+                </div>
+              )}
             </div>
 
             {persona && (
@@ -164,7 +165,7 @@ function Sparkline({ points }) {
             <circle cx={c.x} cy={c.y} r={5} fill={fill}
                     stroke={c.hadRecall ? '#dba953' : 'rgba(0,0,0,0.4)'}
                     strokeWidth={c.hadRecall ? 1.5 : 1} />
-            <title>{c.label} · 累计 {c.cumulative > 0 ? '+' : ''}{c.cumulative}</title>
+            <title>{c.label}</title>
           </g>
         );
       })}
@@ -176,21 +177,20 @@ function ChoiceList({ points }) {
   if (points.length === 0) return null;
   return (
     <div className="trc-list">
-      <div className="trc-list-title">选择历史</div>
+      <div className="trc-list-title">你做过的选择</div>
       <ul>
         {points.map((p, i) => (
           <li key={i} className="trc-list-item">
-            <span className="trc-list-idx">#{i + 1}</span>
-            <span className="trc-list-label">{p.scene_label}</span>
-            <span
-              className={`trc-list-score trc-list-score-${p.faction}`}
-              title={p.had_recall ? `经回顾后：${p.effective_score > 0 ? '+' : ''}${p.effective_score}（原 ${p.raw_score > 0 ? '+' : ''}${p.raw_score}）` : ''}
-            >
-              {p.had_recall && p.effective_score !== p.raw_score
-                ? <><s>{p.raw_score > 0 ? '+' : ''}{p.raw_score}</s> → {p.effective_score > 0 ? '+' : ''}{p.effective_score}</>
-                : <>{p.raw_score > 0 ? '+' : ''}{p.raw_score}</>
-              }
-            </span>
+            <span className={`trc-list-dot trc-list-dot-${p.faction}`} />
+            <div className="trc-list-text">
+              <div className="trc-list-scene">{p.scene_label}</div>
+              {p.option_label && (
+                <div className="trc-list-option">你选了：{p.option_label}</div>
+              )}
+            </div>
+            {p.had_recall && (
+              <span className="trc-list-recall-badge" title="后来你回顾过这次选择">已回顾</span>
+            )}
           </li>
         ))}
       </ul>

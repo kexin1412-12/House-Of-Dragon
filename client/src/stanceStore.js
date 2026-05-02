@@ -60,13 +60,14 @@ export function getChoiceFor(triggerId) {
 }
 
 // 记录一条 faction_choice 选择
-export function recordFactionChoice({ trigger_id, video_id, option_id, score, faction, scene_label }) {
+// option_label 也一起存 —— 轨迹图列表里要显示用户选了哪一个，没分数可看
+export function recordFactionChoice({ trigger_id, video_id, option_id, option_label, score, faction, scene_label }) {
   const s = ensureState();
   // 同一个 trigger 已经选过 → 替换（用户回放重选）
   const idx = s.choices.findIndex(c => c.trigger_id === trigger_id && c.type === 'faction_choice');
   const entry = {
     type: 'faction_choice',
-    trigger_id, video_id, option_id, score, faction, scene_label,
+    trigger_id, video_id, option_id, option_label, score, faction, scene_label,
     recorded_at: new Date().toISOString(),
   };
   if (idx >= 0) s.choices[idx] = entry;
@@ -133,6 +134,7 @@ export function computeTrajectory() {
     return {
       trigger_id: fc.trigger_id,
       scene_label: fc.scene_label,
+      option_label: fc.option_label || null,
       raw_score: fc.score,
       effective_score: effective,
       cumulative,

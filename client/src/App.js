@@ -574,6 +574,7 @@ function TencentPlayer({
         trigger_id: tg.trigger_id,
         video_id: aiKb,
         option_id: option.id,
+        option_label: option.label,
         score: option.score || 0,
         faction: option.faction || 'neutral',
         scene_label: tg.scene_label,
