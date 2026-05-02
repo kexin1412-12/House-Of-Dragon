@@ -12,7 +12,7 @@
     {
       "trigger_id": "s1e5_daemon_kills_rhea",
       "type": "faction_choice",
-      "timestamp": 15,
+      "timestamp": 300,
       "scene_label": "谷地 · 戴蒙杀妻",
       "headline": "💀 立场抉择",
       "prompt_lines": [
@@ -39,7 +39,7 @@
     {
       "trigger_id": "s1e5_criston_proposal",
       "type": "faction_choice",
-      "timestamp": 1230,
+      "timestamp": 2100,
       "scene_label": "君临 · 克里斯顿求私奔",
       "headline": "💔 立场抉择",
       "prompt_lines": [
@@ -67,7 +67,7 @@
     {
       "trigger_id": "s1e5_green_dress_arrival",
       "type": "faction_choice",
-      "timestamp": 1860,
+      "timestamp": 2940,
       "scene_label": "婚宴 · 亚莉森绿裙登场",
       "headline": "⚔️ 立场抉择",
       "prompt_lines": [
