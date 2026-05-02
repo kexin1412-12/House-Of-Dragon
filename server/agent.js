@@ -2657,8 +2657,38 @@ ${bp.description || '（无具体描述）'}
       : [];
     const exactSet = new Set(idsExact);
 
+    // 脸识别有时会漏掉躺着 / 闭眼 / 背身的人（典型例：韦赛里斯躺在床上 → 视觉模型只识到 daemon+otto）。
+    // 兜底：扫 plot.fact + plot.reading，把出现的角色名也算"在场"，否则 chooser 会和 scene_beat 自相矛盾。
+    const givenNameOf = (id) => {
+      const card = db ? charactersLib.findCharacter(db, id) : null;
+      const dn = card?.display_name_zh || '';
+      if (!dn) return null;
+      // "韦赛里斯一世·坦格利安" → 取 "·" 前；再去掉 "一世/二世" 等数字后缀
+      return dn.split('·')[0].replace(/[一二三四五六七八九十]+世$/, '') || null;
+    };
+    const profileIds = Object.keys(profiles);
+    const mentionedNear = new Set();
+    const mentionedExact = new Set();
+    for (const s of nearbyScenes) {
+      const txt = `${s.plot?.fact || ''} ${s.plot?.reading || ''}`;
+      if (!txt.trim()) continue;
+      for (const id of profileIds) {
+        const name = givenNameOf(id);
+        if (name && txt.includes(name)) mentionedNear.add(id);
+      }
+    }
+    if (scene) {
+      const txt = `${scene.plot?.fact || ''} ${scene.plot?.reading || ''}`;
+      for (const id of profileIds) {
+        const name = givenNameOf(id);
+        if (name && txt.includes(name)) mentionedExact.add(id);
+      }
+    }
+
+    const idsAll = Array.from(new Set([...idsNear, ...mentionedNear]));
+
     const out = [];
-    for (const id of idsNear) {
+    for (const id of idsAll) {
       const profile = profiles[id];
       if (!profile) continue;
       // 当前 episode 必须有 boundary，否则放走会剧透
@@ -2669,7 +2699,7 @@ ${bp.description || '（无具体描述）'}
         display_name: card?.display_name || id,
         short_identity: card?.short_identity || null,
         core_traits: profile.core_traits_zh || [],
-        in_frame: exactSet.has(id),
+        in_frame: exactSet.has(id) || mentionedExact.has(id),
       });
     }
     // 此刻就在画面里的角色排前面
