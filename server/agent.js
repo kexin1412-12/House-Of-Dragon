@@ -3441,6 +3441,147 @@ ${stanceListStr}
       providers: ai.describe(),
     });
   });
+
+  // ─── 立场推演 / Stance Speculation ─────────────────────────────────
+  // POST /api/agent/stance/speculate
+  // body: { videoId, triggerId, optionId }
+  // 流式输出 3-5 段"如果走这条路"的剧本式推演，最后一段以 ⚠️ 推演终止
+  // 收束，给一句话告诉用户为什么原剧没走这条路。
+  app.post('/api/agent/stance/speculate', async (req, res) => {
+    const { videoId, triggerId, optionId } = req.body || {};
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+    if (!videoId || !triggerId || !optionId) {
+      send('text', { delta: '缺少 videoId / triggerId / optionId。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    // 读 stance trigger 配置
+    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    let stanceCfg;
+    try {
+      stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8'));
+    } catch (_) {
+      send('text', { delta: '当前视频还没有立场触发点配置。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    const trigger = (stanceCfg.triggers || []).find(t => t.trigger_id === triggerId);
+    if (!trigger) {
+      send('text', { delta: '未找到该立场触发点。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    if (!trigger.speculation?.eligible) {
+      send('text', { delta: '这一处选择没有可推演的另类世界线。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    const option = (trigger.options || []).find(o => o.id === optionId);
+    if (!option) {
+      send('text', { delta: '未找到该选项。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    if (!ai.isAvailable('chat')) {
+      send('text', { delta: '当前没有可用的 LLM provider，立场推演只能在配置后运行。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    const kb = loadKB(videoId);
+    const showName = kb?.show_id === 'house-of-the-dragon' ? '《龙之家族》' : `《${kb?.title || videoId}》`;
+    const episode = (kb && resolveEpisode(kb)) || '';
+    const ts = trigger.timestamp;
+    const tsLabel = `${Math.floor(ts / 60)}:${String(Math.floor(ts % 60)).padStart(2, '0')}`;
+
+    const optionHint = trigger.speculation?.by_option?.[optionId] || '';
+    const convergence = trigger.speculation?.convergence_hint || '';
+
+    const system = `你是 HBO ${showName} 编剧组的成员。你的任务是为观众生成一段"立场推演" —— 假设观众替剧中人做了某个不同的选择，你写出"那个世界线"会怎么走。
+
+═══ 硬性原则 ═══
+1. 严格遵循马丁的世界观、维斯特洛的政治逻辑、家族纹章与阵营、坦格利安王朝的内部矛盾。
+2. 角色行为必须符合人格：戴蒙不会突然温柔、阿丽森不会突然真诚、克里斯顿压抑后会爆发。
+3. **这不是同人小说。**目的不是展开一个平行宇宙，而是让观众更深地理解原剧为什么走了另一条路。
+4. **必须收束。**最后一段必须以「⚠️ 推演终止：」开头，用一两句话告诉观众"为什么原剧没走这条路 / 这条路最终也会走到同一个结局"。
+5. 不要写"作为编剧"、不要做免责声明、不要解释自己在做什么。直接进入第一段场景。
+6. 不剧透原剧后续真实剧情。
+
+═══ 输出格式（严格） ═══
+全文 3-5 段。前面 2-4 段是叙事性的场景 + 心理描写（每段 60-100 字），用平静克制的语气写，不要堆华丽辞藻。最后一段以「⚠️ 推演终止：」开头收束。
+全文严格控制在 350 字以内（中文计）。`;
+
+    const user = `【原剧位置】${episode} · ${tsLabel}
+【场景】${trigger.scene_label}
+【原剧情境】${(trigger.prompt_lines || []).join(' / ')}
+
+【观众选了】${option.label}
+【观众的内心理由】${option.inner_voice || ''}
+
+${optionHint ? `【这条路的方向提示（编剧组内部参考，不要直抄）】${optionHint}` : ''}
+${convergence ? `【收束方向（最后一段要落到这个意思上）】${convergence}` : ''}
+
+请写"如果观众的选择真的发生了"那个世界线。`;
+
+    const controller = new AbortController();
+    res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+
+    try {
+      let providerInfo = null;
+      const stream = ai.chatStream({
+        task: 'chat',
+        system,
+        messages: [{ role: 'user', content: user }],
+        maxTokens: 700,
+        temperature: 0.8,
+        signal: controller.signal,
+      });
+      for await (const chunk of stream) {
+        if (chunk.type === 'meta') { providerInfo = { provider: chunk.provider, model: chunk.model }; continue; }
+        if (chunk.type === 'text' && chunk.delta) send('text', { delta: chunk.delta });
+      }
+      send('done', {
+        source: 'llm',
+        trigger_id: triggerId,
+        option_id: optionId,
+        episode,
+        provider: providerInfo?.provider || null,
+        model: providerInfo?.model || null,
+      });
+      res.end();
+    } catch (err) {
+      if (controller.signal.aborted) return res.end();
+      console.error('[stance/speculate] LLM error:', err?.message || err);
+      send('text', { delta: `\n\n（推演中断：${err?.message || '未知错误'}）` });
+      send('done', { source: 'error' });
+      res.end();
+    }
+  });
+
+  // GET /api/agent/stance/speculate/eligibility?videoId=xxx
+  // 返回这个视频里所有 speculation_eligible 的 trigger_id 列表。前端用来在
+  // AgentPanel 决定哪些已投选项能展开"如果走这条路"按钮。
+  app.get('/api/agent/stance/speculate/eligibility', (req, res) => {
+    const videoId = req.query.videoId;
+    if (!videoId) return res.status(400).json({ error: 'videoId required' });
+    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    let cfg;
+    try { cfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); }
+    catch { return res.json({ video_id: videoId, eligible_triggers: [] }); }
+    const eligibleIds = (cfg.triggers || [])
+      .filter(t => t.speculation?.eligible)
+      .map(t => t.trigger_id);
+    res.json({ video_id: videoId, eligible_triggers: eligibleIds });
+  });
 }
 
 module.exports = { register };

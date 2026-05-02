@@ -194,3 +194,111 @@
   opacity: 1;
   margin-top: 10px;
 }
+
+/* ── post-vote 视图 ── */
+
+.stc-pill.is-post-vote .stc-pill-head {
+  /* 投后让 head 不那么"重"——badge 仍可见但不喧宾夺主 */
+}
+
+.stc-pill-postvote {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stc-pill-postvote-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.stc-pill-postvote-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #d6b06a 0%, #a98545 100%);
+  color: #1a1208;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.stc-pill-postvote-label {
+  color: #f3ecd5;
+  font-weight: 600;
+}
+
+.stc-pill-postvote-voice {
+  color: #a89a76;
+  font-size: 12.5px;
+  line-height: 1.65;
+  font-style: italic;
+  padding-left: 30px;
+}
+
+/* CTA pill（投后 + 可推演 时才出现） */
+.stc-pill-cta {
+  margin-top: 8px;
+  padding: 12px 14px;
+  background: rgba(220, 170, 90, 0.07);
+  border: 1px solid rgba(220, 170, 90, 0.3);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stc-pill-cta-text {
+  font-size: 13px;
+  color: #d6b06a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.5;
+}
+
+.stc-pill-cta-icon {
+  font-size: 14px;
+}
+
+.stc-pill-cta-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.stc-pill-cta-primary,
+.stc-pill-cta-ghost {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.stc-pill-cta-primary {
+  background: linear-gradient(180deg, #d6b06a 0%, #a98545 100%);
+  border: 1px solid #b48f4a;
+  color: #1a1208;
+  font-weight: 600;
+}
+.stc-pill-cta-primary:hover {
+  background: linear-gradient(180deg, #e3bc73 0%, #b88f4d 100%);
+}
+
+.stc-pill-cta-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #a89a76;
+}
+.stc-pill-cta-ghost:hover {
+  color: #d8cfb6;
+  border-color: rgba(255, 255, 255, 0.32);
+}

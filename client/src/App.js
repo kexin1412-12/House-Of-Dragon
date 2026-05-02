@@ -12,10 +12,12 @@ import FavoritesView from './FavoritesView';
 import DEMO_VIDEOS from './demoVideos';
 import StanceCard from './StanceCard';
 import TrajectoryChart from './TrajectoryChart';
+import SpeculationView from './SpeculationView';
 import useStanceTriggers from './useStanceTriggers';
 import {
   recordFactionChoice,
   recordRecallResolution,
+  getChoices as getStanceChoices,
 } from './stanceStore';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -30,6 +32,24 @@ function resolveVideoSrc(url) {
   if (!url) return '';
   if (/^https?:\/\//i.test(url)) return url;
   return `${VIDEO_CDN}${url}`;
+}
+
+// 从 allTriggers + eligibleIds + localStorage 选择记录拼出 AgentPanel
+// 那栏 "你的立场推演" 要展示的入口列表。
+// 一项 = { trigger, choice }，choice 来自 stanceStore 的当前最新记录。
+function computeSpeculationEntries(allTriggers, eligibleIds) {
+  if (!allTriggers || !eligibleIds || eligibleIds.length === 0) return [];
+  const choices = getStanceChoices();
+  const choiceByTrigger = {};
+  for (const c of choices) choiceByTrigger[c.trigger_id] = c;
+  const out = [];
+  for (const tg of allTriggers) {
+    if (!eligibleIds.includes(tg.trigger_id)) continue;
+    const ch = choiceByTrigger[tg.trigger_id];
+    if (!ch) continue;
+    out.push({ trigger: tg, choice: ch });
+  }
+  return out;
 }
 
 const HOME_NAV = [
@@ -518,6 +538,21 @@ function TencentPlayer({
   const stance = useStanceTriggers({ videoId: aiKb, videoRef, enabled: conspiratorMode });
   const [trajectoryOpen, setTrajectoryOpen] = useState(false);
 
+  // 立场推演 / SpeculationView state —— 当前正在展开"如果走这条路"的 trigger+choice
+  const [speculationFor, setSpeculationFor] = useState(null);
+  // 哪些 trigger 在后端有可推演的 speculation —— 拉一次缓存
+  const [speculationEligibleIds, setSpeculationEligibleIds] = useState([]);
+  useEffect(() => {
+    if (!aiKb) { setSpeculationEligibleIds([]); return; }
+    let cancelled = false;
+    fetch(`${API}/api/agent/stance/speculate/eligibility?videoId=${encodeURIComponent(aiKb)}`)
+      .then(r => r.ok ? r.json() : { eligible_triggers: [] })
+      .then(d => { if (!cancelled) setSpeculationEligibleIds(d.eligible_triggers || []); })
+      .catch(() => { if (!cancelled) setSpeculationEligibleIds([]); });
+    return () => { cancelled = true; };
+  }, [aiKb]);
+
+  // 用户在 StanceCard 里选完 —— 立刻落盘（不论后续会不会展开推演）
   function handleStanceChoose(option) {
     const tg = stance.activeTrigger;
     if (!tg) return;
@@ -541,11 +576,22 @@ function TencentPlayer({
         scene_label: tg.scene_label,
       });
     }
-    stance.dismiss();
+    // 不在这里 dismiss —— StanceCard 自己会显示 post-vote CTA，让用户决定
+    // 是"展开推演"还是"关闭继续看"。
   }
 
   function handleStanceDismiss() {
     stance.dismiss();
+  }
+
+  // 用户在 StanceCard / AgentPanel / TrajectoryChart 任一处点了"展开推演"
+  function handleOpenSpeculation(trigger, choice) {
+    setSpeculationFor({ trigger, choice });
+    stance.dismiss();   // 如果立场卡还浮着，关掉
+  }
+
+  function handleCloseSpeculation() {
+    setSpeculationFor(null);
   }
 
   useEffect(() => {
@@ -1547,6 +1593,8 @@ function TencentPlayer({
                       setDepth={setAiDepth}
                       onClear={clearAiMessages}
                       onEnterCharacterMode={() => setPanelMode('character')}
+                      speculationEntries={computeSpeculationEntries(stance.allTriggers, speculationEligibleIds)}
+                      onOpenSpeculation={handleOpenSpeculation}
                     />
                   )}
                 </div>
@@ -1705,8 +1753,10 @@ function TencentPlayer({
               <StanceCard
                 trigger={stance.activeTrigger}
                 priorChoice={stance.priorChoice}
+                speculationEligible={speculationEligibleIds.includes(stance.activeTrigger.trigger_id)}
                 onChoose={handleStanceChoose}
                 onDismiss={handleStanceDismiss}
+                onOpenSpeculation={(trigger, choice) => handleOpenSpeculation(trigger, choice)}
               />
             )}
 
@@ -1832,6 +1882,15 @@ function TencentPlayer({
         open={trajectoryOpen}
         show="house-of-the-dragon"
         onClose={() => setTrajectoryOpen(false)}
+      />
+
+      {/* 立场推演 ——"如果走这条路"模态，从立场卡 / AgentPanel / TrajectoryChart 入口打开 */}
+      <SpeculationView
+        open={!!speculationFor}
+        videoId={aiKb}
+        trigger={speculationFor?.trigger}
+        choice={speculationFor?.choice}
+        onClose={handleCloseSpeculation}
       />
     </div>
   );
@@ -2041,6 +2100,8 @@ function AgentPanel({
   depth = 'brief', setDepth = () => {},
   onClear,
   onEnterCharacterMode,
+  speculationEntries = [],
+  onOpenSpeculation,
 }) {
   const weighted = depth === 'deep';
 
@@ -2050,6 +2111,30 @@ function AgentPanel({
       <div className="tx-agent-de-rail" aria-hidden="true">
         <span className="tx-agent-de-page">S01·A05·{String(messages.length).padStart(2, '0')}</span>
       </div>
+
+      {/* "你的立场推演" 入口行 —— 投过票且后端标记为可推演的场景才会出现这里 */}
+      {speculationEntries.length > 0 && onOpenSpeculation && (
+        <div className="tx-agent-de-spec">
+          <div className="tx-agent-de-spec-label">
+            <span className="tx-agent-de-spec-icon">🔀</span>
+            你的立场推演
+            <span className="tx-agent-de-spec-count">{speculationEntries.length}</span>
+          </div>
+          <div className="tx-agent-de-spec-chips">
+            {speculationEntries.map(({ trigger, choice }) => (
+              <button
+                key={trigger.trigger_id}
+                className="tx-agent-de-spec-chip"
+                onClick={() => onOpenSpeculation(trigger, choice)}
+                title={`你投了：${choice.option_label} — 点击展开"如果走这条路"`}
+              >
+                <span className="tx-agent-de-spec-chip-scene">{trigger.scene_label}</span>
+                <span className="tx-agent-de-spec-chip-arrow">→</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 上半区：纯阅读，纵向叙事流 —— scrollbar 走 .tx-agent-log（DE 风格 4px 细金线） */}
       <div ref={logRef} className="tx-agent-log tx-agent-de-log">

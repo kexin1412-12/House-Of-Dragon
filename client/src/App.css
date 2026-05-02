@@ -1116,6 +1116,68 @@ body {
 }
 .tx-agent-de-empty em { font-style: italic; color: rgba(232, 200, 150, 0.7); }
 
+/* "你的立场推演" 入口行 —— 投过票 + 可推演的场景才出现 */
+.tx-agent-de-spec {
+  margin: 6px 12px 12px;
+  padding: 10px 12px;
+  background: rgba(220, 170, 90, 0.06);
+  border: 1px solid rgba(220, 170, 90, 0.22);
+  border-radius: 4px;
+}
+.tx-agent-de-spec-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #c9a55c;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.tx-agent-de-spec-icon { font-size: 13px; }
+.tx-agent-de-spec-count {
+  margin-left: auto;
+  background: rgba(220, 170, 90, 0.2);
+  color: #d6b06a;
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 8px;
+  letter-spacing: 0;
+}
+.tx-agent-de-spec-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tx-agent-de-spec-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: 1px dashed rgba(220, 170, 90, 0.28);
+  border-radius: 3px;
+  padding: 7px 10px;
+  color: #d8cfb6;
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.tx-agent-de-spec-chip:hover {
+  background: rgba(220, 170, 90, 0.1);
+  border-style: solid;
+  border-color: rgba(220, 170, 90, 0.55);
+  color: #f3ecd5;
+}
+.tx-agent-de-spec-chip-scene { flex: 1; }
+.tx-agent-de-spec-chip-arrow {
+  font-size: 11px;
+  color: #c9a55c;
+  margin-left: 8px;
+}
+
 /* DE 一行叙事行（不要 background / border / shadow） */
 .de-line {
   font-size: 13px; line-height: 1.72;
