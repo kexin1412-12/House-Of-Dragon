@@ -557,16 +557,13 @@ function TencentPlayer({
     const tg = stance.activeTrigger;
     if (!tg) return;
     if (tg.type === 'recall') {
-      const modifier = option.score_delta_modifier
-        || (option.id === 'defect_to_other' ? 'flip'
-          : option.id === 'shaken_drift' ? 'halve'
-          : null);
       recordRecallResolution({
         trigger_id: tg.trigger_id,
         video_id: aiKb,
         prior_trigger_id: tg.requires_prior_choice,
         option_id: option.id,
-        modifier,
+        option_label: option.label,
+        option_inner_voice: option.inner_voice,
         scene_label: tg.scene_label,
       });
     } else {
@@ -575,8 +572,7 @@ function TencentPlayer({
         video_id: aiKb,
         option_id: option.id,
         option_label: option.label,
-        score: option.score || 0,
-        faction: option.faction || 'neutral',
+        option_inner_voice: option.inner_voice,
         scene_label: tg.scene_label,
       });
     }

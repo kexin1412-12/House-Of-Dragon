@@ -49,24 +49,16 @@ export default function StanceCard({ trigger, priorChoice, onChoose, onDismiss }
         <div className="stc-options">
           {(trigger.options || []).map((opt, i) => {
             const isHovered = revealedIdx === i;
-            const factionClass = opt.faction
-              ? `stc-option-${opt.faction}`
-              : (opt.id === 'defect_to_other' ? 'stc-option-flip'
-                : opt.id === 'shaken_drift' ? 'stc-option-shake'
-                : 'stc-option-neutral');
             return (
               <button
                 key={opt.id}
-                className={`stc-option ${factionClass} ${isHovered ? 'is-hovered' : ''}`}
+                className={`stc-option ${isHovered ? 'is-hovered' : ''}`}
                 onMouseEnter={() => setRevealedIdx(i)}
                 onMouseLeave={() => setRevealedIdx(null)}
                 onClick={() => onChoose && onChoose(opt)}
               >
                 <div className="stc-option-row">
                   <span className="stc-option-label">{opt.label}</span>
-                  {opt.sublabel && (
-                    <span className="stc-option-sublabel">— {opt.sublabel}</span>
-                  )}
                 </div>
                 {opt.inner_voice && (
                   <div className="stc-option-voice">"{opt.inner_voice}"</div>

@@ -86,8 +86,7 @@
 .stc-option {
   text-align: left;
   background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-left: 3px solid transparent;
+  border: 1px solid rgba(255,255,255,0.10);
   border-radius: 4px;
   padding: 12px 14px;
   color: #e6dfc8;
@@ -98,19 +97,10 @@
 .stc-option:hover,
 .stc-option.is-hovered {
   background: rgba(255,255,255,0.07);
+  border-color: rgba(190,150,80,0.35);
   transform: translateX(2px);
 }
 .stc-option:active { transform: translateX(0); }
-
-/* 阵营色边 */
-.stc-option-black   { border-left-color: #b04a4a; }
-.stc-option-green   { border-left-color: #4a8a5e; }
-.stc-option-neutral { border-left-color: #94835a; }
-
-/* recall 模式的三档反应 */
-.stc-option-flip   { border-left-color: #c08653; }   /* 改投 */
-.stc-option-shake  { border-left-color: #94835a; }   /* 动摇 */
-/* hold_position 用 neutral 色 */
 
 .stc-option-row {
   display: flex;
@@ -122,12 +112,6 @@
 
 .stc-option-label {
   color: #f3ecd5;
-}
-
-.stc-option-sublabel {
-  font-size: 12px;
-  font-weight: 400;
-  color: #b8a87f;
 }
 
 .stc-option-voice {

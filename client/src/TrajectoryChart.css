@@ -1,4 +1,4 @@
-/* 立场轨迹图模态 */
+/* 立场轨迹图模态 —— 纯叙事清单，无 sparkline / persona / 分数 */
 
 .trc-root {
   position: fixed;
@@ -20,7 +20,7 @@
 
 .trc-card {
   position: relative;
-  width: min(700px, 92%);
+  width: min(640px, 92%);
   max-height: 88vh;
   overflow-y: auto;
   background: linear-gradient(180deg, #1a1612 0%, #0f0c0a 100%);
@@ -46,7 +46,7 @@
 }
 .trc-close:hover { background: rgba(255,255,255,0.08); color: #f3ecd5; }
 
-.trc-header { margin-bottom: 18px; }
+.trc-header { margin-bottom: 24px; }
 .trc-eyebrow {
   font-size: 12px;
   letter-spacing: 0.18em;
@@ -69,134 +69,89 @@
 .trc-empty p { margin: 0 0 6px; font-size: 14px; line-height: 1.7; }
 .trc-empty-sub { color: #6b5c3d; font-size: 13px; }
 
-/* sparkline */
-.trc-sparkline {
-  width: 100%;
-  height: 140px;
-  margin: 8px 0 18px;
+/* list ─── timeline 风格 */
+.trc-list {
+  list-style: none;
+  padding: 0; margin: 0 0 16px;
 }
 
-/* summary */
-.trc-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  padding: 14px 0;
-  border-top: 1px dashed rgba(190,150,80,0.18);
-  border-bottom: 1px dashed rgba(190,150,80,0.18);
-  margin-bottom: 18px;
+.trc-list-item {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding: 6px 0;
 }
-.trc-summary-item {
+
+.trc-list-marker {
+  position: relative;
+  width: 12px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-}
-.trc-summary-label {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: #6b5c3d;
-  text-transform: uppercase;
-}
-.trc-summary-value {
-  font-size: 17px;
-  color: #f3ecd5;
-  font-weight: 600;
-}
-
-/* persona */
-.trc-persona {
-  margin-bottom: 18px;
-  padding: 16px 18px;
-  background: rgba(190,150,80,0.06);
-  border-left: 3px solid #c9a55c;
-  border-radius: 4px;
-}
-.trc-persona-label {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #b8a87f;
-}
-.trc-persona-name {
-  margin: 4px 0 8px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #f3ecd5;
-}
-.trc-persona-tagline {
-  font-size: 14px;
-  font-style: italic;
-  color: #d6b06a;
-  margin-bottom: 8px;
-}
-.trc-persona-desc {
-  font-size: 13px;
-  line-height: 1.75;
-  color: #c4b890;
-}
-
-/* list */
-.trc-list { margin-bottom: 16px; }
-.trc-list-title {
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #6b5c3d;
-  margin-bottom: 8px;
-}
-.trc-list ul {
-  list-style: none;
-  padding: 0; margin: 0;
-}
-.trc-list-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 9px 0;
-  border-bottom: 1px dashed rgba(190,150,80,0.1);
-  font-size: 13px;
 }
 .trc-list-dot {
-  flex-shrink: 0;
-  width: 8px; height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
+  background: #c9a55c;
   margin-top: 6px;
+  box-shadow: 0 0 0 3px rgba(201,165,92,0.15);
+  flex-shrink: 0;
 }
-.trc-list-dot-black   { background: #b04a4a; }
-.trc-list-dot-green   { background: #4a8a5e; }
-.trc-list-dot-neutral { background: #94835a; }
+.trc-list-line {
+  flex: 1;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(201,165,92,0.45) 0%, rgba(201,165,92,0.1) 100%);
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
 
-.trc-list-text { flex: 1; min-width: 0; }
+.trc-list-text {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 18px;
+}
+
 .trc-list-scene {
   color: #d8cfb6;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   line-height: 1.5;
-}
-.trc-list-option {
-  margin-top: 2px;
-  color: #8a8275;
-  font-size: 12px;
-  line-height: 1.5;
-  font-style: italic;
 }
 
-.trc-list-recall-badge {
-  flex-shrink: 0;
-  font-size: 10px;
-  letter-spacing: 0.1em;
+.trc-list-choice {
+  margin-top: 4px;
+  color: #f3ecd5;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.trc-list-voice {
+  margin-top: 6px;
+  color: #a89a76;
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.7;
+  border-left: 1px solid rgba(190,150,80,0.2);
+  padding-left: 10px;
+}
+
+.trc-list-recall {
+  margin-top: 6px;
+  font-size: 11px;
   color: #dba953;
-  padding: 2px 6px;
-  border: 1px solid rgba(219, 169, 83, 0.4);
-  border-radius: 3px;
-  margin-top: 3px;
+  letter-spacing: 0.08em;
 }
 
 /* actions */
 .trc-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(190,150,80,0.15);
 }
 .trc-btn {
   padding: 6px 14px;

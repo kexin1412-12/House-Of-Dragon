@@ -1,10 +1,9 @@
 {
-  "_schema_version": 1,
+  "_schema_version": 2,
   "_notes": [
     "立场追踪 / Stance Tracking 触发点 —— 本集三条核心冲突线，密度 3/集。",
-    "三个 trigger 都是 faction_choice：每个选项映射到 black/green/neutral 之一。",
-    "score: 站黑党 +1 / 观望 0 / 站绿党 -1。累积形成轨迹。",
-    "recall 机制留在 store + hook + StanceCard 里，本集不用 —— 等 S1E8+ 内容到位再触发跨集打脸。"
+    "无打分 / 无阵营 tag —— 每个选项就是一个说得通的立场，不归类、不聚合。",
+    "选择本身是产物；不派生 +N 黑党 / X 类型这种二次产物。"
   ],
   "video_id": "house_of_dragon_05",
   "show_id": "house-of-the-dragon",
@@ -23,23 +22,17 @@
         {
           "id": "daemon_cold_but_logical",
           "label": "冷血但合理",
-          "inner_voice": "这段婚姻困住了他十年，维斯特洛没有离婚这回事。",
-          "score": 1,
-          "faction": "black"
+          "inner_voice": "这段婚姻困住了他十年，维斯特洛没有离婚这回事。"
         },
         {
           "id": "daemon_unacceptable",
           "label": "不可接受",
-          "inner_voice": "再不想要这段婚姻，谋杀也不是出路。",
-          "score": -1,
-          "faction": "green"
+          "inner_voice": "再不想要这段婚姻，谋杀也不是出路。"
         },
         {
           "id": "blame_jaehaerys",
           "label": "蕾雅死得不值",
-          "inner_voice": "真正该被追究的是当初强行安排这段婚姻的杰赫里斯。",
-          "score": 0,
-          "faction": "neutral"
+          "inner_voice": "真正该被追究的是当初强行安排这段婚姻的杰赫里斯。"
         }
       ]
     },
@@ -57,23 +50,17 @@
         {
           "id": "rhaenyra_chose_right",
           "label": "雷妮拉选对了",
-          "inner_voice": "她是铁王座继承人，不可能为一个骑士放弃一切。",
-          "score": 1,
-          "faction": "black"
+          "inner_voice": "她是铁王座继承人，不可能为一个骑士放弃一切。"
         },
         {
           "id": "criston_deserves_pity",
           "label": "克里斯顿值得同情",
-          "inner_voice": "他为她破了誓，她却只把他当工具。",
-          "score": -1,
-          "faction": "green"
+          "inner_voice": "他为她破了誓，她却只把他当工具。"
         },
         {
           "id": "both_at_fault",
           "label": "两个人都有问题",
-          "inner_voice": "她不该上那张床，他不该幻想私奔。",
-          "score": 0,
-          "faction": "neutral"
+          "inner_voice": "她不该上那张床，他不该幻想私奔。"
         }
       ]
     },
@@ -91,23 +78,17 @@
         {
           "id": "alicent_did_right",
           "label": "她做得对",
-          "inner_voice": "不表态就是等死，她的孩子将来需要这条裙子的保护。",
-          "score": -1,
-          "faction": "green"
+          "inner_voice": "不表态就是等死，她的孩子将来需要这条裙子的保护。"
         },
         {
           "id": "alicent_too_early",
           "label": "她做得太早",
-          "inner_voice": "韦赛里斯还活着，现在公开决裂只会加速分裂。",
-          "score": 0,
-          "faction": "neutral"
+          "inner_voice": "韦赛里斯还活着，现在公开决裂只会加速分裂。"
         },
         {
           "id": "otto_pulling_strings",
           "label": "是奥托在操控她",
-          "inner_voice": "她自己未必想走到这一步，是她父亲把恐惧种进了她脑子里。",
-          "score": 1,
-          "faction": "black"
+          "inner_voice": "她自己未必想走到这一步，是她父亲把恐惧种进了她脑子里。"
         }
       ]
     }
