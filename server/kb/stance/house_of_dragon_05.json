@@ -3,8 +3,8 @@
   "_notes": [
     "立场追踪 / Stance Tracking 触发点 —— S1E5 共 10 个事件，覆盖本集所有关键道德 / 政治分歧。",
     "无打分 / 无阵营 tag —— 每个选项就是一个说得通的立场，不归类、不聚合。",
-    "时间戳取'事件结束后几秒'：先让用户看完这场戏，再问问题。",
-    "时间戳基于 server/kb/house_of_dragon_05.json 的 scenes[] 与 branch_points[] 校准；少数估算的需要测的时候微调。"
+    "时间戳 = 事件对应 scene 的 end_time（零缓冲）—— 视频播到这一秒立场卡就浮起来。",
+    "数据源：server/kb/house_of_dragon_05.json 的 scenes[]。"
   ],
   "video_id": "house_of_dragon_05",
   "show_id": "house-of-the-dragon",
@@ -13,7 +13,7 @@
     {
       "trigger_id": "s1e5_daemon_kills_rhea",
       "type": "faction_choice",
-      "timestamp": 300,
+      "timestamp": 290,
       "scene_label": "谷地 · 戴蒙杀妻",
       "headline": "💀 立场抉择",
       "prompt_lines": [
@@ -40,7 +40,7 @@
     {
       "trigger_id": "s1e5_otto_warns_alicent",
       "type": "faction_choice",
-      "timestamp": 510,
+      "timestamp": 468,
       "scene_label": "君临 · 父女诀别",
       "headline": "🗡️ 立场抉择",
       "prompt_lines": [
@@ -77,7 +77,7 @@
     {
       "trigger_id": "s1e5_tides_open_marriage",
       "type": "faction_choice",
-      "timestamp": 1170,
+      "timestamp": 1152,
       "scene_label": "潮汐堡 · 雷妮拉与莱诺谈判",
       "headline": "🤝 立场抉择",
       "prompt_lines": [
@@ -105,7 +105,7 @@
     {
       "trigger_id": "s1e5_criston_proposal",
       "type": "faction_choice",
-      "timestamp": 1980,
+      "timestamp": 1848,
       "scene_label": "君临 · 克里斯顿求私奔",
       "headline": "💔 立场抉择",
       "prompt_lines": [
@@ -133,7 +133,7 @@
     {
       "trigger_id": "s1e5_alicent_questions_cole",
       "type": "faction_choice",
-      "timestamp": 2200,
+      "timestamp": 1922,
       "scene_label": "红堡 · 亚莉森审问骑士",
       "headline": "🔥 立场抉择",
       "prompt_lines": [
@@ -161,7 +161,7 @@
     {
       "trigger_id": "s1e5_green_dress_arrival",
       "type": "faction_choice",
-      "timestamp": 2580,
+      "timestamp": 2563,
       "scene_label": "婚宴 · 亚莉森绿裙登场",
       "headline": "⚔️ 立场抉择",
       "prompt_lines": [
@@ -198,7 +198,7 @@
     {
       "trigger_id": "s1e5_daemon_disrupts",
       "type": "faction_choice",
-      "timestamp": 3180,
+      "timestamp": 3191,
       "scene_label": "婚宴 · 戴蒙搅局",
       "headline": "🐉 立场抉择",
       "prompt_lines": [
@@ -226,7 +226,7 @@
     {
       "trigger_id": "s1e5_rhaenys_observes",
       "type": "faction_choice",
-      "timestamp": 3270,
+      "timestamp": 3243,
       "scene_label": "婚宴 · 雷妮丝旁观",
       "headline": "👁️ 立场抉择",
       "prompt_lines": [
@@ -254,7 +254,7 @@
     {
       "trigger_id": "s1e5_bloody_wedding",
       "type": "faction_choice",
-      "timestamp": 3435,
+      "timestamp": 3372,
       "scene_label": "婚礼 · 血色仪式",
       "headline": "🩸 立场抉择",
       "prompt_lines": [
@@ -282,7 +282,7 @@
     {
       "trigger_id": "s1e5_godswood_suicide",
       "type": "faction_choice",
-      "timestamp": 3530,
+      "timestamp": 3490,
       "scene_label": "神木林 · 克里斯顿求死",
       "headline": "🌳 立场抉择",
       "prompt_lines": [
