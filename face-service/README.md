@@ -36,12 +36,18 @@ so the Vercel-hosted Node app can call `${FACE_SERVICE_URL}/recognize`.
 
 ## Deploy
 
+From the **repo root** (so the Dockerfile's `COPY server/...` paths resolve):
+
 ```bash
-fly deploy --config face-service/fly.toml
+fly deploy . --config face-service/fly.toml \
+             --dockerfile face-service/Dockerfile \
+             --ignorefile face-service/.flyignore \
+             --remote-only
 ```
 
 First build takes ~6–8 min (TF wheel + model download bake). Subsequent
-deploys are ~2 min thanks to layer caching. Watch logs with `fly logs`.
+deploys are ~2 min thanks to layer caching. Watch logs with
+`fly logs --app <app-name>`.
 
 ## Verify
 

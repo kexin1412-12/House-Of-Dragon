@@ -2,15 +2,17 @@
 # After `fly launch --no-deploy --copy-config` Fly will rewrite `app =` with
 # a globally-unique slug; that's expected.
 
-app = "hotd-face-service"
+app = "hotd-face-svc-kexin"
 primary_region = "sjc"  # close to Vercel's default us-west-1
 
 [build]
-  # Run from repo root: `fly deploy --config face-service/fly.toml`
-  # Build context = cwd (repo root), so COPY paths in the Dockerfile
-  # resolve to server/scripts/face_service.py + face_gallery.json correctly.
-  dockerfile = "face-service/Dockerfile"
-  ignorefile = "face-service/.flyignore"
+  # Build context + dockerfile are passed on the CLI so they resolve from
+  # the repo root rather than the fly.toml directory:
+  #   fly deploy . --config face-service/fly.toml \
+  #               --dockerfile face-service/Dockerfile \
+  #               --ignorefile face-service/.flyignore
+  # (Dockerfile COPYs server/scripts/face_service.py + face_gallery.json,
+  #  which only resolve correctly when the build context is the repo root.)
 
 [http_service]
   internal_port = 5001
