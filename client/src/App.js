@@ -1795,8 +1795,16 @@ function TencentPlayer({
         </aside>
       </main>
 
-      {/* 叙事 X 光 —— 视频下方常驻面板：关键事件 / 人物关系 / 本集符号 三 tab */}
-      <StorylineXRay videoId={aiKb} videoRef={videoRef} inline />
+      {/* 叙事 X 光 —— 视频下方常驻面板：关键事件 / 人物关系 / 本集符号 三 tab
+          额外接受立场触发点 + onOpenStance：脉络图上每个投票点会画一个对话气泡 marker，
+          点击就能弹出对应的立场卡。 */}
+      <StorylineXRay
+        videoId={aiKb}
+        videoRef={videoRef}
+        inline
+        stanceTriggers={stance.allTriggers}
+        onOpenStance={stance.openManually}
+      />
 
       {/* Floating side icons */}
       <div className="tx-floating">

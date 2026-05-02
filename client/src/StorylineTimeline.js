@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './StorylineTimeline.css';
 import useStorylineFavorites from './useStorylineFavorites';
+import { getChoices } from './stanceStore';
 
 const ZOOM_MIN = 0.5;
 const ZOOM_MAX = 2.5;
@@ -362,8 +363,83 @@ const VIEW_MODES = [
   { id: 'foreshadow', label: '伏笔线索' },
 ];
 
+// 把每个 stance trigger 锚到时间窗包含它的主线节点。多个 trigger 同节点
+// 时按时间排序后纵向 stack（避免横向跟相邻节点的 marker 撞）。
+function anchorStanceTriggers(triggers, mainNodes) {
+  if (!triggers || triggers.length === 0 || mainNodes.length === 0) return [];
+  const groups = new Map();
+  for (const tg of triggers) {
+    let anchor = mainNodes[0];
+    for (const n of mainNodes) {
+      if (tg.timestamp >= n.start_time) anchor = n;
+      else break;
+    }
+    if (!groups.has(anchor.node_id)) groups.set(anchor.node_id, []);
+    groups.get(anchor.node_id).push(tg);
+  }
+  const out = [];
+  for (const [nodeId, list] of groups) {
+    list.sort((a, b) => a.timestamp - b.timestamp);
+    list.forEach((tg, idx) => out.push({ tg, anchorNodeId: nodeId, stackIdx: idx, stackTotal: list.length }));
+  }
+  return out;
+}
+
+function truncateZh(s, n = 7) {
+  if (!s) return '';
+  return s.length > n ? s.slice(0, n) + '…' : s;
+}
+
+// 单个立场触发点 marker：对话气泡 + 已投选项小标签 + 锁状态
+function StanceMarker({ trigger, x, y, choice, locked, onClick }) {
+  return (
+    <g
+      className={`sx-stance-mark ${choice ? 'is-voted' : ''} ${locked ? 'is-locked' : ''}`}
+      transform={`translate(${x}, ${y})`}
+      onClick={(e) => { if (locked) return; e.stopPropagation(); onClick(trigger.trigger_id); }}
+      style={{ cursor: locked ? 'default' : 'pointer' }}
+    >
+      <title>
+        {locked
+          ? `锁定中（视频未播到此处） · ${trigger.scene_label || ''}`
+          : (choice ? `你投了：${choice.option_label} · 点击重新选` : `${trigger.scene_label || '立场抉择'} · 点击表态`)}
+      </title>
+
+      {/* 气泡主体 */}
+      <rect
+        className="sx-stance-bubble"
+        x={-13} y={-11}
+        width={26} height={18}
+        rx={5} ry={5}
+      />
+      {/* 三个对话点 */}
+      <circle className="sx-stance-bubble-dot" cx={-6} cy={-2} r={1.4} />
+      <circle className="sx-stance-bubble-dot" cx={0}  cy={-2} r={1.4} />
+      <circle className="sx-stance-bubble-dot" cx={6}  cy={-2} r={1.4} />
+      {/* 气泡尾巴 */}
+      <path className="sx-stance-bubble-tail" d="M -3 7 L 0 11 L 3 7 Z" />
+
+      {/* 已投：小金点徽章 */}
+      {choice && !locked && (
+        <circle className="sx-stance-vote-dot" cx={11} cy={-9} r={3.2} />
+      )}
+
+      {/* 已投：选项小标签 */}
+      {choice && !locked && (
+        <g transform="translate(0, 24)">
+          <rect className="sx-stance-label-bg" x={-44} y={-9} width={88} height={18} rx={9} />
+          <text className="sx-stance-label-text" x={0} y={3.5} textAnchor="middle">
+            你投了：{truncateZh(choice.option_label, 5)}
+          </text>
+        </g>
+      )}
+    </g>
+  );
+}
+
 export default function StorylineTimeline({
   storyline, currentTime, videoId, onJumpTo,
+  stanceTriggers = [], onOpenStance,
 }) {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [unlockedSet, setUnlockedSet] = useState(() => new Set());
@@ -376,6 +452,27 @@ export default function StorylineTimeline({
     for (const n of (storyline?.nodes || [])) m[n.node_id] = n;
     return m;
   }, [storyline]);
+
+  // 立场触发点锚到时间窗包含它的主线节点。重算时机：trigger 列表 / 主线变化时。
+  // userChoices 用 currentTime 当 dep —— 每次播放推进 / 投完票 dismiss 后父组件重渲，
+  // 顺势重读 localStorage。
+  const mainNodes = useMemo(() => {
+    if (!storyline) return [];
+    const ids = storyline.main_track_node_ids || [];
+    return ids.map(id => allNodesById[id]).filter(Boolean);
+  }, [storyline, allNodesById]);
+
+  const anchoredStance = useMemo(
+    () => anchorStanceTriggers(stanceTriggers, mainNodes),
+    [stanceTriggers, mainNodes]
+  );
+
+  const userChoicesByTrigger = useMemo(() => {
+    const m = {};
+    for (const c of getChoices()) m[c.trigger_id] = c;
+    return m;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stanceTriggers, currentTime]);
 
   const layout = useMemo(() => computeLayout(storyline), [storyline]);
   const viewport = useViewport(layout, viewportRef);
@@ -597,6 +694,32 @@ export default function StorylineTimeline({
               );
             })}
           </g>
+
+          {/* 立场投票点 marker —— 浮在主线节点正上方，跟视频时间锁定。
+              foreshadow 模式下主线节点不可见 → marker 也跟着藏起来。 */}
+          {viewMode !== 'foreshadow' && anchoredStance.length > 0 && (
+            <g className="sx-stance-marks">
+              {anchoredStance.map(({ tg, anchorNodeId, stackIdx, stackTotal }) => {
+                const anchor = layout.positions[anchorNodeId];
+                if (!anchor) return null;
+                const offsetX = stackTotal === 1 ? 0 : (stackIdx - (stackTotal - 1) / 2) * 60;
+                const x = anchor.x + offsetX;
+                const y = layout.mainLineY - NODE_H / 2 - 30;
+                const choice = userChoicesByTrigger[tg.trigger_id];
+                const locked = currentTime < tg.timestamp;
+                return (
+                  <StanceMarker
+                    key={tg.trigger_id}
+                    trigger={tg}
+                    x={x} y={y}
+                    choice={choice}
+                    locked={locked}
+                    onClick={onOpenStance}
+                  />
+                );
+              })}
+            </g>
+          )}
         </svg>
       </div>
 
@@ -609,6 +732,16 @@ export default function StorylineTimeline({
           <span className="sx-legend-item"><span className="sx-legend-mark sx-sw-turn">◆</span> 关键转折</span>
           <span className="sx-legend-item"><span className="sx-legend-mark sx-sw-side">---</span> 分支线索</span>
           <span className="sx-legend-item"><span className="sx-legend-swatch sx-sw-locked" /> 隐藏节点</span>
+          {anchoredStance.length > 0 && (
+            <span className="sx-legend-item">
+              <span className="sx-legend-mark sx-sw-stance" aria-hidden="true">
+                <svg width="14" height="11" viewBox="-13 -11 26 18">
+                  <rect x={-10} y={-8} width={20} height={14} rx={4} fill="rgba(201,165,92,0.85)" />
+                </svg>
+              </span>
+              立场投票点
+            </span>
+          )}
         </div>
 
         <div className="sx-tl-viewmode">

@@ -99,10 +99,23 @@ export default function useStanceTriggers({ videoId, videoRef, enabled = true })
     setPriorChoice(null);
   }
 
+  // 从外部（叙事 X 光的脉络图标记）手动打开一张卡。覆盖当前激活的卡。
+  function openManually(triggerId) {
+    const tg = allTriggers.find(t => t.trigger_id === triggerId);
+    if (!tg) return;
+    if (tg.type === 'recall' && tg.requires_prior_choice) {
+      setPriorChoice(getChoiceFor(tg.requires_prior_choice));
+    } else {
+      setPriorChoice(null);
+    }
+    setActiveTrigger(tg);
+  }
+
   return {
     allTriggers,
     activeTrigger,
     priorChoice,
     dismiss,
+    openManually,
   };
 }

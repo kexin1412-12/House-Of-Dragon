@@ -129,7 +129,11 @@ function NodeCardStrip({ storyline, currentTime, onJumpTo, onExpand }) {
   );
 }
 
-export default function StorylineXRay({ videoId, videoRef, inline = false }) {
+export default function StorylineXRay({
+  videoId, videoRef, inline = false,
+  stanceTriggers = [],
+  onOpenStance,
+}) {
   const [open, setOpen] = useState(false);
   const [inlineOpen, setInlineOpen] = useState(() => readInlineOpen());
   const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph' | 'symbols'
@@ -282,6 +286,8 @@ export default function StorylineXRay({ videoId, videoRef, inline = false }) {
             currentTime={currentTime}
             videoId={videoId}
             onJumpTo={onJumpTo}
+            stanceTriggers={stanceTriggers}
+            onOpenStance={onOpenStance}
           />
         )}
         {activeTab === 'graph' && (
