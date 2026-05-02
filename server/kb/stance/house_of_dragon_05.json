@@ -1,9 +1,10 @@
 {
-  "_schema_version": 2,
+  "_schema_version": 3,
   "_notes": [
-    "立场追踪 / Stance Tracking 触发点 —— 本集三条核心冲突线，密度 3/集。",
+    "立场追踪 / Stance Tracking 触发点 —— S1E5 共 10 个事件，覆盖本集所有关键道德 / 政治分歧。",
     "无打分 / 无阵营 tag —— 每个选项就是一个说得通的立场，不归类、不聚合。",
-    "选择本身是产物；不派生 +N 黑党 / X 类型这种二次产物。"
+    "时间戳取'事件结束后几秒'：先让用户看完这场戏，再问问题。",
+    "时间戳基于 server/kb/house_of_dragon_05.json 的 scenes[] 与 branch_points[] 校准；少数估算的需要测的时候微调。"
   ],
   "video_id": "house_of_dragon_05",
   "show_id": "house-of-the-dragon",
@@ -37,9 +38,65 @@
       ]
     },
     {
+      "trigger_id": "s1e5_otto_warns_alicent",
+      "type": "faction_choice",
+      "timestamp": 510,
+      "scene_label": "君临 · 父女诀别",
+      "headline": "🗡️ 立场抉择",
+      "prompt_lines": [
+        "奥托被解除国王之手，临走警告亚莉森：",
+        "雷妮拉登基之日就是你孩子的死期。"
+      ],
+      "options": [
+        {
+          "id": "otto_speaks_truth",
+          "label": "奥托说的是事实",
+          "inner_voice": "坦格利安家族的历史证明，继承权的竞争者从来活不久。"
+        },
+        {
+          "id": "otto_exploits_fear",
+          "label": "他在利用女儿的恐惧",
+          "inner_voice": "他被罢免了，正在把自己的政治野心包装成父爱。"
+        },
+        {
+          "id": "otto_correct_but_impure",
+          "label": "话是对的但动机不纯",
+          "inner_voice": "威胁确实存在，但奥托关心的不是外孙，是海塔尔家族的权力。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_tides_open_marriage",
+      "type": "faction_choice",
+      "timestamp": 1170,
+      "scene_label": "潮汐堡 · 雷妮拉与莱诺谈判",
+      "headline": "🤝 立场抉择",
+      "prompt_lines": [
+        "雷妮拉对莱诺说：我们各尽义务，之后各过各的。",
+        "你可以继续爱乔弗里，我也有自己的安排。"
+      ],
+      "options": [
+        {
+          "id": "marriage_pragmatic",
+          "label": "务实且体面",
+          "inner_voice": "两个人都不用装，这是政治婚姻里最好的结果了。"
+        },
+        {
+          "id": "marriage_unfair_to_laenor",
+          "label": "对莱诺不公平",
+          "inner_voice": "她有选择的主动权，莱诺只能被动接受条件。"
+        },
+        {
+          "id": "marriage_will_collapse",
+          "label": "这种婚姻迟早出事",
+          "inner_voice": "秘密太多了，任何一环暴露都会连锁崩塌。"
+        }
+      ]
+    },
+    {
       "trigger_id": "s1e5_criston_proposal",
       "type": "faction_choice",
-      "timestamp": 2100,
+      "timestamp": 1980,
       "scene_label": "君临 · 克里斯顿求私奔",
       "headline": "💔 立场抉择",
       "prompt_lines": [
@@ -65,9 +122,37 @@
       ]
     },
     {
+      "trigger_id": "s1e5_alicent_questions_cole",
+      "type": "faction_choice",
+      "timestamp": 2200,
+      "scene_label": "红堡 · 亚莉森审问骑士",
+      "headline": "🔥 立场抉择",
+      "prompt_lines": [
+        "克里斯顿主动向王后坦白了自己破誓的事。",
+        "亚莉森没有告发他。"
+      ],
+      "options": [
+        {
+          "id": "cole_is_honest",
+          "label": "克里斯顿是诚实的",
+          "inner_voice": "他选择坦白而不是隐瞒，说明他的荣誉感还在。"
+        },
+        {
+          "id": "cole_seeks_relief",
+          "label": "他在找人替他收拾烂摊子",
+          "inner_voice": "他坦白不是因为诚实，是因为他扛不住了需要出口。"
+        },
+        {
+          "id": "alicent_banks_favor",
+          "label": "亚莉森不告发是在攒筹码",
+          "inner_voice": "她留下克里斯顿不是因为同情，是因为一个欠她人情的铁卫比一个被处死的铁卫有用得多。"
+        }
+      ]
+    },
+    {
       "trigger_id": "s1e5_green_dress_arrival",
       "type": "faction_choice",
-      "timestamp": 2940,
+      "timestamp": 2580,
       "scene_label": "婚宴 · 亚莉森绿裙登场",
       "headline": "⚔️ 立场抉择",
       "prompt_lines": [
@@ -89,6 +174,118 @@
           "id": "otto_pulling_strings",
           "label": "是奥托在操控她",
           "inner_voice": "她自己未必想走到这一步，是她父亲把恐惧种进了她脑子里。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_daemon_disrupts",
+      "type": "faction_choice",
+      "timestamp": 3180,
+      "scene_label": "婚宴 · 戴蒙搅局",
+      "headline": "🐉 立场抉择",
+      "prompt_lines": [
+        "戴蒙在舞池里拦住雷妮拉，",
+        "用高等瓦雷利亚语对她说：跟我走，去龙石岛。"
+      ],
+      "options": [
+        {
+          "id": "rhaenyra_should_go",
+          "label": "雷妮拉应该跟他走",
+          "inner_voice": "戴蒙虽然危险但他是唯一一个不把她当棋子的人。"
+        },
+        {
+          "id": "daemon_wants_throne",
+          "label": "戴蒙在利用她",
+          "inner_voice": "他要的不是雷妮拉，是雷妮拉身后的铁王座。"
+        },
+        {
+          "id": "targaryen_tragedy",
+          "label": "这就是坦格利安的悲剧",
+          "inner_voice": "他们之间有真感情，但这份感情注定会毁掉所有人。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_rhaenys_observes",
+      "type": "faction_choice",
+      "timestamp": 3270,
+      "scene_label": "婚宴 · 雷妮丝旁观",
+      "headline": "👁️ 立场抉择",
+      "prompt_lines": [
+        "雷妮丝旁观这场闹剧。",
+        "大议会选了韦赛里斯而不是她，理由只有一个：她是女人。"
+      ],
+      "options": [
+        {
+          "id": "rhaenys_should_be_queen",
+          "label": "雷妮丝才是真正的王",
+          "inner_voice": "如果当初选了她，今天这些烂事一件都不会发生。"
+        },
+        {
+          "id": "council_was_correct",
+          "label": "大议会的决定有道理",
+          "inner_voice": "不是因为她是女人，是因为当时的政治格局需要韦赛里斯。"
+        },
+        {
+          "id": "rhaenys_chose_wisely",
+          "label": "她选择不争才是最聪明的",
+          "inner_voice": "看看雷妮拉为了王位正在失去什么，雷妮丝退一步反而保全了一切。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_bloody_wedding",
+      "type": "faction_choice",
+      "timestamp": 3435,
+      "scene_label": "婚礼 · 血色仪式",
+      "headline": "🩸 立场抉择",
+      "prompt_lines": [
+        "婚礼在乔弗里的血泊旁举行。",
+        "雷妮拉含泪披上瓦列利安的斗篷，莱诺只给了她嘴角一个吻。"
+      ],
+      "options": [
+        {
+          "id": "price_of_power",
+          "label": "这就是权力的代价",
+          "inner_voice": "每个人都为这桩婚姻付出了自己最在乎的东西。"
+        },
+        {
+          "id": "should_cancel_wedding",
+          "label": "该取消婚礼",
+          "inner_voice": "有人死在婚宴上还照常举行，说明所有人在乎的是联盟不是人命。"
+        },
+        {
+          "id": "viserys_to_blame",
+          "label": "韦赛里斯最该被骂",
+          "inner_voice": "他明知所有矛盾都在激化，还一意孤行推进婚礼，今晚的血有他一份。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s1e5_godswood_suicide",
+      "type": "faction_choice",
+      "timestamp": 3530,
+      "scene_label": "神木林 · 克里斯顿求死",
+      "headline": "🌳 立场抉择",
+      "prompt_lines": [
+        "克里斯顿跪在神木林前拔出匕首。",
+        "亚莉森走过来，按住了他的手。"
+      ],
+      "options": [
+        {
+          "id": "alicent_gains_ally",
+          "label": "亚莉森救了一个未来的盟友",
+          "inner_voice": "有意无意，从这一刻起克里斯顿的命属于王后。"
+        },
+        {
+          "id": "cole_undeserving",
+          "label": "克里斯顿不配同情",
+          "inner_voice": "他刚在婚宴上活活打死了一个人，现在求死不是赎罪是逃避。"
+        },
+        {
+          "id": "saddest_moment",
+          "label": "这是全集最悲哀的一幕",
+          "inner_voice": "一个破了誓的骑士和一个被推上战场的王后，两个被困住的人在神木林前短暂地互相看见了。"
         }
       ]
     }

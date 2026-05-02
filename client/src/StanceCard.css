@@ -1,53 +1,74 @@
 /* 立场抉择卡 / 回顾卡 ——
-   inline 形态：画面左下角小浮层。
-   不蒙黑 / 不暂停 / 不抢焦。视频继续播，用户继续看，看见就选，没看见就过。
-   位置：bottom: 110px（PlayerControls 上方一点，跟 .diegetic-cue 同高）；
-        left: 24px。 */
+   pill 横排形态，画面右下角浮层。
+   不蒙黑 / 不暂停 / 不抢焦。10 秒内不点自动 fade。
+   位置：bottom: 110px（PlayerControls 上方）；right: 24px。 */
 
-.stc-inline {
+.stc-pill {
   position: absolute;
   bottom: 110px;
-  left: 24px;
-  width: 360px;
-  max-width: calc(100% - 48px);
+  right: 24px;
+  width: min(560px, calc(100% - 48px));
   z-index: 6;
-  background: rgba(20, 16, 12, 0.82);
+  background: rgba(20, 16, 12, 0.86);
   border: 1px solid rgba(190, 150, 80, 0.32);
-  border-radius: 6px;
-  padding: 14px 16px 12px;
+  border-radius: 8px;
+  padding: 12px 14px 14px;
   color: #e6dfc8;
   font-family: "Noto Serif SC", "PingFang SC", serif;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
-  animation: stc-inline-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  animation: stc-pill-in 360ms cubic-bezier(0.2, 0.7, 0.2, 1);
   pointer-events: auto;
 }
 
-@keyframes stc-inline-in {
-  from { opacity: 0; transform: translateX(-12px); }
-  to   { opacity: 1; transform: translateX(0); }
+@keyframes stc-pill-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.stc-inline.is-recall {
+.stc-pill.is-recall {
   border-color: rgba(220, 170, 90, 0.45);
 }
 
-.stc-inline-head {
+/* ── header row ── */
+.stc-pill-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 10px;
 }
 
-.stc-inline-eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  color: #c9a55c;
+.stc-pill-badge {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #1a1208;
+  background: linear-gradient(180deg, #d6b06a 0%, #a98545 100%);
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stc-pill-title {
+  flex: 1;
+  font-size: 14px;
   font-weight: 600;
-  text-transform: uppercase;
+  color: #f3ecd5;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.stc-inline-close {
+.stc-pill-countdown {
+  font-size: 11px;
+  color: #a89a76;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.stc-pill-close {
   background: none;
   border: none;
   color: #6b5c3d;
@@ -57,78 +78,119 @@
   height: 22px;
   line-height: 1;
   border-radius: 50%;
+  flex-shrink: 0;
   transition: background 140ms ease, color 140ms ease;
 }
-.stc-inline-close:hover {
+.stc-pill-close:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #d8cfb6;
 }
 
-.stc-inline-scene {
-  margin-top: 2px;
-  font-size: 11px;
-  color: #8a8275;
-  letter-spacing: 0.06em;
+/* ── progress bar ── */
+.stc-pill-progress {
+  margin-top: 8px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.stc-pill-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a55c 0%, #a98545 100%);
+  transition: width 100ms linear;
 }
 
-.stc-inline-prompt {
-  margin: 10px 0 12px;
+/* ── prompt context ── */
+.stc-pill-prompt {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #d8cfb6;
 }
 
-.stc-inline-recall-prior {
+.stc-pill-prompt-line {
+  display: inline;
+}
+.stc-pill-prompt-line + .stc-pill-prompt-line::before {
+  content: ' ';
+}
+
+.stc-pill-recall-prior {
   font-size: 12px;
   color: #b59c6a;
   font-style: italic;
   line-height: 1.65;
-  padding: 6px 0 8px;
-  border-bottom: 1px dashed rgba(190, 150, 80, 0.18);
+  padding-bottom: 8px;
   margin-bottom: 8px;
+  border-bottom: 1px dashed rgba(190, 150, 80, 0.18);
 }
 
-.stc-inline-line {
-  margin: 0 0 4px;
-  font-size: 13.5px;
-  line-height: 1.65;
-  color: #e6dfc8;
-}
-.stc-inline-line:last-child { margin-bottom: 0; }
-
-/* 选项 */
-.stc-inline-options {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+/* ── 3 options pill row ── */
+.stc-pill-options {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
-.stc-inline-option {
-  text-align: left;
-  background: rgba(255, 255, 255, 0.03);
+.stc-pill-option {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 4px;
-  padding: 8px 10px;
+  border-radius: 5px;
+  padding: 10px 8px;
   color: #e6dfc8;
   cursor: pointer;
   font-family: inherit;
-  transition: background 140ms ease, border-color 140ms ease;
-}
-.stc-inline-option:hover,
-.stc-inline-option.is-hovered {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(190, 150, 80, 0.4);
-}
-
-.stc-inline-option-label {
-  color: #f3ecd5;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
+  text-align: center;
+  transition: background 140ms ease, border-color 140ms ease, opacity 200ms ease, transform 80ms ease;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.stc-pill-option:hover:not(:disabled),
+.stc-pill-option.is-hovered:not(:disabled) {
+  background: rgba(201, 165, 92, 0.10);
+  border-color: rgba(201, 165, 92, 0.5);
+  color: #f3ecd5;
+}
+.stc-pill-option:active { transform: scale(0.98); }
+.stc-pill-option:disabled { cursor: default; }
+
+.stc-pill-option.is-picked {
+  background: rgba(201, 165, 92, 0.18);
+  border-color: #c9a55c;
+  color: #f3ecd5;
 }
 
-.stc-inline-option-voice {
-  margin-top: 4px;
+.stc-pill-option.is-faded {
+  opacity: 0.35;
+}
+
+.stc-pill-option-check {
+  color: #c9a55c;
+  font-weight: 700;
+}
+
+/* ── inner voice slot (hover-revealed or post-pick) ── */
+.stc-pill-voice {
+  margin-top: 10px;
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #a89a76;
   font-style: italic;
+  min-height: 0;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 220ms ease, opacity 200ms ease, margin-top 220ms ease;
 }
-
-/* 鼠标 idle / 离开播放区时跟着 toolbar 一起淡 —— 在 App.css 里加规则 */
+.stc-pill-voice.is-shown {
+  max-height: 80px;
+  opacity: 1;
+  margin-top: 10px;
+}
