@@ -3300,7 +3300,7 @@ ${stanceListStr}
 [事实] —— 这条世界线里这一刻发生了什么。客观叙事，第二人称"你..."。50-90 字。
 [解读] —— 角色此刻心里在想什么 / 决定背后的逻辑。50-90 字。
 [推测] —— 这个选择会引向什么 / 后续连锁反应（未来几集 / 几年）。50-90 字。
-[问]   —— 最后 1-2 段。每段一个开放式问句（30-60 字），扎在角色心理矛盾上。**只**这一种段允许直接以问号收尾。
+[问]   —— **全文最多 2 段、最多 2 个问句**。每段只放一个开放式问句（30-60 字），扎在角色心理矛盾上。**只**这一种段允许直接以问号收尾。一段里堆 3-5 个问号即报废。
 
 排布建议（参考，不强制）：
 [事实] → [解读] → [事实] → [推测] → [问] → [问]
@@ -3312,7 +3312,8 @@ ${stanceListStr}
 - 段首没有 [标签]
 - 段与段之间不空行
 - 把"事实"、"解读"这种词写在段落正文里（这些词只许出现在 [方括号] 标签里）
-- 一段超过 90 字 / 全文超过 380 字（中文计）`;
+- 一段超过 90 字 / 全文超过 380 字（中文计）
+- **超过 2 个 [问] 段 / 全文超过 2 个问号** —— 这是硬上限，写第 3 个问号即报废`;
 
     const user = `【原剧位置】${episode} · ${tsLabel}
 【场景】${trigger.scene_label}
@@ -3324,7 +3325,7 @@ ${stanceListStr}
 ${optionHint ? `【这条路的方向提示（编剧组内部参考，不要直抄）】${optionHint}` : ''}
 ${convergence ? `【这条路上的张力暗流（最后那 1-2 个问句要踩在这股力上，但是用"问"不是"答" —— 不要替观众讲出这个结论）】${convergence}` : ''}
 
-请写"如果你的选择真的发生了"那个世界线。前面 2-3 段照常推演，最后一段抛 1-2 个开放问句给观众，让他们继续想。`;
+请写"如果你的选择真的发生了"那个世界线。前面 4-5 段用 [事实]/[解读]/[推测] 穿插推演，结尾**最多** 2 段 [问]、**全文最多 2 个问号**。`;
 
     const controller = new AbortController();
     res.on('close', () => { if (!res.writableEnded) controller.abort(); });
@@ -3356,6 +3357,131 @@ ${convergence ? `【这条路上的张力暗流（最后那 1-2 个问句要踩�
       if (controller.signal.aborted) return res.end();
       console.error('[stance/speculate] LLM error:', err?.message || err);
       send('text', { delta: `\n\n（推演中断：${err?.message || '未知错误'}）` });
+      send('done', { source: 'error' });
+      res.end();
+    }
+  });
+
+  // ─── 立场推演 · 续推（用户对开放问句继续问下去）──────────────────
+  // POST /api/agent/stance/speculate/continue
+  // body: { videoId, triggerId, optionId, history: [{role, content}], question }
+  // 已经跑过一轮 speculate，开放问句把球抛回观众；观众点了某个问句
+  // 或自己写了一句，调这个端点继续延展同一条假设世界线。
+  // 系统约束跟 /speculate 一致：留在 alt-world，不剧透原剧后续，第二人称对观众。
+  // 输出：流式 2-3 段续写，结尾再抛 1-2 个新的开放问句把对话往下推。
+  app.post('/api/agent/stance/speculate/continue', async (req, res) => {
+    const { videoId, triggerId, optionId, history, question } = req.body || {};
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+    const userQ = String(question || '').trim().slice(0, 600);
+    if (!videoId || !triggerId || !optionId || !userQ) {
+      send('text', { delta: '缺少必要字段。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    let stanceCfg;
+    try { stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); }
+    catch (_) {
+      send('text', { delta: '当前视频没有立场配置。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    const trigger = (stanceCfg.triggers || []).find(t => t.trigger_id === triggerId);
+    const option = trigger ? (trigger.options || []).find(o => o.id === optionId) : null;
+    if (!trigger || !option) {
+      send('text', { delta: '立场触发点 / 选项找不到。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    if (!ai.isAvailable('chat')) {
+      send('text', { delta: '当前没有可用的 LLM provider。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    const kb = loadKB(videoId);
+    const showName = kb?.show_id === 'house-of-the-dragon' ? '《龙之家族》' : `《${kb?.title || videoId}》`;
+    const episode = (kb && resolveEpisode(kb)) || '';
+
+    const optionHint = trigger.speculation?.by_option?.[optionId] || '';
+    const convergence = trigger.speculation?.convergence_hint || '';
+
+    const system = `你是 HBO ${showName} 编剧组的成员，正在和观众一起把一条"假设世界线"往下推。
+观众已经替剧中人做了一个不同于原剧的选择，前面已经有过几段推演，现在观众有了新的追问。
+你要做的是：**留在那条假设世界线里**，把它再往前推一小段，回答观众的问题，然后把球再抛回去。
+
+═══ 硬性原则 ═══
+1. 严格遵循马丁的世界观、维斯特洛的政治逻辑、家族纹章、坦格利安王朝的内部矛盾。
+2. 角色行为必须符合人格：戴蒙不会突然温柔、阿丽森不会突然真诚、克里斯顿压抑后会爆发。
+3. **不下结论、不收束、不替观众讲完。**留在假设世界线里继续往下推，不要切回原剧。
+4. **不剧透原剧后续真实剧情。**你写的是"如果，那么"。
+5. 用第二人称"你"指向观众做选择的那个剧中人（"你回到房间……"）。
+6. 不要写"作为编剧"、不要做免责声明、不要解释自己在做什么。直接进入续写。
+
+═══ 输出格式（严格） ═══
+全文 2-3 段。
+前面 1-2 段是叙事性的场景 + 心理描写，每段 50-90 字，平静克制语气，不堆华丽辞藻。
+最后一段必须**另起一行**单独成段，是 1-2 个新的开放式问句（每问 25-50 字），扎在观众这次问的张力上，往下一层推。问句之间也用空行分隔。
+**全文严禁出现任何 emoji 或符号前缀**（不要 💭 ⚠️ 🔀 ⏵ ✦ ➜ → ←）。
+段与段之间统一用一个空行分隔。
+全文严格控制在 280 字以内（中文计）。`;
+
+    const initialUser = `【原剧位置】${episode}
+【场景】${trigger.scene_label}
+【观众选了】${option.label}（${option.inner_voice || ''}）
+${optionHint ? `【这条路的方向（编剧组内部参考，不直抄）】${optionHint}` : ''}
+${convergence ? `【这条路的张力暗流】${convergence}` : ''}
+
+下面是和观众的对话历史。请按风格继续。`;
+
+    // 把 history 截成最近 8 轮（避免 prompt 过长 / 还能保留主题感）
+    const safeHist = Array.isArray(history) ? history.slice(-8) : [];
+    const messages = [
+      { role: 'user', content: initialUser },
+      ...safeHist.map(m => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: String(m.content || '').slice(0, 1200),
+      })),
+      { role: 'user', content: userQ },
+    ];
+
+    const controller = new AbortController();
+    res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+
+    try {
+      let providerInfo = null;
+      const stream = ai.chatStream({
+        task: 'chat',
+        system,
+        messages,
+        maxTokens: 600,
+        temperature: 0.85,
+        signal: controller.signal,
+      });
+      for await (const chunk of stream) {
+        if (chunk.type === 'meta') { providerInfo = { provider: chunk.provider, model: chunk.model }; continue; }
+        if (chunk.type === 'text' && chunk.delta) send('text', { delta: chunk.delta });
+      }
+      send('done', {
+        source: 'llm',
+        trigger_id: triggerId,
+        option_id: optionId,
+        episode,
+        provider: providerInfo?.provider || null,
+        model: providerInfo?.model || null,
+      });
+      res.end();
+    } catch (err) {
+      if (controller.signal.aborted) return res.end();
+      console.error('[stance/speculate/continue] LLM error:', err?.message || err);
+      send('text', { delta: `\n\n（续推中断：${err?.message || '未知错误'}）` });
       send('done', { source: 'error' });
       res.end();
     }
