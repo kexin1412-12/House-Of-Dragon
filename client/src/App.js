@@ -496,6 +496,9 @@ function TencentPlayer({
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [aiDepth, setAiDepth] = useState('brief'); // 'brief' | 'deep'
+  // 立场推演会话：null = 未开启；活跃时 free-text + chip 都路由到 /continue 端点
+  // history 是 [{role:'user'|'assistant', content}] —— 给 server 续推 prompt 用
+  const [speculationThread, setSpeculationThread] = useState(null);
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
   const [aiChatOpen, setAiChatOpen] = useState(false);
@@ -987,9 +990,15 @@ function TencentPlayer({
   function clearAiMessages() {
     setAiMessages([]);
     setAiInput('');
+    setSpeculationThread(null);
   }
 
   async function submitAiQuestion(forcedQuestion) {
+    // 立场推演会话活跃时，free-text 和 chip 都接到续推端点，让 AI 留在那条
+    // 假设世界线里继续推；用户点"结束推演"或主动 clear 才回到普通 chat。
+    if (speculationThread) {
+      return submitSpeculationFollowup(forcedQuestion);
+    }
     const candidate = typeof forcedQuestion === 'string' ? forcedQuestion : aiInput;
     const q = candidate.trim();
     if (!q) { console.warn('[submitAiQuestion] aborted: empty input'); return; }
@@ -1141,6 +1150,8 @@ function TencentPlayer({
 
   // 立场推演 → 直接喷到 AI 对话流里（不再走单独的 SpeculationView 模态）。
   // 用户可以在同一对话窗口里继续追问 —— LLM 看得到完整 lastExchanges。
+  // 完成时把 trigger/option/full text 落进 speculationThread，让后续 free-text
+  // + chip 路由到 /continue 端点把这条假设世界线接着推下去。
   async function submitStanceSpeculation(trigger, choice) {
     if (aiSending) return;
     if (!trigger || !choice) return;
@@ -1157,6 +1168,14 @@ function TencentPlayer({
       { role: 'user', text: userText, t, kind: 'speculation_request' },
       { role: 'agent', text: '', source: 'loading', t, streaming: true, kind: 'speculation' },
     ]);
+    // 开启 thread；history 暂为空，初轮的 assistant 输出在 finalize 时塞进去
+    setSpeculationThread({
+      triggerId: trigger.trigger_id,
+      optionId: choice.option_id,
+      scene_label: trigger.scene_label,
+      option_label: choice.option_label,
+      history: [],
+    });
     setAiSending(true);
 
     // 跟 submitAiQuestion 同款打字机
@@ -1186,14 +1205,24 @@ function TencentPlayer({
     };
     const finalizeMsg = (patch) => {
       const apply = () => {
+        let finalText = '';
         setAiMessages(prev => {
           const copy = prev.slice();
           const last = copy[copy.length - 1];
           if (last?.role === 'agent' && last.streaming) {
-            copy[copy.length - 1] = { ...last, streaming: false, ...patch };
+            finalText = last.text;
+            const parsedQuestions = extractOpenQuestions(finalText);
+            copy[copy.length - 1] = { ...last, streaming: false, kind: 'speculation', parsedQuestions, ...patch };
           }
           return copy;
         });
+        // 把这一轮的 assistant 全文塞进 thread.history，给续推 prompt 用
+        if (finalText) {
+          setSpeculationThread(t => t ? {
+            ...t,
+            history: [...t.history, { role: 'assistant', content: finalText }],
+          } : t);
+        }
       };
       const wait = () => {
         if (queue.length || typing) setTimeout(wait, 40);
@@ -1249,6 +1278,134 @@ function TencentPlayer({
     } finally {
       setAiSending(false);
     }
+  }
+
+  // 立场推演续推：用户对开放问句继续问下去 / 自己写一句。
+  // 调 /api/agent/stance/speculate/continue，把 thread.history 一起送过去；
+  // 收到的输出再走打字机，结尾问句解析进 parsedQuestions，下一轮 chip。
+  async function submitSpeculationFollowup(forcedQuestion) {
+    const thread = speculationThread;
+    if (!thread) return;
+    if (aiSending) return;
+    const candidate = typeof forcedQuestion === 'string' ? forcedQuestion : aiInput;
+    const q = candidate.trim();
+    if (!q) return;
+    const t = videoRef.current?.currentTime || 0;
+
+    setAiMessages(prev => [
+      ...prev,
+      { role: 'user', text: q, t, kind: 'speculation_followup' },
+      { role: 'agent', text: '', source: 'loading', t, streaming: true, kind: 'speculation' },
+    ]);
+    setAiInput('');
+    setSpeculationThread(prev => prev ? {
+      ...prev,
+      history: [...prev.history, { role: 'user', content: q }],
+    } : prev);
+    setAiSending(true);
+
+    const TYPE_INTERVAL_MS = 18;
+    let queue = '';
+    let typing = false;
+    const flushChunk = (chunk) => setAiMessages(prev => {
+      const copy = prev.slice();
+      const last = copy[copy.length - 1];
+      if (last?.role === 'agent' && last.streaming) {
+        copy[copy.length - 1] = { ...last, text: last.text + chunk };
+      }
+      return copy;
+    });
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
+      flushChunk(queue.slice(0, n));
+      queue = queue.slice(n);
+      typing = true;
+      setTimeout(tick, TYPE_INTERVAL_MS);
+    };
+    const appendDelta = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const finalizeMsg = (patch) => {
+      const apply = () => {
+        let finalText = '';
+        setAiMessages(prev => {
+          const copy = prev.slice();
+          const last = copy[copy.length - 1];
+          if (last?.role === 'agent' && last.streaming) {
+            finalText = last.text;
+            const parsedQuestions = extractOpenQuestions(finalText);
+            copy[copy.length - 1] = { ...last, streaming: false, kind: 'speculation', parsedQuestions, ...patch };
+          }
+          return copy;
+        });
+        if (finalText) {
+          setSpeculationThread(prev => prev ? {
+            ...prev,
+            history: [...prev.history, { role: 'assistant', content: finalText }],
+          } : prev);
+        }
+      };
+      const wait = () => {
+        if (queue.length || typing) setTimeout(wait, 40);
+        else apply();
+      };
+      wait();
+    };
+
+    try {
+      const resp = await fetch(`${API}/api/agent/stance/speculate/continue`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoId: aiKb || null,
+          triggerId: thread.triggerId,
+          optionId: thread.optionId,
+          history: thread.history,
+          question: q,
+        }),
+      });
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let source = 'llm', provider = null, model = null;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) !== -1) {
+          const raw = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+          let evtType = 'message', dataStr = '';
+          for (const line of raw.split('\n')) {
+            if (line.startsWith('event: ')) evtType = line.slice(7).trim();
+            else if (line.startsWith('data: ')) dataStr += line.slice(6);
+          }
+          if (!dataStr) continue;
+          let data;
+          try { data = JSON.parse(dataStr); } catch { continue; }
+          if (evtType === 'text') appendDelta(data.delta || '');
+          else if (evtType === 'done') {
+            if (data.source) source = data.source;
+            if (data.provider) provider = data.provider;
+            if (data.model) model = data.model;
+            finalizeMsg({ source, provider, model });
+          }
+        }
+      }
+    } catch (err) {
+      finalizeMsg({ text: `续推中断：${err?.message || '未知错误'}`, source: 'error' });
+    } finally {
+      setAiSending(false);
+    }
+  }
+
+  function exitSpeculation() {
+    setSpeculationThread(null);
   }
 
   // 角色内心：流式拿三层回应（说/心/潜）+ 三个跟问选项
@@ -1529,6 +1686,8 @@ function TencentPlayer({
                       onEnterCharacterMode={() => setPanelMode('character')}
                       speculationEntries={computeSpeculationEntries(stance.allTriggers)}
                       onOpenSpeculation={handleOpenSpeculation}
+                      speculationThread={speculationThread}
+                      onExitSpeculation={exitSpeculation}
                     />
                   )}
                 </div>
@@ -1754,6 +1913,8 @@ function TencentPlayer({
                 setDepth={setAiDepth}
                 onClear={clearAiMessages}
                 onEnterCharacterMode={() => setPanelMode('character')}
+                speculationThread={speculationThread}
+                onExitSpeculation={exitSpeculation}
               />
             )
           )}
@@ -1871,6 +2032,22 @@ const VOICE_CAT = {
   '权衡': 'blue', '旧账': 'purple', '不祥': 'amber',
 };
 const STANCE_NAMES = ['王者', '血亲', '审慎', '火焰'];
+
+// 立场推演结尾的开放问句抽取：服务端 prompt 要求结尾每个问句独占一段、以 ？/? 收尾。
+// 倒着扫，连续遇到的"以问号结尾"段算开放问句，遇到非问句段就停。
+function extractOpenQuestions(text) {
+  if (!text) return [];
+  const paragraphs = String(text).split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+  const out = [];
+  for (let i = paragraphs.length - 1; i >= 0; i--) {
+    const p = paragraphs[i];
+    if (!/[？?]$/.test(p)) break;
+    if (p.length < 6 || p.length > 200) break;
+    out.unshift(p);
+    if (out.length >= 3) break;
+  }
+  return out;
+}
 
 // 进入角色的开场流式 raw → { surface, depth }。每来一个 delta 都会调一次，
 // 必须容忍部分输出（[深层] 还没出现 / 1./2./3. 还没出现）。
@@ -2002,8 +2179,17 @@ function AgentPanel({
   onEnterCharacterMode,
   speculationEntries = [],
   onOpenSpeculation,
+  speculationThread = null,
+  onExitSpeculation,
 }) {
   const weighted = depth === 'deep';
+  const inSpeculation = !!speculationThread;
+  // 在推演会话里：取最新一条 agent speculation 消息上 parser 抓出来的 1-3 个开放问句，
+  // 用它们替换默认 quick chip，让用户一点就把这条假设世界线再往下推。
+  const lastSpeculationMsg = inSpeculation
+    ? [...messages].reverse().find(m => m.role === 'agent' && m.kind === 'speculation' && !m.streaming)
+    : null;
+  const followupQuestions = (lastSpeculationMsg?.parsedQuestions || []).filter(Boolean);
 
   return (
     <div className="tx-agent-de">
@@ -2083,26 +2269,58 @@ function AgentPanel({
           )}
         </div>
 
+        {inSpeculation && (
+          <div className="tx-agent-de-spec-active">
+            <span className="tx-agent-de-spec-active-label">
+              推演中 · {speculationThread.scene_label} · 你选了：{speculationThread.option_label}
+            </span>
+            {onExitSpeculation && (
+              <button
+                type="button"
+                className="tx-agent-de-spec-active-exit"
+                onClick={() => !sending && onExitSpeculation()}
+                disabled={sending}
+                title="结束这条假设世界线，回到普通解析"
+              >结束推演</button>
+            )}
+          </div>
+        )}
+
         <div className="tx-agent-de-chips">
-          {QUICK_QUESTIONS.map(q => (
-            <button
-              key={q}
-              type="button"
-              className={`tx-agent-de-chip ${weighted ? 'is-weighted' : ''}`}
-              onClick={() => !sending && onSubmit(q)}
-              disabled={sending}
-              title="点击直接发送"
-            >{q}</button>
-          ))}
-          {onEnterCharacterMode && (
-            <button
-              type="button"
-              className="tx-agent-de-chip tx-agent-de-chip-mode"
-              onClick={() => !sending && onEnterCharacterMode()}
-              disabled={sending}
-              title="钻进角色脑子里和 TA 对话"
-            >角色内心</button>
-          )}
+          {inSpeculation
+            ? followupQuestions.map((q, i) => (
+                <button
+                  key={`spq-${i}`}
+                  type="button"
+                  className="tx-agent-de-chip tx-agent-de-chip-spec"
+                  onClick={() => !sending && onSubmit(q)}
+                  disabled={sending}
+                  title="顺着这个问题让 AI 继续往下推"
+                >{q}</button>
+              ))
+            : (
+              <>
+                {QUICK_QUESTIONS.map(q => (
+                  <button
+                    key={q}
+                    type="button"
+                    className={`tx-agent-de-chip ${weighted ? 'is-weighted' : ''}`}
+                    onClick={() => !sending && onSubmit(q)}
+                    disabled={sending}
+                    title="点击直接发送"
+                  >{q}</button>
+                ))}
+                {onEnterCharacterMode && (
+                  <button
+                    type="button"
+                    className="tx-agent-de-chip tx-agent-de-chip-mode"
+                    onClick={() => !sending && onEnterCharacterMode()}
+                    disabled={sending}
+                    title="钻进角色脑子里和 TA 对话"
+                  >角色内心</button>
+                )}
+              </>
+            )}
         </div>
 
         {/* 自由输入：平面下划线，不是实色卡片 */}
@@ -2112,7 +2330,7 @@ function AgentPanel({
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSubmit(); } }}
-            placeholder="问点什么……"
+            placeholder={inSpeculation ? '继续追问，让 AI 把这条路再推一步……' : '问点什么……'}
             disabled={sending}
           />
           <button

@@ -2,11 +2,34 @@
    无 sparkline / persona / 分数。原浮窗形态已废弃。 */
 
 .trc-inline {
+  /* 父容器 .sx-body 锁死 540px + overflow:hidden，所以本面板自己负责滚动。 */
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
   padding: 24px 28px 20px;
   color: #e8e2d3;
   font-family: "Noto Serif SC", "PingFang SC", serif;
+}
+
+/* 内层包一个 max-width 限宽容器，把内容居中，但 scrollbar 仍贴在 .trc-inline 右
+   边（不会被推到屏幕中央显得突兀）。 */
+.trc-inline > * {
   max-width: 720px;
-  margin: 0 auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 滚动条配色：跟金黑调一致，比浏览器默认更克制。 */
+.trc-inline::-webkit-scrollbar { width: 6px; }
+.trc-inline::-webkit-scrollbar-track { background: transparent; }
+.trc-inline::-webkit-scrollbar-thumb {
+  background: rgba(201, 165, 92, 0.25);
+  border-radius: 3px;
+}
+.trc-inline::-webkit-scrollbar-thumb:hover { background: rgba(201, 165, 92, 0.4); }
+.trc-inline {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 165, 92, 0.25) transparent;
 }
 
 .trc-header { margin-bottom: 24px; }
