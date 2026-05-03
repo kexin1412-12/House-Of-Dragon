@@ -1818,18 +1818,19 @@ function episodeTag(filename) {
 // 同一 tag 重复出现的话取第一段（system prompt 里要求每个 tag 最多一次）。
 function parseTaggedAnswer(text) {
   if (!text) return [];
-  const TAGS = ['[事实]', '[解读]', '[推测]'];
+  // 支持多次出现 —— 立场推演会有连续 [事实]→[解读]→[推测]→[事实]→...→[问] 分段。
+  // 老版本只 indexOf 找第一次，后续段就被吃掉了；改成 global regex 扫所有位置。
+  const TAG_RE = /\[(事实|解读|推测|问)\]/g;
   const positions = [];
-  for (const tag of TAGS) {
-    const idx = text.indexOf(tag);
-    if (idx !== -1) positions.push({ tag, idx });
+  let m;
+  while ((m = TAG_RE.exec(text)) !== null) {
+    positions.push({ kind: m[1], idx: m.index, tagLen: m[0].length });
   }
-  positions.sort((a, b) => a.idx - b.idx);
-  const segments = [];
-  // 第一个 tag 之前的内容当作 [事实]
   if (positions.length === 0) {
     return [{ kind: '事实', text: text.trim() }];
   }
+  const segments = [];
+  // 第一个 tag 之前的内容当作 [事实]
   if (positions[0].idx > 0) {
     const head = text.slice(0, positions[0].idx).trim();
     if (head) segments.push({ kind: '事实', text: head });
@@ -1837,8 +1838,8 @@ function parseTaggedAnswer(text) {
   for (let i = 0; i < positions.length; i++) {
     const p = positions[i];
     const end = i + 1 < positions.length ? positions[i + 1].idx : text.length;
-    const body = text.slice(p.idx + p.tag.length, end).trim();
-    if (body) segments.push({ kind: p.tag.slice(1, -1), text: body });
+    const body = text.slice(p.idx + p.tagLen, end).trim();
+    if (body) segments.push({ kind: p.kind, text: body });
   }
   return segments;
 }

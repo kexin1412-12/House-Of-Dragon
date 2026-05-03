@@ -1208,10 +1208,23 @@ body {
 .de-body { display: inline; }
 .de-body-you   { color: #d4c4a8; font-style: italic; }                 /* 你的话 = 暖灰斜体 */
 .de-body-agent { display: block; margin-top: 4px; }
-.de-seg { margin: 0 0 4px; }
+.de-seg { margin: 0 0 10px; line-height: 1.85; }
+.de-seg:last-child { margin-bottom: 0; }
 .de-seg-事实 { color: #d4c4a8; }                                       /* 暖灰：客观叙事 */
-.de-seg-解读 { color: #9bb8d4; }                                       /* 灰蓝：观点判断 */
-.de-seg-推测 { color: #e8b85a; font-style: italic; opacity: 0.95; }    /* 琥珀斜体：不确定 */
+.de-seg-解读 { color: #9bb8d4; }                                       /* 灰蓝：观点 / 角色心理 */
+.de-seg-推测 { color: #e8b85a; font-style: italic; opacity: 0.95; }    /* 琥珀斜体：后续连锁 / 不确定 */
+.de-seg-问   {                                                         /* 紫斜体：开放式反问 */
+  color: #c9a4d4;
+  font-style: italic;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(201, 164, 212, 0.22);
+}
+.de-seg-问 + .de-seg-问 {
+  margin-top: 6px;
+  padding-top: 0;
+  border-top: none;
+}
 
 .de-thinking { color: rgba(232, 200, 150, 0.5); font-style: italic; }
 .de-cursor {
