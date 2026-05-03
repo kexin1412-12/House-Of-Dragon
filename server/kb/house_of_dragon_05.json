@@ -43978,20 +43978,7 @@
           "confidence": 0.4728
         }
       ],
-      "symbols": [
-        {
-          "symbol_id": "alicent_truth_callback_e05",
-          "evidence_in_frame": "亚莉森意识到雷妮拉对她撒了谎",
-          "confidence": "high",
-          "source": "scene_hotspots_migration_2026-05-01",
-          "cta": {
-            "kind": "callback",
-            "video_id": "house_of_dragon_04",
-            "timestamp": 750,
-            "label": "回看 S1E4 12:30 雷妮拉的发誓"
-          }
-        }
-      ]
+      "symbols": []
     },
     {
       "scene_id": "s285",
@@ -52417,6 +52404,20 @@
             0.6208
           ],
           "confidence": 0.4902
+        }
+      ],
+      "symbols": [
+        {
+          "symbol_id": "alicent_truth_callback_e05",
+          "evidence_in_frame": "亚莉森意识到雷妮拉对她撒了谎",
+          "confidence": "high",
+          "source": "scene_hotspots_migration_2026-05-01",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_04",
+            "timestamp": 750,
+            "label": "回看 S1E4 12:30 雷妮拉的发誓"
+          }
         }
       ]
     },
