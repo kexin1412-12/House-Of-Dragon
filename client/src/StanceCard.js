@@ -1,6 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './StanceCard.css';
 
+// 分叉图标 —— 替代 🔀。Y 字形：一根主干，两条带箭头的分支。
+function ForkIcon({ className }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M 8 14 L 8 9" />
+      <path d="M 8 9 C 8 7 6 6 4 6 L 4 3" />
+      <path d="M 8 9 C 8 7 10 6 12 6 L 12 3" />
+      <path d="M 2.4 5 L 4 3 L 5.6 5" />
+      <path d="M 10.4 5 L 12 3 L 13.6 5" />
+    </svg>
+  );
+}
+
 // 立场抉择卡 / 回顾卡 / 投后 CTA 三态共组件 ——
 // 横向 pill 布局，"实时互动" badge + 倒计时，画面右下角浮层。
 //
@@ -188,14 +210,14 @@ export default function StanceCard({
           {speculationByOption[pickedId] && (
             <div className="stc-pill-cta">
               <div className="stc-pill-cta-text">
-                <span className="stc-pill-cta-icon">🔀</span>
+                <ForkIcon className="stc-pill-cta-icon" />
                 想看看如果走这条路会怎样？
               </div>
               <div className="stc-pill-cta-actions">
                 <button
                   className="stc-pill-cta-primary"
                   onClick={handleOpenSpec}
-                >展开推演 →</button>
+                >展开推演</button>
                 <button
                   className="stc-pill-cta-ghost"
                   onClick={onDismiss}

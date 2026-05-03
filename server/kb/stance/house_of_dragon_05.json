@@ -15,7 +15,7 @@
       "type": "faction_choice",
       "timestamp": 290,
       "scene_label": "谷地 · 戴蒙杀妻",
-      "headline": "💀 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "戴蒙杀了自己的妻子来挣脱一段他从未想要的政治联姻。"
       ],
@@ -50,7 +50,7 @@
       "type": "faction_choice",
       "timestamp": 468,
       "scene_label": "君临 · 父女诀别",
-      "headline": "🗡️ 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "奥托被解除国王之手，临走警告亚莉森：",
         "雷妮拉登基之日就是你孩子的死期。"
@@ -86,7 +86,7 @@
       "type": "faction_choice",
       "timestamp": 1152,
       "scene_label": "潮汐堡 · 雷妮拉与莱诺谈判",
-      "headline": "🤝 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "雷妮拉对莱诺说：我们各尽义务，之后各过各的。",
         "你可以继续爱乔弗里，我也有自己的安排。"
@@ -122,7 +122,7 @@
       "type": "faction_choice",
       "timestamp": 1848,
       "scene_label": "君临 · 克里斯顿求私奔",
-      "headline": "💔 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "克里斯顿说：抛下王冠跟我走，我们去厄索斯重新开始。",
         "雷妮拉说：不。"
@@ -158,7 +158,7 @@
       "type": "faction_choice",
       "timestamp": 1922,
       "scene_label": "红堡 · 亚莉森审问骑士",
-      "headline": "🔥 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "克里斯顿主动向王后坦白了自己破誓的事。",
         "亚莉森没有告发他。"
@@ -186,7 +186,7 @@
       "type": "faction_choice",
       "timestamp": 2563,
       "scene_label": "婚宴 · 亚莉森绿裙登场",
-      "headline": "⚔️ 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "亚莉森穿着绿色礼裙走进大厅，全场起立。",
         "从此再无朋友，只有阵营。"
@@ -222,7 +222,7 @@
       "type": "faction_choice",
       "timestamp": 3191,
       "scene_label": "婚宴 · 戴蒙搅局",
-      "headline": "🐉 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "戴蒙在舞池里拦住雷妮拉，",
         "用高等瓦雷利亚语对她说：跟我走，去龙石岛。"
@@ -258,7 +258,7 @@
       "type": "faction_choice",
       "timestamp": 3243,
       "scene_label": "婚宴 · 雷妮丝旁观",
-      "headline": "👁️ 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "雷妮丝旁观这场闹剧。",
         "大议会选了韦赛里斯而不是她，理由只有一个：她是女人。"
@@ -294,7 +294,7 @@
       "type": "faction_choice",
       "timestamp": 3372,
       "scene_label": "婚礼 · 血色仪式",
-      "headline": "🩸 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "婚礼在乔弗里的血泊旁举行。",
         "雷妮拉含泪披上瓦列利安的斗篷，莱诺只给了她嘴角一个吻。"
@@ -330,7 +330,7 @@
       "type": "faction_choice",
       "timestamp": 3490,
       "scene_label": "神木林 · 克里斯顿求死",
-      "headline": "🌳 立场抉择",
+      "headline": "立场抉择",
       "prompt_lines": [
         "克里斯顿跪在神木林前拔出匕首。",
         "亚莉森走过来，按住了他的手。"

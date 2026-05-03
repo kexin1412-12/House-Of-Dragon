@@ -264,7 +264,9 @@
 }
 
 .stc-pill-cta-icon {
-  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .stc-pill-cta-actions {

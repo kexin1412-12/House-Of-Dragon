@@ -1137,7 +1137,11 @@ body {
   font-weight: 600;
   text-transform: uppercase;
 }
-.tx-agent-de-spec-icon { font-size: 13px; }
+.tx-agent-de-spec-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
 .tx-agent-de-spec-count {
   margin-left: auto;
   background: rgba(220, 170, 90, 0.2);

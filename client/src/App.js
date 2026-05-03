@@ -2190,7 +2190,22 @@ function AgentPanel({
       {speculationEntries.length > 0 && onOpenSpeculation && (
         <div className="tx-agent-de-spec">
           <div className="tx-agent-de-spec-label">
-            <span className="tx-agent-de-spec-icon">🔀</span>
+            <svg
+              className="tx-agent-de-spec-icon"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M 8 14 L 8 9" />
+              <path d="M 8 9 C 8 7 6 6 4 6 L 4 3" />
+              <path d="M 8 9 C 8 7 10 6 12 6 L 12 3" />
+              <path d="M 2.4 5 L 4 3 L 5.6 5" />
+              <path d="M 10.4 5 L 12 3 L 13.6 5" />
+            </svg>
             你的立场推演
             <span className="tx-agent-de-spec-count">{speculationEntries.length}</span>
           </div>
