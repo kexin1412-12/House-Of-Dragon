@@ -3291,15 +3291,28 @@ ${stanceListStr}
       } catch (e) { /* ignore */ }
     }
 
-    const items = [];
+    // 按 symbol_id 去重：同一符号会在连续 scene 里反复被标（如 laenor_agreement
+    // 在潮汐堡谈判那段 17:59/18:17/18:54 三处都挂了），列表里展示成 3 条
+    // 一模一样文字+不同时间戳没有信息量。只保留首次出现的时刻，附带 occurrences
+    // 计数让前端可以选择性显示"× N 处"。SymbolHotspots overlay 不走这个端点，
+    // 视频上的角标依然每个 scene 各显示一次，没有影响。
+    const byId = new Map();
     for (const scene of (kb.scenes || [])) {
       for (const sym of (scene.symbols || [])) {
+        const existing = byId.get(sym.symbol_id);
+        if (existing) {
+          existing.occurrences += 1;
+          existing.last_scene_start = scene.start_time;
+          continue;
+        }
         const dict = symMap[sym.symbol_id] || {};
-        items.push({
+        byId.set(sym.symbol_id, {
           symbol_id: sym.symbol_id,
           scene_id: scene.scene_id,
           scene_start: scene.start_time,
           scene_end: scene.end_time,
+          last_scene_start: scene.start_time,
+          occurrences: 1,
           keyframe: scene.keyframe || null,
           category: dict.category || null,
           meaning_zh: sym.meaning_zh || dict.meaning_zh || null,
@@ -3310,7 +3323,7 @@ ${stanceListStr}
         });
       }
     }
-    items.sort((a, b) => a.scene_start - b.scene_start);
+    const items = Array.from(byId.values()).sort((a, b) => a.scene_start - b.scene_start);
     res.json({ has_kb: true, items });
   });
 
