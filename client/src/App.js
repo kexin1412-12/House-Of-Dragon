@@ -1302,7 +1302,7 @@ function TencentPlayer({
     setPanelMode('analysis');
 
     const t = videoRef.current?.currentTime || 0;
-    const userText = `🔀 立场推演 · ${trigger.scene_label} · 你选了：${choice.option_label}`;
+    const userText = `立场推演 · ${trigger.scene_label} · 你选了：${choice.option_label}`;
 
     setAiMessages(prev => [
       ...prev,
