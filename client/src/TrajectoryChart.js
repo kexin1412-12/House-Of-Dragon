@@ -100,15 +100,20 @@ export default function TrajectoryChart() {
         </div>
       ) : (
         <>
-          <ChoiceList choices={choices} />
-
-          <SummarySection
-            choiceCount={choices.length}
-            summary={summary}
-            phase={summaryPhase}
-            errMsg={summaryErr}
-            onStart={handleStartSummary}
-          />
+          <div className="trc-cols">
+            <div className="trc-col-left">
+              <ChoiceList choices={choices} />
+            </div>
+            <div className="trc-col-right">
+              <SummarySection
+                choiceCount={choices.length}
+                summary={summary}
+                phase={summaryPhase}
+                errMsg={summaryErr}
+                onStart={handleStartSummary}
+              />
+            </div>
+          </div>
 
           <div className="trc-actions">
             <button className="trc-btn trc-btn-ghost" onClick={handleReset}>

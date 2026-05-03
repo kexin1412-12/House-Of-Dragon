@@ -30,9 +30,11 @@
   z-index: 2;
 }
 
-/* 内层包一个 max-width 限宽容器，把内容居中，但 scrollbar 仍贴在 .trc-inline 右
-   边（不会被推到屏幕中央显得突兀）。 */
-.trc-inline > * {
+/* 内层限宽：header / empty / actions 还是居中 720px。
+   2 列布局 .trc-cols 自己有 max-width 1140，宽得多。 */
+.trc-header,
+.trc-empty,
+.trc-actions {
   max-width: 720px;
   margin-left: auto;
   margin-right: auto;
@@ -77,10 +79,29 @@
 .trc-empty p { margin: 0 0 6px; font-size: 14px; line-height: 1.7; }
 .trc-empty-sub { color: #6b5c3d; font-size: 13px; }
 
+/* 左右双栏：左 = 立场时间线，右 = AI 总结。窄屏自动堆叠成一列。 */
+.trc-cols {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.15fr);
+  gap: 32px;
+  align-items: start;          /* 列高度独立，不强制对齐 */
+  max-width: 1140px;
+  margin: 0 auto;
+}
+@media (max-width: 920px) {
+  .trc-cols { grid-template-columns: 1fr; gap: 22px; }
+}
+
+/* AI 总结栏 sticky：左边 timeline 滚动时，右边总结跟着可见，不会被滚出去 */
+.trc-col-right {
+  position: sticky;
+  top: 0;
+}
+
 /* list ─── timeline 风格 */
 .trc-list {
   list-style: none;
-  padding: 0; margin: 0 0 16px;
+  padding: 0; margin: 0;        /* 之前 0 0 16px 给和 .trc-summary 之间留白；现在分列了不需要 */
 }
 
 .trc-list-item {
@@ -153,11 +174,12 @@
   letter-spacing: 0.08em;
 }
 
-/* AI 总结区 —— 灰蓝 callout，区别于上方金色时间线。
+/* AI 总结区 —— 灰蓝 callout，区别于左侧金色时间线。
    这块是 AI 对你立场的'解读'，跟 chat 推演里的 [解读] 灰蓝同色系，
-   语义上也对：分析性的、反思性的、外部视角。 */
+   语义上也对：分析性的、反思性的、外部视角。
+   分栏后这块是右栏的全部内容 —— margin-top 归零（不再叠在 timeline 下面）。 */
 .trc-summary {
-  margin-top: 24px;
+  margin-top: 0;
   padding: 18px 22px 20px 22px;
   background: linear-gradient(180deg,
     rgba(155, 184, 212, 0.05) 0%,
