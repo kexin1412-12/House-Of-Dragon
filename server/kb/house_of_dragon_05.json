@@ -13,50 +13,6 @@
   "duration": 3587.959,
   "generated_by": "preprocess.js",
   "generated_at": "2026-04-26T03:31:27.578Z",
-  "branch_points": [
-    {
-      "branch_id": "bp_5e_criston_proposal",
-      "timestamp": 2100,
-      "label": "克里斯顿向雷尼拉提议私奔",
-      "decision_holder": "rhaenyra_targaryen",
-      "decision_holder_display": "雷尼拉",
-      "description": "私下里，克里斯顿·科尔向你（雷尼拉）下跪求私奔——离开君临、放弃王位、和他一起去自由贸易城邦。",
-      "options": [
-        "按原剧：拒绝克里斯顿，继续准备和赖诺尔的婚事",
-        "答应私奔：连夜离开君临，放弃铁王座",
-        "把这件事告诉父亲韦赛里斯"
-      ],
-      "context_for_llm": "韦赛里斯刚撤掉了奥托·海塔尔。雷尼拉的铁王座继承权前所未有地稳固。但她也正被推上一桩自己未必情愿的政治婚姻——与赖诺尔·瓦列利安。科尔提议的'离开'是在赌：离开就是放弃王朝，留下就是放弃他。雷尼拉这个角色的核心张力在这里被点破。"
-    },
-    {
-      "branch_id": "bp_5e_alicent_dress",
-      "timestamp": 2940,
-      "label": "阿丽森决定穿什么礼服赴婚礼",
-      "decision_holder": "alicent_hightower",
-      "decision_holder_display": "阿丽森",
-      "description": "出门前最后一刻，阿丽森（在父亲奥托被撤后第一次正式公开露面）决定穿哪一身礼服去出席雷尼拉的婚礼。",
-      "options": [
-        "按原剧：穿海塔尔家的绿礼服（公开宣告阵营）",
-        "穿与王族色调一致的红黑礼服（继续装作中立）",
-        "称病不去婚礼"
-      ],
-      "context_for_llm": "在 HoD S01E05，阿丽森公开穿海塔尔绿出现在婚礼上，被普遍解读为'绿党'诞生的标志性瞬间。如果她选择别的，绿党与黑党的分化形态会被显著推迟或改变。注意她的儿子伊耿此时还很小，她做这个决定时未必有完整的政治计算，更多是被父亲奥托被撤后的羞辱与本能推着走。"
-    },
-    {
-      "branch_id": "bp_5e_daemon_arrival",
-      "timestamp": 3240,
-      "label": "戴蒙在婚礼上发表致辞",
-      "decision_holder": "daemon_targaryen",
-      "decision_holder_display": "戴蒙",
-      "description": "戴蒙（刚处理掉妻子瑞亚·罗伊斯回到君临）在赖诺尔与雷尼拉的婚礼上被请上台讲话。他要说什么。",
-      "options": [
-        "按原剧：保持挑衅的沉默，让全场尴尬",
-        "公开质疑赖诺尔配不上雷尼拉，逼他表态",
-        "说一段表面祝福、实则暗示自己更适合雷尼拉的瓦雷利亚语"
-      ],
-      "context_for_llm": "戴蒙此时在场，是哥哥韦赛里斯特许、是带着新寡身份回来的。婚礼现场气氛极度紧绷：海蛇家族在场、赖诺尔的情人乔弗里·朗茅斯也在场、阿丽森穿绿到场。戴蒙开口的每一种方式都会重塑这场宴会的走向。"
-    }
-  ],
   "scenes": [
     {
       "scene_id": "s01",

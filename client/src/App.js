@@ -663,16 +663,9 @@ function TencentPlayer({
   const CHAR_TURN_LIMIT = 10;
 
   // ─── 共谋者 · 机制 A：分支推演 ─────────────────────────────────
-  const [branchPoints, setBranchPoints] = useState([]);            // [{branch_id, timestamp, label, options, ...}]
-  const [branchCues, setBranchCues] = useState({});                // { branch_id: { headline, sub } } —— LLM 写的字幕旁白
-  const [branchInvitation, setBranchInvitation] = useState(null);  // 到点了但用户还没点击"介入" —— 沉浸不打断
-  const [branchPending, setBranchPending] = useState(null);        // 用户点击介入后才进入决策态
-  const [branchChoice, setBranchChoice] = useState('');            // 用户选择字符串
-  const [branchSimulation, setBranchSimulation] = useState('');    // 流式累积的"替代世界线"文本
-  const [branchSimulating, setBranchSimulating] = useState(false);
-  const [branchPhase, setBranchPhase] = useState('idle');          // idle | choose | simulate | done
-  const branchTriggeredRef = useRef(new Set());                    // 已自动触发过的 branch_id —— 避免重复弹窗
-  const branchInvitationTimerRef = useRef(null);
+  // 共谋者机制 A（DiegeticCue + BranchModal + branch_points / cue / list / simulate）已下线 ——
+  // 与机制 B（StanceCard）功能重叠（同一时间窗内两种推演卡）。机制 B 用结构化三选项
+  // + speculation，自由文本输入版本退场。
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -689,151 +682,6 @@ function TencentPlayer({
       setAiKb(list.includes(base) ? base : '');
     }).catch(() => {});
   }, [playing.id, playing.filename]);
-
-  // 拉本视频的分支决策点（共谋者机制 A）+ 让 LLM 给每个分支写一条旁白 cue
-  useEffect(() => {
-    branchTriggeredRef.current = new Set();
-    setBranchCues({});
-    if (!aiKb) { setBranchPoints([]); return; }
-    let cancelled = false;
-    // 把单条 branch cue 的拉取抽成 helper，避免循环里 .then 闭包引用 cancelled
-    // 触发 eslint 的 no-loop-func 警告（const 迭代变量本身是安全的，但 cancelled 共享）
-    const fetchBranchCue = (bp) => {
-      axios
-        .get(`${API}/api/agent/branch/cue?videoId=${encodeURIComponent(aiKb)}&branchId=${encodeURIComponent(bp.branch_id)}`)
-        .then(({ data }) => {
-          if (cancelled) return;
-          if (data?.headline && data?.sub) {
-            setBranchCues(prev => ({ ...prev, [bp.branch_id]: { headline: data.headline, sub: data.sub } }));
-          }
-        })
-        .catch(() => { /* 拉不到就用 DiegeticCue 内置 fallback */ });
-    };
-    axios.get(`${API}/api/agent/branch/list?videoId=${encodeURIComponent(aiKb)}`)
-      .then(r => {
-        if (cancelled) return;
-        const pts = r.data.branch_points || [];
-        setBranchPoints(pts);
-        // 并行预拉每个分支的字幕旁白；返回了再 merge
-        for (const bp of pts) fetchBranchCue(bp);
-      })
-      .catch(() => setBranchPoints([]));
-    return () => { cancelled = true; };
-  }, [aiKb]);
-
-  // 监听 currentTime 越过 branch_point 时：不打断观看，只在屏幕一角放一个"你能介入"暗示
-  // （视频继续播；用户点了 invitation 才暂停 + 打开决策模态）
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v || branchPoints.length === 0) return;
-    const onTime = () => {
-      // 已经处于决策态 / 已经有未消化的邀请 → 不再叠加
-      if (branchPhase !== 'idle' || branchInvitation) return;
-      const now = v.currentTime;
-      for (const bp of branchPoints) {
-        if (branchTriggeredRef.current.has(bp.branch_id)) continue;
-        if (now >= bp.timestamp && now < bp.timestamp + 1.5) {
-          branchTriggeredRef.current.add(bp.branch_id);
-          setBranchInvitation(bp);
-          // 18 秒不点 → 默认错过这次"叙事窗口"，邀请 fade 掉
-          if (branchInvitationTimerRef.current) clearTimeout(branchInvitationTimerRef.current);
-          branchInvitationTimerRef.current = setTimeout(() => {
-            setBranchInvitation(null);
-          }, 18000);
-          break;
-        }
-      }
-    };
-    v.addEventListener('timeupdate', onTime);
-    return () => v.removeEventListener('timeupdate', onTime);
-  }, [branchPoints, branchPhase, branchInvitation]);
-
-  // 用户点击 invitation → 进入决策态
-  function acceptBranchInvitation() {
-    const bp = branchInvitation;
-    if (!bp) return;
-    if (branchInvitationTimerRef.current) clearTimeout(branchInvitationTimerRef.current);
-    const v = videoRef.current;
-    if (v && !v.paused) v.pause();
-    setBranchInvitation(null);
-    setBranchPending(bp);
-    setBranchChoice('');
-    setBranchSimulation('');
-    setBranchPhase('choose');
-  }
-  function dismissBranchInvitation() {
-    if (branchInvitationTimerRef.current) clearTimeout(branchInvitationTimerRef.current);
-    setBranchInvitation(null);
-  }
-
-  async function submitBranchChoice() {
-    if (!branchPending || !branchChoice.trim() || branchSimulating) return;
-    setBranchSimulating(true);
-    setBranchPhase('simulate');
-    setBranchSimulation('');
-    try {
-      const resp = await fetch(`${API}/api/agent/branch/simulate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          videoId: aiKb,
-          branchId: branchPending.branch_id,
-          choice: branchChoice.trim(),
-        }),
-      });
-      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let buffer = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        let sep;
-        while ((sep = buffer.indexOf('\n\n')) !== -1) {
-          const raw = buffer.slice(0, sep);
-          buffer = buffer.slice(sep + 2);
-          let evtType = 'message', dataStr = '';
-          for (const line of raw.split('\n')) {
-            if (line.startsWith('event: ')) evtType = line.slice(7).trim();
-            else if (line.startsWith('data: ')) dataStr += line.slice(6);
-          }
-          if (!dataStr) continue;
-          let data;
-          try { data = JSON.parse(dataStr); } catch { continue; }
-          if (evtType === 'text') setBranchSimulation(prev => prev + (data.delta || ''));
-          else if (evtType === 'done') { /* metadata only */ }
-        }
-      }
-      setBranchPhase('done');
-    } catch (err) {
-      setBranchSimulation(`推演失败：${err.message}`);
-      setBranchPhase('done');
-    } finally {
-      setBranchSimulating(false);
-    }
-  }
-
-  function dismissBranch() {
-    setBranchPending(null);
-    setBranchChoice('');
-    setBranchSimulation('');
-    setBranchPhase('idle');
-    const v = videoRef.current;
-    if (v && v.paused) v.play().catch(() => {});
-  }
-
-  // 切视频时清掉分支状态
-  useEffect(() => {
-    branchTriggeredRef.current = new Set();
-    setBranchInvitation(null);
-    setBranchPending(null);
-    setBranchChoice('');
-    setBranchSimulation('');
-    setBranchPhase('idle');
-    if (branchInvitationTimerRef.current) clearTimeout(branchInvitationTimerRef.current);
-  }, [playing.id]);
-
 
   // 人物识别改为按钮触发：点一次跑一次，标签自动 6 秒后消失。
   // 不再自动轮询 → 不会自动弹名字 / 状态变化 popup。
@@ -1770,16 +1618,6 @@ function TencentPlayer({
               </div>
             )}
 
-            {/* 共谋者 · 分支「叙事低语」—— 字幕由 LLM 按本场情绪现写 */}
-            {branchInvitation && (
-              <DiegeticCue
-                headline={branchCues[branchInvitation.branch_id]?.headline}
-                sub={branchCues[branchInvitation.branch_id]?.sub}
-                onAccept={acceptBranchInvitation}
-                onDismiss={dismissBranchInvitation}
-              />
-            )}
-
             {/* 共谋者 · 隐藏符号热点 —— 脉冲小点 + 角标 pill，点击查看深度解读
                 共谋模式关闭时整组下线（不轮询、不渲染） */}
             {conspiratorMode && (
@@ -1948,21 +1786,8 @@ function TencentPlayer({
         <button title="反馈"><IconFeedback /></button>
       </div>
 
-      {/* 共谋者 · 机制 A：分支推演模态 */}
-      {branchPending && (
-        <BranchModal
-          branch={branchPending}
-          phase={branchPhase}
-          choice={branchChoice}
-          setChoice={setBranchChoice}
-          simulation={branchSimulation}
-          simulating={branchSimulating}
-          onSubmit={submitBranchChoice}
-          onDismiss={dismissBranch}
-        />
-      )}
-
-      {/* 机制 B/C 不再全屏 —— 改成画面内浮层，挂在 .tx-player-wrap 里 */}
+      {/* 机制 A 已下线（DiegeticCue + BranchModal）。
+          机制 B/C 不再全屏 —— 改成画面内浮层，挂在 .tx-player-wrap 里 */}
 
       {/* 立场轨迹已并入叙事 X 光面板（"我的立场"tab），不再 body 级模态。 */}
 
@@ -2552,136 +2377,6 @@ function CharLine({ message, speakerName }) {
           {showCursor && lastIdx === 'sub' && <span className="de-cursor">▍</span>}
         </div>
       )}
-    </div>
-  );
-}
-
-/* ─── 共谋者 · 叙事低语（diegetic cue）────────────────────────
-   分支点到来时不再用浮动卡片，而是从画面里浮出一句金色衬线字幕，
-   像剧本身在对你低语。空格介入；ESC 视而不见。 */
-function DiegeticCue({ headline, sub, onAccept, onDismiss }) {
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === ' ' || e.code === 'Space') {
-        e.preventDefault();
-        onAccept();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        onDismiss();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onAccept, onDismiss]);
-
-  // LLM 还没拉到时给一个静态兜底（演示时一般会在 branchInvitation 触发前就到位）
-  const hl = headline || '这一秒，谁都没动。';
-  const sb = sub || '你能动一下。';
-  // headline 缺时（即使用 fallback）也避免空白；动画 key 让换 cue 时重放入场
-  const animKey = `${hl}|${sb}`;
-
-  return (
-    <>
-      <div className="diegetic-vignette" />
-      <div
-        className="diegetic-cue"
-        onClick={onAccept}
-        role="button"
-        tabIndex={0}
-        key={animKey}
-      >
-        <div className="diegetic-cue-rule" />
-        <div className="diegetic-cue-line">{hl}</div>
-        <div className="diegetic-cue-sub">{sb}</div>
-        <div className="diegetic-cue-hint">空格　执笔　│　ESC　听凭史书既定</div>
-      </div>
-    </>
-  );
-}
-
-/* ─── 共谋者 · 分支推演 · 羊皮卷风格 ───────────────────────── */
-function BranchModal({ branch, phase, choice, setChoice, simulation, simulating, onSubmit, onDismiss }) {
-  const isCustom = !branch.options.includes(choice) && choice.length > 0;
-  return (
-    <div className="branch-scroll-backdrop">
-      <button className="branch-scroll-exit" onClick={onDismiss} title="ESC">
-        <span className="branch-scroll-exit-mark">×</span>
-        <span className="branch-scroll-exit-text">视而不见</span>
-      </button>
-
-      <div className="branch-scroll">
-        <div className="branch-scroll-header">
-          <div className="branch-scroll-eyebrow">{branch.decision_holder_display} · 此时此刻</div>
-          <h2 className="branch-scroll-title">{branch.label}</h2>
-          <div className="branch-scroll-rule" />
-          <p className="branch-scroll-desc">{branch.description}</p>
-        </div>
-
-        {phase === 'choose' && (
-          <>
-            <div className="branch-scroll-question">若由你执笔 ——</div>
-            <div className="branch-scroll-options">
-              {branch.options.map((opt, i) => (
-                <button
-                  key={i}
-                  className={`branch-scroll-option ${choice === opt ? 'selected' : ''}`}
-                  onClick={() => setChoice(opt)}
-                >
-                  <span className="branch-scroll-option-marker">·</span>
-                  <span className="branch-scroll-option-text">{opt}</span>
-                </button>
-              ))}
-              <div className={`branch-scroll-option branch-scroll-option-custom ${isCustom ? 'selected' : ''}`}>
-                <span className="branch-scroll-option-marker">·</span>
-                <input
-                  className="branch-scroll-option-custom-input"
-                  placeholder="或者，写下未曾设想的那一种 ……"
-                  value={isCustom ? choice : ''}
-                  onChange={e => setChoice(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="branch-scroll-actions">
-              <button
-                className="branch-scroll-go"
-                onClick={onSubmit}
-                disabled={!choice.trim()}
-              >
-                <span>见证选择的代价</span>
-                <span className="branch-scroll-go-mark">⟶</span>
-              </button>
-            </div>
-          </>
-        )}
-
-        {(phase === 'simulate' || phase === 'done') && (
-          <>
-            <div className="branch-scroll-chosen">
-              <span className="branch-scroll-chosen-mark">你的决断</span>
-              <span className="branch-scroll-chosen-text">{choice}</span>
-            </div>
-            <div className="branch-scroll-simulation">
-              <div className="branch-scroll-sim-eyebrow">
-                ── 另一卷未定之史 ──{simulating && <span className="branch-scroll-typing"> · 渡鸦正在传信</span>}
-              </div>
-              <div className="branch-scroll-sim-body">
-                {simulation || (simulating ? ' ' : '')}
-                {simulating && simulation && <span className="branch-scroll-caret">▌</span>}
-              </div>
-            </div>
-            <div className="branch-scroll-actions">
-              <button
-                className="branch-scroll-go"
-                onClick={onDismiss}
-                disabled={simulating && !simulation}
-              >
-                <span>{simulating ? '渡鸦未归 ……' : '接受既定命运'}</span>
-                {!simulating && <span className="branch-scroll-go-mark">↺</span>}
-              </button>
-            </div>
-          </>
-        )}
-      </div>
     </div>
   );
 }
