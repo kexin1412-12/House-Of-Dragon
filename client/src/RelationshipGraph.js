@@ -192,7 +192,8 @@ function CharacterNode({ char, position, highlighted, focused, dead, dimmed, por
 }
 
 // ─── Kin edge layer ─────────────────────────────────────────────────
-function MarriageEdge({ a, b, label, sameRow }) {
+function MarriageEdge({ a, b, label, sameRow, dimmed }) {
+  const dimCls = dimmed ? ' is-dimmed' : '';
   if (sameRow) {
     // horizontal bar between two same-row portraits, "夫妻" pill mid-bar
     const y = a.y;
@@ -200,7 +201,7 @@ function MarriageEdge({ a, b, label, sameRow }) {
     const x2 = Math.max(a.x, b.x) - PORTRAIT_R;
     const mid = (x1 + x2) / 2;
     return (
-      <g className="rg-kin rg-kin-marriage">
+      <g className={`rg-kin rg-kin-marriage${dimCls}`}>
         <line x1={x1} y1={y} x2={x2} y2={y} />
         <PillLabel x={mid} y={y} text={label} kind="kin" />
       </g>
@@ -216,14 +217,14 @@ function MarriageEdge({ a, b, label, sameRow }) {
   const x1 = a.x + ux * PORTRAIT_R, y1 = a.y + uy * PORTRAIT_R;
   const x2 = b.x - ux * PORTRAIT_R, y2 = b.y - uy * PORTRAIT_R;
   return (
-    <g className="rg-kin rg-kin-marriage rg-kin-cross-gen">
+    <g className={`rg-kin rg-kin-marriage rg-kin-cross-gen${dimCls}`}>
       <line x1={x1} y1={y1} x2={x2} y2={y2} />
       <PillLabel x={mx} y={my} text={label} kind="kin" />
     </g>
   );
 }
 
-function SiblingEdge({ a, b, label }) {
+function SiblingEdge({ a, b, label, dimmed }) {
   // Bracket *above* the two heads. Used only for siblings whose parents
   // aren't visible (would be redundant otherwise — already filtered out
   // server-side).
@@ -231,7 +232,7 @@ function SiblingEdge({ a, b, label }) {
   const xL = Math.min(a.x, b.x);
   const xR = Math.max(a.x, b.x);
   return (
-    <g className="rg-kin rg-kin-sibling">
+    <g className={`rg-kin rg-kin-sibling${dimmed ? ' is-dimmed' : ''}`}>
       <line x1={a.x} y1={a.y - PORTRAIT_R} x2={a.x} y2={yBar} />
       <line x1={b.x} y1={b.y - PORTRAIT_R} x2={b.x} y2={yBar} />
       <line x1={xL} y1={yBar} x2={xR} y2={yBar} />
@@ -240,7 +241,7 @@ function SiblingEdge({ a, b, label }) {
   );
 }
 
-function ParentBracketEdge({ parents, children, positions }) {
+function ParentBracketEdge({ parents, children, positions, dimmed }) {
   // Skip if any participant is missing a position (defensive — shouldn't happen)
   for (const p of parents) if (!positions[p]) return null;
   for (const c of children) if (!positions[c]) return null;
@@ -271,7 +272,7 @@ function ParentBracketEdge({ parents, children, positions }) {
   const xR = Math.max(...xs);
 
   return (
-    <g className="rg-kin rg-kin-parent">
+    <g className={`rg-kin rg-kin-parent${dimmed ? ' is-dimmed' : ''}`}>
       {/* trunk: vertical from parent anchor down to bus */}
       <line x1={anchorX} y1={anchorY} x2={anchorX} y2={busY} />
       {/* bus: horizontal bar spanning all kids' columns (extends to anchor if needed) */}
@@ -900,28 +901,38 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
                   transformOrigin: '0 0',
                 }}
               >
-                {/* kin layer (always shown) */}
+                {/* kin layer —— 当某角色被点中（highlighted）时，跟他无关的
+                    亲缘 / 婚姻 / 兄弟 / 父子边变暗，让用户的视线集中在和这个
+                    角色直接相连的边上。无 highlight 时全亮。 */}
                 <g className="rg-kin-layer">
-                  {parentGroups.map((g, i) => (
-                    <ParentBracketEdge
-                      key={`pg-${i}`}
-                      parents={g.parents}
-                      children={g.children}
-                      positions={layout.positions}
-                    />
-                  ))}
+                  {parentGroups.map((g, i) => {
+                    const involves = !highlighted
+                      || g.parents.includes(highlighted)
+                      || g.children.includes(highlighted);
+                    return (
+                      <ParentBracketEdge
+                        key={`pg-${i}`}
+                        parents={g.parents}
+                        children={g.children}
+                        positions={layout.positions}
+                        dimmed={!involves}
+                      />
+                    );
+                  })}
                   {tree.kin_edges
                     .filter(e => e.kind === 'marriage')
                     .map((e, i) => {
                       const a = layout.positions[e.from];
                       const b = layout.positions[e.to];
                       if (!a || !b) return null;
+                      const involves = !highlighted || e.from === highlighted || e.to === highlighted;
                       return (
                         <MarriageEdge
                           key={`mar-${i}`}
                           a={a} b={b}
                           label={e.label}
                           sameRow={a.y === b.y}
+                          dimmed={!involves}
                         />
                       );
                     })}
@@ -931,7 +942,8 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
                       const a = layout.positions[e.from];
                       const b = layout.positions[e.to];
                       if (!a || !b) return null;
-                      return <SiblingEdge key={`sib-${i}`} a={a} b={b} label={e.label} />;
+                      const involves = !highlighted || e.from === highlighted || e.to === highlighted;
+                      return <SiblingEdge key={`sib-${i}`} a={a} b={b} label={e.label} dimmed={!involves} />;
                     })}
                 </g>
 

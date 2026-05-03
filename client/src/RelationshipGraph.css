@@ -355,6 +355,16 @@
 .rg-kin-marriage line { stroke: var(--rg-pill-edge); }
 .rg-kin-sibling line  { stroke: rgba(245, 209, 119, 0.65); stroke-width: 1.4; }
 .rg-kin-parent line   { stroke: rgba(245, 209, 119, 0.78); }
+
+/* 选中某角色后，跟他无关的亲缘 / 婚姻 / 兄弟 / 父子边变暗 ——
+   跟节点 .rg-node.is-dimmed 同样的 0.22 不透明度对齐。 */
+.rg-kin.is-dimmed {
+  opacity: 0.18;
+  transition: opacity .25s ease;
+}
+.rg-kin:not(.is-dimmed) {
+  transition: opacity .25s ease;
+}
 .rg-kin-cross-gen line {
   stroke: var(--rg-pill-edge);
   stroke-dasharray: 6 4;     /* visually marks the cross-gen marriage */
