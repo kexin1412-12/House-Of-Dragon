@@ -4,6 +4,7 @@ import './StorylineXRay.css';
 import StorylineTimeline from './StorylineTimeline';
 import RelationshipGraph from './RelationshipGraph';
 import EpisodeSymbolList from './EpisodeSymbolList';
+import TrajectoryChart from './TrajectoryChart';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -136,7 +137,7 @@ export default function StorylineXRay({
 }) {
   const [open, setOpen] = useState(false);
   const [inlineOpen, setInlineOpen] = useState(() => readInlineOpen());
-  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph' | 'symbols'
+  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'graph' | 'symbols' | 'stance'
   const { storyline } = useStoryline(videoId);
   // inline 模式下 currentTime 只在面板展开时跑（收起时不浪费 setTimeout 链）；
   // HUD 模式只在 open=true 时跑
@@ -246,6 +247,18 @@ export default function StorylineXRay({
             </svg>
             <span>关键线索</span>
           </button>
+          <button
+            className={`sx-tab${activeTab === 'stance' ? ' is-active' : ''}`}
+            onClick={() => handleTabClick('stance')}
+          >
+            <svg className="sx-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 17l4-4 4 3 6-7 4 4" />
+              <circle cx="7" cy="13" r="1.4" fill="currentColor" stroke="none" />
+              <circle cx="11" cy="16" r="1.4" fill="currentColor" stroke="none" />
+              <circle cx="17" cy="9" r="1.4" fill="currentColor" stroke="none" />
+            </svg>
+            <span>我的立场</span>
+          </button>
         </nav>
         <div className="sx-topbar-right">
           <span className="sx-completion-label">本集完成度</span>
@@ -304,6 +317,9 @@ export default function StorylineXRay({
             currentTime={currentTime}
             onJumpTo={onJumpTo}
           />
+        )}
+        {activeTab === 'stance' && (
+          <TrajectoryChart />
         )}
       </div>
       )}

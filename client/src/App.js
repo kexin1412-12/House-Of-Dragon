@@ -11,7 +11,6 @@ import InPlayerLoreCard from './InPlayerLoreCard';
 import FavoritesView from './FavoritesView';
 import DEMO_VIDEOS from './demoVideos';
 import StanceCard from './StanceCard';
-import TrajectoryChart from './TrajectoryChart';
 import useStanceTriggers from './useStanceTriggers';
 import {
   recordFactionChoice,
@@ -538,7 +537,6 @@ function TencentPlayer({
   // 形态：画面左下角小浮层，**不暂停视频、不蒙黑** —— 看见就选，没看见就过。
   // 总开关跟共谋模式绑在一起：conspiratorMode=false 时整组功能下线。
   const stance = useStanceTriggers({ videoId: aiKb, videoRef, enabled: conspiratorMode });
-  const [trajectoryOpen, setTrajectoryOpen] = useState(false);
 
   // 立场推演 —— 不再走单独的模态，结果直接喷到 AI 对话流里。
   // 推演的 per-option eligibility 直接从 trigger.speculation.by_option 读，
@@ -1621,21 +1619,7 @@ function TencentPlayer({
                 onChange={setConspiratorMode}
                 hidden={!hasRiffs}
               />
-              {conspiratorMode && (
-                <button
-                  className="tx-player-stance-btn"
-                  onClick={() => setTrajectoryOpen(true)}
-                  title="查看你做过的选择"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 17l4-4 4 3 6-7 4 4"/>
-                    <circle cx="7" cy="13" r="1.4" fill="currentColor"/>
-                    <circle cx="11" cy="16" r="1.4" fill="currentColor"/>
-                    <circle cx="17" cy="9" r="1.4" fill="currentColor"/>
-                  </svg>
-                  立场轨迹
-                </button>
-              )}
+              {/* "立场轨迹"已并入下方叙事 X 光面板的"我的立场"tab，工具栏不再单设入口。 */}
             </div>
 
             {/* 右边浮 icon → 展开 AgentPanel 抽屉（常驻，与关系图/对谈同族） */}
@@ -1980,12 +1964,7 @@ function TencentPlayer({
 
       {/* 机制 B/C 不再全屏 —— 改成画面内浮层，挂在 .tx-player-wrap 里 */}
 
-      {/* 立场轨迹图 —— body 级模态，从工具栏入口打开 */}
-      <TrajectoryChart
-        open={trajectoryOpen}
-        show="house-of-the-dragon"
-        onClose={() => setTrajectoryOpen(false)}
-      />
+      {/* 立场轨迹已并入叙事 X 光面板（"我的立场"tab），不再 body 级模态。 */}
 
     </div>
   );

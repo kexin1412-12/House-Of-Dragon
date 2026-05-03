@@ -1,50 +1,13 @@
-/* 立场轨迹图模态 —— 纯叙事清单，无 sparkline / persona / 分数 */
+/* 立场轨迹清单 —— 嵌在叙事 X 光面板的"我的立场"tab 里，纯叙事清单，
+   无 sparkline / persona / 分数。原浮窗形态已废弃。 */
 
-.trc-root {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(6, 8, 12, 0.78);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  animation: trc-fade-in 220ms ease;
-}
-
-@keyframes trc-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.trc-card {
-  position: relative;
-  width: min(640px, 92%);
-  max-height: 88vh;
-  overflow-y: auto;
-  background: linear-gradient(180deg, #1a1612 0%, #0f0c0a 100%);
-  border: 1px solid rgba(190,150,80,0.4);
-  border-radius: 8px;
-  padding: 32px 36px 28px;
+.trc-inline {
+  padding: 24px 28px 20px;
   color: #e8e2d3;
   font-family: "Noto Serif SC", "PingFang SC", serif;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+  max-width: 720px;
+  margin: 0 auto;
 }
-
-.trc-close {
-  position: absolute;
-  top: 12px; right: 14px;
-  background: none;
-  border: none;
-  color: #8a8275;
-  font-size: 22px;
-  cursor: pointer;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  transition: background 140ms ease;
-}
-.trc-close:hover { background: rgba(255,255,255,0.08); color: #f3ecd5; }
 
 .trc-header { margin-bottom: 24px; }
 .trc-eyebrow {
