@@ -62,6 +62,27 @@ export default function EpisodeSymbolList({ videoId, currentTime, onJumpTo }) {
     return items.filter(it => (CATEGORY_LABEL[it.category] || '其他') === activeCat);
   }, [items, activeCat]);
 
+  // upcoming（未播到）的项目对所有 symbol_id 都展示同一条"等播到这里再揭晓"，
+  // 同一 scene 里挂了多个 symbol_id 时会出现两条/三条一模一样的行 —— 视觉上是
+  // 重复。按 scene_id（兜底用 floor(scene_start)）折叠：每个 scene 只保留一行，
+  // 视频播到那一刻之后所有 symbol 各自展开。
+  const display = useMemo(() => {
+    if (!filtered.length) return [];
+    const t = currentTime || 0;
+    const out = [];
+    const seenUpcomingScenes = new Set();
+    for (const it of filtered) {
+      const watched = t >= (it.scene_end ?? it.scene_start);
+      if (!watched) {
+        const key = it.scene_id || `t${Math.floor(it.scene_start || 0)}`;
+        if (seenUpcomingScenes.has(key)) continue;
+        seenUpcomingScenes.add(key);
+      }
+      out.push(it);
+    }
+    return out;
+  }, [filtered, currentTime]);
+
   const completion = useMemo(() => {
     if (!items || items.length === 0) return { watched: 0, total: 0, pct: 0 };
     const t = currentTime || 0;
@@ -98,7 +119,7 @@ export default function EpisodeSymbolList({ videoId, currentTime, onJumpTo }) {
       </nav>
 
       <ul className="esl-list">
-        {filtered.map((it, idx) => {
+        {display.map((it, idx) => {
           const t = currentTime || 0;
           const watched = t >= (it.scene_end ?? it.scene_start);
           const upcoming = !watched;
