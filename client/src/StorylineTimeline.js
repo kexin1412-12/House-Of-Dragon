@@ -96,13 +96,21 @@ function computeLayout(storyline) {
     sideTracksMeta.push({ ...st, side });
   });
 
-  // 画布尺寸
-  const lastMainCx = mainIds.length
-    ? CANVAS_PAD_X + (mainIds.length - 1) * (NODE_W + NODE_GAP) + NODE_W / 2
-    : CANVAS_PAD_X;
-  const width = lastMainCx + NODE_W / 2 + CANVAS_PAD_X;
-  // 高度对称：mainLineY 之下也留同样的 SIDE_OFFSET_Y + NODE_H/2 + bottom pad
-  const height = mainLineY + SIDE_OFFSET_Y + NODE_H / 2 + CANVAS_PAD_BOTTOM;
+  // 画布尺寸：扫所有节点（含支线）的实际 x/y 外延，主线 lastMainCx 不够 ——
+  // 支线节点挂在 anchor.x + 118 处，最后一个主线节点的 above 支线会超出主线 width。
+  // 之前漏算这部分 → fit 看不全 + pan 边界用错的 gw 把节点截断在视口外。
+  let maxX = CANVAS_PAD_X;
+  let maxY = mainLineY;
+  for (const id of Object.keys(positions)) {
+    const p = positions[id];
+    maxX = Math.max(maxX, p.x + NODE_W / 2);
+    maxY = Math.max(maxY, p.y + NODE_H / 2);
+  }
+  const width = maxX + CANVAS_PAD_X;
+  const height = Math.max(
+    mainLineY + SIDE_OFFSET_Y + NODE_H / 2 + CANVAS_PAD_BOTTOM,
+    maxY + CANVAS_PAD_BOTTOM,
+  );
   return { positions, width, height, mainLineY, sideTracksMeta };
 }
 
