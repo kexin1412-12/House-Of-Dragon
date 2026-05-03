@@ -1,0 +1,185 @@
+/* 多视角同场景重写 modal —— 沿用 Storyline X-Ray 的色板（白色 accent + 暖灰棕底） */
+
+.mp-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8, 4, 4, 0.62);
+  backdrop-filter: blur(3px);
+  z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  animation: mpFadeIn .18s ease;
+}
+@keyframes mpFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mp-panel {
+  position: relative;
+  width: min(1280px, 100%);
+  max-height: calc(100vh - 48px);
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(ellipse at 85% -10%,
+      rgba(58, 40, 24, 0.55) 0%,
+      rgba(28, 20, 14, 0.92) 55%,
+      rgba(20, 14, 10, 0.98) 100%),
+    #1a130d;
+  color: #e8e6df;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: mpPanelIn .22s cubic-bezier(.2,.7,.2,1);
+  overflow: hidden;
+}
+@keyframes mpPanelIn {
+  from { opacity: 0; transform: scale(.985); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.mp-close {
+  position: absolute; top: 12px; right: 14px;
+  background: transparent; border: 0;
+  color: rgba(232, 230, 223, 0.7);
+  width: 34px; height: 34px;
+  font-size: 22px; line-height: 1;
+  cursor: pointer; border-radius: 50%;
+  transition: background .15s ease, color .15s ease;
+  z-index: 2;
+}
+.mp-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+.mp-header {
+  padding: 22px 32px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+.mp-eyebrow {
+  font-size: 11px; letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 6px;
+}
+.mp-title {
+  font-size: 22px; font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+.mp-time {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(232, 230, 223, 0.55);
+  font-feature-settings: 'tnum';
+  letter-spacing: 1px;
+}
+
+.mp-status {
+  padding: 60px 32px;
+  text-align: center;
+  color: rgba(232, 230, 223, 0.7);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.mp-status-error {
+  color: #ffb4b4;
+}
+
+/* ─── 三栏（或 N 栏）并排 ──────────────────────────────────────────── */
+.mp-cols {
+  display: grid;
+  gap: 20px;
+  padding: 20px 28px 8px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+.mp-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mp-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mp-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 980px) {
+  .mp-cols-3, .mp-cols-4 { grid-template-columns: 1fr; }
+}
+
+.mp-col {
+  background: rgba(20, 14, 10, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 18px 20px 22px;
+  display: flex; flex-direction: column;
+  min-height: 320px;
+  transition: border-color .2s ease;
+}
+.mp-col:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.mp-col-head {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+.mp-col-portrait {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+.mp-col-portrait--empty {
+  background: linear-gradient(135deg, rgba(46, 30, 14, 0.6), rgba(20, 14, 10, 0.9));
+}
+.mp-col-meta {
+  min-width: 0;
+}
+.mp-col-name {
+  font-size: 16px; font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mp-col-id {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.mp-col-body {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #e8e6df;
+  white-space: pre-wrap;
+  letter-spacing: 0.2px;
+  font-family: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', serif;
+  flex: 1 1 auto;
+}
+.mp-col-placeholder {
+  color: rgba(232, 230, 223, 0.4);
+  font-size: 13px;
+  font-style: italic;
+}
+.mp-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  color: rgba(255, 255, 255, 0.85);
+  animation: mpBlink 1s infinite;
+}
+@keyframes mpBlink {
+  0%, 50%   { opacity: 1; }
+  51%, 100% { opacity: 0.15; }
+}
+
+.mp-footer {
+  padding: 12px 32px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: right;
+  flex-shrink: 0;
+}
+.mp-footer-hint {
+  font-size: 11.5px;
+  color: rgba(232, 230, 223, 0.45);
+  letter-spacing: 0.5px;
+}

@@ -2,6 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './StorylineTimeline.css';
 import useStorylineFavorites from './useStorylineFavorites';
 import { getChoices } from './stanceStore';
+import MultiPovModal from './MultiPovModal';
+
+const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const ZOOM_MIN = 0.5;
 const ZOOM_MAX = 2.5;
@@ -286,7 +289,8 @@ function StoryNode({
 }
 
 // ─── Detail side panel (右侧滑入) ──────────────────────────────────
-function NodeDetailPanel({ node, allNodesById, onSelectNode, onJumpTo, fav, onToggleFav, onClose }) {
+function NodeDetailPanel({ node, allNodesById, onSelectNode, onJumpTo, fav, onToggleFav, onClose, videoId }) {
+  const [povOpen, setPovOpen] = useState(false);
   if (!node) return null;
   const [prevId, nextId] = node.related_node_ids || [null, null];
   const prevNode = prevId ? allNodesById[prevId] : null;
@@ -354,12 +358,28 @@ function NodeDetailPanel({ node, allNodesById, onSelectNode, onJumpTo, fav, onTo
           ▶ 跳到此节点
         </button>
         <button
+          className="sx-btn sx-btn-secondary"
+          onClick={() => setPovOpen(true)}
+        >
+          🎭 三视角重写这场戏
+        </button>
+        <button
           className={`sx-btn sx-btn-secondary${fav ? ' is-active' : ''}`}
           onClick={onToggleFav}
         >
           {fav ? '✓ 已收藏片段' : '🔖 标记为片段'}
         </button>
       </div>
+      {povOpen && (
+        <MultiPovModal
+          api={API}
+          videoId={videoId}
+          startTime={node.start_time}
+          endTime={node.end_time}
+          sceneLabel={node.title}
+          onClose={() => setPovOpen(false)}
+        />
+      )}
     </aside>
   );
 }
@@ -782,6 +802,7 @@ export default function StorylineTimeline({
           fav={isFav(videoId, selectedNode.node_id)}
           onToggleFav={handleToggleFav}
           onClose={() => setSelectedNodeId(null)}
+          videoId={videoId}
         />
       )}
     </div>

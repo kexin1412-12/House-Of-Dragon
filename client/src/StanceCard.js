@@ -42,6 +42,7 @@ export default function StanceCard({
     setRevealedIdx(null);
     startedAtRef.current = Date.now();
     setRemainingMs(AUTO_DISMISS_MS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger?.trigger_id]);
 
   // pre-vote 倒计时
@@ -57,6 +58,7 @@ export default function StanceCard({
       }
     }, 100);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger?.trigger_id, pickedId, onDismiss]);
 
   // post-vote no-speculation：1.5s 后自动收
