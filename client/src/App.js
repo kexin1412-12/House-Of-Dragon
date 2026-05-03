@@ -12,7 +12,6 @@ import FavoritesView from './FavoritesView';
 import DEMO_VIDEOS from './demoVideos';
 import StanceCard from './StanceCard';
 import TrajectoryChart from './TrajectoryChart';
-import SpeculationView from './SpeculationView';
 import useStanceTriggers from './useStanceTriggers';
 import {
   recordFactionChoice,
@@ -541,10 +540,9 @@ function TencentPlayer({
   const stance = useStanceTriggers({ videoId: aiKb, videoRef, enabled: conspiratorMode });
   const [trajectoryOpen, setTrajectoryOpen] = useState(false);
 
-  // 立场推演 / SpeculationView state —— 当前正在展开"如果走这条路"的 trigger+choice
-  // 推演的 per-option eligibility 直接从 trigger.speculation.by_option 读，不再
-  // 走单独的 endpoint —— useStanceTriggers 拉的 trigger 配置里已经有这个字段。
-  const [speculationFor, setSpeculationFor] = useState(null);
+  // 立场推演 —— 不再走单独的模态，结果直接喷到 AI 对话流里。
+  // 推演的 per-option eligibility 直接从 trigger.speculation.by_option 读，
+  // useStanceTriggers 拉的 trigger 配置里已经有这个字段。
 
   // 用户在 StanceCard 里选完 —— 立刻落盘（不论后续会不会展开推演）
   function handleStanceChoose(option) {
@@ -578,14 +576,12 @@ function TencentPlayer({
     stance.dismiss();
   }
 
-  // 用户在 StanceCard / AgentPanel / TrajectoryChart 任一处点了"展开推演"
+  // 用户在 StanceCard / AgentPanel / TrajectoryChart 任一处点了"展开推演" ——
+  // 收掉立场卡，把推演直接喷到 AI 对话里（submitStanceSpeculation 自己会
+  // 打开抽屉 + 切 analysis 模式）。
   function handleOpenSpeculation(trigger, choice) {
-    setSpeculationFor({ trigger, choice });
-    stance.dismiss();   // 如果立场卡还浮着，关掉
-  }
-
-  function handleCloseSpeculation() {
-    setSpeculationFor(null);
+    stance.dismiss();
+    submitStanceSpeculation(trigger, choice);
   }
 
   useEffect(() => {
@@ -1297,6 +1293,118 @@ function TencentPlayer({
     }
   }
 
+  // 立场推演 → 直接喷到 AI 对话流里（不再走单独的 SpeculationView 模态）。
+  // 用户可以在同一对话窗口里继续追问 —— LLM 看得到完整 lastExchanges。
+  async function submitStanceSpeculation(trigger, choice) {
+    if (aiSending) return;
+    if (!trigger || !choice) return;
+
+    // 抽屉打开 + 切到 analysis 模态（如果在角色内心模式里）
+    setAiChatOpen(true);
+    setPanelMode('analysis');
+
+    const t = videoRef.current?.currentTime || 0;
+    const userText = `🔀 立场推演 · ${trigger.scene_label} · 你选了：${choice.option_label}`;
+
+    setAiMessages(prev => [
+      ...prev,
+      { role: 'user', text: userText, t, kind: 'speculation_request' },
+      { role: 'agent', text: '', source: 'loading', t, streaming: true, kind: 'speculation' },
+    ]);
+    setAiSending(true);
+
+    // 跟 submitAiQuestion 同款打字机
+    const TYPE_INTERVAL_MS = 18;
+    let queue = '';
+    let typing = false;
+    const flushChunk = (chunk) => setAiMessages(prev => {
+      const copy = prev.slice();
+      const last = copy[copy.length - 1];
+      if (last?.role === 'agent' && last.streaming) {
+        copy[copy.length - 1] = { ...last, text: last.text + chunk };
+      }
+      return copy;
+    });
+    const tick = () => {
+      if (!queue.length) { typing = false; return; }
+      const n = queue.length > 200 ? 3 : queue.length > 80 ? 2 : 1;
+      flushChunk(queue.slice(0, n));
+      queue = queue.slice(n);
+      typing = true;
+      setTimeout(tick, TYPE_INTERVAL_MS);
+    };
+    const appendDelta = (delta) => {
+      if (!delta) return;
+      queue += delta;
+      if (!typing) tick();
+    };
+    const finalizeMsg = (patch) => {
+      const apply = () => {
+        setAiMessages(prev => {
+          const copy = prev.slice();
+          const last = copy[copy.length - 1];
+          if (last?.role === 'agent' && last.streaming) {
+            copy[copy.length - 1] = { ...last, streaming: false, ...patch };
+          }
+          return copy;
+        });
+      };
+      const wait = () => {
+        if (queue.length || typing) setTimeout(wait, 40);
+        else apply();
+      };
+      wait();
+    };
+
+    try {
+      const resp = await fetch(`${API}/api/agent/stance/speculate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          videoId: aiKb || null,
+          triggerId: trigger.trigger_id,
+          optionId: choice.option_id,
+        }),
+      });
+      if (!resp.ok || !resp.body) throw new Error(`HTTP ${resp.status}`);
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let source = 'llm', provider = null, model = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) !== -1) {
+          const raw = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+          let evtType = 'message', dataStr = '';
+          for (const line of raw.split('\n')) {
+            if (line.startsWith('event: ')) evtType = line.slice(7).trim();
+            else if (line.startsWith('data: ')) dataStr += line.slice(6);
+          }
+          if (!dataStr) continue;
+          let data;
+          try { data = JSON.parse(dataStr); } catch { continue; }
+          if (evtType === 'text') appendDelta(data.delta || '');
+          else if (evtType === 'done') {
+            if (data.source) source = data.source;
+            if (data.provider) provider = data.provider;
+            if (data.model) model = data.model;
+            finalizeMsg({ source, provider, model });
+          }
+        }
+      }
+    } catch (err) {
+      finalizeMsg({ text: `推演中断：${err?.message || '未知错误'}`, source: 'error' });
+    } finally {
+      setAiSending(false);
+    }
+  }
+
   // 角色内心：流式拿三层回应（说/心/潜）+ 三个跟问选项
   async function submitCharacterTurn(forcedQuestion) {
     if (!charSelected || !aiKb) return;
@@ -1879,14 +1987,6 @@ function TencentPlayer({
         onClose={() => setTrajectoryOpen(false)}
       />
 
-      {/* 立场推演 ——"如果走这条路"模态，从立场卡 / AgentPanel / TrajectoryChart 入口打开 */}
-      <SpeculationView
-        open={!!speculationFor}
-        videoId={aiKb}
-        trigger={speculationFor?.trigger}
-        choice={speculationFor?.choice}
-        onClose={handleCloseSpeculation}
-      />
     </div>
   );
 }
