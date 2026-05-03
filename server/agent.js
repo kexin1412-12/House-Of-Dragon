@@ -3794,6 +3794,143 @@ ${povBlock}
       res.end();
     }
   });
+
+  // ─── 立场总结 / Stance Summary ────────────────────────────────────────
+  // POST /api/agent/stance/summary
+  // body: { videoId, choices:[{trigger_id, option_id, option_label, option_inner_voice,
+  //                            scene_label, type, recorded_at}] }
+  //
+  // 流式输出一段"读你的立场轨迹"的第二人称叙述。
+  //
+  // **绝对红线（写进 prompt）**：不归类、不打 persona 标签、不说"你站 X 党 / 你是 X 类型"、
+  // 不打分、不写阵营 banner。只写 issue-by-issue 你表达过什么位置 + 把每个断言挂回到具体场景。
+  app.post('/api/agent/stance/summary', async (req, res) => {
+    const { videoId, choices } = req.body || {};
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
+    const send = (event, data) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+
+    if (!Array.isArray(choices) || choices.length === 0) {
+      send('text', { delta: '还没有立场记录。' });
+      send('done', { source: 'empty' });
+      return res.end();
+    }
+    if (!videoId) {
+      send('text', { delta: '缺少 videoId。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+    if (!ai.isAvailable('chat')) {
+      send('text', { delta: '当前没有可用的 LLM provider。' });
+      send('done', { source: 'error' });
+      return res.end();
+    }
+
+    // 读 stance 配置 → 给每条 choice 补 prompt_lines / convergence_hint / 其他选项的 inner_voice
+    // 让 LLM 看到"你当时面对的张力是什么"，而不是只看到一行 label。
+    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    let stanceCfg = null;
+    try { stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); } catch {}
+    const triggerById = {};
+    for (const t of (stanceCfg?.triggers || [])) triggerById[t.trigger_id] = t;
+
+    const kb = loadKB(videoId);
+    const showName = kb?.show_id === 'house-of-the-dragon' ? '《龙之家族》' : `《${kb?.title || videoId}》`;
+    const episode = (kb && resolveEpisode(kb)) || '';
+
+    // sort by trigger timestamp（如果有），否则按 recorded_at
+    const enriched = choices
+      .map(c => {
+        const tg = triggerById[c.trigger_id] || null;
+        return {
+          choice: c,
+          trigger: tg,
+          ts: tg?.timestamp ?? Date.parse(c.recorded_at || 0) / 1000 ?? 0,
+        };
+      })
+      .sort((a, b) => a.ts - b.ts);
+
+    const fmtTs = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+    const blocks = enriched.map(({ choice, trigger, ts }, i) => {
+      const others = (trigger?.options || [])
+        .filter(o => o.id !== choice.option_id)
+        .map(o => `· "${o.label}"（${o.inner_voice || '—'}）`)
+        .join('\n');
+      const isCanonical = !!(trigger?.options || []).find(o => o.id === choice.option_id)?.is_canonical;
+      return `[${i + 1}] ${fmtTs(ts)} · ${choice.scene_label}${choice.type === 'recall' ? '（回顾打脸）' : ''}
+情境：${(trigger?.prompt_lines || []).join(' / ') || '—'}
+你选了："${choice.option_label}"${isCanonical ? '（剧情正在发生的方向）' : '（与剧情不一样的方向）'}
+你的内心理由：${choice.option_inner_voice ? `"${choice.option_inner_voice}"` : '—'}
+${others ? `当时其他可选：\n${others}` : ''}`;
+    }).join('\n\n');
+
+    const system = `你是 HBO ${showName} 的剧本顾问。任务：给观众**读一遍他的立场轨迹**。
+
+═══ 红线（违反就是失败） ═══
+1. 不归类。绝对不要写"你属于 X 党 / 你是 X 类型 / 你是审慎型 / 你倾向 Y 阵营"这种 persona 标签或党派 banner。
+2. 不打分。不要"你 6/10 站绿党"、不要任何数字、不要 sparkline、不要排名。
+3. 不评判。不要说"这是个明智的选择 / 这是个鲁莽的选择"。
+4. 不预言用户。不要写"你将来会..."、不要替观众预测下一集他会怎么选。
+5. 不剧透原剧后续真实剧情。
+
+═══ 该写什么 ═══
+按 issue（议题）维度组织，不要按时间线流水账。每个 issue 一段：
+- 先用一句话指明这件事本身的张力（例：维斯特洛的政治婚姻里，私情有多少空间？）
+- 再说在这件事上你做过的具体选择 —— 用 [N] 引用上面给的编号场景作为证据
+- 同一议题如果你前后立场有变化（包括打脸 / recall），就明确指出转折点
+- 如果你多次站到"与剧情不一样的方向"，可以指出你在抗某一种叙事重力
+
+挑 3-4 个最有 substance 的议题来写，不是覆盖全部。
+
+═══ 形式 ═══
+全文 350-500 字。第二人称"你"，平静克制语气。
+每个议题一段，段间空一行。
+最后一段不是总结、不是定调，是 1 个**开放式问句**，把"如果再来一次你还会这样选吗"这层张力抛回给观众，不要替观众回答。
+不要 markdown 标题、不要 emoji、不要 [N] 之外的标点装饰。`;
+
+    const user = `【剧集】${episode}（${showName}）
+【你做过的立场选择，按时间顺序】
+
+${blocks}
+
+请按上面的红线 + 形式约束，给我读一遍我的立场轨迹。`;
+
+    const controller = new AbortController();
+    res.on('close', () => { if (!res.writableEnded) controller.abort(); });
+
+    try {
+      let providerInfo = null;
+      const stream = ai.chatStream({
+        task: 'chat',
+        system,
+        messages: [{ role: 'user', content: user }],
+        maxTokens: 1200,
+        temperature: 0.7,
+        signal: controller.signal,
+      });
+      for await (const chunk of stream) {
+        if (chunk.type === 'meta') { providerInfo = { provider: chunk.provider, model: chunk.model }; continue; }
+        if (chunk.type === 'text' && chunk.delta) send('text', { delta: chunk.delta });
+      }
+      send('done', {
+        source: 'llm',
+        episode,
+        choice_count: choices.length,
+        provider: providerInfo?.provider || null,
+        model: providerInfo?.model || null,
+      });
+      res.end();
+    } catch (err) {
+      if (controller.signal.aborted) return res.end();
+      console.error('[stance/summary] LLM error:', err?.message || err);
+      send('text', { delta: `\n\n（总结中断：${err?.message || '未知错误'}）` });
+      send('done', { source: 'error' });
+      res.end();
+    }
+  });
 }
 
 module.exports = { register };

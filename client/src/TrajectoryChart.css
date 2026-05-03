@@ -108,11 +108,90 @@
   letter-spacing: 0.08em;
 }
 
+/* AI 总结区 ────────────────────────────────────────── */
+.trc-summary {
+  margin-top: 24px;
+  padding: 20px 22px 22px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,0.04) 0%,
+      rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 8px;
+}
+
+.trc-summary-head {
+  margin-bottom: 14px;
+}
+.trc-summary-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  font-weight: 600;
+}
+.trc-summary-title {
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.trc-summary-cta {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 14px;
+}
+.trc-summary-cta-desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.85;
+  color: rgba(232,226,211,0.78);
+  letter-spacing: 0.02em;
+}
+
+.trc-summary-body {
+  font-size: 14px;
+  line-height: 2;
+  color: #f3ecd5;
+  letter-spacing: 0.02em;
+  white-space: pre-wrap;
+  font-family: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', serif;
+}
+.trc-summary-body--streaming { min-height: 80px; }
+.trc-summary-placeholder {
+  color: rgba(232,226,211,0.4);
+  font-style: italic;
+  font-size: 13px;
+}
+.trc-summary-cursor {
+  display: inline-block;
+  margin-left: 1px;
+  color: rgba(255,255,255,0.85);
+  animation: trcBlink 1s infinite;
+}
+@keyframes trcBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.15; }
+}
+
+.trc-summary-foot {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trc-summary-error {
+  font-size: 13px;
+  color: #ffb4b4;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+}
+
 /* actions */
 .trc-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
+  margin-top: 16px;
   padding-top: 16px;
   border-top: 1px dashed rgba(190,150,80,0.15);
 }
@@ -123,9 +202,22 @@
   font-size: 13px;
   cursor: pointer;
 }
+.trc-btn-sm { padding: 4px 10px; font-size: 12px; }
 .trc-btn-ghost {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.14);
   color: #8a8275;
 }
 .trc-btn-ghost:hover { color: #d8cfb6; border-color: rgba(255,255,255,0.28); }
+.trc-btn-primary {
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.92);
+  color: #1a130d;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background .15s ease, border-color .15s ease;
+}
+.trc-btn-primary:hover {
+  background: #fff;
+  border-color: #fff;
+}
