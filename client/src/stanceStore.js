@@ -1,7 +1,8 @@
-// 立场追踪 / Stance Tracking —— localStorage 状态层
+// 立场追踪 / Stance Tracking —— 纯内存状态层（每次刷新页面清零）
 //
-// 后端不存选择（anonymous + 无 DB）。所有 user state 在浏览器里：
-//   hotd.stance.v1 = { choices }
+// 之前用 localStorage('hotd.stance.v1') 持久化，但产品决定立场选择是
+// "本次观影"内的现场记录——刷新页面就回到空白，让用户每次重新开始
+// 观影时面对一张白板。所以从 localStorage 退化成模块级变量，F5 即清。
 //
 // 不打分、不归类、不聚合。choices 就是一个按时间排序的事件流，
 // 每条记录"在哪场戏 / 你选了哪一个 / 你当时的内心理由"。
@@ -9,32 +10,14 @@
 //
 // 开关由 conspiratorMode（共谋模式）统一控制，本 store 不再保管 opt-in。
 
-const KEY = 'hotd.stance.v1';
+let _state = { choices: [] };
 
-function readRaw() {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function writeRaw(state) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state));
-  } catch {
-    /* quota / private mode → silently ignore；功能本身就是可选 */
-  }
-}
+// 一次性清理旧版本遗留在 localStorage 里的 stance 数据。新模型走纯内存，
+// 不读不写 localStorage，但用户浏览器里可能还有上次访问留下的 hotd.stance.v1。
+try { localStorage.removeItem('hotd.stance.v1'); } catch {}
 
 function ensureState() {
-  const cur = readRaw();
-  if (cur && typeof cur === 'object') return cur;
-  const init = { choices: [] };
-  writeRaw(init);
-  return init;
+  return _state;
 }
 
 // ─── choices ─────────────────────────────────────────────────────────────
@@ -59,7 +42,6 @@ export function recordFactionChoice({ trigger_id, video_id, option_id, option_la
   };
   if (idx >= 0) s.choices[idx] = entry;
   else s.choices.push(entry);
-  writeRaw(s);
   return entry;
 }
 
@@ -74,7 +56,6 @@ export function recordRecallResolution({ trigger_id, video_id, prior_trigger_id,
   };
   if (idx >= 0) s.choices[idx] = entry;
   else s.choices.push(entry);
-  writeRaw(s);
   return entry;
 }
 
@@ -85,5 +66,5 @@ export function isTriggerHandled(triggerId) {
 
 // 整个 store 重置（"重置我的轨迹"按钮用）
 export function resetAll() {
-  writeRaw({ choices: [] });
+  _state = { choices: [] };
 }
