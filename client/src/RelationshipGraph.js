@@ -841,18 +841,18 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
         <div
           className="rg-tree-card"
           onClickCapture={(e) => {
-            // 兜底：点 panel / 角色节点 / zoom 按钮 / 关闭 × 之外的任何位置
-            // （含 header / legend / scan-line / 卡片空白）都按"渐进剥离"关一层
-            // (profile → highlight → drawer)，跟 ESC 行为一致。capture 阶段跑确保
-            // viewport blank click 也能命中 (与 .rg-tree-viewport 的 bubble onClick
-            // 调用同一 closeOneLayer，幂等)。embedded 模式下第三层是 noop——
-            // 父级（StorylineXRay）拥有真正的"关闭"语义。
+            // 只有在 SVG viewport 空白处的点击才走"渐进剥离"
+            // (profile → highlight → drawer)。header / legend / scan-line /
+            // 卡片 padding 这些"装饰区"不再触发 —— 避免用户读 profile 时
+            // 随手点周围把档案带飞。viewport 内部点 .rg-node 仍走节点本身的
+            // click handler；这里只兜空白。embedded 模式下第三层是 noop。
             const t = e.target;
             if (!t || !t.closest) return;
             if (t.closest('.rg-profile')) return;
             if (t.closest('.rg-node')) return;
             if (t.closest('.rg-zoom-controls')) return;
             if (t.closest('.rg-close')) return;
+            if (!t.closest('.rg-tree-viewport')) return;
             closeOneLayer();
           }}
         >
