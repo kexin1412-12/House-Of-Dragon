@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
+import { Analytics } from '@vercel/analytics/react';
 import './App.css';
 import RelationshipGraph from './RelationshipGraph';
 import StorylineXRay from './StorylineXRay';
@@ -392,6 +393,7 @@ export default function App() {
           initialRightTab={pendingRightTab}
         />
       )}
+      <Analytics />
     </div>
   );
 }
