@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Analytics } from "@vercel/analytics/react";
 import axios from 'axios';
 import './App.css';
 import RelationshipGraph from './RelationshipGraph';
