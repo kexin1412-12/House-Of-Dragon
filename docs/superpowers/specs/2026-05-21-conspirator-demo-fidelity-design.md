@@ -33,8 +33,11 @@
 1. **不暴露内部细节**：可见文案不得出现文件名 / 路径 / JSON 字段名 / 内部 ID /
    反引号代码引用 / "本剧 KB" 这类元层级措辞。真实数据字段（`convergence_hint`、
    `arc_so_far`、`is_canonical`、`short_identity` 等）一律映射成干净中文标签。
-   现有英文模块名（StanceCard / CharacterPanel 等）作为既有设计元素**保留**，
-   不新增裸字段名。
+   **现有英文模块名要去掉**：现页内交互块标题里的内部组件/代码标识
+   （StanceCard / CharacterPanel / SymbolHotspots / AgentPanel，以及 `cursor_time`
+   这类代码变量名）一律从可见文案中清除，换成纯中文标签（如「立场抉择卡」
+   「四色声部」「画面叠加层」「快捷提问」「观看进度」）。新增两个模块同样只用中文标签。
+   品牌词（共谋者 / Conspirator）与剧名英文不在此限。
 2. **不打分**：立场 / 投票 / 选择类交互不打分、不归类、不聚合，连底层 score 都不算。
    "我的立场轨迹" 只**列出**用户的选择本身。"观望" 永远是合法选项。
 3. **点空白关 profile**：关系图 profile 侧栏开启后，panel 之外任何空白点击都走
