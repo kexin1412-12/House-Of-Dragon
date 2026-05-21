@@ -385,6 +385,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .tl-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
   transition:.22s;position:relative;overflow:hidden}
 .tl-node.locked .tl-card{filter:blur(2px) grayscale(1);opacity:.48;pointer-events:none;user-select:none}
+.tl-node.unlocked{cursor:pointer}
 .tl-node.unlocked .tl-card{border-left:3px solid var(--green)}
 .tl-node.unlocked .tl-card:hover{border-color:var(--green);box-shadow:0 6px 20px rgba(46,125,82,.12);transform:translateX(2px)}
 .tl-node.unlocked.expanded .tl-card{background:rgba(46,125,82,.04)}
@@ -1389,12 +1390,9 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
     return m+':'+String(s).padStart(2,'0');
   }
 
-  function fmtMin(min){
-    const m=Math.floor(min), s=0;
-    return m+':'+String(s).padStart(2,'0');
-  }
-
   const track=document.getElementById('tlTrack');
+  const tlBadge=document.getElementById('tlBadge');
+  const tlCursorTxt=document.getElementById('tlCursorTxt');
 
   /* build DOM nodes once */
   const nodeEls=TL_DATA.nodes.map((n,i)=>{
@@ -1471,15 +1469,12 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
       }
     });
 
-    const badge=document.getElementById('tlBadge');
-    const curTxt=document.getElementById('tlCursorTxt');
-    const scrub=document.getElementById('tlScrub');
     const minVal=cursorSec/60;
     const displayMin=Math.floor(minVal);
     const displaySec=Math.floor(cursorSec%60);
     const label=displayMin+':'+String(displaySec).padStart(2,'0');
-    if(badge)badge.textContent='观看进度 '+label;
-    if(curTxt)curTxt.textContent=label;
+    if(tlBadge)tlBadge.textContent='观看进度 '+label;
+    if(tlCursorTxt)tlCursorTxt.textContent=label;
   }
 
   const tlScrub=document.getElementById('tlScrub');
