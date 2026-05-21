@@ -305,11 +305,12 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .rg2-conf-ally{stroke:var(--green);stroke-dasharray:7 5}
 .rg2-conf-blood{stroke:var(--slate);stroke-dasharray:1 0}
 .rg2-conf-secret{stroke:var(--emotion);stroke-dasharray:2 5;stroke-linecap:round}
-.rg2-conf-friend{stroke:var(--reason)}
 .rg2-conf-lab{fill:var(--dim);font-size:10.5px;font-weight:600;opacity:0;transition:opacity .25s}
 .rg2-conf-lab.is-on{opacity:.95}
+.rg2-conf-lab.is-future{opacity:.4}
 .rg2-conf-lab-bg{fill:var(--panel);opacity:0;transition:opacity .25s}
 .rg2-conf-lab-bg.is-on{opacity:.92}
+.rg2-conf-lab-bg.is-future{opacity:.35}
 /* nodes */
 .rg2-node{cursor:pointer;transition:opacity .25s}
 .rg2-node:hover .rg2-ring{stroke:var(--reason);stroke-width:2.4}
@@ -1117,8 +1118,9 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
         kinLayer.appendChild(el('line',{x1:A.x+R,y1:A.y,x2:B.x-R,y2:B.y,class:'rg2-kin'}));
         kinLayer.appendChild(pill((A.x+B.x)/2,A.y,k.label));
       }else{
-        /* cross-generation marriage → diagonal */
-        kinLayer.appendChild(el('line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:'rg2-kin','stroke-dasharray':'4 4'}));
+        /* cross-generation marriage → diagonal, trimmed to circle rims */
+        const angle=Math.atan2(B.y-A.y,B.x-A.x);
+        kinLayer.appendChild(el('line',{x1:A.x+Math.cos(angle)*R,y1:A.y+Math.sin(angle)*R,x2:B.x-Math.cos(angle)*R,y2:B.y-Math.sin(angle)*R,class:'rg2-kin','stroke-dasharray':'4 4'}));
         kinLayer.appendChild(pill((A.x+B.x)/2,(A.y+B.y)/2,k.label));
       }
     }else if(k.kind==='sibling'){
@@ -1231,15 +1233,18 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
       ce.bg.classList.toggle('is-on',touches);
       ce.lab.classList.toggle('is-on',touches);
       ce.line.classList.toggle('is-future',touches&&ce.future);
+      ce.bg.classList.toggle('is-future',touches&&ce.future);
+      ce.lab.classList.toggle('is-future',touches&&ce.future);
       if(touches){involved.add(ce.a);involved.add(ce.b);}
     });
+    const hasCon=involved.size>1;
     ids.forEach(nid=>{
-      nodeEls[nid].classList.toggle('is-dim',!involved.has(nid));
+      nodeEls[nid].classList.toggle('is-dim',hasCon&&!involved.has(nid));
       nodeEls[nid].classList.toggle('is-sel',nid===id);
     });
   }
   function clearHighlight(){
-    confEls.forEach(ce=>{ce.line.classList.remove('is-on','is-future');ce.bg.classList.remove('is-on');ce.lab.classList.remove('is-on');});
+    confEls.forEach(ce=>{ce.line.classList.remove('is-on','is-future');ce.bg.classList.remove('is-on','is-future');ce.lab.classList.remove('is-on','is-future');});
     ids.forEach(nid=>nodeEls[nid].classList.remove('is-dim','is-sel'));
   }
 
