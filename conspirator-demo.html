@@ -593,30 +593,31 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <p class="lead">画面上呼吸的光点是导演本来就放在那里、大多数观众会错过的信息。<b style="color:var(--text)">点光点看解读；拖动进度条，看防剧透检索层如何按你的进度过滤未来。</b></p>
 
   <div class="demo">
-    <div class="head"><span class="dot" style="background:var(--reason)"></span><span class="t">SymbolHotspots · 画面叠加层</span><span class="badge" id="curBadge">当前进度 31:00</span></div>
-    <div class="body">
-      <div class="frame">
-        <div class="label"><b>godswood</b> · S1E5</div>
-        <span class="hotspot" style="left:34%;top:40%" data-s="brooch"></span>
-        <span class="hotspot r2" style="left:62%;top:55%" data-s="throne"></span>
-        <span class="hotspot r3" style="left:48%;top:70%" data-s="goose"></span>
-        <div class="sub">
-          <div class="zh">我宁愿要烤鸭，也不要<span class="kw" id="kwGoose">鹅<span class="pop" id="goosePop">
-            <div class="lvl"><b>一句话</b>表面在聊菜，实则隐晦谈论性取向。</div>
-            <div class="lvl"><b>深层含义</b>中世纪语境下 “goose” 是对同性取向的委婉说法，雷妮拉在用餐桌话语试探莱诺。</div>
-            <div class="lvl"><b>叙事效果</b>编剧用一句菜名，让观众在不被点破的情况下意识到莱诺的取向。</div>
-          </span></span>。</div>
-          <div class="en">I prefer roast duck to goose. I cannot say why.</div>
+    <div class=”head”><span class=”dot” style=”background:var(--reason)”></span><span class=”t”>画面叠加层</span><span class=”badge” id=”curBadge”>当前进度 31:00</span></div>
+    <div class=”body”>
+      <div class=”frame”>
+        <div class=”label”><b>潮汐堡 · 海岸</b> · S1E5</div>
+        <span class=”hotspot” style=”left:22%;top:38%” data-s=”throne”></span>
+        <span class=”hotspot r2” style=”left:55%;top:48%” data-s=”moon_tea”></span>
+        <span class=”hotspot r3” style=”left:72%;top:62%” data-s=”goose”></span>
+        <span class=”hotspot” style=”left:40%;top:72%;opacity:.18;filter:grayscale(1);animation:none” data-s=”hightower_green” title=”锁定 · 等播到这里再揭晓”></span>
+        <div class=”sub”>
+          <div class=”zh”>比起烧鹅，我更偏爱烤鸭。说不上为什么。——<span class=”kw” id=”kwGoose”>莱诺<span class=”pop” id=”goosePop”>
+            <div class=”lvl”><b>一句话</b>莱诺借餐桌话语向雷妮拉委婉说明自己的取向——用”鸭”与”鹅”代替不能明说的词。</div>
+            <div class=”lvl”><b>双关背景</b>中世纪欧洲贵族圈以食物隐喻性取向的传统，被编剧直接复刻。”goose”对应莱诺真实的爱好，”duck”是他必须履行的婚姻义务。</div>
+            <div class=”lvl”><b>叙事效果</b>两个被塞进政治婚姻的年轻人，用同一套”代号”默契达成了”各自吃自己想吃的”协议。</div>
+          </span></span></div>
+          <div class=”en”>I prefer roast duck to goose. I cannot say why.</div>
         </div>
       </div>
-      <div class="infocard" id="symInfo"><div class="tiny center" style="padding:14px 0">点击画面上的光点，或点字幕里高亮的「鹅」查看文化梗</div></div>
+      <div class=”infocard” id=”symInfo”><div class=”tiny center” style=”padding:14px 0”>点击画面上的光点，或点字幕里高亮的「莱诺」查看梗解析</div></div>
 
-      <div class="scrubwrap">
-        <div class="tiny" style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span>观看进度（cursor_time）</span><span id="cursorTxt">31:00</span>
+      <div class=”scrubwrap”>
+        <div class=”tiny” style=”display:flex;justify-content:space-between;margin-bottom:6px”>
+          <span>观看进度</span><span id=”cursorTxt”>31:00</span>
         </div>
-        <input type="range" class="scrub" id="scrub" min="0" max="60" value="31" />
-        <div class="tiny" id="spoilerNote" style="margin-top:10px;color:var(--green)">✓ AI 此刻只知道「你看到 31:00 为止的世界」——更晚的符号与剧情已在检索层被过滤。</div>
+        <input type=”range” class=”scrub” id=”scrub” min=”0” max=”60” value=”31” />
+        <div class=”tiny” id=”spoilerNote” style=”margin-top:10px;color:var(--green)”>✓ AI 此刻只知道「你看到 31:00 为止的世界」——还有 2 个更晚的符号已在检索层被过滤。</div>
       </div>
     </div>
   </div>
@@ -630,12 +631,14 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
       <h2 class="sec" style="font-size:clamp(22px,3vw,30px)">你的即时追剧搭子</h2>
       <p class="lead" style="font-size:15px">每句回答都标注可信度：<span class="accent-g">[事实]</span> / <span class="accent-r">[解读]</span> / <span class="accent-e">[推测]</span>，并基于专门构建的剧集知识图谱，不是通用大模型瞎猜。</p>
       <div class="demo" style="margin-top:18px">
-        <div class="head"><span class="dot" style="background:var(--gold)"></span><span class="t">AgentPanel · 快捷提问</span></div>
+        <div class="head"><span class="dot" style="background:var(--gold)"></span><span class="t">快捷提问</span></div>
         <div class="body">
           <div class="agentchips" id="agentChips">
-            <span class="chip" data-q="green">绿色礼服代表什么？</span>
-            <span class="chip" data-q="goose">这是什么梗？</span>
+            <span class="chip" data-q="green">绿裙代表什么？</span>
+            <span class="chip" data-q="goose">鸭鹅是什么梗？</span>
+            <span class="chip" data-q="tea">那杯茶是什么？</span>
             <span class="chip" data-q="recap">上一集发生了什么？</span>
+            <span class="chip" data-q="tide">潮汐堡是什么地方？</span>
           </div>
           <div class="answer" id="agentAns"><div class="tiny center" style="padding:18px 0">点一个问题，看分层流式回答</div></div>
         </div>
@@ -1203,26 +1206,34 @@ renderChar();
 
 /* ---------- SYMBOL hotspots ---------- */
 const SYM={
-  brooch:{cat:'色彩编码 · 道具',catBg:'rgba(46,125,82,.16)',catC:'#2e7d52',t:'31:00',
-    ev:'亚莉森特胸前佩戴的海塔尔家族胸针，与她的绿裙一同登场。',
-    mean:'绿色是海塔尔家族灯塔在战时点燃的火光——绿色出席婚宴，是向坦格利安公开宣战的信号。',
-    take:'这一刻，绿党诞生了。'},
   throne:{cat:'伏笔 · 跨集回看',catBg:'rgba(47,95,176,.16)',catC:'#2f5fb0',t:'08:27',
-    ev:'韦赛里斯手上始终缠着、且在持续恶化的绷带。',
-    mean:'铁王座在吞噬坐上它的人——这道伤从 S1E1 被王座割伤至今从未痊愈，是「权力反噬掌权者」的视觉隐喻。',
-    take:'不是新伤口，而是一条从第一集就埋下的暗线。',callback:'回看 S1E1 · 韦赛里斯首次被王座割伤'},
-  goose:{cat:'文化梗 · 台词双关',catBg:'rgba(178,58,72,.16)',catC:'#b23a48',t:'25:06',
-    ev:'雷妮拉餐桌上的台词：「我宁愿要烤鸭，也不要鹅。」',
-    mean:'中世纪语境下 “goose” 是对同性取向的隐晦委婉说法，她在用菜名试探莱诺。',
-    take:'编剧用一句菜名，让你在不被点破的情况下读懂莱诺。'}
+    ev:'韦赛里斯手上始终缠着、且持续恶化的绷带——他坐在或靠近铁王座时，剑刃剐伤从未愈合。',
+    mean:'铁王座由一千把战败者的剑铸成，故意不加打磨。征服者伊耿认为「国王不该坐得舒服」——每次见血都在确认：他不是合适的君主，权力正在一点点吞噬他。',
+    take:'坐这个位子的代价，已经具象化在他手背上了。',callback:'回看 S1E1 · 韦赛里斯首次被王座割伤'},
+  moon_tea:{cat:'道具 · 隐语',catBg:'rgba(106,69,181,.16)',catC:'#6a45b5',t:'11:31',
+    ev:'拉蕊斯向阿莉森特提起：「大学士亲自给公主的寝宫送了一壶茶。」整句话不带一个露骨的字。',
+    mean:'moon tea（月亮茶）是维斯特洛社会里的堕胎/避孕草药。镜头一旦给到这杯茶，就在确认当事女性近期有私情，且当事方不愿此事公开。这是家族对「丑闻」做的政治止损，不是关心。',
+    take:'这场对话也是绿党情报网的起点：拉蕊斯第一次向阿莉森特表态「我看见了，我可以为你所用」。'},
+  goose:{cat:'文化梗 · 台词双关',catBg:'rgba(178,58,72,.16)',catC:'#b23a48',t:'18:19',
+    ev:'莱诺对雷妮拉说：「比起烧鹅，我更偏爱烤鸭。说不上为什么。」（18:19）',
+    mean:'中世纪欧洲贵族圈用食物隐喻性取向的传统在这里被直接复刻。”goose”对应莱诺的真实取向，”duck”是他不得不履行的婚姻义务——他在用餐桌暗语向未婚妻委婉出柜。',
+    take:'两个被政治婚姻绑定的年轻人，用同一套代号默契达成了「各自吃自己想吃的」协议。'},
+  hightower_green:{cat:'色彩编码 · 阵营宣言',catBg:'rgba(46,125,82,.16)',catC:'#2e7d52',t:'42:43',
+    ev:'亚莉森特身着海塔尔家族深祖母绿礼服走入婚宴大厅，全场起立——她此前从未公开穿过绿色。',
+    mean:'海塔尔灯塔在召集军队时燃烧绿色火焰。绿色出席婚宴，是向坦格利安继承线公开宣战的政治信号。拉蕊斯当场向兄长哈尔温点明了这个颜色的军事含义。',
+    take:'这一刻，「绿党」诞生了。从此再无朋友，只有阵营。'},
+  mouse:{cat:'剪辑 · 视觉隐喻',catBg:'rgba(91,100,112,.16)',catC:'#5b6470',t:'56:00',
+    ev:'婚礼/宴会散场后空荡的厅堂里，一只老鼠从镜头前穿过，啃食残羹。',
+    mean:'繁华表象之下的腐朽。婚礼看着热闹（红黑礼服、龙旗、大餐），但散场之后只剩老鼠——隐喻坦格利安王朝的根基已经在烂。',
+    take:'「王朝百年和平」的滤镜，在这个镜头里碎了。'}
 };
 function showSym(key){
-  const s=SYM[key];const box=document.getElementById('symInfo');
-  box.innerHTML=`<span class="cat" style="background:${s.catBg};color:${s.catC}">${s.cat} · ${s.t}</span>
-    <div class="row"><b>证据</b>${s.ev}</div>
-    <div class="row"><b>含义</b>${s.mean}</div>
-    <div class="takeaway">观众外卖 · ${s.take}</div>
-    ${s.callback?`<span class="linkbtn">${svg('return')} ${s.callback}</span>`:''}`;
+  const s=SYM[key];if(!s)return;const box=document.getElementById('symInfo');
+  box.innerHTML=`<span class=”cat” style=”background:${s.catBg};color:${s.catC}”>${s.cat} · ${s.t}</span>
+    <div class=”row”><b>证据</b>${s.ev}</div>
+    <div class=”row”><b>含义</b>${s.mean}</div>
+    <div class=”takeaway”>观众外卖 · ${s.take}</div>
+    ${s.callback?`<span class=”linkbtn”>${svg('return')} ${s.callback}</span>`:''}`;
 }
 document.querySelectorAll('.hotspot').forEach(h=>h.addEventListener('click',()=>showSym(h.dataset.s)));
 
@@ -1234,35 +1245,43 @@ goosePop.addEventListener('click',e=>e.stopPropagation());
 
 /* spoiler scrub */
 const scrub=document.getElementById('scrub');
-const symbolsAt={brooch:31,throne:8,goose:25};
+const symbolsAt={throne:8,moon_tea:11,goose:18,hightower_green:42,mouse:56};
 function fmt(m){return String(Math.floor(m)).padStart(2,'0')+':00'}
-scrub.addEventListener('input',()=>{
-  const t=+scrub.value;
+function applySymFilter(t){
   document.getElementById('cursorTxt').textContent=fmt(t);
   document.getElementById('curBadge').textContent='当前进度 '+fmt(t);
   document.querySelectorAll('.hotspot').forEach(h=>{
     const at=symbolsAt[h.dataset.s];
-    if(at>t){h.style.opacity='.18';h.style.filter='grayscale(1)';h.style.animation='none';h.title='锁定 · 等播到这里再揭晓'}
+    if(at===undefined||at>t){h.style.opacity='.18';h.style.filter='grayscale(1)';h.style.animation='none';h.title='锁定 · 等播到这里再揭晓'}
     else{h.style.opacity='1';h.style.filter='none';h.style.animation='';h.title=''}
   });
   const note=document.getElementById('spoilerNote');
   const future=Object.values(symbolsAt).filter(a=>a>t).length;
   note.textContent=`✓ AI 此刻只知道「你看到 ${fmt(t)} 为止的世界」——还有 ${future} 个更晚的符号已在检索层被过滤。`;
-});
+}
+scrub.addEventListener('input',()=>applySymFilter(+scrub.value));
+applySymFilter(+scrub.value);
 
 /* ---------- AGENT panel ---------- */
 const AGENT={
-  green:[['fact','亚莉森特在红堡晚宴上身着海塔尔家族的绿色礼服登场。'],
-         ['read','海塔尔家族的灯塔在战时点燃绿火——绿色出席婚宴，是向坦格利安公开宣战的政治信号。'],
-         ['guess','这一选择预示了她与雷妮拉之间不可调和的阵营对立。'],
-         ['lore','御林铁卫｜保护王室的七名骑士：终身不婚、不持地、不继承，用命换王族的安全。']],
-  goose:[['fact','雷妮拉的台词原文是 “I prefer roast duck to goose.”。'],
-         ['read','“goose” 在中世纪语境下是对同性取向的隐晦委婉说法，她在用菜名试探莱诺。'],
-         ['guess','编剧借此在不点破的情况下，让观众读懂莱诺的取向。']],
-  recap:[['fact','上一集结尾，国王韦赛里斯确认雷妮拉为王位继承人。'],
-         ['read','这一决定埋下了与亚莉森特之子之间的继承冲突。'],
-         ['guess','本集绿裙登场，正是这条裂痕第一次被公开摆上台面。']]
-};
+  green:[['fact','亚莉森特在婚宴大厅身着海塔尔家族深祖母绿礼服登场——此前她从未在公开场合穿过绿色。'],
+         ['read','海塔尔灯塔召集军队时燃烧绿色火焰。绿色出席婚宴，是向坦格利安继承线公开宣战的政治信号，不是服装选择。'],
+         ['guess','从这一晚起，「绿党」（支持亚莉森之子伊耿）与「黑党」（支持雷妮拉）的命名正式确立，再无退路。'],
+         ['lore','海塔尔家族·「绿党」的起源｜旧镇古老家族，掌管维斯特洛最高灯塔。灯塔顶端召集军队时改燃绿色火焰——亚莉森特这件绿裙，就是那道火光。']],
+  goose:[['fact','莱诺对雷妮拉说的台词原文是 “I prefer roast duck to goose. I cannot say why.”（18:19）。'],
+         ['read','中世纪欧洲贵族圈用食物隐喻性取向的传统在这里被直接复刻。”goose”对应莱诺的真实取向，”duck”是他必须履行的婚姻义务——他在用餐桌暗语向未婚妻委婉出柜。'],
+         ['guess','两个被政治婚姻绑定的年轻人，在公开场合用代号确认了彼此的真实状态，默契达成了「各自吃自己想吃的」协议——这正是雷妮拉随后向克里斯顿提出「各不干涉」条款的底气来源。']],
+  tea:[['fact','拉蕊斯·斯壮向阿莉森特说：「大学士亲自给公主的寝宫送了一壶茶。」整句话不带任何露骨的词（11:31）。'],
+       ['read','moon tea（月亮茶）是维斯特洛社会里的堕胎/避孕草药。镜头给到这杯茶，就是在确认：雷妮拉那一晚有私情，且韦赛里斯已经知情并悄悄止损。这是政治处理，不是关心。'],
+       ['guess','这场对话是绿党情报网的起点。拉蕊斯借此向阿莉森特表态「我看见了，我可以为你所用」——从这一刻起，阿莉森特开始有了不属于任何人的私人情报渠道。'],
+       ['lore','潮汐堡｜瓦列利安家族居城，位于潮头岛。海蛇科利斯用九次远航的财富将其建成维斯特洛最奢华的城堡之一。雷妮拉与莱诺正是在这里的海岸谈成了婚姻协议。']],
+  recap:[['fact','上一集（S1E04）结尾：国王韦赛里斯一世在众臣面前正式宣布雷妮拉为铁王座继承人，并指婚她与莱诺·瓦列利安。'],
+         ['read','这一宣布绕过了「男性优先继承」的传统，奥托·海塔尔随即报告雷妮拉与戴蒙夜游之事，随后被革职——海塔尔家族在朝廷的最重要支点就此拔除。'],
+         ['guess','本集是上集指婚决定的直接后续：婚礼举行、绿裙登场、阵营公开——韦赛里斯的「好心」决定，正在以最快的速度把所有人推向战争。']],
+  tide:[['fact','潮汐堡是瓦列利安家族在潮头岛的居城，由海蛇科利斯用九次远航积累的财富兴建。白色大理石主体，金顶塔楼。'],
+        ['read','瓦列利安和坦格利安同来自旧瓦雷利亚，但瓦列利安从未拥有过龙——这是他们与坦格利安之间根本的权力差距，也是科利斯愿意接受这桩联姻的原因之一。'],
+        ['guess','雷妮拉与莱诺在这里海岸达成的「协议婚姻」（各不干涉私生活）是全剧最务实的安排，但也埋下了最多隐患——秘密早晚会有一个被戳破的时刻。'],
+        ['lore','潮汐堡｜瓦列利安家族居城，位于潮头岛。海蛇科利斯用九次远航的财富将其建成维斯特洛最奢华的城堡之一。雷妮拉与莱诺正是在这里的海岸谈成了婚姻协议。']]};
 const TAGNAME={fact:'事实',read:'解读',guess:'推测'};
 document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('click',()=>{
   const ans=document.getElementById('agentAns');ans.innerHTML='';
