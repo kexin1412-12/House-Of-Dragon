@@ -1027,6 +1027,7 @@ renderTrigger();
 })();
 
 /* ---------- CHARACTER demo ---------- */
+(function(){
 const CV_DATA={
   daemon:{
     name:'戴蒙·坦格利安',
@@ -1159,30 +1160,37 @@ function renderChar(){
   dlg.innerHTML=html;
   const qc=document.getElementById('qchips');
   c.open.forEach(qid=>{
-    const item=c.qs[qid];
+    const item=c.qs[qid];if(!item)return;
     const el=document.createElement('span');el.className='chip';el.textContent=item.q;
     el.onclick=()=>answer(qid);qc.appendChild(el);
   });
 }
 function answer(qid){
   if(rounds>=10)return;
+  const c=CV_DATA[curChar];const item=c.qs[qid];if(!item)return;
   rounds++;updateRound();
-  const c=CV_DATA[curChar];const item=c.qs[qid];const area=document.getElementById('replyArea');
+  const area=document.getElementById('replyArea');
   let v='';item.v.forEach(([cls,h,t])=>{v+=`<div class="voice ${cls}"><div class="vh">${h}</div>${t}</div>`});
+  const isFinal=rounds>=10;
+  const followHtml=isFinal
+    ? `<div class="tiny" style="margin-top:10px;color:var(--faint)">本轮对话已至上限</div>`
+    : `<div class="tiny" style="margin-top:10px">用一种立场继续追问：</div><div class="chips" id="followchips"></div>`;
   area.innerHTML=`<div class="reply">
     <div class="said">「${item.said}」</div>
     <div class="tiny" style="margin-bottom:4px">内心声部：</div>${v}
     <div class="subtext">潜台词 · ${item.sub}</div>
-    <div class="tiny" style="margin-top:10px">用一种立场继续追问：</div>
-    <div class="chips" id="followchips"></div>
+    ${followHtml}
     <div class="rounds">第 ${rounds} / 10 轮 · 每个角色严格遵守当前集数信息边界，绝不剧透未来</div>
   </div>`;
-  const fc=document.getElementById('followchips');
-  item.follow.forEach(f=>{
-    const el=document.createElement('span');el.className='chip';
-    el.innerHTML=`<span class="st">[${f.tag}]</span>${c.qs[f.to].q}`;
-    el.onclick=()=>answer(f.to);fc.appendChild(el);
-  });
+  if(!isFinal){
+    const fc=document.getElementById('followchips');
+    item.follow.forEach(f=>{
+      if(!c.qs[f.to])return;
+      const el=document.createElement('span');el.className='chip';
+      el.innerHTML=`<span class="st">[${f.tag}]</span>${c.qs[f.to].q}`;
+      el.onclick=()=>answer(f.to);fc.appendChild(el);
+    });
+  }
   area.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function updateRound(){document.getElementById('roundBadge').textContent=`第 ${rounds} / 10 轮`}
@@ -1191,6 +1199,7 @@ document.querySelectorAll('#charpick .who').forEach(w=>w.addEventListener('click
   w.classList.add('on');curChar=w.dataset.c;renderChar();
 }));
 renderChar();
+})();
 
 /* ---------- SYMBOL hotspots ---------- */
 const SYM={
