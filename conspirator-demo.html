@@ -571,7 +571,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <p class="lead">不是「和一个 AI 聊角色」，而是同时看到：外在回应、两个声部的内心独白、一行潜台词、三个带立场标签的跟问。灵感来自《极乐迪斯科》。<b style="color:var(--text)">选个角色，挑一句问。</b></p>
 
   <div class="demo">
-    <div class="head"><span class="dot" style="background:var(--emotion)"></span><span class="t">CharacterPanel · 四色声部</span><span class="badge" id="roundBadge">第 0 / 10 轮</span></div>
+    <div class="head"><span class="dot" style="background:var(--emotion)"></span><span class="t">四色声部</span><span class="badge" id="roundBadge">第 0 / 10 轮</span></div>
     <div class="body">
       <div class="charwrap">
         <div class="charpick" id="charpick">
@@ -1027,63 +1027,147 @@ renderTrigger();
 })();
 
 /* ---------- CHARACTER demo ---------- */
-const CHARS={
-  daemon:{name:'戴蒙·坦格利安',
-    intro:[['表层','一个放荡不羁的王子，正冷眼审视婚宴上的政治角力。'],['深层','一个被兄长放逐的人，在烛影里反复回忆自己失去的一切。']],
-    qs:[
-      {q:'你真的爱雷妮拉，还是只是想要王位？',
-       said:'（嗤笑）你以为爱和王位，是两件可以分开的事？',
-       v:[['reason','王座算计','回答任何一边都会成为把柄——这个问题本身就是陷阱。'],['instinct','龙血','你凭什么问我这个？']],
-       sub:'他在想：如果她知道真相，还会站在我这边吗？'},
-      {q:'被兄长放逐，你恨他吗？',
-       said:'恨？我只是比他更早看清，铁王座从不属于善良的人。',
-       v:[['emotion','旧日血亲','我们曾一起在龙石岛放风筝，那时还没有王座挡在中间。'],['instinct','龙血','他先弃了我，我不过是没有跪着求他。']],
-       sub:'他在想：如果当年是我坐上王座，今天会不会不一样？'},
-      {q:'如果给你一次重来的机会，你会怎么做？',
-       said:'重来？我从不回头看——回头的人，会被铁王座的刃割伤。',
-       v:[['reason','王座算计','承认想重来，就是承认现在输了。'],['intuition','直觉预感','可有什么正在逼近，连龙也压不住。']],
-       sub:'他在想：有些选择，做下去的那一刻就已经没有退路了。'}
-    ]},
-  rhaenyra:{name:'雷妮拉·坦格利安',
-    intro:[['表层','王储，端坐席间，努力让每个动作都配得上「继承人」三个字。'],['深层','一个被誓言和血统困住的女孩，偷偷羡慕着能为自己而活的人。']],
-    qs:[
-      {q:'你愿意为王位放弃自由吗？',
-       said:'自由？我生来就没有过它。我有的只是父亲交到我手里的重量。',
-       v:[['reason','继承重负','示弱会让所有等着我犯错的人闻到血味。'],['emotion','自由渴望','我也想过，逃到狭海对岸，做一个没有姓氏的人。']],
-       sub:'她在想：如果我不是坦格利安，他们还会爱我吗？'},
-      {q:'你还把亚莉森特当朋友吗？',
-       said:'她今晚穿了绿色。有些答案，不需要我开口。',
-       v:[['emotion','旧日情谊','我们曾在神木林分享所有秘密。'],['reason','继承重负','现在她的每一步，都在为她的孩子铺路。']],
-       sub:'她在想：是从哪一刻起，我们站到了桌子的两端？'}
-    ]},
-  alicent:{name:'亚莉森特·海塔尔',
-    intro:[['表层','王后，绿裙加身，从容走入婚宴，把一场登场变成一次宣告。'],['深层','一个被父亲推上政治舞台的女儿，在责任与旧日情谊间反复撕扯。']],
-    qs:[
-      {q:'你穿绿色，是宣战吗？',
-       said:'绿色是海塔尔的颜色。我只是……穿了我家的颜色而已。',
-       v:[['reason','责任枷锁','我必须让所有人看清，我的孩子身后站着谁。'],['emotion','旧日情谊','可我曾经，只想做雷妮拉的朋友。']],
-       sub:'她在想：是他们先把我推到这一步的，不是我。'},
-      {q:'你后悔嫁给国王吗？',
-       said:'后悔是一种奢侈，而我很久没有奢侈过了。',
-       v:[['intuition','直觉预感','这条路尽头的东西，我不敢去想。'],['reason','责任枷锁','我的孩子需要一个站在权力中心的母亲。']],
-       sub:'她在想：如果当初父亲没有派我去陪伴国王……'}
-    ]}
+const CV_DATA={
+  daemon:{
+    name:'戴蒙·坦格利安',
+    intro:[
+      ['表层','一个放荡不羁的王子，正冷眼审视婚宴上的政治角力。'],
+      ['深层','一个被兄长流放的人，用玩世不恭遮掩心底那份仍未熄灭的怨与忠。']
+    ],
+    open:['q_throne','q_exile'],
+    qs:{
+      q_throne:{
+        q:'你真的爱雷妮拉，还是只是想要王位？',
+        said:'（嗤笑）你以为爱和王位，是两件可以分开的事？',
+        v:[
+          ['reason','王座算计','回答任何一边都会成为把柄——这个问题本身就是陷阱。'],
+          ['instinct','龙血本能','你凭什么问我这个？']
+        ],
+        sub:'他在想：这宫里唯一像坦格利安的人，偏偏是我没资格触碰的那一个。',
+        follow:[{tag:'血亲',to:'q_exile'},{tag:'火焰',to:'q_return'}]
+      },
+      q_exile:{
+        q:'哥哥把你放逐出去，你恨他吗？',
+        said:'恨？我只是比他更早看清，铁王座从不属于善良的人。',
+        v:[
+          ['emotion','旧日血亲','我们曾同在龙石岛——那时还没有王座挡在中间。'],
+          ['instinct','龙血本能','他先弃了我，我不过是没有跪着求他。']
+        ],
+        sub:'他在想：应该是我的剑——不是他的影子。但这句话，我从未说出口。',
+        follow:[{tag:'王者',to:'q_throne'},{tag:'直觉',to:'q_return'}]
+      },
+      q_return:{
+        q:'此刻回到君临，你来这里是为了什么？',
+        said:'他让我回来，我就回来了。至于原因——我的原因从不需要向任何人解释。',
+        v:[
+          ['intuition','暗涌预感','阿莉森特今晚穿了绿色。这婚宴不是结束，是开始。'],
+          ['reason','王座算计','回来意味着我还在局里。不回来，才是真的输了。']
+        ],
+        sub:'他在想：他让我出席侄女的婚礼——这是施舍，还是他自己也需要我？',
+        follow:[{tag:'血亲',to:'q_exile'},{tag:'审慎',to:'q_throne'}]
+      }
+    }
+  },
+  rhaenyra:{
+    name:'雷妮拉·坦格利安',
+    intro:[
+      ['表层','王储，端坐席间，努力让每个动作都配得上「继承人」三个字。'],
+      ['深层','一个被誓言与血统困住的女孩，不被允许骄傲，也不被允许逃走。']
+    ],
+    open:['q_marriage','q_alicent'],
+    qs:{
+      q_marriage:{
+        q:'你愿意为王位放弃自由吗？',
+        said:'自由？我生来就没有过它。我有的只是父亲交到我手里的重量。',
+        v:[
+          ['reason','继承重负','示弱会让所有等着我犯错的人闻到血味。'],
+          ['emotion','自由渴望','我也想过，逃到狭海对岸，做一个没有姓氏的人。']
+        ],
+        sub:'她在想：我父亲选择了我，但他没问过我愿不愿意。',
+        follow:[{tag:'血亲',to:'q_alicent'},{tag:'审慎',to:'q_dragon'}]
+      },
+      q_alicent:{
+        q:'你还把亚莉森特当朋友吗？',
+        said:'她今晚穿了绿色。有些答案，不需要我开口。',
+        v:[
+          ['emotion','旧日情谊','我们曾在神木林分享所有秘密——那是我此生最不孤独的时候。'],
+          ['reason','继承重负','现在她的每一步，都在为她的孩子铺路，而不是为了我。']
+        ],
+        sub:'她在想：是从哪一刻起，我们站到了桌子的两端？是她嫁给父亲的那天，还是更早？',
+        follow:[{tag:'王者',to:'q_marriage'},{tag:'火焰',to:'q_dragon'}]
+      },
+      q_dragon:{
+        q:'你的龙——赛拉克丝，是你唯一的自由吗？',
+        said:'在这个宫里，沉默比誓言更有用。骑上她的背，至少没有人敢开口问我该飞去哪里。',
+        v:[
+          ['instinct','龙血觉醒','飞在空中的那一刻，我才是真正的坦格利安，而不是谁的继承人。'],
+          ['reason','继承重负','但落地之后，一切还是原样。龙飞不过礼制这堵墙。']
+        ],
+        sub:'她在想：如果我是个无名的人，只有一条龙，这世界会不会对我更诚实一些？',
+        follow:[{tag:'血亲',to:'q_alicent'},{tag:'审慎',to:'q_marriage'}]
+      }
+    }
+  },
+  alicent:{
+    name:'亚莉森特·海塔尔',
+    intro:[
+      ['表层','王后，绿裙加身，从容走入婚宴，把一场登场变成一次宣告。'],
+      ['深层','一个被父亲推上政治舞台的女儿，把压抑的怨意包进体面与责任里。']
+    ],
+    open:['q_green','q_duty'],
+    qs:{
+      q_green:{
+        q:'今晚穿绿色，是宣战吗？',
+        said:'绿色是海塔尔的颜色。我只是……穿了我家的颜色而已。',
+        v:[
+          ['reason','责任枷锁','我必须让所有人看清，我的孩子身后站着谁。'],
+          ['emotion','旧日情谊','可我曾经，只想做雷妮拉的朋友，而不是她的对手。']
+        ],
+        sub:'她在想：是他们先把我推到这一步的，不是我先背叛谁。',
+        follow:[{tag:'王者',to:'q_duty'},{tag:'情谊',to:'q_friend'}]
+      },
+      q_duty:{
+        q:'父亲被撤了国王之手——你怎么看这件事？',
+        said:'父亲教过我：体面是一种武器，不是一种代价。他从不真正退场。',
+        v:[
+          ['intuition','暗涌预感','他会回来的——用另一种方式，在另一个地方。'],
+          ['reason','责任枷锁','而我的责任，是在他不在的时候，让这个家族不乱阵脚。']
+        ],
+        sub:'她在想：父亲的离去，让我真正孤立在这宫墙里了。现在我只剩我自己。',
+        follow:[{tag:'火焰',to:'q_green'},{tag:'情谊',to:'q_friend'}]
+      },
+      q_friend:{
+        q:'如果雷妮拉今晚走过来对你说话，你会怎么回应？',
+        said:'（停顿）雷妮拉会得到她想要的——她总是会的。',
+        v:[
+          ['emotion','旧日情谊','我还记得我们在一起读书的那些傍晚，她是那么……真实。'],
+          ['instinct','压抑的怨','是她先骗了我，不是我先背叛她——七神在上，我没有说谎。']
+        ],
+        sub:'她在想：母亲的责任不能用对错来衡量。我能给孩子的，只有我站在这里这件事本身。',
+        follow:[{tag:'王者',to:'q_duty'},{tag:'审慎',to:'q_green'}]
+      }
+    }
+  }
 };
 let curChar='daemon', rounds=0;
 function renderChar(){
   rounds=0;updateRound();
-  const c=CHARS[curChar];const dlg=document.getElementById('dlg');
+  const c=CV_DATA[curChar];const dlg=document.getElementById('dlg');
   let html='<div class="intro">';
   c.intro.forEach(([k,t])=>html+=`<span class="ly"><b>${k}</b>${t}</span>`);
   html+='</div><div class="tiny">选择一个开场问题：</div><div class="chips" id="qchips"></div><div id="replyArea"></div>';
   dlg.innerHTML=html;
   const qc=document.getElementById('qchips');
-  c.qs.forEach((item,i)=>{const el=document.createElement('span');el.className='chip';el.textContent=item.q;el.onclick=()=>answer(i);qc.appendChild(el)});
+  c.open.forEach(qid=>{
+    const item=c.qs[qid];
+    const el=document.createElement('span');el.className='chip';el.textContent=item.q;
+    el.onclick=()=>answer(qid);qc.appendChild(el);
+  });
 }
-function answer(i){
+function answer(qid){
   if(rounds>=10)return;
   rounds++;updateRound();
-  const c=CHARS[curChar];const item=c.qs[i];const area=document.getElementById('replyArea');
+  const c=CV_DATA[curChar];const item=c.qs[qid];const area=document.getElementById('replyArea');
   let v='';item.v.forEach(([cls,h,t])=>{v+=`<div class="voice ${cls}"><div class="vh">${h}</div>${t}</div>`});
   area.innerHTML=`<div class="reply">
     <div class="said">「${item.said}」</div>
@@ -1093,10 +1177,12 @@ function answer(i){
     <div class="chips" id="followchips"></div>
     <div class="rounds">第 ${rounds} / 10 轮 · 每个角色严格遵守当前集数信息边界，绝不剧透未来</div>
   </div>`;
-  const stances=['王者','血亲','审慎','火焰'];
   const fc=document.getElementById('followchips');
-  stances.forEach(s=>{const el=document.createElement('span');el.className='chip';el.innerHTML=`<span class="st">[${s}]</span>继续`;
-    el.onclick=()=>answer((i+1)%c.qs.length);fc.appendChild(el)});
+  item.follow.forEach(f=>{
+    const el=document.createElement('span');el.className='chip';
+    el.innerHTML=`<span class="st">[${f.tag}]</span>${c.qs[f.to].q}`;
+    el.onclick=()=>answer(f.to);fc.appendChild(el);
+  });
   area.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function updateRound(){document.getElementById('roundBadge').textContent=`第 ${rounds} / 10 轮`}
