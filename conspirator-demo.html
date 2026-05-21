@@ -876,11 +876,11 @@ let stTypingTimer=null;
 function fmtTime(s){const m=Math.floor(s/60);const sec=s%60;return m+':'+(sec<10?'0':'')+sec;}
 
 function stTypeOut(el,text,done){
-  if(stTypingTimer)clearInterval(stTypingTimer);
+  if(stTypingTimer){clearInterval(stTypingTimer);stTypingTimer=null;}
   el.textContent='';el.classList.add('cursor-blink');let i=0;
   stTypingTimer=setInterval(()=>{
     el.textContent=text.slice(0,++i);
-    if(i>=text.length){clearInterval(stTypingTimer);el.classList.remove('cursor-blink');if(done)done();}
+    if(i>=text.length){clearInterval(stTypingTimer);stTypingTimer=null;el.classList.remove('cursor-blink');if(done)done();}
   },18);
 }
 
@@ -942,7 +942,11 @@ function renderTrigger(){
     why.className='why';
     why.textContent='「'+opt.voice+'」';
     div.appendChild(why);
-    div.addEventListener('click',function(){chooseOpt(opt,tr);});
+    div.addEventListener('click',function(){
+      document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
+      div.classList.add('sel');
+      chooseOpt(opt,tr);
+    });
     optsEl.appendChild(div);
   });
 
@@ -958,7 +962,11 @@ function renderTrigger(){
   watchWhy.className='why';
   watchWhy.textContent='「现在还不是表态的时候。」';
   watchDiv.appendChild(watchWhy);
-  watchDiv.addEventListener('click',function(){chooseWatch(tr);});
+  watchDiv.addEventListener('click',function(){
+    document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
+    watchDiv.classList.add('sel');
+    chooseWatch(tr);
+  });
   optsEl.appendChild(watchDiv);
 
   // reset spec area
@@ -966,7 +974,7 @@ function renderTrigger(){
   if(specWrap)specWrap.style.display='none';
   const specEl=document.getElementById('spec');
   if(specEl)specEl.textContent='';
-  if(stTypingTimer)clearInterval(stTypingTimer);
+  if(stTypingTimer){clearInterval(stTypingTimer);stTypingTimer=null;}
 
   // prev / next buttons
   const prev=document.getElementById('stPrev');
@@ -976,18 +984,6 @@ function renderTrigger(){
 }
 
 function chooseOpt(opt,tr){
-  // mark all opts deselected, select clicked one
-  document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
-  // find the matching element
-  const allOpts=document.querySelectorAll('#opts .opt');
-  // match by label text
-  for(let i=0;i<allOpts.length;i++){
-    const labEl=allOpts[i].querySelector('.lab');
-    if(labEl&&labEl.textContent.replace('剧情走向','').trim()===opt.label){
-      allOpts[i].classList.add('sel');break;
-    }
-  }
-
   stTraj.push({scene:tr.scene,label:opt.label});
   renderTraj();
 
@@ -1011,11 +1007,6 @@ function chooseOpt(opt,tr){
 }
 
 function chooseWatch(tr){
-  document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
-  const allOpts=document.querySelectorAll('#opts .opt');
-  const last=allOpts[allOpts.length-1];
-  if(last)last.classList.add('sel');
-
   stTraj.push({scene:tr.scene,label:'沉默旁观'});
   renderTraj();
 
