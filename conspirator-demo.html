@@ -601,6 +601,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
         <span class=”hotspot r2” style=”left:55%;top:48%” data-s=”moon_tea”></span>
         <span class=”hotspot r3” style=”left:72%;top:62%” data-s=”goose”></span>
         <span class=”hotspot” style=”left:40%;top:72%;opacity:.18;filter:grayscale(1);animation:none” data-s=”hightower_green” title=”锁定 · 等播到这里再揭晓”></span>
+        <span class=”hotspot r3” style=”left:82%;top:83%;opacity:.18;filter:grayscale(1);animation:none” data-s=”mouse” title=”锁定 · 等播到这里再揭晓”></span>
         <div class=”sub”>
           <div class=”zh”>比起烧鹅，我更偏爱烤鸭。说不上为什么。——<span class=”kw” id=”kwGoose”>莱诺<span class=”pop” id=”goosePop”>
             <div class=”lvl”><b>一句话</b>莱诺借餐桌话语向雷妮拉委婉说明自己的取向——用”鸭”与”鹅”代替不能明说的词。</div>
@@ -1205,8 +1206,9 @@ renderChar();
 })();
 
 /* ---------- SYMBOL hotspots ---------- */
+(function(){
 const SYM={
-  throne:{cat:'伏笔 · 跨集回看',catBg:'rgba(47,95,176,.16)',catC:'#2f5fb0',t:'08:27',
+  throne:{cat:'伏笔 · 跨集回看',catBg:'rgba(47,95,176,.16)',catC:'#2f5fb0',t:'09:21',
     ev:'韦赛里斯手上始终缠着、且持续恶化的绷带——他坐在或靠近铁王座时，剑刃剐伤从未愈合。',
     mean:'铁王座由一千把战败者的剑铸成，故意不加打磨。征服者伊耿认为「国王不该坐得舒服」——每次见血都在确认：他不是合适的君主，权力正在一点点吞噬他。',
     take:'坐这个位子的代价，已经具象化在他手背上了。',callback:'回看 S1E1 · 韦赛里斯首次被王座割伤'},
@@ -1228,6 +1230,8 @@ const SYM={
     take:'「王朝百年和平」的滤镜，在这个镜头里碎了。'}
 };
 function showSym(key){
+  const currentMinutes=+(document.getElementById('scrub')||{value:0}).value;
+  if(symbolsAt[key]!==undefined&&symbolsAt[key]>currentMinutes)return;
   const s=SYM[key];if(!s)return;const box=document.getElementById('symInfo');
   box.innerHTML=`<span class=”cat” style=”background:${s.catBg};color:${s.catC}”>${s.cat} · ${s.t}</span>
     <div class=”row”><b>证据</b>${s.ev}</div>
@@ -1245,15 +1249,15 @@ goosePop.addEventListener('click',e=>e.stopPropagation());
 
 /* spoiler scrub */
 const scrub=document.getElementById('scrub');
-const symbolsAt={throne:8,moon_tea:11,goose:18,hightower_green:42,mouse:56};
+const symbolsAt={throne:9,moon_tea:11,goose:18,hightower_green:42,mouse:56};
 function fmt(m){return String(Math.floor(m)).padStart(2,'0')+':00'}
 function applySymFilter(t){
   document.getElementById('cursorTxt').textContent=fmt(t);
   document.getElementById('curBadge').textContent='当前进度 '+fmt(t);
   document.querySelectorAll('.hotspot').forEach(h=>{
     const at=symbolsAt[h.dataset.s];
-    if(at===undefined||at>t){h.style.opacity='.18';h.style.filter='grayscale(1)';h.style.animation='none';h.title='锁定 · 等播到这里再揭晓'}
-    else{h.style.opacity='1';h.style.filter='none';h.style.animation='';h.title=''}
+    if(at===undefined||at>t){h.style.opacity='.18';h.style.filter='grayscale(1)';h.style.animation='none';h.title='锁定 · 等播到这里再揭晓';h.style.pointerEvents='none';}
+    else{h.style.opacity='1';h.style.filter='none';h.style.animation='';h.title='';h.style.pointerEvents='';}
   });
   const note=document.getElementById('spoilerNote');
   const future=Object.values(symbolsAt).filter(a=>a>t).length;
@@ -1261,8 +1265,10 @@ function applySymFilter(t){
 }
 scrub.addEventListener('input',()=>applySymFilter(+scrub.value));
 applySymFilter(+scrub.value);
+})();
 
 /* ---------- AGENT panel ---------- */
+(function(){
 const AGENT={
   green:[['fact','亚莉森特在婚宴大厅身着海塔尔家族深祖母绿礼服登场——此前她从未在公开场合穿过绿色。'],
          ['read','海塔尔灯塔召集军队时燃烧绿色火焰。绿色出席婚宴，是向坦格利安继承线公开宣战的政治信号，不是服装选择。'],
@@ -1274,7 +1280,7 @@ const AGENT={
   tea:[['fact','拉蕊斯·斯壮向阿莉森特说：「大学士亲自给公主的寝宫送了一壶茶。」整句话不带任何露骨的词（11:31）。'],
        ['read','moon tea（月亮茶）是维斯特洛社会里的堕胎/避孕草药。镜头给到这杯茶，就是在确认：雷妮拉那一晚有私情，且韦赛里斯已经知情并悄悄止损。这是政治处理，不是关心。'],
        ['guess','这场对话是绿党情报网的起点。拉蕊斯借此向阿莉森特表态「我看见了，我可以为你所用」——从这一刻起，阿莉森特开始有了不属于任何人的私人情报渠道。'],
-       ['lore','潮汐堡｜瓦列利安家族居城，位于潮头岛。海蛇科利斯用九次远航的财富将其建成维斯特洛最奢华的城堡之一。雷妮拉与莱诺正是在这里的海岸谈成了婚姻协议。']],
+       ['lore','斯壮家族｜赫伦堡领主家族。长子哈尔温「断骨者」；次子拉蕊斯自幼跛足，从不习武，却有过人的耳朵和眼睛。正是拉蕊斯向阿莉森特透露了「那壶茶」——这一刻他成为绿党最早的情报提供者，绰号「白色蠕虫」由此而来。']],
   recap:[['fact','上一集（S1E04）结尾：国王韦赛里斯一世在众臣面前正式宣布雷妮拉为铁王座继承人，并指婚她与莱诺·瓦列利安。'],
          ['read','这一宣布绕过了「男性优先继承」的传统，奥托·海塔尔随即报告雷妮拉与戴蒙夜游之事，随后被革职——海塔尔家族在朝廷的最重要支点就此拔除。'],
          ['guess','本集是上集指婚决定的直接后续：婚礼举行、绿裙登场、阵营公开——韦赛里斯的「好心」决定，正在以最快的速度把所有人推向战争。']],
@@ -1283,10 +1289,13 @@ const AGENT={
         ['guess','雷妮拉与莱诺在这里海岸达成的「协议婚姻」（各不干涉私生活）是全剧最务实的安排，但也埋下了最多隐患——秘密早晚会有一个被戳破的时刻。'],
         ['lore','潮汐堡｜瓦列利安家族居城，位于潮头岛。海蛇科利斯用九次远航的财富将其建成维斯特洛最奢华的城堡之一。雷妮拉与莱诺正是在这里的海岸谈成了婚姻协议。']]};
 const TAGNAME={fact:'事实',read:'解读',guess:'推测'};
+let agentGen=0;
 document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('click',()=>{
+  const myGen=++agentGen;
   const ans=document.getElementById('agentAns');ans.innerHTML='';
   const rows=AGENT[c.dataset.q];let idx=0;
   (function next(){
+    if(myGen!==agentGen)return;
     if(idx>=rows.length)return;
     const [type,txt]=rows[idx++];
     if(type==='lore'){const [h,d]=txt.split('｜');const div=document.createElement('div');div.className='lorecard';
@@ -1294,10 +1303,11 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
     else{const row=document.createElement('div');row.className='lyrow';
       row.innerHTML=`<span class="lytag ${type}">[${TAGNAME[type]}]</span><span></span>`;ans.appendChild(row);
       const span=row.querySelector('span:last-child');let i=0;
-      const tm=setInterval(()=>{span.textContent=txt.slice(0,++i);if(i>=txt.length){clearInterval(tm);setTimeout(next,160)}},14);return;}
+      const tm=setInterval(()=>{if(myGen!==agentGen){clearInterval(tm);return;}span.textContent=txt.slice(0,++i);if(i>=txt.length){clearInterval(tm);setTimeout(next,160)}},14);return;}
     setTimeout(next,180);
   })();
 }));
+})();
 
 /* ---------- RELATIONS graph + profile ---------- */
 (function(){
