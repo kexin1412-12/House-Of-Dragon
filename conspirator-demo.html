@@ -648,7 +648,8 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .std-end:hover{color:#e8eaf0;border-color:#6b7280}
 .std-q{margin:0 0 13px;font-size:13.5px;line-height:1.6}
 .std-q .you{color:#f5e8d4;font-weight:700}.std-q .dash{color:#5a606b;margin:0 6px}.std-q .txt{color:#d4c4a8;font-style:italic}
-.std-para{font-size:13px;line-height:1.82;color:#cfd3da;margin:0 0 11px}
+.std-para{font-size:13px;line-height:1.82;color:#d4c4a8;margin:0 0 11px}
+.std-para.spec{color:#e8b85a;font-style:italic;opacity:.95}
 .std-foll-lab{font-size:11.5px;color:#7b828e;margin:15px 0 8px}
 .std-foll{display:flex;flex-direction:column;gap:8px}
 .std-foll-q{text-align:left;border:1px solid #2a2f38;border-radius:8px;padding:9px 11px;color:#cfd3da;background:rgba(255,255,255,.02);font-size:12px;line-height:1.55;cursor:pointer;font-family:inherit;transition:.15s}
@@ -1126,7 +1127,7 @@ secs.forEach(s=>s&&io2.observe(s));
   setInterval(function(){cd--;if(cd<0)cd=8;var e=document.getElementById('stCd');if(e)e.textContent='剩余 00:'+(cd<10?'0'+cd:cd);},1000);
   function setScene(s){if(sceneEl.firstChild&&sceneEl.firstChild.nodeType===3)sceneEl.firstChild.nodeValue=s+' ';}
   function renderTraj(){var wrap=document.getElementById('stTrajWrap'),list=document.getElementById('stTraj');if(Object.keys(picks).length===0){wrap.style.display='none';return;}wrap.style.display='block';list.innerHTML='';T.forEach(function(tr,i){if(picks[i]){var li=document.createElement('li');li.textContent=tr.scene+' · '+picks[i].label;list.appendChild(li);}});}
-  function streamParas(host,paras,done){if(typing){clearInterval(typing);}var i=0;(function next(){if(i>=paras.length){if(done)done();return;}var el=document.createElement('p');el.className='std-para';host.appendChild(el);var t=paras[i++],j=0;typing=setInterval(function(){el.textContent=t.slice(0,++j);specPanel.scrollTop=specPanel.scrollHeight;if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,120);}},9);})();}
+  function streamParas(host,paras,done){if(typing){clearInterval(typing);}var i=0;(function next(){if(i>=paras.length){if(done)done();return;}var last=(i===paras.length-1);var el=document.createElement('p');el.className='std-para'+(last?' spec':'');host.appendChild(el);var t=paras[i++],j=0;typing=setInterval(function(){el.textContent=t.slice(0,++j);specPanel.scrollTop=specPanel.scrollHeight;if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,120);}},9);})();}
   function openSpec(i,o){
     var tr=T[i];
     pill.style.display='none';
