@@ -533,32 +533,33 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <p class="lead">每一部剧只有一个结局。立场推演不改一帧画面，却在关键转折打开一扇通往平行世界的门。<b style="color:var(--text)">试试做出选择 → 展开推演。</b></p>
 
   <div class="demo">
-    <div class="head"><span class="dot" style="background:var(--gold)"></span><span class="t">StanceCard · 立场抉择卡</span><span class="badge">House of the Dragon · S1E5 · 31:00</span></div>
+    <div class="head">
+      <span class="dot" style="background:var(--gold)"></span>
+      <span class="t">立场抉择卡</span>
+      <span class="badge" id="stIdxBadge">立场点 1 / 4</span>
+      <span class="badge" id="stTimeBadge" style="margin-left:6px">House of the Dragon · S1E5</span>
+    </div>
     <div class="body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px">
+        <button id="stPrev" class="btn ghost" style="padding:7px 16px;font-size:13px;border-radius:20px" disabled>← 上一处</button>
+        <button id="stNext" class="btn ghost" style="padding:7px 16px;font-size:13px;border-radius:20px">下一处 →</button>
+      </div>
       <div class="stance" id="stanceCard">
-        <div class="scene">红堡晚宴 · 亚莉森特绿裙登场</div>
-        <div class="q">如果你是红堡中的一位领主，你会怎么做？</div>
-        <div class="count" id="cd"><span class="mini-ic" data-i="clock"></span><div class="bar"><i></i></div><span>10s</span></div>
-        <div id="opts">
-          <div class="opt" data-k="black">
-            <div class="lab">起身行礼 <span class="side" style="background:rgba(46,125,82,.14);color:var(--green)">站绿党</span></div>
-            <div class="why">「她的孩子确实有危险，向王后示好不算背叛。」</div>
-          </div>
-          <div class="opt" data-k="white">
-            <div class="lab">纹丝不动 <span class="side" style="background:rgba(140,47,58,.14);color:var(--wine)">站黑党</span></div>
-            <div class="why">「誓言就是誓言，国王立的储君不容动摇。」</div>
-          </div>
-          <div class="opt" data-k="neutral">
-            <div class="lab">端起酒杯，假装没看见 <span class="side" style="background:rgba(91,100,112,.16);color:var(--slate)">观望</span></div>
-            <div class="why">「现在选边太早了，再等等看风向。」</div>
-          </div>
-        </div>
+        <div class="scene" id="stScene"></div>
+        <div class="q" id="stPrompt"></div>
+        <div id="opts"></div>
         <div id="specWrap" style="display:none">
-          <div class="tiny" style="margin:14px 0 0">↓ AI 第二人称剧本式推演（流式生成）</div>
+          <div class="tiny" style="margin:14px 0 6px" id="specLabel"></div>
           <div class="spec" id="spec"></div>
         </div>
       </div>
       <div class="tiny center" style="margin-top:16px">观望永远是合法选项，不强迫站队 · 选择被记入「我的立场轨迹」，但<b>不打分、不归类、不聚合</b></div>
+
+      <!-- 立场轨迹 -->
+      <div id="stTrajWrap" style="display:none;margin-top:20px;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:14px 16px">
+        <div style="font-size:12.5px;font-weight:700;color:var(--dim);margin-bottom:10px;letter-spacing:.04em">我的立场轨迹</div>
+        <ol id="stTraj" style="margin:0;padding-left:18px;font-size:13px;color:var(--dim);line-height:1.95;font-family:var(--serif)"></ol>
+      </div>
     </div>
   </div>
 </section>
@@ -820,43 +821,219 @@ const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const
 secs.forEach(s=>s&&io2.observe(s));
 
 /* ---------- STANCE demo ---------- */
-const specByKey={
-  black:`你选择了起身行礼。绿裙在烛火下像一面尚未宣读的战旗，而你——率先低下了头。\n红堡里所有眼睛都记住了：当雷妮拉的旗帜还在风中，你已经先一步站到了王后那一边。`,
-  white:`你选择了纹丝不动。整张长桌都在起身，唯独你坐着，像一块拒绝随风倒的石头。\n你以为这是忠诚，可在亚莉森特眼里，这是第一份需要被记下的名字。`,
-  neutral:`你端起酒杯，把目光藏进酒里。你告诉自己：现在选边太早了。\n但在一个所有人都被迫表态的夜晚，沉默本身，也是一种被记住的表态。`
-};
-const askByKey={
-  black:'可当雷妮拉的孩子被指认为私生子时，你还会为今晚的低头骄傲吗？',
-  white:'可三集之后，她三个儿子都长着斯壮家的棕发——你还站她吗？',
-  neutral:'可当战争真正爆发，没有人记得中立者的名字时，你后悔今晚没选吗？'
-};
-let stanceTyping=null;
-document.querySelectorAll('#opts .opt').forEach(opt=>{
-  opt.addEventListener('click',()=>{
-    document.querySelectorAll('#opts .opt').forEach(o=>o.classList.remove('sel'));
-    opt.classList.add('sel');
-    const cd=document.getElementById('cd');if(cd)cd.style.display='none';
-    const k=opt.dataset.k;
-    const wrap=document.getElementById('specWrap');wrap.style.display='block';
-    const spec=document.getElementById('spec');
-    typeOut(spec, specByKey[k], ()=>{
-      const a=document.createElement('span');a.className='ask';a.textContent='↳ '+askByKey[k]+'（点击继续追问）';
-      a.onclick=()=>{a.style.color='var(--faint)';a.style.cursor='default';a.onclick=null;
-        const more=document.createElement('div');more.className='spec';more.style.marginTop='10px';spec.parentNode.appendChild(more);
-        typeOut(more,'AI 在同一条对话流里接着推：你以为今晚的选择只是一次礼节，但它会沿着十集的剧情一路回扣——每一次新信息揭示，都会回来重新审视你此刻的判断。这，就是「会被剧情打脸」的立场轨迹。');
-      };
-      spec.appendChild(document.createElement('br'));spec.appendChild(a);
-    });
-  });
-});
-function typeOut(el,text,done){
-  if(stanceTyping)clearInterval(stanceTyping);
+(function(){
+const STANCE_DATA={triggers:[
+  {
+    scene:'谷地 · 戴蒙杀妻',
+    t:290,
+    prompt:'戴蒙杀了自己的妻子来挣脱一段他从未想要的政治联姻。',
+    convergence:'无论戴蒙杀不杀蕾雅，他与雷妮拉的纠葛都会以同样毁灭性的方式继续 —— 这是火与血血脉的本性，不取决于一颗石头。',
+    options:[
+      {label:'冷血但合理',voice:'这段婚姻困住了他十年，维斯特洛没有离婚这回事。',canonical:true,spec:null},
+      {label:'不可接受',voice:'再不想要这段婚姻，谋杀也不是出路。',canonical:false,spec:'如果戴蒙真的转身离开 —— 婚姻继续，他十年前被流放Vale的羁绊不会断；与雷妮拉的关系会被这层困境扭曲得更深。最终他可能用更阴损的手段结束这段婚姻 —— 比如毒杀，或一场"意外"。'},
+      {label:'蕾雅死得不值',voice:'真正该被追究的是当初强行安排这段婚姻的杰赫里斯。',canonical:false,spec:'如果当年Jaehaerys没安排这桩联姻 —— 戴蒙年轻时就在君临扎根，提前介入雷妮拉的成长。或许让她更早强大，但也会让奥托盯得更紧 —— 或许奥托根本就不会让阿莉森进宫。'}
+    ]
+  },
+  {
+    scene:'君临 · 父女诀别',
+    t:468,
+    prompt:'奥托被解除国王之手，临走警告亚莉森：雷妮拉登基之日就是你孩子的死期。',
+    convergence:'奥托的预言会自我实现 —— 不论亚莉森信不信。差别只在于她何时学会自己想这件事。',
+    options:[
+      {label:'奥托说的是事实',voice:'坦格利安家族的历史证明，继承权的竞争者从来活不久。',canonical:false,spec:'如果亚莉森这一刻就完全采信父亲 —— 她会从此刻开始算计：把克里斯顿、拉里斯、宫廷里每一个怨怼者都收为己用。绿党会更早成形，但代价是她变成奥托的延伸 —— 失去自己。'},
+      {label:'他在利用女儿的恐惧',voice:'他被罢免了，正在把自己的政治野心包装成父爱。',canonical:false,spec:'如果亚莉森公开拒绝奥托的警告 —— 她仍试图与雷妮拉做朋友。她会在韦赛里斯死后的某个清晨发现自己彻底孤立 —— 没有党、没有盟友、孩子真的危险。这是一个比绿党宫变更悲哀的结局。'},
+      {label:'话是对的但动机不纯',voice:'威胁确实存在，但奥托关心的不是外孙，是海塔尔家族的权力。',canonical:true,spec:null}
+    ]
+  },
+  {
+    scene:'潮汐堡 · 雷妮拉与莱诺谈判',
+    t:1152,
+    prompt:'雷妮拉对莱诺说：我们各尽义务，之后各过各的。你可以继续爱乔弗里，我也有自己的安排。',
+    convergence:'维斯特洛的政治婚姻没有"体面"的可能 —— 体面是给观众看的，账总要在多年后由其他人来还。',
+    options:[
+      {label:'务实且体面',voice:'两个人都不用装，这是政治婚姻里最好的结果了。',canonical:true,spec:null},
+      {label:'对莱诺不公平',voice:'她有选择的主动权，莱诺只能被动接受条件。',canonical:false,spec:'如果雷妮拉真把"对莱诺不公平"当回事 —— 她要么取消婚约，要么坚持单偶制。前者让科利斯·瓦列利安转向中立，黑党失去最强海军；后者让雷妮拉每晚被自己嫌弃的丈夫困住，她对戴蒙的渴望会爆发得更早。'},
+      {label:'这种婚姻迟早出事',voice:'秘密太多了，任何一环暴露都会连锁崩塌。',canonical:false,spec:'如果两人在订立时就承认这必然崩塌 —— 让莱诺以朋友身份退出，避免后来的婚宴血案。但代价是雷妮拉得另觅婚约对象 —— 可能落到艾蒙德或更糟的人手里。'}
+    ]
+  },
+  {
+    scene:'婚宴 · 亚莉森绿裙登场',
+    t:2563,
+    prompt:'亚莉森穿着绿色礼裙走进大厅，全场起立。从此再无朋友，只有阵营。',
+    convergence:'无论穿不穿绿裙，阵营的裂痕已经存在。区别只是战争以什么形式开始 —— 公开宣战，还是地下暗涌。',
+    options:[
+      {label:'她做得对',voice:'不表态就是等死，她的孩子将来需要这条裙子的保护。',canonical:true,spec:null},
+      {label:'她做得太早',voice:'韦赛里斯还活着，现在公开决裂只会加速分裂。',canonical:false,spec:'如果她当晚穿了一件银灰色的裙子忍住了 —— 矛盾从明面转入地下。她私下联络旧镇家族，准备依然进行，只是少了一个清晰的宣战时刻。这或许多给雷妮拉几年的喘息，但绿党的形成不会停。'},
+      {label:'是奥托在操控她',voice:'她自己未必想走到这一步，是她父亲把恐惧种进了她脑子里。',canonical:false,spec:'如果亚莉森意识到自己被父亲的话支配并反抗 —— 她会用绿裙做一件父亲不期待的事：把它脱下来，公开宣告自己不站任何一方。结果是绿党分裂，海塔尔失去主心骨，但她孩子的危险并不会因此消失。'}
+    ]
+  }
+]};
+
+let stIdx=0;
+const stTraj=[];
+let stTypingTimer=null;
+
+function fmtTime(s){const m=Math.floor(s/60);const sec=s%60;return m+':'+(sec<10?'0':'')+sec;}
+
+function stTypeOut(el,text,done){
+  if(stTypingTimer)clearInterval(stTypingTimer);
   el.textContent='';el.classList.add('cursor-blink');let i=0;
-  stanceTyping=setInterval(()=>{
+  stTypingTimer=setInterval(()=>{
     el.textContent=text.slice(0,++i);
-    if(i>=text.length){clearInterval(stanceTyping);el.classList.remove('cursor-blink');done&&done();}
-  },22);
+    if(i>=text.length){clearInterval(stTypingTimer);el.classList.remove('cursor-blink');if(done)done();}
+  },18);
 }
+
+function renderTraj(){
+  const wrap=document.getElementById('stTrajWrap');
+  const list=document.getElementById('stTraj');
+  if(!list)return;
+  if(stTraj.length===0){wrap.style.display='none';return;}
+  wrap.style.display='block';
+  list.innerHTML='';
+  stTraj.forEach(function(entry){
+    const li=document.createElement('li');
+    li.textContent=entry.scene+' · '+entry.label;
+    list.appendChild(li);
+  });
+}
+
+function renderTrigger(){
+  const n=STANCE_DATA.triggers.length;
+  const tr=STANCE_DATA.triggers[stIdx];
+
+  // header badges
+  const idxBadge=document.getElementById('stIdxBadge');
+  if(idxBadge)idxBadge.textContent='立场点 '+(stIdx+1)+' / '+n;
+  const timeBadge=document.getElementById('stTimeBadge');
+  if(timeBadge)timeBadge.textContent='House of the Dragon · S1E5 · '+fmtTime(tr.t);
+
+  // scene + prompt
+  const sceneEl=document.getElementById('stScene');
+  if(sceneEl)sceneEl.textContent=tr.scene;
+  const promptEl=document.getElementById('stPrompt');
+  if(promptEl)promptEl.textContent=tr.prompt;
+
+  // options
+  const optsEl=document.getElementById('opts');
+  if(!optsEl)return;
+  optsEl.innerHTML='';
+
+  // real options from KB
+  tr.options.forEach(function(opt,oi){
+    const div=document.createElement('div');
+    div.className='opt';
+    div.setAttribute('data-oi',oi);
+    // label row with side tag
+    const lab=document.createElement('div');
+    lab.className='lab';
+    const labelTxt=document.createTextNode(opt.label+' ');
+    lab.appendChild(labelTxt);
+    if(opt.canonical){
+      const tag=document.createElement('span');
+      tag.className='side';
+      tag.style.cssText='background:rgba(140,47,58,.14);color:var(--wine)';
+      tag.textContent='剧情走向';
+      lab.appendChild(tag);
+    }
+    div.appendChild(lab);
+    // inner voice (shown on hover / after select)
+    const why=document.createElement('div');
+    why.className='why';
+    why.textContent='「'+opt.voice+'」';
+    div.appendChild(why);
+    div.addEventListener('click',function(){chooseOpt(opt,tr);});
+    optsEl.appendChild(div);
+  });
+
+  // always add 观望 option
+  const watchDiv=document.createElement('div');
+  watchDiv.className='opt';
+  watchDiv.setAttribute('data-oi','watch');
+  const watchLab=document.createElement('div');
+  watchLab.className='lab';
+  watchLab.innerHTML='沉默旁观 <span class="side" style="background:rgba(91,100,112,.16);color:var(--slate)">观望</span>';
+  watchDiv.appendChild(watchLab);
+  const watchWhy=document.createElement('div');
+  watchWhy.className='why';
+  watchWhy.textContent='「现在还不是表态的时候。」';
+  watchDiv.appendChild(watchWhy);
+  watchDiv.addEventListener('click',function(){chooseWatch(tr);});
+  optsEl.appendChild(watchDiv);
+
+  // reset spec area
+  const specWrap=document.getElementById('specWrap');
+  if(specWrap)specWrap.style.display='none';
+  const specEl=document.getElementById('spec');
+  if(specEl)specEl.textContent='';
+  if(stTypingTimer)clearInterval(stTypingTimer);
+
+  // prev / next buttons
+  const prev=document.getElementById('stPrev');
+  const next=document.getElementById('stNext');
+  if(prev)prev.disabled=(stIdx===0);
+  if(next)next.disabled=(stIdx===n-1);
+}
+
+function chooseOpt(opt,tr){
+  // mark all opts deselected, select clicked one
+  document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
+  // find the matching element
+  const allOpts=document.querySelectorAll('#opts .opt');
+  // match by label text
+  for(let i=0;i<allOpts.length;i++){
+    const labEl=allOpts[i].querySelector('.lab');
+    if(labEl&&labEl.textContent.replace('剧情走向','').trim()===opt.label){
+      allOpts[i].classList.add('sel');break;
+    }
+  }
+
+  stTraj.push({scene:tr.scene,label:opt.label});
+  renderTraj();
+
+  const specWrap=document.getElementById('specWrap');
+  const specEl=document.getElementById('spec');
+  const specLabel=document.getElementById('specLabel');
+  specWrap.style.display='block';
+
+  if(opt.canonical){
+    // canonical: show convergence note
+    if(specLabel)specLabel.textContent='剧情本就如此 · 历史收束于同一处';
+    stTypeOut(specEl,tr.convergence);
+  } else if(opt.spec){
+    // counterfactual: type out the spec text
+    if(specLabel)specLabel.textContent='反事实推演 · 如果那一刻不同';
+    stTypeOut(specEl,opt.spec);
+  } else {
+    if(specLabel)specLabel.textContent='';
+    specEl.textContent='';
+  }
+}
+
+function chooseWatch(tr){
+  document.querySelectorAll('#opts .opt').forEach(function(o){o.classList.remove('sel');});
+  const allOpts=document.querySelectorAll('#opts .opt');
+  const last=allOpts[allOpts.length-1];
+  if(last)last.classList.add('sel');
+
+  stTraj.push({scene:tr.scene,label:'沉默旁观'});
+  renderTraj();
+
+  const specWrap=document.getElementById('specWrap');
+  const specEl=document.getElementById('spec');
+  const specLabel=document.getElementById('specLabel');
+  specWrap.style.display='block';
+  if(specLabel)specLabel.textContent='';
+  specEl.textContent='你选择不站队。沉默本身，也是一种被记住的表态。';
+}
+
+const stPrevBtn=document.getElementById('stPrev');
+const stNextBtn=document.getElementById('stNext');
+if(stPrevBtn)stPrevBtn.addEventListener('click',function(){if(stIdx>0){stIdx--;renderTrigger();}});
+if(stNextBtn)stNextBtn.addEventListener('click',function(){if(stIdx<STANCE_DATA.triggers.length-1){stIdx++;renderTrigger();}});
+
+renderTrigger();
+})();
 
 /* ---------- CHARACTER demo ---------- */
 const CHARS={
