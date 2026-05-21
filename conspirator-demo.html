@@ -373,6 +373,40 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .rg2-comp-nm{font-size:13px;font-weight:700}
 .rg2-comp-id{font-size:11.5px;color:var(--dim);margin-top:2px}
 @media(max-width:600px){.rg2-stage{height:420px}.rg2-profile{width:88%}}
+
+/* storyline timeline */
+.tl-track{display:flex;flex-direction:column;gap:0;position:relative;padding-left:24px;margin-bottom:18px}
+.tl-track::before{content:"";position:absolute;left:7px;top:10px;bottom:10px;width:2px;
+  background:linear-gradient(var(--green),rgba(46,125,82,.2));border-radius:2px}
+.tl-node{position:relative;margin-bottom:14px;cursor:default}
+.tl-node::before{content:"";position:absolute;left:-20px;top:13px;width:10px;height:10px;border-radius:50%;
+  background:var(--green);border:2px solid #fff;box-shadow:0 0 0 2px var(--green);z-index:1;transition:.3s}
+.tl-node.locked::before{background:#c8cdd5;box-shadow:0 0 0 2px #c8cdd5}
+.tl-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+  transition:.22s;position:relative;overflow:hidden}
+.tl-node.locked .tl-card{filter:blur(2px) grayscale(1);opacity:.48;pointer-events:none;user-select:none}
+.tl-node.unlocked .tl-card{border-left:3px solid var(--green)}
+.tl-node.unlocked .tl-card:hover{border-color:var(--green);box-shadow:0 6px 20px rgba(46,125,82,.12);transform:translateX(2px)}
+.tl-node.unlocked.expanded .tl-card{background:rgba(46,125,82,.04)}
+.tl-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tl-time{font-size:11px;color:var(--green);font-weight:700;letter-spacing:.03em;font-variant-numeric:tabular-nums}
+.tl-func{font-size:10.5px;border-radius:10px;padding:2px 8px;border:1px solid var(--line2);color:var(--dim)}
+.tl-func.f-铺垫{color:var(--reason);border-color:rgba(47,95,176,.28);background:rgba(47,95,176,.07)}
+.tl-func.f-推进{color:var(--slate);border-color:rgba(91,100,112,.28);background:rgba(91,100,112,.07)}
+.tl-func.f-关键转折{color:var(--intuition);border-color:rgba(191,125,30,.28);background:rgba(191,125,30,.07)}
+.tl-func.f-高潮{color:var(--instinct);border-color:rgba(192,57,43,.28);background:rgba(192,57,43,.07)}
+.tl-func.f-收束{color:var(--emotion);border-color:rgba(106,69,181,.28);background:rgba(106,69,181,.07)}
+.tl-title{font-size:14.5px;font-weight:700;color:var(--text);margin-bottom:4px}
+.tl-summary{font-size:13px;color:var(--dim);line-height:1.75}
+.tl-impact{font-size:13px;color:#3a3f48;line-height:1.85;margin-top:10px;padding-top:10px;
+  border-top:1px dashed var(--line2);font-family:var(--serif);
+  max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .25s ease}
+.tl-node.expanded .tl-impact{max-height:200px;opacity:1}
+.tl-expand-hint{font-size:11px;color:var(--green);margin-top:6px;opacity:.7}
+.tl-lock-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:11.5px;color:var(--faint);letter-spacing:.05em;pointer-events:none;
+  background:rgba(244,245,247,.55)}
+.tl-node.unlocked .tl-lock-label{display:none}
 </style>
 </head>
 <body>
@@ -388,6 +422,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <a href="#character">角色内心</a>
     <a href="#symbol">符号·防剧透</a>
     <a href="#relations">关系</a>
+    <a href="#timeline">脉络</a>
     <a href="#arch">架构</a>
     <a href="#ai">AI 原生</a>
     <a href="#diff">差异化</a>
@@ -628,6 +663,23 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
         <aside class="rg2-profile" id="rg2Profile" aria-hidden="true"></aside>
       </div>
       <div class="tiny center" style="margin-top:12px">点角色看冲突线 + 档案 · 点空白处依次收起档案、收起高亮</div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="timeline">
+  <div class="eyebrow accent-g">交互演示 ⑥ · 故事线脉络</div>
+  <h2 class="sec">看到哪，故事就解锁到哪。</h2>
+  <p class="lead">未播的节点是锁住的——<b style="color:var(--text)">拖动观看进度，剧情脉络随你一格格点亮，不抢先剧透。</b></p>
+  <div class="demo">
+    <div class="head"><span class="dot" style="background:var(--green)"></span><span class="t">故事线脉络</span><span class="badge" id="tlBadge">观看进度 31:00</span></div>
+    <div class="body">
+      <div class="tl-track" id="tlTrack"></div>
+      <div class="scrubwrap">
+        <div class="tiny" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>观看进度</span><span id="tlCursorTxt">31:00</span></div>
+        <input type="range" class="scrub" id="tlScrub" min="0" max="60" value="31"/>
+      </div>
     </div>
   </div>
 </section>
@@ -1308,6 +1360,131 @@ document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('cl
     if(profOpen){closeProfile();profOpen=false;return;}
     if(curId){clearHighlight();curId=null;}
   });
+})();
+
+/* ---------- TIMELINE demo ---------- */
+(function(){
+  const TL_DATA={
+    cursor:1860,
+    nodes:[
+      {t:165,  title:'开场杀妻',   func:'铺垫',   summary:'开场即定调：这集没人是干净的。',
+       impact:'戴蒙在谷地惊马杀死妻子蕾雅·罗伊斯，用石头补刀。一场冷血私刑给本集所有「忠诚 / 私情 / 政治」的张力定下基调。'},
+      {t:373,  title:'父女诀别',   func:'铺垫',   summary:'亚莉森的立场从这一刻开始动摇。',
+       impact:'奥托被解除国王之手，临走警告亚莉森：「雷妮拉登基之日就是你孩子的死期。」绿党立场的种子在此种下。'},
+      {t:1072, title:'潮汐堡谈判', func:'推进',   summary:'两个棋子试图在棋盘上找到自己的空间。',
+       impact:'雷妮拉与莱诺在海岸散步，坦诚协商开放式婚姻——各取所需、各有情人。政治联姻的轮廓清晰起来，但也暴露了「私情留缝」。'},
+      {t:1417, title:'骑士求私奔', func:'关键转折', summary:'骑士的浪漫幻想撞上公主的政治现实，裂痕不可逆转。',
+       impact:'克里斯顿恳求雷妮拉放弃王位一起私奔到厄索斯，被果断拒绝。两人关系彻底破裂，为后续婚宴血案埋下导火索。'},
+      {t:2552, title:'绿裙登场',   func:'推进',   summary:'无声宣战，阵营从此划定。',
+       impact:'婚宴已开，亚莉森身着海塔尔家族战争色「绿色」礼裙迟到入场。全场起立，唯戴蒙未动。这一刻黑党 vs 绿党的分裂正式公开化。'},
+      {t:3307, title:'婚宴血案',   func:'高潮',   summary:'婚宴变屠场，莱诺崩溃。',
+       impact:'乔弗里识破克里斯顿是雷妮拉的情人并试图结盟，克里斯顿精神崩溃当场将其殴打致死。一场公开侮辱性的血案，所有伪装彻底撕掉。'},
+      {t:3367, title:'血色婚礼',   func:'收束',   summary:'一切才刚刚开始——本集是钩子的起点，不是终点。',
+       impact:'婚礼在血泊中仓促举行，雷妮拉含泪宣誓，莱诺只给了嘴角一吻。老鼠舔血的镜头收尾。本集冲突收束，下一段权力撕裂正式开锣。'}
+    ]
+  };
+
+  function fmtSec(sec){
+    const m=Math.floor(sec/60), s=Math.floor(sec%60);
+    return m+':'+String(s).padStart(2,'0');
+  }
+
+  function fmtMin(min){
+    const m=Math.floor(min), s=0;
+    return m+':'+String(s).padStart(2,'0');
+  }
+
+  const track=document.getElementById('tlTrack');
+
+  /* build DOM nodes once */
+  const nodeEls=TL_DATA.nodes.map((n,i)=>{
+    const wrapper=document.createElement('div');
+    wrapper.className='tl-node locked';
+    wrapper.dataset.idx=i;
+
+    const card=document.createElement('div');
+    card.className='tl-card';
+
+    const meta=document.createElement('div');
+    meta.className='tl-meta';
+
+    const timeEl=document.createElement('span');
+    timeEl.className='tl-time';
+    timeEl.textContent=fmtSec(n.t);
+
+    const funcEl=document.createElement('span');
+    funcEl.className='tl-func f-'+n.func;
+    funcEl.textContent=n.func;
+
+    meta.appendChild(timeEl);
+    meta.appendChild(funcEl);
+
+    const titleEl=document.createElement('div');
+    titleEl.className='tl-title';
+    titleEl.textContent=n.title;
+
+    const summaryEl=document.createElement('div');
+    summaryEl.className='tl-summary';
+    summaryEl.textContent=n.summary;
+
+    const hintEl=document.createElement('div');
+    hintEl.className='tl-expand-hint';
+    hintEl.textContent='点击展开详情 ↓';
+
+    const impactEl=document.createElement('div');
+    impactEl.className='tl-impact';
+    impactEl.textContent=n.impact;
+
+    const lockLabel=document.createElement('div');
+    lockLabel.className='tl-lock-label';
+    lockLabel.textContent='等播到这里再揭晓';
+
+    card.appendChild(meta);
+    card.appendChild(titleEl);
+    card.appendChild(summaryEl);
+    card.appendChild(hintEl);
+    card.appendChild(impactEl);
+    card.appendChild(lockLabel);
+    wrapper.appendChild(card);
+    track.appendChild(wrapper);
+
+    /* click to toggle expand (only works when unlocked) */
+    wrapper.addEventListener('click',()=>{
+      if(wrapper.classList.contains('locked'))return;
+      wrapper.classList.toggle('expanded');
+      hintEl.textContent=wrapper.classList.contains('expanded')?'点击收起 ↑':'点击展开详情 ↓';
+    });
+
+    return wrapper;
+  });
+
+  function render(cursorSec){
+    TL_DATA.nodes.forEach((n,i)=>{
+      const el=nodeEls[i];
+      const locked=n.t>cursorSec;
+      if(locked){
+        el.classList.add('locked');
+        el.classList.remove('unlocked','expanded');
+      }else{
+        el.classList.remove('locked');
+        el.classList.add('unlocked');
+      }
+    });
+
+    const badge=document.getElementById('tlBadge');
+    const curTxt=document.getElementById('tlCursorTxt');
+    const scrub=document.getElementById('tlScrub');
+    const minVal=cursorSec/60;
+    const displayMin=Math.floor(minVal);
+    const displaySec=Math.floor(cursorSec%60);
+    const label=displayMin+':'+String(displaySec).padStart(2,'0');
+    if(badge)badge.textContent='观看进度 '+label;
+    if(curTxt)curTxt.textContent=label;
+  }
+
+  const tlScrub=document.getElementById('tlScrub');
+  tlScrub.addEventListener('input',()=>render(+tlScrub.value*60));
+  render(TL_DATA.cursor);
 })();
 </script>
 </body>
