@@ -564,6 +564,26 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .ai-lore .h svg{width:14px;height:14px;flex:none}
 .ai-lore .d{font-size:11.5px;line-height:1.6;color:#b6bcc6}
 
+
+/* —— 叙事 X 光面板(深色)：把浅色变量重定义为深色，rg2/tl 规则自动变暗 —— */
+.xray{--panel:#0e1117;--card:#11141b;--bg2:#11141b;--text:#e8eaf0;--dim:#aab0bb;--faint:#7b828e;--line:#20242c;--line2:#2a2f38;color:#cfd3da;background:#0b0d12;border:1px solid #20242c;border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.xray .pw-top{background:#12151c;border-bottom:1px solid #20242c}
+.xray .pw-brand{color:#e8eaf0}
+.xray-body{position:relative;background:#0b0d12}
+.xray .tiny{color:#8b929d}
+.xray .scrub{background:#2a2f38}
+.xray .scrub::-webkit-slider-thumb{border-color:#0b0d12}
+.xray .scrub::-moz-range-thumb{border-color:#0b0d12}
+.xray .rg2-stage{border:0;border-radius:0;height:480px}
+.xray .rg2-sec p.read{color:#cfd3da}
+.xray .tl-impact{color:#cfd3da}
+.xray .tl-lock-label{background:rgba(11,13,18,.62)}
+.xray .tl-node::before{border-color:#0b0d12}
+.xray .tl-node.locked::before{background:#3a414c;box-shadow:0 0 0 2px #3a414c}
+.xray .tl-card{box-shadow:none}
+.xray .rg2-prof-head{background:#0e1117}
+.xray .rg2-profile{box-shadow:-14px 0 40px rgba(0,0,0,.45)}
+
 </style>
 </head>
 <body>
@@ -874,16 +894,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="eyebrow accent-r">交互演示 ⑤ · 人物关系与档案</div>
   <h2 class="sec">谁和谁，因何而站到了桌子的两端。</h2>
   <p class="lead">点一个角色，看 TA 牵动的盟友与敌对，<b style="color:var(--text)">右侧滑出这个人到此刻为止的档案——绝不剧透更晚的剧情。</b></p>
-  <div class="demo">
-    <div class="head"><span class="dot" style="background:var(--reason)"></span><span class="t">人物关系图谱</span><span class="badge">《龙之家族》· S1E5</span></div>
-    <div class="body">
-      <div class="rg2-stage" id="rg2Stage">
-        <svg class="rg2-svg" id="rg2Svg"></svg>
-        <aside class="rg2-profile" id="rg2Profile" aria-hidden="true"></aside>
-      </div>
-      <div class="tiny center" style="margin-top:12px">点角色看冲突线 + 档案 · 点空白处依次收起档案、收起高亮</div>
-    </div>
+  <div class="xray" style="margin-top:18px">
+    <div class="pw-top"><div class="pw-brand">叙事 X 光 · 人物关系<span class="pw-sep">·</span><span class="pw-ep">按集数切片 · S1E5</span></div><span class="pw-ep" style="font-size:11.5px">25 角色 · 49 关系</span></div>
+    <div class="xray-body"><div class="rg2-stage" id="rg2Stage"><svg class="rg2-svg" id="rg2Svg"></svg><aside class="rg2-profile" id="rg2Profile" aria-hidden="true"></aside></div></div>
   </div>
+  <div class="tiny center" style="margin-top:12px;color:var(--dim)">点角色看冲突线 + 现场生成的人物档案 · 点空白处依次收起档案、收起高亮 · 档案绝不剧透更晚的剧情</div>
 </section>
 
 <!-- TIMELINE -->
@@ -891,16 +906,14 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="eyebrow accent-g">交互演示 ⑥ · 故事线脉络</div>
   <h2 class="sec">看到哪，故事就解锁到哪。</h2>
   <p class="lead">未播的节点是锁住的——<b style="color:var(--text)">拖动观看进度，剧情脉络随你一格格点亮，不抢先剧透。</b></p>
-  <div class="demo">
-    <div class="head"><span class="dot" style="background:var(--green)"></span><span class="t">故事线脉络</span><span class="badge" id="tlBadge">观看进度 31:00</span></div>
-    <div class="body">
+  <div class="xray" style="margin-top:18px">
+    <div class="pw-top"><div class="pw-brand">叙事 X 光 · 故事脉络<span class="pw-sep">·</span><span class="pw-ep">隐藏节点随进度解锁</span></div><span class="pw-ep" id="tlBadge" style="font-size:11.5px">观看进度 31:00</span></div>
+    <div class="xray-body" style="padding:20px 22px">
       <div class="tl-track" id="tlTrack"></div>
-      <div class="scrubwrap">
-        <div class="tiny" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>观看进度</span><span id="tlCursorTxt">31:00</span></div>
-        <input type="range" class="scrub" id="tlScrub" min="0" max="60" value="31"/>
-      </div>
+      <div class="scrubwrap"><div class="tiny" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>观看进度</span><span id="tlCursorTxt">31:00</span></div><input type="range" class="scrub" id="tlScrub" min="0" max="60" value="31"/></div>
     </div>
   </div>
+  <div class="tiny center" style="margin-top:12px;color:var(--dim)">拖动观看进度，剧情脉络一格格点亮；未播到的节点锁住模糊，不抢先剧透</div>
 </section>
 
 <!-- ARCHITECTURE -->
