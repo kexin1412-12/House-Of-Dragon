@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>「共谋者」Conspirator · 功能演示</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital@0;1&family=Noto+Serif+SC:wght@600&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f4f5f7;        /* 浅冷灰 */
+  --bg2:#eceef1;
+  --panel:#ffffff;
+  --panel2:#ffffff;
+  --card:#ffffff;
+  --line:rgba(22,24,29,.1);
+  --line2:rgba(22,24,29,.18);
+  --text:#16181d;      /* 炭黑 */
+  --dim:#586070;       /* 石板灰 */
+  --faint:#9aa1ad;
+  --gold:#b23a48;      /* 品牌主色 · 绯红 */
+  --gold2:#9a2f3c;
+  --wine:#8c2f3a;      /* 深绯红 */
+  --reason:#2f5fb0;    /* 蓝 · 理性 */
+  --emotion:#6a45b5;   /* 紫 · 情感 */
+  --instinct:#c0392b;  /* 红 · 本能 */
+  --intuition:#bf7d1e; /* 琥珀 · 直觉 */
+  --green:#2e7d52;     /* 绿党 */
+  --black:#8c2f3a;     /* 黑党 */
+  --slate:#5b6470;     /* 观望 */
+  --serif:'Noto Serif SC','Songti SC',Georgia,serif;
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden; line-height:1.65;
+}
+.serif{font-family:var(--serif)}
+.cinzel{font-family:'Cinzel',serif;letter-spacing:.04em}
+a{color:inherit;text-decoration:none}
+
+/* icons */
+.ico{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;width:21px;height:21px;display:block}
+.ic{display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;border-radius:11px;
+  background:rgba(178,58,72,.08);border:1px solid rgba(178,58,72,.22);margin-bottom:14px;color:var(--gold)}
+.pain .ic{background:rgba(192,57,43,.08);border-color:rgba(192,57,43,.22);color:var(--instinct)}
+.mini-ic{display:inline-flex;vertical-align:-2px;color:currentColor}
+.mini-ic .ico{width:13px;height:13px}
+.lorecard .h .ico,.linkbtn .ico{width:14px;height:14px}
+
+/* scroll progress + nav */
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--gold);z-index:200}
+.nav{
+  position:fixed;top:0;left:0;right:0;height:58px;z-index:150;
+  display:flex;align-items:center;gap:18px;padding:0 22px;
+  background:rgba(255,255,255,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav .brand{font-weight:700;font-size:16px;letter-spacing:.02em;white-space:nowrap}
+.nav .brand .b{color:var(--gold)}
+.nav .links{display:flex;gap:4px;margin-left:8px;overflow-x:auto;scrollbar-width:none}
+.nav .links::-webkit-scrollbar{display:none}
+.nav .links a{
+  padding:6px 11px;border-radius:8px;font-size:13px;color:var(--dim);white-space:nowrap;transition:.18s
+}
+.nav .links a:hover,.nav .links a.on{color:var(--gold);background:rgba(178,58,72,.1)}
+.nav .cta{margin-left:auto;font-size:12.5px;color:var(--gold);border:1px solid rgba(178,58,72,.4);
+  padding:6px 13px;border-radius:20px;white-space:nowrap;transition:.18s}
+.nav .cta:hover{background:rgba(178,58,72,.1)}
+@media(max-width:760px){.nav .cta{display:none}}
+
+section{padding:96px 22px;max-width:1120px;margin:0 auto;scroll-margin-top:64px}
+.eyebrow{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
+h2.sec{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bottom:14px;letter-spacing:-.01em}
+.lead{color:var(--dim);font-size:clamp(15px,1.6vw,17px);max-width:720px}
+.accent-r{color:var(--reason)} .accent-e{color:var(--emotion)} .accent-i{color:var(--instinct)}
+.accent-g{color:var(--green)} .accent-gold{color:var(--gold)}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:120px 22px 80px;position:relative;max-width:none;overflow:hidden;
+}
+.hero .glow{position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(700px 420px at 50% 8%,rgba(178,58,72,.08),transparent 62%),
+    radial-gradient(560px 440px at 14% 80%,rgba(47,95,176,.06),transparent 62%),
+    radial-gradient(560px 440px at 86% 74%,rgba(106,69,181,.05),transparent 62%)}
+.hero>*{position:relative;z-index:1}
+.hero .kicker{font-size:13px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:26px}
+.hero h1{font-size:clamp(54px,11vw,128px);font-weight:700;line-height:.98;margin-bottom:10px;color:var(--text)}
+.hero h1 .bk{color:var(--gold)}
+.hero .sub{font-size:clamp(17px,2.4vw,24px);color:var(--text);margin-bottom:8px}
+.hero .en{font-size:clamp(13px,1.6vw,16px);color:var(--dim);font-style:italic;margin-bottom:30px;font-family:'EB Garamond',serif}
+.hero .tagline{font-size:clamp(18px,2.6vw,28px);color:var(--gold);font-weight:600;margin-bottom:40px;border-top:1px solid var(--line2);border-bottom:1px solid var(--line2);padding:18px 0;max-width:640px}
+.hero .who{font-size:14px;color:var(--faint);margin-top:6px}
+.btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn{padding:13px 26px;border-radius:30px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn.pri{background:var(--gold);color:#fff}
+.btn.pri:hover{background:var(--gold2);transform:translateY(-2px)}
+.btn.ghost{border-color:var(--line2);color:var(--text)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.scrollhint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);color:var(--faint);font-size:12px;letter-spacing:.1em;z-index:1}
+.scrollhint::after{content:"";display:block;width:1px;height:26px;margin:8px auto 0;background:linear-gradient(var(--faint),transparent);animation:drop 1.8s infinite}
+@keyframes drop{0%{opacity:.2;transform:scaleY(.5)}50%{opacity:1}100%{opacity:.2;transform:scaleY(1)}}
+
+/* generic cards */
+.grid{display:grid;gap:16px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:920px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:.22s}
+.card:hover{border-color:var(--line2);transform:translateY(-3px);box-shadow:0 12px 28px rgba(22,24,29,.09)}
+.card h3{font-size:16px;margin-bottom:7px}
+.card p{font-size:13.5px;color:var(--dim)}
+.card .tag{display:inline-block;margin-top:12px;font-size:11.5px;color:var(--dim);border:1px solid var(--line2);border-radius:20px;padding:3px 10px}
+
+/* pain points */
+.pain{border-left:3px solid var(--instinct)}
+.pain h3{color:var(--instinct)}
+.quote{font-style:italic;color:var(--dim);font-size:13px;border-left:2px solid var(--line2);padding-left:10px;margin-top:10px;font-family:var(--serif)}
+
+/* persona row */
+.persona{display:flex;gap:14px;align-items:flex-start}
+.persona .em{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;border-radius:50%;
+  background:rgba(47,95,176,.1);border:1px solid rgba(47,95,176,.26);color:var(--reason);flex:none}
+.persona .em .ico{width:20px;height:20px}
+.persona .say{color:var(--gold);font-weight:700;font-size:14.5px;margin-bottom:4px}
+.persona .pp{font-size:13px;color:var(--dim)}
+.persona .mod{font-size:11.5px;color:var(--reason);margin-top:8px}
+
+/* DEMO blocks */
+.demo{background:var(--panel);border:1px solid var(--line2);border-radius:16px;padding:0;overflow:hidden;margin-top:26px;box-shadow:0 10px 30px rgba(22,24,29,.06)}
+.demo .head{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.demo .head .dot{width:10px;height:10px;border-radius:50%}
+.demo .head .t{font-size:13.5px;font-weight:600}
+.demo .head .badge{margin-left:auto;font-size:11px;color:var(--dim);border:1px solid var(--line2);border-radius:12px;padding:3px 9px}
+.demo .body{padding:22px}
+.tiny{font-size:12px;color:var(--faint)}
+.center{text-align:center}
+
+/* video frame mock (keeps a dark "screen") */
+.frame{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:16/9;
+  background:
+    radial-gradient(120% 100% at 70% 20%,#27313f,#0e1218 72%),
+    linear-gradient(160deg,#1a222e,#0a0d12);
+  border:1px solid rgba(22,24,29,.25);box-shadow:inset 0 0 60px rgba(0,0,0,.45)}
+.frame .label{position:absolute;left:14px;top:12px;font-size:12px;color:#aab2bd;letter-spacing:.05em}
+.frame .label b{color:#e0a44f}
+.frame .sub{position:absolute;left:0;right:0;bottom:42px;text-align:center;padding:0 16px}
+.frame .sub .zh{font-size:clamp(15px,2.4vw,20px);color:#f3f5f8;text-shadow:0 2px 8px #000}
+.frame .sub .en{font-size:clamp(11px,1.6vw,13px);color:#aab2bd;font-style:italic;font-family:'EB Garamond',serif}
+.hotspot{position:absolute;width:18px;height:18px;cursor:pointer;border-radius:50%;
+  background:rgba(224,164,79,.95);box-shadow:0 0 0 0 rgba(224,164,79,.6);animation:pulse 2s infinite}
+.hotspot.r2{background:rgba(96,150,225,.95);box-shadow:0 0 0 0 rgba(96,150,225,.6)}
+.hotspot.r3{background:rgba(162,134,222,.95);box-shadow:0 0 0 0 rgba(162,134,222,.6)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,164,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,164,79,0)}100%{box-shadow:0 0 0 0 rgba(224,164,79,0)}}
+.scrubwrap{margin-top:14px}
+.scrub{-webkit-appearance:none;width:100%;height:6px;border-radius:6px;background:#dadee4;outline:none}
+.scrub::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid #fff}
+.scrub::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid #fff}
+
+/* info card (hotspot result) */
+.infocard{background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:16px;margin-top:16px;min-height:80px}
+.infocard .cat{display:inline-block;font-size:11px;border-radius:12px;padding:2px 9px;margin-bottom:8px}
+.infocard .row{font-size:13.5px;margin:6px 0}
+.infocard .row b{color:var(--dim);font-weight:700;margin-right:6px}
+.infocard .takeaway{color:var(--gold);font-weight:700;font-size:14px;margin-top:8px}
+.linkbtn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12.5px;color:var(--gold);border:1px solid rgba(178,58,72,.4);border-radius:20px;padding:6px 14px;cursor:pointer;transition:.18s}
+.linkbtn:hover{background:rgba(178,58,72,.1)}
+
+/* stance card */
+.stance{max-width:430px;margin:0 auto;background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:20px;box-shadow:0 6px 20px rgba(22,24,29,.07)}
+.stance .scene{font-size:11.5px;color:var(--faint);letter-spacing:.05em;margin-bottom:6px}
+.stance .q{font-size:16px;font-weight:700;margin-bottom:16px}
+.opt{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;cursor:pointer;transition:.18s}
+.opt:hover{border-color:var(--line2);background:rgba(22,24,29,.03)}
+.opt.sel{border-color:var(--gold);background:rgba(178,58,72,.07)}
+.opt .lab{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.opt .side{font-size:11px;border-radius:10px;padding:1px 8px}
+.opt .why{font-size:12.5px;color:var(--dim);font-style:italic;margin-top:6px;max-height:0;overflow:hidden;opacity:0;transition:.25s;font-family:var(--serif)}
+.opt:hover .why,.opt.sel .why{max-height:60px;opacity:1;margin-top:6px}
+.count{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--faint);margin-bottom:14px}
+.count .bar{flex:1;height:4px;border-radius:4px;background:#dadee4;overflow:hidden}
+.count .bar i{display:block;height:100%;width:100%;background:var(--gold);transform-origin:left;animation:cd 10s linear forwards}
+@keyframes cd{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.spec{margin-top:18px;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:16px;font-family:var(--serif);font-size:14.5px;line-height:1.95;color:#2b2f36;min-height:40px;white-space:pre-wrap}
+.spec .ask{display:inline-block;margin-top:12px;color:var(--gold);border-bottom:1px dashed var(--gold);cursor:pointer}
+.cursor-blink::after{content:"▋";color:var(--gold);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+
+/* character voices */
+.charwrap{display:grid;grid-template-columns:200px 1fr;gap:18px}
+@media(max-width:640px){.charwrap{grid-template-columns:1fr}}
+.charpick .who{border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;margin-bottom:8px;transition:.18s;display:flex;gap:10px;align-items:center}
+.charpick .who:hover,.charpick .who.on{border-color:var(--gold);background:rgba(178,58,72,.07)}
+.charpick .who .av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(178,58,72,.1);color:var(--gold);flex:none}
+.charpick .who .av .ico{width:18px;height:18px}
+.charpick .who .nm{font-size:14px;font-weight:700}
+.charpick .who .id{font-size:11px;color:var(--faint)}
+.dlg{background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:200px}
+.intro{font-family:var(--serif);font-size:13.5px;line-height:1.85;color:#3a3f48;margin-bottom:14px}
+.intro .ly{display:block;margin:4px 0}
+.intro .ly b{color:var(--gold);font-weight:700;font-family:sans-serif;font-size:12px;margin-right:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{font-size:12.5px;border:1px solid var(--line2);border-radius:18px;padding:6px 13px;cursor:pointer;transition:.18s;background:#fff}
+.chip:hover{border-color:var(--gold);color:var(--gold);background:rgba(178,58,72,.07)}
+.chip .st{font-size:10px;opacity:.7;margin-right:4px}
+.reply{margin-top:14px;border-top:1px dashed var(--line2);padding-top:14px}
+.reply .said{font-size:15px;font-weight:700;margin-bottom:12px}
+.voice{border-left:3px solid;padding:8px 12px;margin:8px 0;border-radius:0 8px 8px 0;background:rgba(22,24,29,.035);font-size:13px}
+.voice .vh{font-size:11px;font-weight:700;letter-spacing:.04em;margin-bottom:2px}
+.voice.reason{border-color:var(--reason)} .voice.reason .vh{color:var(--reason)}
+.voice.instinct{border-color:var(--instinct)} .voice.instinct .vh{color:var(--instinct)}
+.voice.emotion{border-color:var(--emotion)} .voice.emotion .vh{color:var(--emotion)}
+.voice.intuition{border-color:var(--intuition)} .voice.intuition .vh{color:var(--intuition)}
+.subtext{font-size:12.5px;color:var(--dim);font-style:italic;margin:10px 0;padding-left:12px;border-left:2px solid var(--line2);font-family:var(--serif)}
+.rounds{font-size:11px;color:var(--faint);margin-top:10px}
+
+/* meme subtitle popover (floats over dark video → light card) */
+.kw{color:#e0a44f;border-bottom:2px solid #e0a44f;cursor:pointer;position:relative;padding-bottom:1px}
+.pop{position:absolute;left:50%;bottom:130%;transform:translateX(-50%) translateY(8px);width:min(320px,80vw);
+  background:#fff;border:1px solid var(--line2);border-radius:10px;padding:14px;text-align:left;color:var(--text);
+  opacity:0;pointer-events:none;transition:.2s;z-index:5;box-shadow:0 16px 44px rgba(0,0,0,.25)}
+.pop.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.pop .lvl{font-size:13px;margin:7px 0}
+.pop .lvl b{display:block;font-size:11px;color:var(--gold);letter-spacing:.05em;margin-bottom:2px}
+
+/* AI panel */
+.agentchips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.answer{background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:16px;min-height:90px;font-size:14px;line-height:1.95}
+.lyrow{margin:7px 0;display:flex;gap:8px;align-items:flex-start}
+.lytag{flex:none;font-size:10.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:3px}
+.lytag.fact{background:rgba(46,125,82,.16);color:var(--green)}
+.lytag.read{background:rgba(47,95,176,.16);color:var(--reason)}
+.lytag.guess{background:rgba(106,69,181,.16);color:var(--emotion)}
+.lorecard{margin-top:12px;border:1px solid var(--line2);border-radius:10px;padding:12px;background:rgba(178,58,72,.06)}
+.lorecard .h{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.lorecard .d{font-size:12.5px;color:var(--dim)}
+
+/* architecture */
+.arch{display:flex;flex-direction:column;gap:10px;margin-top:8px;position:relative}
+.layer{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--card)}
+.layer .lt{font-size:13.5px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.layer .ln{font-size:11px;color:var(--faint);font-weight:400}
+.comp{display:flex;flex-wrap:wrap;gap:7px}
+.comp span{font-size:12px;border:1px solid var(--line2);border-radius:8px;padding:4px 10px;color:var(--dim);background:var(--bg2)}
+.busnote{text-align:center;font-size:12px;color:var(--gold);margin:2px 0;letter-spacing:.04em}
+.l1{border-left:3px solid var(--gold)}
+.l2{border-left:3px solid var(--reason)}
+.l3{border-left:3px solid var(--emotion)}
+.l4{border-left:3px solid var(--green)}
+.l5{border-left:3px solid var(--slate)}
+.l6{border-left:3px solid var(--instinct)}
+
+/* table */
+.tbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+.tbl th,.tbl td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl th{color:var(--gold);font-weight:700;font-size:12.5px;letter-spacing:.03em}
+.tbl tr:hover td{background:rgba(22,24,29,.025)}
+.tbl .me{color:var(--gold);font-weight:700}
+.ok{color:var(--green);font-weight:700}
+
+/* ai capability */
+.cap{border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--card)}
+.cap h3{font-size:15px;margin-bottom:6px}
+.cap p{font-size:13px;color:var(--dim)}
+.cap .no{font-size:12px;color:var(--instinct);margin-top:10px;font-style:italic}
+.bigq{text-align:center;font-size:clamp(20px,3vw,30px);font-weight:700;margin:8px 0 30px}
+.bigq .x{color:var(--instinct)}
+
+/* footer */
+footer{border-top:1px solid var(--line2);padding:50px 22px 70px;text-align:center;color:var(--faint);font-size:13px}
+footer .lk{color:var(--gold);word-break:break-all}
+footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;margin-bottom:18px;font-family:var(--serif)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* relationship graph + profile */
+.rg2-stage{position:relative;height:460px;overflow:hidden;border-radius:var(--radius);
+  background:
+    radial-gradient(120% 90% at 30% 12%,rgba(47,95,176,.06),transparent 60%),
+    radial-gradient(120% 90% at 80% 90%,rgba(106,69,181,.05),transparent 60%),
+    var(--bg2);
+  border:1px solid var(--line)}
+.rg2-svg{width:100%;height:100%;display:block}
+.rg2-svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif}
+/* kin edge layer */
+.rg2-kin{stroke:var(--line2);stroke-width:1.6;fill:none}
+.rg2-kin-pill{fill:var(--panel);stroke:var(--line2);stroke-width:1}
+.rg2-kin-pill-t{fill:var(--dim);font-size:10.5px;font-weight:600}
+/* conflict edges */
+.rg2-conf{fill:none;stroke-width:2;opacity:0;transition:opacity .25s}
+.rg2-conf.is-on{opacity:.9}
+.rg2-conf.is-future{opacity:.4}
+.rg2-conf-enemy{stroke:var(--wine)}
+.rg2-conf-ally{stroke:var(--green);stroke-dasharray:7 5}
+.rg2-conf-blood{stroke:var(--slate);stroke-dasharray:1 0}
+.rg2-conf-secret{stroke:var(--emotion);stroke-dasharray:2 5;stroke-linecap:round}
+.rg2-conf-friend{stroke:var(--reason)}
+.rg2-conf-lab{fill:var(--dim);font-size:10.5px;font-weight:600;opacity:0;transition:opacity .25s}
+.rg2-conf-lab.is-on{opacity:.95}
+.rg2-conf-lab-bg{fill:var(--panel);opacity:0;transition:opacity .25s}
+.rg2-conf-lab-bg.is-on{opacity:.92}
+/* nodes */
+.rg2-node{cursor:pointer;transition:opacity .25s}
+.rg2-node:hover .rg2-ring{stroke:var(--reason);stroke-width:2.4}
+.rg2-node.is-sel .rg2-ring{stroke:var(--reason);stroke-width:3}
+.rg2-node.is-dim{opacity:.22}
+.rg2-ring{fill:var(--panel);stroke:var(--line2);stroke-width:1.6;transition:stroke .2s}
+.rg2-fallback-c{stroke:var(--line2);stroke-width:1.6}
+.rg2-fallback-t{fill:#fff;font-weight:700;font-size:26px;text-anchor:middle}
+.rg2-nm{fill:var(--text);font-size:14px;font-weight:700;text-anchor:middle}
+.rg2-en{fill:var(--faint);font-size:9.5px;letter-spacing:.04em;text-anchor:middle}
+.rg2-ep-bg{fill:rgba(47,95,176,.1);stroke:rgba(47,95,176,.28);stroke-width:1}
+.rg2-ep-t{fill:var(--reason);font-size:10px;font-weight:600;text-anchor:middle}
+.rg2-comp-ring{fill:var(--panel);stroke:var(--gold);stroke-width:1.4}
+/* profile drawer */
+.rg2-profile{position:absolute;top:0;right:0;width:320px;max-width:86%;height:100%;
+  transform:translateX(100%);transition:transform .32s ease;overflow-y:auto;
+  background:var(--panel);border-left:1px solid var(--line2);
+  box-shadow:-14px 0 40px rgba(22,24,29,.12);padding:0;z-index:5}
+.rg2-profile.is-open{transform:none}
+.rg2-prof-head{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);
+  padding:18px 20px 14px;display:flex;gap:14px;align-items:center}
+.rg2-prof-close{position:absolute;top:12px;right:14px;width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--dim);
+  border:1px solid var(--line2);background:var(--bg2);line-height:1;transition:.18s}
+.rg2-prof-close:hover{color:var(--gold);border-color:var(--gold)}
+.rg2-prof-avatar{width:58px;height:58px;border-radius:50%;flex:none;overflow:hidden;
+  border:1px solid var(--line2);background:var(--bg2);position:relative}
+.rg2-prof-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.rg2-prof-avatar .rg2-prof-fb{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:700;color:#fff}
+.rg2-prof-name{font-size:17px;font-weight:700;line-height:1.25}
+.rg2-prof-en{font-size:10.5px;color:var(--faint);letter-spacing:.05em;margin-top:2px}
+.rg2-prof-tags{display:flex;flex-wrap:wrap;gap:6px;padding:12px 20px 0}
+.rg2-prof-tag{font-size:11px;border-radius:12px;padding:3px 10px;border:1px solid var(--line2);color:var(--dim)}
+.rg2-prof-tag.ep{color:var(--reason);border-color:rgba(47,95,176,.32);background:rgba(47,95,176,.08)}
+.rg2-prof-body{padding:14px 20px 24px}
+.rg2-sec{margin-top:16px}
+.rg2-sec-h{font-size:12px;font-weight:700;letter-spacing:.04em;margin-bottom:7px;display:flex;align-items:center;gap:7px}
+.rg2-sec-h::before{content:"";width:3px;height:13px;border-radius:2px;background:var(--reason)}
+.rg2-sec.s-id .rg2-sec-h::before{background:var(--slate)}
+.rg2-sec.s-read .rg2-sec-h::before{background:var(--reason)}
+.rg2-sec.s-arc .rg2-sec-h::before{background:var(--emotion)}
+.rg2-sec.s-lore .rg2-sec-h::before{background:var(--intuition)}
+.rg2-sec.s-comp .rg2-sec-h::before{background:var(--gold)}
+.rg2-sec p{font-size:13px;color:var(--dim);line-height:1.85}
+.rg2-sec p.read{font-family:var(--serif);color:#3a3f48;white-space:pre-line}
+.rg2-arc{list-style:none;margin:0;padding:0}
+.rg2-arc li{position:relative;font-size:12.5px;color:var(--dim);line-height:1.7;padding:0 0 10px 18px}
+.rg2-arc li::before{content:"";position:absolute;left:3px;top:6px;width:7px;height:7px;border-radius:50%;
+  background:var(--emotion);box-shadow:0 0 0 3px rgba(106,69,181,.12)}
+.rg2-arc li:not(:last-child)::after{content:"";position:absolute;left:6px;top:13px;bottom:-1px;width:1px;background:var(--line2)}
+.rg2-lore{font-size:12.5px;color:var(--dim);line-height:1.8;background:rgba(191,125,30,.07);
+  border:1px solid rgba(191,125,30,.22);border-radius:10px;padding:11px 13px}
+.rg2-comp{display:flex;gap:11px;align-items:center;background:rgba(178,58,72,.05);
+  border:1px solid rgba(178,58,72,.2);border-radius:10px;padding:10px 12px}
+.rg2-comp-av{width:42px;height:42px;border-radius:50%;flex:none;overflow:hidden;border:1px solid var(--line2);
+  background:var(--bg2);display:flex;align-items:center;justify-content:center}
+.rg2-comp-av img{width:100%;height:100%;object-fit:cover}
+.rg2-comp-av .fb{font-size:16px;font-weight:700;color:var(--gold)}
+.rg2-comp-nm{font-size:13px;font-weight:700}
+.rg2-comp-id{font-size:11.5px;color:var(--dim);margin-top:2px}
+@media(max-width:600px){.rg2-stage{height:420px}.rg2-profile{width:88%}}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+
+<nav class="nav">
+  <div class="brand"><span class="b">「共谋者」</span> Conspirator</div>
+  <div class="links">
+    <a href="#insight">洞察</a>
+    <a href="#persona">用户</a>
+    <a href="#features">功能</a>
+    <a href="#stance">立场推演</a>
+    <a href="#character">角色内心</a>
+    <a href="#symbol">符号·防剧透</a>
+    <a href="#relations">关系</a>
+    <a href="#arch">架构</a>
+    <a href="#ai">AI 原生</a>
+    <a href="#diff">差异化</a>
+  </div>
+  <a class="cta" href="https://house-of-dragon-phi.vercel.app/" target="_blank">在线 Demo ↗</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="glow"></div>
+  <div class="kicker">腾讯 PCG 校园 AI 产品创意大赛 · 命题赛道一</div>
+  <h1 class="cinzel"><span class="bk">「</span>共谋者<span class="bk">」</span></h1>
+  <div class="sub">AI 驱动的沉浸式剧集观影体验平台</div>
+  <div class="en cinzel">Conspirator · Where Every Viewer Becomes a Co-Author</div>
+  <div class="tagline serif">视频不再是一条线，而是一个空间。</div>
+  <div class="btns">
+    <a class="btn pri" href="#features">浏览功能演示 ↓</a>
+    <a class="btn ghost" href="https://house-of-dragon-phi.vercel.app/" target="_blank">打开在线 Demo（需 VPN）</a>
+  </div>
+  <div class="who">选手：陈可欣 ·  演示剧目：《龙之家族》House of the Dragon</div>
+  <div class="scrollhint">观众不再是旁观者，而是叙事的共谋者</div>
+</header>
+
+<!-- INSIGHT -->
+<section id="insight">
+  <div class="eyebrow">核心洞察</div>
+  <h2 class="sec">长视频的真问题不是「不好看」，<br/>而是强迫观众用过时的姿势消费内容。</h2>
+  <p class="lead">3A 游戏已经把叙事密度做到电影级，但玩家是<b style="color:var(--text)">参与者</b>而非旁观者——玩 90 分钟不需要意志力，看 90 分钟却需要。「共谋者」让长视频获得游戏级交互：在不破坏导演原作的前提下，把观众从「看戏的人」变成「与戏共谋的人」。</p>
+
+  <div class="grid g4" style="margin-top:34px">
+    <div class="card reveal pain">
+      <span class="ic" data-i="grid"></span><h3>信息过载</h3>
+      <p>二十多个角色、七八个家族、跨越数十年——「看不懂」成为常态。</p>
+      <div class="quote">「看了十几集还是搞不清谁是谁，像在备考。」</div>
+    </div>
+    <div class="card reveal pain">
+      <span class="ic" data-i="clock"></span><h3>解读滞后</h3>
+      <p>最想深读的是刚看完那一两小时，可优质解析要等一到三天。</p>
+      <div class="quote">「不知道导演拍这镜头啥意思，只能去翻解说。」</div>
+    </div>
+    <div class="card reveal pain">
+      <span class="ic" data-i="gamepad"></span><h3>缺乏代入感</h3>
+      <p>近三成观众用倍速、边看边刷手机——线性被动观看正在失去吸引力。</p>
+      <div class="quote">「看剧变成了背景音，真正有参与感的还是游戏。」</div>
+    </div>
+    <div class="card reveal pain">
+      <span class="ic" data-i="user"></span><h3>角色理解浅</h3>
+      <p>只能靠台词和表情猜内心，无法以对话方式逼问角色的真心话。</p>
+      <div class="quote">「想知道角色在想什么，但分析文章只能单向读。」</div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONA -->
+<section id="persona">
+  <div class="eyebrow">目标用户 · 五种典型画像</div>
+  <h2 class="sec">同一部剧，每个人「卡住」的地方完全不同。</h2>
+  <p class="lead">每一类用户都在自己卡住的那个点上，对应「共谋者」的一个功能出口。</p>
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card reveal"><div class="persona"><div class="em" data-i="rotate-ccw"></div><div>
+      <div class="say">轻度跟看者</div><div class="pp">「上一集谁死了来着？」断档 3–7 天就大面积模糊。</div>
+      <div class="mod">→ 叙事 X 光 · 主线速通</div></div></div></div>
+    <div class="card reveal"><div class="persona"><div class="em" data-i="zap"></div><div>
+      <div class="say">高意愿低耐心者</div><div class="pp">「看剧变成背景音」——注意力被短视频改造过。</div>
+      <div class="mod">→ 符号热点 · 立场卡 · 即时问答</div></div></div></div>
+    <div class="card reveal"><div class="persona"><div class="em" data-i="search"></div><div>
+      <div class="say">设定敏感型影迷</div><div class="pp">「导演埋了彩蛋我没看出来」，字幕还把双关抹平了。</div>
+      <div class="mod">→ 符号热点 · 文化梗 · 设定百科</div></div></div></div>
+    <div class="card reveal"><div class="persona"><div class="em" data-i="message-circle"></div><div>
+      <div class="say">角色沉浸型用户</div><div class="pp">「我想知道他在想什么」，渴望钻进角色脑子里。</div>
+      <div class="mod">→ 角色内心四色声部对话</div></div></div></div>
+    <div class="card reveal"><div class="persona"><div class="em" data-i="return"></div><div>
+      <div class="say">回流补课用户</div><div class="pp">「想接着看但怕被剧透」，搜一个名字就踩雷。</div>
+      <div class="mod">→ 三层防剧透 · 无剧透接回</div></div></div></div>
+    <div class="card reveal" style="display:flex;align-items:center;justify-content:center;border-style:dashed">
+      <div class="center"><div style="font-size:30px;font-weight:700;color:var(--gold)">5</div>
+      <div class="tiny" style="margin-top:6px">类用户 · 一个产品<br/>各自找到出口</div></div></div>
+  </div>
+</section>
+
+<!-- FEATURES OVERVIEW -->
+<section id="features">
+  <div class="eyebrow">核心功能 · 六大模块 / 十四项交互</div>
+  <h2 class="sec">AI 长进了视频里，<span class="accent-gold">而不是挂在旁边。</span></h2>
+  <p class="lead">所有功能共享同一条「实时播放时间」总线，精确到每一秒。下面四个 demo 可以直接点——这正是产品里最核心的交互。</p>
+
+  <div class="grid g4" style="margin-top:30px">
+    <a class="card reveal" href="#stance"><span class="ic" data-i="git-branch"></span><h3>立场抉择 + 推演</h3><p>关键转折弹三选一投票，AI 实时生成「如果引擎」平行世界线。</p><span class="tag">10 触发点 · 8 配推演</span></a>
+    <a class="card reveal" href="#character"><span class="ic" data-i="message-circle"></span><h3>角色内心四色声部</h3><p>《极乐迪斯科》式：外在台词 + 双声部内心 + 潜台词 + 立场跟问。</p><span class="tag">5 角色 · 4 声部 · 10 轮</span></a>
+    <a class="card reveal" href="#symbol"><span class="ic" data-i="sparkles"></span><h3>符号热点 + 防剧透</h3><p>画面亮起导演埋的彩蛋；按观看进度严格过滤未来信息。</p><span class="tag">39 符号 · 7 类别</span></a>
+    <a class="card reveal" href="#meme"><span class="ic" data-i="message-square"></span><h3>文化梗高亮</h3><p>双语字幕 + 高亮关键词，台词里的话中话自动浮出。</p><span class="tag">三层信息深度</span></a>
+    <div class="card reveal"><span class="ic" data-i="scan-face"></span><h3>实时人物识别</h3><p>一点即知「这个人是谁」，结果同时供给四个下游。</p><span class="tag">CV + 视觉大模型兜底</span></div>
+    <div class="card reveal"><span class="ic" data-i="share-2"></span><h3>人物关系图</h3><p>力导向布局、按集数时间切片、点击现场生成人物档案。</p><span class="tag">25 角色 · 49 关系</span></div>
+    <div class="card reveal"><span class="ic" data-i="activity"></span><h3>剧情脉络 X 光</h3><p>SVG 节点图，三个隐藏节点随进度渐进解锁。</p><span class="tag">7 主线 + 3 隐藏</span></div>
+    <div class="card reveal"><span class="ic" data-i="list"></span><h3>关键线索清单</h3><p>全集符号平铺成卡片墙，按七类切换、未播到先蒙住。</p><span class="tag">全集索引视角</span></div>
+    <div class="card reveal"><span class="ic" data-i="trending-up"></span><h3>我的立场轨迹</h3><p>记录全程选择，AI 生成逐议题第二人称分析「你是什么样的观众」。</p><span class="tag">不打标签 · 不打分</span></div>
+    <div class="card reveal"><span class="ic" data-i="book-open"></span><h3>设定百科</h3><p>世界观卡片，围绕「这场戏里为什么重要」组织，两层深度。</p><span class="tag">14 张卡片</span></div>
+    <div class="card reveal"><span class="ic" data-i="star"></span><h3>收藏系统</h3><p>收台词、收节点，一键跳回播放器对应时间点并自动展开。</p><span class="tag">跨页无缝跳转</span></div>
+    <div class="card reveal"><span class="ic" data-i="toggle"></span><h3>共谋模式总开关</h3><p>一键让全部 AI 叠加层下线，还原干净播放器——随时隐形。</p><span class="tag">最好的增强是你忘了它在</span></div>
+  </div>
+</section>
+
+<!-- STANCE DEMO -->
+<section id="stance">
+  <div class="eyebrow accent-gold">交互演示 ① · 立场投票与推演</div>
+  <h2 class="sec">打破固定结局的「如果引擎」</h2>
+  <p class="lead">每一部剧只有一个结局。立场推演不改一帧画面，却在关键转折打开一扇通往平行世界的门。<b style="color:var(--text)">试试做出选择 → 展开推演。</b></p>
+
+  <div class="demo">
+    <div class="head"><span class="dot" style="background:var(--gold)"></span><span class="t">StanceCard · 立场抉择卡</span><span class="badge">House of the Dragon · S1E5 · 31:00</span></div>
+    <div class="body">
+      <div class="stance" id="stanceCard">
+        <div class="scene">红堡晚宴 · 亚莉森特绿裙登场</div>
+        <div class="q">如果你是红堡中的一位领主，你会怎么做？</div>
+        <div class="count" id="cd"><span class="mini-ic" data-i="clock"></span><div class="bar"><i></i></div><span>10s</span></div>
+        <div id="opts">
+          <div class="opt" data-k="black">
+            <div class="lab">起身行礼 <span class="side" style="background:rgba(46,125,82,.14);color:var(--green)">站绿党</span></div>
+            <div class="why">「她的孩子确实有危险，向王后示好不算背叛。」</div>
+          </div>
+          <div class="opt" data-k="white">
+            <div class="lab">纹丝不动 <span class="side" style="background:rgba(140,47,58,.14);color:var(--wine)">站黑党</span></div>
+            <div class="why">「誓言就是誓言，国王立的储君不容动摇。」</div>
+          </div>
+          <div class="opt" data-k="neutral">
+            <div class="lab">端起酒杯，假装没看见 <span class="side" style="background:rgba(91,100,112,.16);color:var(--slate)">观望</span></div>
+            <div class="why">「现在选边太早了，再等等看风向。」</div>
+          </div>
+        </div>
+        <div id="specWrap" style="display:none">
+          <div class="tiny" style="margin:14px 0 0">↓ AI 第二人称剧本式推演（流式生成）</div>
+          <div class="spec" id="spec"></div>
+        </div>
+      </div>
+      <div class="tiny center" style="margin-top:16px">观望永远是合法选项，不强迫站队 · 选择被记入「我的立场轨迹」，但<b>不打分、不归类、不聚合</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTER DEMO -->
+<section id="character">
+  <div class="eyebrow accent-e">交互演示 ② · 角色内心对话</div>
+  <h2 class="sec">钻进角色的脑子里，<span class="accent-e">听见内心不同力量的角力。</span></h2>
+  <p class="lead">不是「和一个 AI 聊角色」，而是同时看到：外在回应、两个声部的内心独白、一行潜台词、三个带立场标签的跟问。灵感来自《极乐迪斯科》。<b style="color:var(--text)">选个角色，挑一句问。</b></p>
+
+  <div class="demo">
+    <div class="head"><span class="dot" style="background:var(--emotion)"></span><span class="t">CharacterPanel · 四色声部</span><span class="badge" id="roundBadge">第 0 / 10 轮</span></div>
+    <div class="body">
+      <div class="charwrap">
+        <div class="charpick" id="charpick">
+          <div class="who on" data-c="daemon"><div class="av" data-i="flame"></div><div><div class="nm">戴蒙·坦格利安</div><div class="id">王座算计 · 龙血</div></div></div>
+          <div class="who" data-c="rhaenyra"><div class="av" data-i="crown"></div><div><div class="nm">雷妮拉·坦格利安</div><div class="id">继承重负 · 自由渴望</div></div></div>
+          <div class="who" data-c="alicent"><div class="av" data-i="shield"></div><div><div class="nm">亚莉森特·海塔尔</div><div class="id">责任枷锁 · 旧日情谊</div></div></div>
+          <div class="tiny" style="margin-top:6px">声部图例：<span class="accent-r">蓝·理性</span> / <span class="accent-i">红·本能</span> / <span class="accent-e">紫·情感</span> / <span style="color:var(--intuition)">琥珀·直觉</span></div>
+        </div>
+        <div class="dlg" id="dlg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SYMBOL + SPOILER DEMO -->
+<section id="symbol">
+  <div class="eyebrow accent-r">交互演示 ③ · 符号热点 + 三层防剧透</div>
+  <h2 class="sec">导演埋的彩蛋，我们帮你找到——<br/>而且<span class="accent-r">绝不剧透。</span></h2>
+  <p class="lead">画面上呼吸的光点是导演本来就放在那里、大多数观众会错过的信息。<b style="color:var(--text)">点光点看解读；拖动进度条，看防剧透检索层如何按你的进度过滤未来。</b></p>
+
+  <div class="demo">
+    <div class="head"><span class="dot" style="background:var(--reason)"></span><span class="t">SymbolHotspots · 画面叠加层</span><span class="badge" id="curBadge">当前进度 31:00</span></div>
+    <div class="body">
+      <div class="frame">
+        <div class="label"><b>godswood</b> · S1E5</div>
+        <span class="hotspot" style="left:34%;top:40%" data-s="brooch"></span>
+        <span class="hotspot r2" style="left:62%;top:55%" data-s="throne"></span>
+        <span class="hotspot r3" style="left:48%;top:70%" data-s="goose"></span>
+        <div class="sub">
+          <div class="zh">我宁愿要烤鸭，也不要<span class="kw" id="kwGoose">鹅<span class="pop" id="goosePop">
+            <div class="lvl"><b>一句话</b>表面在聊菜，实则隐晦谈论性取向。</div>
+            <div class="lvl"><b>深层含义</b>中世纪语境下 “goose” 是对同性取向的委婉说法，雷妮拉在用餐桌话语试探莱诺。</div>
+            <div class="lvl"><b>叙事效果</b>编剧用一句菜名，让观众在不被点破的情况下意识到莱诺的取向。</div>
+          </span></span>。</div>
+          <div class="en">I prefer roast duck to goose. I cannot say why.</div>
+        </div>
+      </div>
+      <div class="infocard" id="symInfo"><div class="tiny center" style="padding:14px 0">点击画面上的光点，或点字幕里高亮的「鹅」查看文化梗</div></div>
+
+      <div class="scrubwrap">
+        <div class="tiny" style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span>观看进度（cursor_time）</span><span id="cursorTxt">31:00</span>
+        </div>
+        <input type="range" class="scrub" id="scrub" min="0" max="60" value="31" />
+        <div class="tiny" id="spoilerNote" style="margin-top:10px;color:var(--green)">✓ AI 此刻只知道「你看到 31:00 为止的世界」——更晚的符号与剧情已在检索层被过滤。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEME + AGENT (smaller demos) -->
+<section id="meme">
+  <div class="grid g2" style="gap:26px">
+    <div class="reveal">
+      <div class="eyebrow accent-gold">交互演示 ④ · AI 解析面板</div>
+      <h2 class="sec" style="font-size:clamp(22px,3vw,30px)">你的即时追剧搭子</h2>
+      <p class="lead" style="font-size:15px">每句回答都标注可信度：<span class="accent-g">[事实]</span> / <span class="accent-r">[解读]</span> / <span class="accent-e">[推测]</span>，并基于专门构建的剧集知识图谱，不是通用大模型瞎猜。</p>
+      <div class="demo" style="margin-top:18px">
+        <div class="head"><span class="dot" style="background:var(--gold)"></span><span class="t">AgentPanel · 快捷提问</span></div>
+        <div class="body">
+          <div class="agentchips" id="agentChips">
+            <span class="chip" data-q="green">绿色礼服代表什么？</span>
+            <span class="chip" data-q="goose">这是什么梗？</span>
+            <span class="chip" data-q="recap">上一集发生了什么？</span>
+          </div>
+          <div class="answer" id="agentAns"><div class="tiny center" style="padding:18px 0">点一个问题，看分层流式回答</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="eyebrow accent-e">设计哲学</div>
+      <h2 class="sec" style="font-size:clamp(22px,3vw,30px)">画面内轻触，<br/>画面外深读。</h2>
+      <p class="lead" style="font-size:15px">沉浸追剧时认知带宽只剩零点几秒——画面内的入口都是「一点即走」；需要深读的内容放进右栏抽屉和下方面板，让用户在「主动探索」的心理状态下从容阅读。</p>
+      <div class="card" style="margin-top:18px;border-left:3px solid var(--gold)">
+        <p class="serif" style="font-size:15px;color:#3a3f48;line-height:1.95">「在你看剧的每一秒，AI 都在『看同一个画面』，并准备好了你可能想问的一切——而你不再是旁观者，你是共谋者。」</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RELATIONS DEMO -->
+<section id="relations">
+  <div class="eyebrow accent-r">交互演示 ⑤ · 人物关系与档案</div>
+  <h2 class="sec">谁和谁，因何而站到了桌子的两端。</h2>
+  <p class="lead">点一个角色，看 TA 牵动的盟友与敌对，<b style="color:var(--text)">右侧滑出这个人到此刻为止的档案——绝不剧透更晚的剧情。</b></p>
+  <div class="demo">
+    <div class="head"><span class="dot" style="background:var(--reason)"></span><span class="t">人物关系图谱</span><span class="badge">《龙之家族》· S1E5</span></div>
+    <div class="body">
+      <div class="rg2-stage" id="rg2Stage">
+        <svg class="rg2-svg" id="rg2Svg"></svg>
+        <aside class="rg2-profile" id="rg2Profile" aria-hidden="true"></aside>
+      </div>
+      <div class="tiny center" style="margin-top:12px">点角色看冲突线 + 档案 · 点空白处依次收起档案、收起高亮</div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="arch">
+  <div class="eyebrow accent-g">产品架构 · 六层堆栈 + 一条时间总线</div>
+  <h2 class="sec">每一个 AI 功能的出现，<br/>都必须值得它占用的那一秒钟。</h2>
+  <p class="lead">六层各司其职，但共享同一条血管——视频的实时播放时间。它是全局唯一的权威时间源，所有「剧情同步」都从它派生。</p>
+
+  <div class="arch" style="margin-top:28px">
+    <div class="layer l1 reveal"><div class="lt">① 画面叠加层 <span class="ln">Overlay · 8 组件 · 共谋模式总开关统管</span></div>
+      <div class="comp"><span>符号热点</span><span>文化梗高亮</span><span>立场抉择卡</span><span>实时识脸</span><span>全屏 Lore 卡</span><span>分支推演</span><span>关系图按钮</span><span>共谋模式开关</span></div></div>
+    <div class="busnote">▲ 订阅实时播放时间 ▲</div>
+    <div class="layer l2 reveal"><div class="lt">② 右栏 AI 面板 <span class="ln">一个抽屉，三种灵魂，共享同一条消息流</span></div>
+      <div class="comp"><span>AI 解析（事实/解读/推测）</span><span>角色内心（四色声部）</span><span>立场推演（反事实剧本）</span></div></div>
+    <div class="busnote">▲ 立场记录共享 · 识脸结果供给角色候选 ▲</div>
+    <div class="layer l3 reveal"><div class="lt">③ 叙事 X 光 <span class="ln">视频下方常驻 4 页签</span></div>
+      <div class="comp"><span>剧情脉络（隐藏节点渐进解锁）</span><span>人物关系（按集数切片）</span><span>关键线索</span><span>我的立场轨迹</span></div></div>
+    <div class="busnote">▲ 按集数剧透边界 · 时间切片 ▲</div>
+    <div class="layer l4 reveal"><div class="lt">④ 知识底座 <span class="ln">离线 AI 流水线产出 · 150+ 结构化条目</span></div>
+      <div class="comp"><span>14 设定百科</span><span>25 角色档案 · 49 关系</span><span>39 符号标注</span><span>故事线节点图</span><span>10 立场触发器</span></div></div>
+    <div class="busnote">▲ 章节锚点 / 关键事件 ▲</div>
+    <div class="layer l5 reveal"><div class="lt">⑤ 视频播放层 <span class="ln">输出全局唯一的播放时间总线</span></div>
+      <div class="comp"><span>进度条 + 章节锚点</span><span>倍速 / 清晰度 / 全屏</span><span>收藏系统（跨页跳转）</span><span>首页 Hero</span></div></div>
+    <div class="busnote">▲ 模型路由 · 11 任务 × 多供应商 ▲</div>
+    <div class="layer l6 reveal"><div class="lt">⑥ 智能引擎 <span class="ln">路由 + Agent + 流水线 · 用户看不见但决定一切</span></div>
+      <div class="comp"><span>任务级模型路由（11 任务 · 自动降级）</span><span>2 个 Tool-using Agent</span><span>15+ 离线自动化脚本</span></div></div>
+  </div>
+</section>
+
+<!-- AI NATIVE -->
+<section id="ai">
+  <div class="eyebrow accent-i">AI 原生能力</div>
+  <div class="bigq">拿掉 AI，产品还能成立吗？<span class="x"> 完全不能。</span></div>
+  <div class="grid g3">
+    <div class="cap reveal"><span class="ic" data-i="image"></span><h3>多模态视觉理解</h3><p>识脸 + 深挖档让 AI 真正「看着同一个画面」回答，而非靠文字猜。</p><div class="no">去掉 → 每次出场都得暂停查百科</div></div>
+    <div class="cap reveal"><span class="ic" data-i="message-square"></span><h3>流式大模型对话</h3><p>6 个端点共享同一套流式框架，回答逐字流出，永不让用户对着加载圈发呆。</p><div class="no">去掉 → 即时解读这个需求无法满足</div></div>
+    <div class="cap reveal"><span class="ic" data-i="users"></span><h3>角色扮演 + 结构化输出</h3><p>同一轮里产出外在台词、双声部独白、潜台词、跟问建议四层内容。</p><div class="no">去掉 → 这个功能直接从现实中消失</div></div>
+    <div class="cap reveal"><span class="ic" data-i="tool"></span><h3>Tool-using Agent ×2</h3><p>自主调用 6 个工具、最多 8 轮推理；离线分析场景，运行时生成热点。</p><div class="no">去掉 → 逐帧标注的人力成本不可扩展</div></div>
+    <div class="cap reveal"><span class="ic" data-i="eye"></span><h3>经典计算机视觉</h3><p>人脸检测 + 512 维特征匹配做主力，大模型只在失败时兜底——省成本控延迟。</p><div class="no">不浪费大模型在能更省的事上</div></div>
+    <div class="cap reveal"><span class="ic" data-i="layers"></span><h3>长上下文 + 语音转写</h3><p>百万 token 一次读完整本《血与火》抽关系；逐字转写带精确时间戳。</p><div class="no">离线重型基建，驱动运行时一切</div></div>
+  </div>
+  <div class="card reveal" style="margin-top:18px;text-align:center;border-style:dashed">
+    <p style="font-size:15px;color:var(--text)">⑦ <b>任务级模型路由</b>：11 个任务按质量 / 延迟 / 成本各走最优模型，主模型宕机自动降级，用户毫无感知。<br/><span class="tiny">视觉走性价比模型 · 对话走低延迟轻量 · 角色走文学性更强 · Agent 必走函数调用</span></p>
+  </div>
+</section>
+
+<!-- DIFF -->
+<section id="diff">
+  <div class="eyebrow accent-gold">创新与差异化 · 三个字：在剧中</div>
+  <h2 class="sec">不是「AI 加个窗口」，而是「AI 长进视频里」。</h2>
+  <div style="overflow-x:auto;margin-top:20px">
+  <table class="tbl">
+    <tr><th>产品</th><th>形态</th><th>关键短板</th></tr>
+    <tr><td>腾讯元宝 · 追剧搭子</td><td>通用聊天窗挂在视频旁</td><td>不懂剧情上下文，与播放完全脱耦</td></tr>
+    <tr><td>爱奇艺 · AI 跳看</td><td>节奏优化工具</td><td>解决「看得快」，不解决「看得懂」</td></tr>
+    <tr><td>Netflix · 潘达斯奈基</td><td>人工预拍多分支</td><td>成本翻倍，只做一部就无法规模化</td></tr>
+    <tr><td>Character.AI</td><td>脱离剧情的角色聊天</td><td>不知道此刻剧情发生了什么</td></tr>
+    <tr><td class="me">「共谋者」</td><td class="me">长进视频里的一层透明皮肤</td><td class="me">在剧中 · 与时间线同步 · 三层防剧透</td></tr>
+  </table>
+  </div>
+
+  <div class="grid g3" style="margin-top:34px">
+    <div class="card reveal"><h3 class="accent-gold">落地可行性</h3>
+      <table class="tbl" style="margin-top:4px;font-size:12.5px">
+        <tr><td>前端</td><td>React + Vite + Zustand</td><td class="ok">✓</td></tr>
+        <tr><td>后端</td><td>Node + Express + 流式推送</td><td class="ok">✓</td></tr>
+        <tr><td>AI 路由</td><td>自研模型路由</td><td class="ok">✓</td></tr>
+        <tr><td>识脸</td><td>DeepFace · 云端独立部署</td><td class="ok">✓</td></tr>
+        <tr><td>知识库</td><td>结构化知识库（E05）</td><td class="ok">✓</td></tr>
+      </table>
+      <p class="tiny" style="margin-top:10px">完整前后端原型，非概念设想。接入新剧只需换数据 + 重跑流水线，每季约 1–2 天。</p>
+    </div>
+    <div class="card reveal"><h3 class="accent-gold">商业化路径</h3>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:6px"><b style="color:var(--text)">增值会员</b> — 视频会员之上的「共谋者模式」付费增值。</p>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:10px"><b style="color:var(--text)">B 端赋能</b> — AI 解析层 SDK 化，供平台 / IP 方集成。</p>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:10px"><b style="color:var(--text)">IP 联动</b> — 为热门新剧首播季做「首发解读」并与片方分成。</p>
+    </div>
+    <div class="card reveal" style="border-left:3px solid var(--gold)"><h3 class="accent-gold">市场</h3>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:6px">2024 年中国长视频付费用户超 <b style="color:var(--gold)">3 亿</b>，「追剧型」重度用户约占三成。</p>
+      <p style="font-size:13.5px;color:var(--dim);margin-top:10px">瞄准「看完还想聊」的需求——深度理解、探索角色、与人争论，而当前生态无法在观影场景内满足。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="big serif">观众不再是旁观者，而是叙事的共谋者。</div>
+  <div>在线 Demo：<a class="lk" href="https://house-of-dragon-phi.vercel.app/" target="_blank">https://house-of-dragon-phi.vercel.app/</a>（需 VPN）</div>
+  <div style="margin-top:10px">「共谋者」Conspirator · 腾讯 PCG 校园 AI 产品创意大赛 · 选手：陈可欣</div>
+  <div class="tiny" style="margin-top:18px;color:var(--faint)">本页为功能演示原型，所有交互内容为预置示例 · 演示剧目《龙之家族》</div>
+</footer>
+
+<script>
+/* ---------- icon set (inline SVG line icons) ---------- */
+const ICONS={
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/>',
+  gamepad:'<rect x="2" y="7" width="20" height="11" rx="5"/><line x1="7" y1="12" x2="11" y2="12"/><line x1="9" y1="10" x2="9" y2="14"/><line x1="16" y1="11" x2="16.01" y2="11"/><line x1="18" y1="14" x2="18.01" y2="14"/>',
+  user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="8" r="4"/>',
+  'rotate-ccw':'<polyline points="3 4 3 10 9 10"/><path d="M3.5 14a8 8 0 1 0 1.9-8.3L3 10"/>',
+  zap:'<polygon points="13 2 4 14 12 14 11 22 20 10 12 10 13 2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
+  'message-circle':'<path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/>',
+  'return':'<polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+  'git-branch':'<line x1="6" y1="4" x2="6" y2="14"/><circle cx="6" cy="17" r="3"/><circle cx="18" cy="7" r="3"/><path d="M18 10a9 9 0 0 1-9 9"/>',
+  sparkles:'<path d="M12 3l1.7 4.6L18 9l-4.3 1.4L12 15l-1.7-4.6L6 9l4.3-1.4L12 3z"/><path d="M18.5 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1z"/>',
+  'message-square':'<path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/>',
+  'scan-face':'<path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/><line x1="9" y1="10" x2="9.01" y2="10"/><line x1="15" y1="10" x2="15.01" y2="10"/><path d="M9.5 14.5a3.5 3.5 0 0 0 5 0"/>',
+  'share-2':'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/>',
+  activity:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  list:'<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3.5" y1="6" x2="3.51" y2="6"/><line x1="3.5" y1="12" x2="3.51" y2="12"/><line x1="3.5" y1="18" x2="3.51" y2="18"/>',
+  'trending-up':'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  'book-open':'<path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>',
+  star:'<polygon points="12 2 14.9 8.6 22 9.3 16.5 14 18.2 21 12 17.3 5.8 21 7.5 14 2 9.3 9.1 8.6 12 2"/>',
+  toggle:'<rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="16" cy="12" r="3"/>',
+  image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.6"/><polyline points="21 15 16 10 5 21"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="8" r="3.5"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 4.1a4 4 0 0 1 0 7.8"/>',
+  tool:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  layers:'<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  crown:'<path d="M3 18h18l-1.5-9-5 4L12 5 9.5 13l-5-4L3 18z"/>',
+  flame:'<path d="M12 3c.5 4 4 5.6 4 9.5A4 4 0 0 1 8 13c0-2 1-3.2 1.7-4.4.6 1.6 1.8 1.9 1.8 1.9C11.5 8 10.5 6 12 3z"/>',
+  shield:'<path d="M12 3l7.5 3.5v5C19.5 16 16 19 12 21 8 19 4.5 16 4.5 11.5v-5L12 3z"/>'
+};
+function svg(key){return '<svg viewBox="0 0 24 24" class="ico">'+(ICONS[key]||'')+'</svg>'}
+document.querySelectorAll('[data-i]').forEach(el=>{el.innerHTML=svg(el.dataset.i)});
+
+/* ---------- scroll progress + reveal + nav highlight ---------- */
+const prog=document.getElementById('prog');
+addEventListener('scroll',()=>{const h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const navlinks=[...document.querySelectorAll('.nav .links a')];
+const secs=navlinks.map(a=>document.querySelector(a.getAttribute('href')));
+const io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const i=secs.indexOf(e.target);navlinks.forEach(a=>a.classList.remove('on'));if(navlinks[i])navlinks[i].classList.add('on')}}),{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>s&&io2.observe(s));
+
+/* ---------- STANCE demo ---------- */
+const specByKey={
+  black:`你选择了起身行礼。绿裙在烛火下像一面尚未宣读的战旗，而你——率先低下了头。\n红堡里所有眼睛都记住了：当雷妮拉的旗帜还在风中，你已经先一步站到了王后那一边。`,
+  white:`你选择了纹丝不动。整张长桌都在起身，唯独你坐着，像一块拒绝随风倒的石头。\n你以为这是忠诚，可在亚莉森特眼里，这是第一份需要被记下的名字。`,
+  neutral:`你端起酒杯，把目光藏进酒里。你告诉自己：现在选边太早了。\n但在一个所有人都被迫表态的夜晚，沉默本身，也是一种被记住的表态。`
+};
+const askByKey={
+  black:'可当雷妮拉的孩子被指认为私生子时，你还会为今晚的低头骄傲吗？',
+  white:'可三集之后，她三个儿子都长着斯壮家的棕发——你还站她吗？',
+  neutral:'可当战争真正爆发，没有人记得中立者的名字时，你后悔今晚没选吗？'
+};
+let stanceTyping=null;
+document.querySelectorAll('#opts .opt').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    document.querySelectorAll('#opts .opt').forEach(o=>o.classList.remove('sel'));
+    opt.classList.add('sel');
+    const cd=document.getElementById('cd');if(cd)cd.style.display='none';
+    const k=opt.dataset.k;
+    const wrap=document.getElementById('specWrap');wrap.style.display='block';
+    const spec=document.getElementById('spec');
+    typeOut(spec, specByKey[k], ()=>{
+      const a=document.createElement('span');a.className='ask';a.textContent='↳ '+askByKey[k]+'（点击继续追问）';
+      a.onclick=()=>{a.style.color='var(--faint)';a.style.cursor='default';a.onclick=null;
+        const more=document.createElement('div');more.className='spec';more.style.marginTop='10px';spec.parentNode.appendChild(more);
+        typeOut(more,'AI 在同一条对话流里接着推：你以为今晚的选择只是一次礼节，但它会沿着十集的剧情一路回扣——每一次新信息揭示，都会回来重新审视你此刻的判断。这，就是「会被剧情打脸」的立场轨迹。');
+      };
+      spec.appendChild(document.createElement('br'));spec.appendChild(a);
+    });
+  });
+});
+function typeOut(el,text,done){
+  if(stanceTyping)clearInterval(stanceTyping);
+  el.textContent='';el.classList.add('cursor-blink');let i=0;
+  stanceTyping=setInterval(()=>{
+    el.textContent=text.slice(0,++i);
+    if(i>=text.length){clearInterval(stanceTyping);el.classList.remove('cursor-blink');done&&done();}
+  },22);
+}
+
+/* ---------- CHARACTER demo ---------- */
+const CHARS={
+  daemon:{name:'戴蒙·坦格利安',
+    intro:[['表层','一个放荡不羁的王子，正冷眼审视婚宴上的政治角力。'],['深层','一个被兄长放逐的人，在烛影里反复回忆自己失去的一切。']],
+    qs:[
+      {q:'你真的爱雷妮拉，还是只是想要王位？',
+       said:'（嗤笑）你以为爱和王位，是两件可以分开的事？',
+       v:[['reason','王座算计','回答任何一边都会成为把柄——这个问题本身就是陷阱。'],['instinct','龙血','你凭什么问我这个？']],
+       sub:'他在想：如果她知道真相，还会站在我这边吗？'},
+      {q:'被兄长放逐，你恨他吗？',
+       said:'恨？我只是比他更早看清，铁王座从不属于善良的人。',
+       v:[['emotion','旧日血亲','我们曾一起在龙石岛放风筝，那时还没有王座挡在中间。'],['instinct','龙血','他先弃了我，我不过是没有跪着求他。']],
+       sub:'他在想：如果当年是我坐上王座，今天会不会不一样？'},
+      {q:'如果给你一次重来的机会，你会怎么做？',
+       said:'重来？我从不回头看——回头的人，会被铁王座的刃割伤。',
+       v:[['reason','王座算计','承认想重来，就是承认现在输了。'],['intuition','直觉预感','可有什么正在逼近，连龙也压不住。']],
+       sub:'他在想：有些选择，做下去的那一刻就已经没有退路了。'}
+    ]},
+  rhaenyra:{name:'雷妮拉·坦格利安',
+    intro:[['表层','王储，端坐席间，努力让每个动作都配得上「继承人」三个字。'],['深层','一个被誓言和血统困住的女孩，偷偷羡慕着能为自己而活的人。']],
+    qs:[
+      {q:'你愿意为王位放弃自由吗？',
+       said:'自由？我生来就没有过它。我有的只是父亲交到我手里的重量。',
+       v:[['reason','继承重负','示弱会让所有等着我犯错的人闻到血味。'],['emotion','自由渴望','我也想过，逃到狭海对岸，做一个没有姓氏的人。']],
+       sub:'她在想：如果我不是坦格利安，他们还会爱我吗？'},
+      {q:'你还把亚莉森特当朋友吗？',
+       said:'她今晚穿了绿色。有些答案，不需要我开口。',
+       v:[['emotion','旧日情谊','我们曾在神木林分享所有秘密。'],['reason','继承重负','现在她的每一步，都在为她的孩子铺路。']],
+       sub:'她在想：是从哪一刻起，我们站到了桌子的两端？'}
+    ]},
+  alicent:{name:'亚莉森特·海塔尔',
+    intro:[['表层','王后，绿裙加身，从容走入婚宴，把一场登场变成一次宣告。'],['深层','一个被父亲推上政治舞台的女儿，在责任与旧日情谊间反复撕扯。']],
+    qs:[
+      {q:'你穿绿色，是宣战吗？',
+       said:'绿色是海塔尔的颜色。我只是……穿了我家的颜色而已。',
+       v:[['reason','责任枷锁','我必须让所有人看清，我的孩子身后站着谁。'],['emotion','旧日情谊','可我曾经，只想做雷妮拉的朋友。']],
+       sub:'她在想：是他们先把我推到这一步的，不是我。'},
+      {q:'你后悔嫁给国王吗？',
+       said:'后悔是一种奢侈，而我很久没有奢侈过了。',
+       v:[['intuition','直觉预感','这条路尽头的东西，我不敢去想。'],['reason','责任枷锁','我的孩子需要一个站在权力中心的母亲。']],
+       sub:'她在想：如果当初父亲没有派我去陪伴国王……'}
+    ]}
+};
+let curChar='daemon', rounds=0;
+function renderChar(){
+  rounds=0;updateRound();
+  const c=CHARS[curChar];const dlg=document.getElementById('dlg');
+  let html='<div class="intro">';
+  c.intro.forEach(([k,t])=>html+=`<span class="ly"><b>${k}</b>${t}</span>`);
+  html+='</div><div class="tiny">选择一个开场问题：</div><div class="chips" id="qchips"></div><div id="replyArea"></div>';
+  dlg.innerHTML=html;
+  const qc=document.getElementById('qchips');
+  c.qs.forEach((item,i)=>{const el=document.createElement('span');el.className='chip';el.textContent=item.q;el.onclick=()=>answer(i);qc.appendChild(el)});
+}
+function answer(i){
+  if(rounds>=10)return;
+  rounds++;updateRound();
+  const c=CHARS[curChar];const item=c.qs[i];const area=document.getElementById('replyArea');
+  let v='';item.v.forEach(([cls,h,t])=>{v+=`<div class="voice ${cls}"><div class="vh">${h}</div>${t}</div>`});
+  area.innerHTML=`<div class="reply">
+    <div class="said">「${item.said}」</div>
+    <div class="tiny" style="margin-bottom:4px">内心声部：</div>${v}
+    <div class="subtext">潜台词 · ${item.sub}</div>
+    <div class="tiny" style="margin-top:10px">用一种立场继续追问：</div>
+    <div class="chips" id="followchips"></div>
+    <div class="rounds">第 ${rounds} / 10 轮 · 每个角色严格遵守当前集数信息边界，绝不剧透未来</div>
+  </div>`;
+  const stances=['王者','血亲','审慎','火焰'];
+  const fc=document.getElementById('followchips');
+  stances.forEach(s=>{const el=document.createElement('span');el.className='chip';el.innerHTML=`<span class="st">[${s}]</span>继续`;
+    el.onclick=()=>answer((i+1)%c.qs.length);fc.appendChild(el)});
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function updateRound(){document.getElementById('roundBadge').textContent=`第 ${rounds} / 10 轮`}
+document.querySelectorAll('#charpick .who').forEach(w=>w.addEventListener('click',()=>{
+  document.querySelectorAll('#charpick .who').forEach(x=>x.classList.remove('on'));
+  w.classList.add('on');curChar=w.dataset.c;renderChar();
+}));
+renderChar();
+
+/* ---------- SYMBOL hotspots ---------- */
+const SYM={
+  brooch:{cat:'色彩编码 · 道具',catBg:'rgba(46,125,82,.16)',catC:'#2e7d52',t:'31:00',
+    ev:'亚莉森特胸前佩戴的海塔尔家族胸针，与她的绿裙一同登场。',
+    mean:'绿色是海塔尔家族灯塔在战时点燃的火光——绿色出席婚宴，是向坦格利安公开宣战的信号。',
+    take:'这一刻，绿党诞生了。'},
+  throne:{cat:'伏笔 · 跨集回看',catBg:'rgba(47,95,176,.16)',catC:'#2f5fb0',t:'08:27',
+    ev:'韦赛里斯手上始终缠着、且在持续恶化的绷带。',
+    mean:'铁王座在吞噬坐上它的人——这道伤从 S1E1 被王座割伤至今从未痊愈，是「权力反噬掌权者」的视觉隐喻。',
+    take:'不是新伤口，而是一条从第一集就埋下的暗线。',callback:'回看 S1E1 · 韦赛里斯首次被王座割伤'},
+  goose:{cat:'文化梗 · 台词双关',catBg:'rgba(178,58,72,.16)',catC:'#b23a48',t:'25:06',
+    ev:'雷妮拉餐桌上的台词：「我宁愿要烤鸭，也不要鹅。」',
+    mean:'中世纪语境下 “goose” 是对同性取向的隐晦委婉说法，她在用菜名试探莱诺。',
+    take:'编剧用一句菜名，让你在不被点破的情况下读懂莱诺。'}
+};
+function showSym(key){
+  const s=SYM[key];const box=document.getElementById('symInfo');
+  box.innerHTML=`<span class="cat" style="background:${s.catBg};color:${s.catC}">${s.cat} · ${s.t}</span>
+    <div class="row"><b>证据</b>${s.ev}</div>
+    <div class="row"><b>含义</b>${s.mean}</div>
+    <div class="takeaway">观众外卖 · ${s.take}</div>
+    ${s.callback?`<span class="linkbtn">${svg('return')} ${s.callback}</span>`:''}`;
+}
+document.querySelectorAll('.hotspot').forEach(h=>h.addEventListener('click',()=>showSym(h.dataset.s)));
+
+/* goose keyword popover */
+const kw=document.getElementById('kwGoose'),goosePop=document.getElementById('goosePop');
+kw.addEventListener('click',e=>{e.stopPropagation();goosePop.classList.toggle('show');showSym('goose')});
+document.addEventListener('click',()=>goosePop.classList.remove('show'));
+goosePop.addEventListener('click',e=>e.stopPropagation());
+
+/* spoiler scrub */
+const scrub=document.getElementById('scrub');
+const symbolsAt={brooch:31,throne:8,goose:25};
+function fmt(m){return String(Math.floor(m)).padStart(2,'0')+':00'}
+scrub.addEventListener('input',()=>{
+  const t=+scrub.value;
+  document.getElementById('cursorTxt').textContent=fmt(t);
+  document.getElementById('curBadge').textContent='当前进度 '+fmt(t);
+  document.querySelectorAll('.hotspot').forEach(h=>{
+    const at=symbolsAt[h.dataset.s];
+    if(at>t){h.style.opacity='.18';h.style.filter='grayscale(1)';h.style.animation='none';h.title='锁定 · 等播到这里再揭晓'}
+    else{h.style.opacity='1';h.style.filter='none';h.style.animation='';h.title=''}
+  });
+  const note=document.getElementById('spoilerNote');
+  const future=Object.values(symbolsAt).filter(a=>a>t).length;
+  note.textContent=`✓ AI 此刻只知道「你看到 ${fmt(t)} 为止的世界」——还有 ${future} 个更晚的符号已在检索层被过滤。`;
+});
+
+/* ---------- AGENT panel ---------- */
+const AGENT={
+  green:[['fact','亚莉森特在红堡晚宴上身着海塔尔家族的绿色礼服登场。'],
+         ['read','海塔尔家族的灯塔在战时点燃绿火——绿色出席婚宴，是向坦格利安公开宣战的政治信号。'],
+         ['guess','这一选择预示了她与雷妮拉之间不可调和的阵营对立。'],
+         ['lore','御林铁卫｜保护王室的七名骑士：终身不婚、不持地、不继承，用命换王族的安全。']],
+  goose:[['fact','雷妮拉的台词原文是 “I prefer roast duck to goose.”。'],
+         ['read','“goose” 在中世纪语境下是对同性取向的隐晦委婉说法，她在用菜名试探莱诺。'],
+         ['guess','编剧借此在不点破的情况下，让观众读懂莱诺的取向。']],
+  recap:[['fact','上一集结尾，国王韦赛里斯确认雷妮拉为王位继承人。'],
+         ['read','这一决定埋下了与亚莉森特之子之间的继承冲突。'],
+         ['guess','本集绿裙登场，正是这条裂痕第一次被公开摆上台面。']]
+};
+const TAGNAME={fact:'事实',read:'解读',guess:'推测'};
+document.querySelectorAll('#agentChips .chip').forEach(c=>c.addEventListener('click',()=>{
+  const ans=document.getElementById('agentAns');ans.innerHTML='';
+  const rows=AGENT[c.dataset.q];let idx=0;
+  (function next(){
+    if(idx>=rows.length)return;
+    const [type,txt]=rows[idx++];
+    if(type==='lore'){const [h,d]=txt.split('｜');const div=document.createElement('div');div.className='lorecard';
+      div.innerHTML=`<div class="h">${svg('book-open')} ${h}</div><div class="d">${d}</div>`;ans.appendChild(div);}
+    else{const row=document.createElement('div');row.className='lyrow';
+      row.innerHTML=`<span class="lytag ${type}">[${TAGNAME[type]}]</span><span></span>`;ans.appendChild(row);
+      const span=row.querySelector('span:last-child');let i=0;
+      const tm=setInterval(()=>{span.textContent=txt.slice(0,++i);if(i>=txt.length){clearInterval(tm);setTimeout(next,160)}},14);return;}
+    setTimeout(next,180);
+  })();
+}));
+
+/* ---------- RELATIONS graph + profile ---------- */
+(function(){
+  const RG_DATA={
+    base:'https://house-of-dragon-phi.vercel.app',
+    chars:{
+      otto_hightower:{
+        name:'奥托·海塔尔', en:'OTTO HIGHTOWER', epithet:null, house:'Hightower',
+        identity:'前御前首相', col:0, row:0,
+        portrait:'/kb/characters/face_refs/otto_hightower/default/fd_01_Otto-S2.png.png',
+        headline:'被革职的前御前首相，家族影响力受损',
+        analysis:'奥托·海塔尔曾是韦赛里斯一世的御前首相，负责国王的日常政务。他主张以制度而非武力应对戴蒙·坦格利安的威胁。他向韦赛里斯报告雷妮拉与戴蒙的夜游事件后，国王反应强烈、最终将其革职，二人关系彻底决裂。此事不仅使奥托失去朝中最高代言人地位，也削弱了海塔尔家族在王权中的影响力。\n\n他的女儿阿莉森特在朝中与其父立场微妙交织，而他与戴蒙之间的敌对关系愈加尖锐——双方在权力争夺中势如水火。',
+        arc:['任御前首相，主张以制度应对戴蒙的威胁','因报告雷妮拉与戴蒙夜游事件被革职','与韦赛里斯决裂，海塔尔家族在朝堂失去最高代言人'],
+        lore:null, companion:null
+      },
+      daemon_targaryen:{
+        name:'戴蒙·坦格利安', en:'DAEMON TARGARYEN', epithet:'浪荡王子', house:'Targaryen',
+        identity:'韦赛里斯国王之弟', col:1, row:0,
+        portrait:'/kb/characters/face_refs/daemon_targaryen/default/fd_01_Daemon_Targaryen_S2_Infobox.pn.png',
+        headline:'王子戴蒙的暗流与冲突',
+        analysis:'戴蒙·坦格利安，韦赛里斯国王之弟，性格张扬、行事难以约束。曾任都城卫戍司令，因公开发言激怒国王而被解职，转而经营龙石岛。他的野性与好战令朝臣心存忌惮——虽曾被视为可能的王位继承人，但与韦赛里斯的关系日渐紧张，兄弟间的不认与敌意日益加深。\n\n他与雷尼拉之间的暧昧互动，显示出他在权力与情感之间的撕扯；与奥托·海塔尔的政治对立，则让他成为王权与文官势力之间的关键人物。',
+        arc:['被任命为都城卫戍司令，展现军事才能','因激怒国王被解职，转而经营龙石岛','在婚宴上贴近雷尼拉低语，制造最私密的接触'],
+        lore:'在《血与火》里，坦格利安家族是维斯特洛的流亡王室，象征着权力与争斗。',
+        companion:{name:'凯拉克西斯', id:'血翼，戴蒙的红龙', portrait:'/kb/characters/dragon_refs/caraxes.png'}
+      },
+      viserys_targaryen:{
+        name:'韦赛里斯一世', en:'VISERYS I TARGARYEN', epithet:'少壮王', house:'Targaryen',
+        identity:'坦格利安王朝第五任国王', col:2, row:0,
+        portrait:'/kb/characters/face_refs/viserys_targaryen/default/fd_01_Viserys_I_Targaryen_Official_G.jpg',
+        headline:'王朝维系者，面临信任危机与家族分裂',
+        analysis:'韦赛里斯一世·坦格利安，现任七大王国之王，承载着老国王杰赫里斯维系王朝和平的期望。然而随着权力斗争加剧，他面临来自各方的信任危机。与奥托·海塔尔的决裂，标志着他与昔日顾问关系的彻底破裂；与女儿雷妮拉之间的信任也因私事遭到破坏，父女隔阂日益加深，影响着王位继承的稳定。',
+        arc:['被老国王杰赫里斯指定为继承人','在位期间努力维持王朝的和平与稳定','因雷妮拉与戴蒙夜游事件而革职奥托','向雷妮拉送月亮茶，宣告信任破裂'],
+        lore:'在《血与火》里，坦格利安家族是维斯特洛的流亡大贵族，曾统治七国。',
+        companion:null
+      },
+      corlys_velaryon:{
+        name:'科利斯·瓦列利安', en:'CORLYS VELARYON', epithet:'潮汐之主', house:'Velaryon',
+        identity:'「海蛇」', col:4, row:0,
+        portrait:'/kb/characters/face_refs/corlys_velaryon/default/fd_01_Corlys_Velaryon_S2.jpg.jpg',
+        headline:'海蛇：维斯特洛的航海巨头与家族联姻的操盘手',
+        analysis:'科利斯·瓦列利安，绰号「海蛇」，是瓦列利安家族族长，掌控着维斯特洛最富有的航海家族。以卓越的航海经验与财富在政治舞台上占据一席之地。作为蕾妮丝·坦格利安的丈夫，他通过联姻把海军势力与坦格利安血脉相连。\n\n虽与雷尼拉一度亲密，但失子之痛与战略分歧让同盟出现裂痕；与戴蒙的政治盟友关系则相对稳固——阶梯列岛之战的并肩者，后又因联姻成姻亲。',
+        arc:['成为瓦列利安家族的潮汐之主','与蕾妮丝·坦格利安结为夫妻','与雷尼拉建立同盟关系','与戴蒙在阶梯列岛之战中并肩作战'],
+        lore:null,
+        companion:{name:'海雾', id:'银灰色的龙', portrait:'/kb/characters/dragon_refs/seasmoke.png'}
+      },
+      rhaenys_targaryen:{
+        name:'蕾妮丝·坦格利安', en:'RHAENYS TARGARYEN', epithet:'无冕女王', house:'Targaryen',
+        identity:'「无冕女王」', col:5, row:0,
+        portrait:'/kb/characters/face_refs/rhaenys_targaryen/default/fd_01_S2_Rhaenys_Targaryen_Infobox.j.jpg',
+        headline:'无冕女王，王位争夺中的棋子与见证者',
+        analysis:'蕾妮丝·坦格利安，曾被视为杰赫里斯一世的合理继承人，却因性别被大议会跳过，成为历史上著名的"未当上的女王"。她与科利斯·瓦列利安的结合，既是海军势力与皇家血脉的联姻，也是她在政治格局中寻求立足的努力。\n\n她与韦赛里斯一世关系冷淡，在迎接仪式上施以"不全礼"，显示出对当权者的不屑与警惕。作为雷尼拉的表姑，她的经历成为雷尼拉的镜子——既是同盟，也是一种警示。',
+        arc:['被大议会跳过，未能继承王位','与科利斯·瓦列利安结婚，形成政治同盟','在迎接仪式上对韦赛里斯施以不全礼'],
+        lore:'在《血与火》里，坦格利安家族是维斯特洛的流亡大贵族，曾统治七国。',
+        companion:{name:'梅蕾斯', id:'红色女王，蕾妮丝的龙', portrait:'/kb/characters/dragon_refs/meleys.png'}
+      },
+      alicent_hightower:{
+        name:'阿莉森特·海塔尔', en:'ALICENT HIGHTOWER', epithet:null, house:'Hightower',
+        identity:'韦赛里斯一世之妻，奥托·海塔尔之女', col:1.6, row:1,
+        portrait:'/kb/characters/face_refs/alicent_hightower/adult/fd_01_AlicentASfASInfobox.PNG.png',
+        headline:'海塔尔家族的王后与权力游戏的操纵者',
+        analysis:'阿莉森特·海塔尔，韦赛里斯一世的第二任王后，海塔尔家族在朝中的政治支点。从宫廷侍女起步，她与雷尼拉公主的亲密关系为后来的权力斗争埋下伏笔。\n\n随着她与韦赛里斯及雷尼拉的关系日益紧张，立场愈发坚定。在婚宴上她身穿海塔尔祖母绿独自入场，象征性地告别与韦赛里斯、雷妮拉的旧日关系，正式归入海塔尔一侧——"绿党"由此成形，哪怕这意味着与曾经的挚友疏远。',
+        arc:['成为宫廷侍女，与雷尼拉关系亲密','成为韦赛里斯第二任王后，获得政治地位','在雷妮拉婚宴上宣布归入海塔尔家族一侧'],
+        lore:null, companion:null
+      },
+      rhaenyra_targaryen:{
+        name:'雷尼拉·坦格利安', en:'RHAENYRA TARGARYEN', epithet:'王国之光', house:'Targaryen',
+        identity:'龙石岛公主，铁王座继承人', col:2.6, row:1,
+        portrait:'/kb/characters/face_refs/rhaenyra_targaryen/adult/fd_01_Queen_Rhaenyra.jpg.jpg',
+        headline:'铁王座继承人，家族与权力的复杂交织',
+        analysis:'雷尼拉·坦格利安是国王韦赛里斯一世的独女，初期并未被视为继承人。父王册封后，她承受着家族期待与传统男权的双重压力。在与莱诺·瓦列利安的血泊婚礼上，虽完成与瓦列利安家族的绑定，但这桩婚事的象征意义却因血腥事件而坍塌。\n\n她与阿莉森特从闺蜜转为敌对，象征着她在权力斗争中的孤立；父亲对她的信任破裂、送来月亮茶，标志着父女间沟通的彻底断裂。与此同时，她还要面对与克里斯顿的敌对，以及与戴蒙的暧昧情感。',
+        arc:['韦赛里斯之女，钟爱骑龙，对宫廷礼制感到束缚','被父王册封为铁王座继承人，但地位受到挑战','与莱诺完成血泊婚礼，婚事象征意义坍塌'],
+        lore:'在《血与火》里，坦格利安家族象征着三头红龙。',
+        companion:{name:'赛拉克丝', id:'雷尼拉的金龙', portrait:'/kb/characters/dragon_refs/syrax.png'}
+      },
+      laenor_velaryon:{
+        name:'莱诺·瓦列利安', en:'LAENOR VELARYON', epithet:null, house:'Velaryon',
+        identity:'潮头岛继承人，海蛇科利斯之子', col:4.5, row:1,
+        portrait:'/kb/characters/face_refs/laenor_velaryon/default/fd_01_Laenor_Velaryon_Official_Guide.jpg',
+        headline:'潮头岛继承人，雷妮拉之夫，面临痛苦的家族纷争',
+        analysis:'莱诺·瓦列利安，潮头岛继承人，海蛇科利斯之子，拥有显赫的家族背景。他与情人乔弗里·朗茅斯的秘密关系，展现了他对个人情感的追求。然而乔弗里在婚宴上被克里斯顿·科尔杀害，这一事件不仅终结了他们的爱情，也为他与雷妮拉的结合蒙上阴影。\n\n他与克里斯顿的敌对将贯穿余生——因情人之死引发的痛苦，令他在家族与个人情感之间不断挣扎。',
+        arc:['与情人乔弗里秘密交往','乔弗里在婚宴上被克里斯顿杀害','在同一夜与雷妮拉完成婚礼'],
+        lore:null, companion:null
+      }
+    },
+    /* kin edges among the 8 (real relation_zh kept) */
+    kin:[
+      {kind:'sibling', a:'daemon_targaryen', b:'viserys_targaryen', label:'兄弟'},
+      {kind:'marriage', a:'corlys_velaryon', b:'rhaenys_targaryen', label:'夫妻'},
+      {kind:'marriage', a:'rhaenyra_targaryen', b:'laenor_velaryon', label:'夫妻'},
+      {kind:'marriage', a:'viserys_targaryen', b:'alicent_hightower', label:'夫妻'},
+      {kind:'marriage', a:'daemon_targaryen', b:'rhaenyra_targaryen', label:'夫妻'},
+      {kind:'parent', from:'otto_hightower', to:'alicent_hightower', label:'子女'},
+      {kind:'parent', from:'viserys_targaryen', to:'rhaenyra_targaryen', label:'子女'},
+      {kind:'parents', from:['corlys_velaryon','rhaenys_targaryen'], to:'laenor_velaryon', label:'子女'}
+    ],
+    /* conflict edges only among the 8 (real relation labels kept) */
+    conflict:[
+      {a:'viserys_targaryen', b:'otto_hightower', kind:'enemy', relation:'决裂', future:true},
+      {a:'viserys_targaryen', b:'rhaenyra_targaryen', kind:'enemy', relation:'信任破裂', future:true},
+      {a:'viserys_targaryen', b:'daemon_targaryen', kind:'enemy', relation:'兄弟不认', future:true},
+      {a:'daemon_targaryen', b:'otto_hightower', kind:'enemy', relation:'政治对立', future:false},
+      {a:'daemon_targaryen', b:'rhaenyra_targaryen', kind:'secret', relation:'暧昧', future:true},
+      {a:'rhaenys_targaryen', b:'viserys_targaryen', kind:'enemy', relation:'表亲冷淡', future:false},
+      {a:'rhaenys_targaryen', b:'rhaenyra_targaryen', kind:'blood', relation:'表姑侄', future:false},
+      {a:'rhaenys_targaryen', b:'daemon_targaryen', kind:'blood', relation:'表亲', future:false},
+      {a:'corlys_velaryon', b:'rhaenyra_targaryen', kind:'ally', relation:'关系紧张', future:false},
+      {a:'corlys_velaryon', b:'daemon_targaryen', kind:'ally', relation:'政治盟友', future:false},
+      {a:'alicent_hightower', b:'rhaenyra_targaryen', kind:'enemy', relation:'公开对立', future:true}
+    ]
+  };
+
+  const stage=document.getElementById('rg2Stage');
+  const svg=document.getElementById('rg2Svg');
+  const profile=document.getElementById('rg2Profile');
+  if(!stage||!svg||!profile)return;
+  const NS='http://www.w3.org/2000/svg';
+
+  /* layout geometry */
+  const PAD=78, COLW=152, ROWH=224, R=38;
+  const ids=Object.keys(RG_DATA.chars);
+  const pos={};
+  let maxCol=0, maxRow=0;
+  ids.forEach(id=>{const c=RG_DATA.chars[id];if(c.col>maxCol)maxCol=c.col;if(c.row>maxRow)maxRow=c.row});
+  ids.forEach(id=>{const c=RG_DATA.chars[id];pos[id]={x:PAD+c.col*COLW, y:PAD+c.row*ROWH}});
+  const VW=PAD*2+maxCol*COLW;
+  const VH=PAD*2+maxRow*ROWH+78; /* extra room for labels under bottom row */
+  svg.setAttribute('viewBox','0 0 '+VW+' '+VH);
+
+  const houseColor={Targaryen:'#8c2f3a', Hightower:'#2e7d52', Velaryon:'#2f5fb0', Royce:'#5b6470'};
+  function el(tag,attrs){const n=document.createElementNS(NS,tag);if(attrs)for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
+  const fullUrl=p=>RG_DATA.base+p;
+  function initial(name){return (name||'?').trim().charAt(0)}
+
+  /* ---- layers ---- */
+  const kinLayer=el('g',{class:'rg2-kinlayer'});
+  const confLayer=el('g',{class:'rg2-conflayer'});
+  const nodeLayer=el('g',{class:'rg2-nodelayer'});
+
+  function pill(x,y,text){
+    const g=el('g');
+    const w=text.length*11+14, h=18;
+    g.appendChild(el('rect',{x:x-w/2,y:y-h/2,width:w,height:h,rx:9,class:'rg2-kin-pill'}));
+    const t=el('text',{x:x,y:y+4,'text-anchor':'middle',class:'rg2-kin-pill-t'});t.textContent=text;g.appendChild(t);
+    return g;
+  }
+
+  /* kin edges */
+  RG_DATA.kin.forEach(k=>{
+    if(k.kind==='marriage'){
+      const A=pos[k.a], B=pos[k.b];
+      const sameRow=Math.abs(A.y-B.y)<1;
+      if(sameRow){
+        kinLayer.appendChild(el('line',{x1:A.x+R,y1:A.y,x2:B.x-R,y2:B.y,class:'rg2-kin'}));
+        kinLayer.appendChild(pill((A.x+B.x)/2,A.y,k.label));
+      }else{
+        /* cross-generation marriage → diagonal */
+        kinLayer.appendChild(el('line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:'rg2-kin','stroke-dasharray':'4 4'}));
+        kinLayer.appendChild(pill((A.x+B.x)/2,(A.y+B.y)/2,k.label));
+      }
+    }else if(k.kind==='sibling'){
+      const A=pos[k.a], B=pos[k.b];
+      const top=Math.min(A.y,B.y)-R-16;
+      const path=`M ${A.x} ${A.y-R} L ${A.x} ${top} L ${B.x} ${top} L ${B.x} ${B.y-R}`;
+      kinLayer.appendChild(el('path',{d:path,class:'rg2-kin'}));
+      kinLayer.appendChild(pill((A.x+B.x)/2,top,k.label));
+    }else if(k.kind==='parent'){
+      const P=pos[k.from], C=pos[k.to];
+      const midY=(P.y+C.y)/2;
+      const path=`M ${P.x} ${P.y+R} L ${P.x} ${midY} L ${C.x} ${midY} L ${C.x} ${C.y-R}`;
+      kinLayer.appendChild(el('path',{d:path,class:'rg2-kin'}));
+      kinLayer.appendChild(pill(C.x,midY,k.label));
+    }else if(k.kind==='parents'){
+      const P1=pos[k.from[0]], P2=pos[k.from[1]], C=pos[k.to];
+      const busX=(P1.x+P2.x)/2;
+      const midY=(Math.max(P1.y,P2.y)+C.y)/2;
+      /* legs from each parent down to a horizontal bus, then to child */
+      kinLayer.appendChild(el('path',{d:`M ${P1.x} ${P1.y+R} L ${P1.x} ${midY} L ${P2.x} ${midY} L ${P2.x} ${P2.y+R}`,class:'rg2-kin'}));
+      kinLayer.appendChild(el('path',{d:`M ${busX} ${midY} L ${busX} ${midY+14} L ${C.x} ${midY+14} L ${C.x} ${C.y-R}`,class:'rg2-kin'}));
+      kinLayer.appendChild(pill(C.x,C.y-R-16,k.label));
+    }
+  });
+
+  /* conflict edges (one DOM line per edge, hidden until selected) */
+  const confEls=[]; /* {a,b,line,bg,lab} */
+  RG_DATA.conflict.forEach(c=>{
+    const A=pos[c.a], B=pos[c.b];
+    const line=el('path',{class:'rg2-conf rg2-conf-'+c.kind});
+    /* slight curve so overlapping pairs separate */
+    const mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+    const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
+    const off=22, nx=-dy/len*off, ny=dx/len*off;
+    line.setAttribute('d',`M ${A.x} ${A.y} Q ${mx+nx} ${my+ny} ${B.x} ${B.y}`);
+    confLayer.appendChild(line);
+    const lx=mx+nx*0.7, ly=my+ny*0.7;
+    const bg=el('rect',{class:'rg2-conf-lab-bg',rx:8});
+    const lab=el('text',{x:lx,y:ly+3,'text-anchor':'middle',class:'rg2-conf-lab'});
+    lab.textContent=c.relation;
+    const w=c.relation.length*11+10;
+    bg.setAttribute('x',lx-w/2);bg.setAttribute('y',ly-9);bg.setAttribute('width',w);bg.setAttribute('height',17);
+    confLayer.appendChild(bg);confLayer.appendChild(lab);
+    confEls.push({a:c.a,b:c.b,kind:c.kind,future:c.future,line,bg,lab});
+  });
+
+  /* nodes */
+  const nodeEls={};
+  ids.forEach(id=>{
+    const c=RG_DATA.chars[id], p=pos[id];
+    const g=el('g',{class:'rg2-node','data-id':id});
+    g.setAttribute('transform',`translate(${p.x},${p.y})`);
+    /* portrait clipped to circle, with fallback */
+    const clipId='rg2clip-'+id;
+    const defs=el('defs');
+    defs.appendChild(el('clipPath',{id:clipId})).appendChild(el('circle',{cx:0,cy:0,r:R}));
+    g.appendChild(defs);
+    g.appendChild(el('circle',{class:'rg2-ring',cx:0,cy:0,r:R}));
+    /* fallback letter circle (hidden until image errors) */
+    const fb=el('g',{class:'rg2-fb',style:'display:none'});
+    fb.appendChild(el('circle',{class:'rg2-fallback-c',cx:0,cy:0,r:R-2,fill:houseColor[c.house]||'#5b6470'}));
+    const ft=el('text',{x:0,y:9,class:'rg2-fallback-t'});ft.textContent=initial(c.name);fb.appendChild(ft);
+    const img=el('image',{href:fullUrl(c.portrait),x:-R,y:-R,width:R*2,height:R*2,'clip-path':'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice'});
+    img.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',fullUrl(c.portrait));
+    img.addEventListener('error',()=>{img.style.display='none';fb.style.display='';});
+    g.appendChild(img);g.appendChild(fb);
+    /* companion (龙伴) small circle */
+    if(c.companion){
+      const cg=el('g',{transform:`translate(${R-6},${R-6})`});
+      const cClip='rg2cclip-'+id;
+      const cdefs=el('defs');cdefs.appendChild(el('clipPath',{id:cClip})).appendChild(el('circle',{cx:0,cy:0,r:13}));
+      cg.appendChild(cdefs);
+      cg.appendChild(el('circle',{class:'rg2-comp-ring',cx:0,cy:0,r:13}));
+      const cfb=el('text',{x:0,y:5,'text-anchor':'middle',style:'display:none;fill:var(--gold);font-weight:700;font-size:13px'});
+      cfb.textContent=initial(c.companion.name);
+      const cimg=el('image',{x:-13,y:-13,width:26,height:26,'clip-path':'url(#'+cClip+')',preserveAspectRatio:'xMidYMid slice'});
+      cimg.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href',fullUrl(c.companion.portrait));
+      cimg.addEventListener('error',()=>{cimg.style.display='none';cfb.style.display='';});
+      cg.appendChild(cimg);cg.appendChild(cfb);
+      g.appendChild(cg);
+    }
+    /* zh name */
+    const nm=el('text',{x:0,y:R+20,class:'rg2-nm'});nm.textContent=c.name;g.appendChild(nm);
+    /* en name */
+    const en=el('text',{x:0,y:R+33,class:'rg2-en'});en.textContent=c.en;g.appendChild(en);
+    /* epithet pill */
+    if(c.epithet){
+      const ew=c.epithet.length*11+16;
+      const ey=R+46;
+      g.appendChild(el('rect',{class:'rg2-ep-bg',x:-ew/2,y:ey-12,width:ew,height:17,rx:8}));
+      const et=el('text',{x:0,y:ey,class:'rg2-ep-t'});et.textContent=c.epithet;g.appendChild(et);
+    }
+    g.addEventListener('click',e=>{e.stopPropagation();selectChar(id);});
+    nodeLayer.appendChild(g);
+    nodeEls[id]=g;
+  });
+
+  svg.appendChild(kinLayer);
+  svg.appendChild(confLayer);
+  svg.appendChild(nodeLayer);
+
+  /* ---- interaction ---- */
+  let curId=null, profOpen=false;
+
+  function highlightConflicts(id){
+    const involved=new Set([id]);
+    confEls.forEach(ce=>{
+      const touches=(ce.a===id||ce.b===id);
+      ce.line.classList.toggle('is-on',touches);
+      ce.bg.classList.toggle('is-on',touches);
+      ce.lab.classList.toggle('is-on',touches);
+      ce.line.classList.toggle('is-future',touches&&ce.future);
+      if(touches){involved.add(ce.a);involved.add(ce.b);}
+    });
+    ids.forEach(nid=>{
+      nodeEls[nid].classList.toggle('is-dim',!involved.has(nid));
+      nodeEls[nid].classList.toggle('is-sel',nid===id);
+    });
+  }
+  function clearHighlight(){
+    confEls.forEach(ce=>{ce.line.classList.remove('is-on','is-future');ce.bg.classList.remove('is-on');ce.lab.classList.remove('is-on');});
+    ids.forEach(nid=>nodeEls[nid].classList.remove('is-dim','is-sel'));
+  }
+
+  function avatarHTML(name,portrait,fbClass,bg){
+    const url=fullUrl(portrait);
+    const fb='<span class="'+(fbClass||'rg2-prof-fb')+'" style="display:none;background:'+(bg||'var(--slate)')+'">'+initial(name)+'</span>';
+    return '<img src="'+url+'" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'+fb;
+  }
+
+  function openProfile(id){
+    const c=RG_DATA.chars[id];
+    const hc=houseColor[c.house]||'#5b6470';
+    let h='';
+    h+='<div class="rg2-prof-head">';
+    h+='<span class="rg2-prof-close" id="rg2Close" role="button" aria-label="关闭">&times;</span>';
+    h+='<span class="rg2-prof-avatar">'+avatarHTML(c.name,c.portrait,'rg2-prof-fb',hc)+'</span>';
+    h+='<div><div class="rg2-prof-name">'+c.name+'</div><div class="rg2-prof-en">'+c.en+'</div></div>';
+    h+='</div>';
+    h+='<div class="rg2-prof-tags">';
+    if(c.epithet)h+='<span class="rg2-prof-tag ep">'+c.epithet+'</span>';
+    h+='<span class="rg2-prof-tag">'+houseName(c.house)+'</span>';
+    h+='</div>';
+    h+='<div class="rg2-prof-body">';
+    if(c.identity)h+='<div class="rg2-sec s-id"><div class="rg2-sec-h">身份</div><p>'+c.identity+'</p></div>';
+    if(c.analysis)h+='<div class="rg2-sec s-read"><div class="rg2-sec-h">深度解读</div><p class="read">'+c.analysis+'</p></div>';
+    if(c.arc&&c.arc.length){h+='<div class="rg2-sec s-arc"><div class="rg2-sec-h">至今的剧情节点</div><ul class="rg2-arc">';c.arc.forEach(a=>h+='<li>'+a+'</li>');h+='</ul></div>';}
+    if(c.lore)h+='<div class="rg2-sec s-lore"><div class="rg2-sec-h">血与火 · 背景</div><div class="rg2-lore">'+c.lore+'</div></div>';
+    if(c.companion){
+      h+='<div class="rg2-sec s-comp"><div class="rg2-sec-h">龙伴</div><div class="rg2-comp">';
+      h+='<span class="rg2-comp-av"><img src="'+fullUrl(c.companion.portrait)+'" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\'"><span class="fb" style="display:none">'+initial(c.companion.name)+'</span></span>';
+      h+='<div><div class="rg2-comp-nm">'+c.companion.name+'</div><div class="rg2-comp-id">'+c.companion.id+'</div></div>';
+      h+='</div></div>';
+    }
+    h+='</div>';
+    profile.innerHTML=h;
+    profile.classList.add('is-open');
+    profile.setAttribute('aria-hidden','false');
+    const close=document.getElementById('rg2Close');
+    if(close)close.addEventListener('click',e=>{e.stopPropagation();closeProfile();profOpen=false;});
+  }
+  function closeProfile(){
+    profile.classList.remove('is-open');
+    profile.setAttribute('aria-hidden','true');
+  }
+  function houseName(h){
+    const map={Targaryen:'坦格利安家族',Hightower:'海塔尔家族',Velaryon:'瓦列利安家族',Royce:'罗伊斯家族',Strong:'斯壮家族',Cole:'科尔家族'};
+    return map[h]||(h?h+' 家族':'无家族');
+  }
+
+  function selectChar(id){
+    curId=id;
+    highlightConflicts(id);
+    openProfile(id);
+    profOpen=true;
+  }
+
+  /* blank click → progressive close: 1) profile, 2) highlight */
+  stage.addEventListener('click',e=>{
+    if(e.target.closest('.rg2-node'))return;
+    if(e.target.closest('.rg2-profile'))return;
+    if(profOpen){closeProfile();profOpen=false;return;}
+    if(curId){clearHighlight();curId=null;}
+  });
+})();
+</script>
+</body>
+</html>
