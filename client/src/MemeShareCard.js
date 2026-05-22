@@ -4,7 +4,6 @@ import './MemeShareCard.css';
 // 分享卡 —— 每条梗按内容固定一种最合适的模板，纯前端 Canvas 画，零依赖、@2x 高清：
 //   quote    台词卡   —— 纯排版力：大 serif 金字 + 角色名 + 剧名 + 收藏数（社交货币）
 //   moment   名场面卡 —— 情绪容器：场景帧(▶) + 一句话 + 情绪分布 + “Nk 在此暂停”
-//   dialogue 对白卡   —— 剧本感：左右分色气泡 + 不剧透的悬念钩子
 
 const SHOW_TITLE = '龙之家族';
 const BRAND = '共谋者';
@@ -215,70 +214,6 @@ async function drawMoment(ctx, riff, card) {
   footerBrand(ctx);
 }
 
-// ── 对白卡 ──
-function drawDialogue(ctx, riff, card) {
-  ctx.textBaseline = 'alphabetic';
-
-  // 眉标
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#f3c97a';
-  ctx.font = `600 17px ${SANS}`;
-  ctx.fillText('✦  对白', PAD, PAD + 28);
-
-  let y = PAD + 70;
-  const maxBubbleW = 366;
-
-  for (const line of (card.lines || [])) {
-    const left = line.who === 'a';
-    ctx.font = `400 19px ${SANS}`;
-    const txtLines = wrapText(ctx, line.text, maxBubbleW - 28);
-    const lh = 27;
-    const bh = txtLines.length * lh + 22;
-    const bw = Math.min(maxBubbleW, Math.max(...txtLines.map(l => ctx.measureText(l).width)) + 28);
-    const x = left ? PAD : W - PAD - bw;
-
-    // 角色名
-    ctx.textAlign = left ? 'left' : 'right';
-    ctx.fillStyle = 'rgba(255,255,255,0.45)';
-    ctx.font = `500 13px ${SANS}`;
-    ctx.fillText(line.speaker || '', left ? PAD + 2 : W - PAD - 2, y);
-    y += 20;
-
-    // 气泡
-    ctx.fillStyle = left ? 'rgba(124,107,212,0.20)' : 'rgba(243,201,122,0.16)';
-    roundRect(ctx, x, y, bw, bh, 12); ctx.fill();
-
-    // 文字
-    ctx.textAlign = 'left';
-    ctx.fillStyle = left ? '#d9d2f0' : '#f3e6c8';
-    ctx.font = `400 19px ${SANS}`;
-    let ty = y + 28;
-    for (const ln of txtLines) { ctx.fillText(ln, x + 14, ty); ty += lh; }
-    y += bh + 26;
-  }
-
-  // 悬念钩子
-  if (card.teaser) {
-    const cx = W / 2;
-    let ty = Math.max(y + 24, H - 168);
-    // 细分隔线
-    ctx.strokeStyle = 'rgba(243,201,122,0.4)';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(cx - 22, ty - 24); ctx.lineTo(cx + 22, ty - 24); ctx.stroke();
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = `italic 400 18px ${SERIF}`;
-    for (const ln of wrapText(ctx, card.teaser, W - PAD * 2)) { ctx.fillText(ln, cx, ty); ty += 27; }
-    ctx.textAlign = 'left';
-  }
-
-  // 页脚
-  ctx.fillStyle = '#8a7f6b';
-  ctx.font = `500 15px ${SANS}`;
-  ctx.fillText(`《${SHOW_TITLE}》 · ${riff.episode || ''}`, PAD, H - PAD);
-  footerBrand(ctx);
-}
-
 async function drawCard(canvas, riff) {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -296,7 +231,6 @@ async function drawCard(canvas, riff) {
 
   const card = riff.card || { type: 'quote' };
   if (card.type === 'moment') await drawMoment(ctx, riff, card);
-  else if (card.type === 'dialogue') drawDialogue(ctx, riff, card);
   else drawQuote(ctx, riff, card);
 
   // 内描金边框（最后画，框住整张）
@@ -306,7 +240,7 @@ async function drawCard(canvas, riff) {
   ctx.stroke();
 }
 
-const CARD_LABEL = { quote: '台词卡', moment: '名场面卡', dialogue: '对白卡' };
+const CARD_LABEL = { quote: '台词卡', moment: '名场面卡' };
 
 export default function MemeShareCard({ riff, onClose }) {
   const canvasRef = useRef(null);

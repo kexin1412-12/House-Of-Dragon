@@ -5,7 +5,7 @@ import './SceneShareCard.css';
 // 片段卡 —— 分享「这段剧情」：场景截图 + 几句台词叠起来（影视截图配字格式）。
 // 截图优先抓视频当前像素帧（用一个一次性 crossOrigin 克隆 video，绝不碰主播放器，
 // 避免 CORS 拖垮播放）；抓不到（CDN 无 CORS）就回退到同源场景关键帧——永远能导出。
-// 台词复用现有数据：对白梗用两句对白，其余用该句台词的英文 + 中文。
+// 台词复用现有数据：该句台词的英文 + 中文。
 
 const SHOW_TITLE = '龙之家族';
 const BRAND = '共谋者';
@@ -110,12 +110,8 @@ function captureFrame(videoUrl, time) {
   });
 }
 
-// 复用现有台词：对白梗→两句对白；其余→该句英文+中文
+// 复用现有台词：该句台词的英文 + 中文
 function linesOf(riff) {
-  const card = riff.card;
-  if (card && card.type === 'dialogue' && Array.isArray(card.lines)) {
-    return card.lines.map(l => ({ speaker: l.speaker, en: l.text, zh: '' }));
-  }
   const a = riff.anchor || {};
   return [{ speaker: '', en: a.subtitle_en || '', zh: a.subtitle_zh || '' }];
 }

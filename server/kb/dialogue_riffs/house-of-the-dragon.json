@@ -136,20 +136,23 @@
         ]
       },
       "card": {
-        "type": "dialogue",
-        "teaser": "没有一个字提到爱情，却把这段婚姻说尽了。",
-        "lines": [
+        "type": "moment",
+        "caption": "Laenor 用「更爱烤鸭还是烤鹅」向未婚妻委婉出柜，雷妮拉听懂了，顺着接了下去。",
+        "emotions": [
           {
-            "who": "a",
-            "speaker": "Laenor",
-            "text": "I prefer roast duck to goose. I cannot say why."
+            "label": "会心一笑",
+            "count": 5400
           },
           {
-            "who": "b",
-            "speaker": "Rhaenyra",
-            "text": "Some find goose a little rich. But I see no reason you cannot have both duck and goose."
+            "label": "意难平",
+            "count": 4200
+          },
+          {
+            "label": "名场面",
+            "count": 3600
           }
-        ]
+        ],
+        "paused": "2.7万人在此暂停"
       }
     },
     {
@@ -261,20 +264,23 @@
         ]
       },
       "card": {
-        "type": "dialogue",
-        "teaser": "这两句对话之后，一个骑士用余生去恨她。",
-        "lines": [
+        "type": "moment",
+        "caption": "「为爱，不为王座」——Criston 把骑士的一切压上来，换来的却是「我即是王冠」。",
+        "emotions": [
           {
-            "who": "a",
-            "speaker": "Criston Cole",
-            "text": "A marriage for love, not for the crown."
+            "label": "震撼",
+            "count": 7100
           },
           {
-            "who": "b",
-            "speaker": "Rhaenyra",
-            "text": "I am the crown, Ser Criston. Or I will be."
+            "label": "意难平",
+            "count": 4800
+          },
+          {
+            "label": "起鸡皮",
+            "count": 3900
           }
-        ]
+        ],
+        "paused": "3.5万人在此暂停"
       }
     },
     {
@@ -318,20 +324,23 @@
         ]
       },
       "card": {
-        "type": "dialogue",
-        "teaser": "敢当着戴蒙的面说这句话的人，维斯特洛没剩几个。",
-        "lines": [
+        "type": "moment",
+        "caption": "罗伊斯当面指控戴蒙杀妻——维斯特洛少有人敢这样对坦格利安开口。",
+        "emotions": [
           {
-            "who": "a",
-            "speaker": "Ser Gerold Royce",
-            "text": "In the Vale, men are made to answer for their crimes. Even Targaryens."
+            "label": "解气",
+            "count": 4600
           },
           {
-            "who": "b",
-            "speaker": "Daemon Targaryen",
-            "text": "The Vale is a fine place — to be forgotten in."
+            "label": "震撼",
+            "count": 3300
+          },
+          {
+            "label": "名场面",
+            "count": 2900
           }
-        ]
+        ],
+        "paused": "2.1万人在此暂停"
       }
     },
     {
