@@ -709,6 +709,10 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .std-input input::placeholder{color:#5a606b;font-style:italic}
 .std-input .send{background:none;border:0;color:#d6b06a;font-size:12.5px;cursor:pointer;flex:none;font-family:inherit}
 
+
+.std-para.q{color:#e8b85a;font-style:italic;opacity:.95;margin-top:14px;padding-top:10px;border-top:1px dashed rgba(232,184,90,.25)}
+.std-para.q + .std-para.q{margin-top:6px;padding-top:0;border-top:none}
+
 </style>
 </head>
 <body>
@@ -1235,16 +1239,19 @@ secs.forEach(s=>s&&io2.observe(s));
     body.innerHTML='';if(foll)foll.innerHTML='';
     var paras=specDepth==='brief'?(o.spB||o.sp||[]):(o.spD||o.sp||[]);
     var follows=specDepth==='brief'?(o.flB||o.fl||[]):(o.flD||o.fl||[]);
+    var items=[];
+    paras.forEach(function(p,idx){items.push({cls:(idx===paras.length-1?'spec':''),t:p});});
+    follows.forEach(function(q){items.push({cls:'q',t:q});});
     var i=0;
     (function next(){
-      if(i>=paras.length){
+      if(i>=items.length){
         follows.forEach(function(q){var b=document.createElement('button');b.className='std-foll-q';b.innerHTML='<span class="qm">[问]</span>'+q;b.addEventListener('click',specNote);foll.appendChild(b);});
         return;
       }
-      var isLast=(i===paras.length-1);
-      var el=document.createElement('p');el.className='std-para'+(isLast?' spec':'');body.appendChild(el);
-      var t=paras[i++],j=0;
-      typing=setInterval(function(){el.textContent=t.slice(0,++j);if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,110);}},9);
+      var it=items[i++];
+      var el=document.createElement('p');el.className='std-para'+(it.cls?' '+it.cls:'');body.appendChild(el);
+      var t=it.t,j=0;
+      typing=setInterval(function(){el.textContent=t.slice(0,++j);if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,it.cls==='q'?55:110);}},9);
     })();
   }
   function specNote(){var foll=document.getElementById('stFoll');if(!foll||document.getElementById('stSpecNote'))return;var n=document.createElement('div');n.id='stSpecNote';n.style.cssText='font-size:11.5px;color:#7b828e;line-height:1.6;margin-top:10px';n.textContent='演示到此 —— 完整的多轮「如果引擎」推演在产品内可继续往下推。';foll.appendChild(n);}
