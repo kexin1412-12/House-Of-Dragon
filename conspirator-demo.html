@@ -127,6 +127,8 @@ h2.sec{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bo
 .demo-notes .dn-k::before{content:"";width:14px;height:2px;background:var(--gold);border-radius:2px;flex:none}
 .demo-notes p{font-size:14px;line-height:1.72;color:var(--dim);margin:0}
 .demo-notes b{color:var(--text);font-weight:600}
+.demo-notes .dn-ai{margin-top:16px;padding:11px 13px;background:rgba(61,94,156,.06);border:1px solid rgba(61,94,156,.18);border-left:3px solid var(--gold);border-radius:8px;font-size:12.5px;line-height:1.66;color:var(--dim)}
+.demo-notes .dn-ai .lab{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--gold);margin-bottom:5px}
 @media(max-width:860px){.demo-2col{grid-template-columns:1fr;gap:18px}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:.22s}
 .card:hover{border-color:var(--line2);transform:translateY(-3px);box-shadow:0 12px 28px rgba(22,24,29,.09)}
@@ -1004,6 +1006,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>每次提问，后端先按当前播放时间从剧集知识图谱里捞出「这一秒」的场景、在场角色、字幕原文和符号注入 prompt——不是泛泛的维基梗概。所以你问「绿裙代表什么」，它答的是「海塔尔家族战时亮绿火，绿裙＝公开宣战」。每句还标可信度 <b>[事实]/[解读]/[推测]</b>，不用猜它在引用还是在编。</p>
     <div class="dn-k">永远只知道你看到这里</div>
     <p>出 prompt 前先按你的进度（精确到集）过滤知识库，后续剧情根本不进上下文——不是「忍着不说」，而是 prompt 里压根没有。这套游标过滤贯穿产品所有 AI 端点。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>提问 → 按播放时间从<b>剧集知识图谱</b>捞「这一秒」的场景 / 在场角色 / 字幕 / 符号注入 prompt；深挖档再截<b>前后三帧</b>送多模态视觉模型——AI 真在看同一个画面。每句标 [事实]/[解读]/[推测]。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1049,6 +1052,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>选完不是放一段预写文本，而是大模型<b>实时生成的第二人称平行世界线</b>，还能多轮追问——排列组合出成千上万条路径，从根上解决「选了也没用」。它不改原片一帧、不换一句台词，原作叙事权威完整保留，推演是「延伸阅读」而非替代品。</p>
     <div class="dn-k">只记录选择，从不打分</div>
     <p>只记录<b>你选了什么，不打分、不归类、不站队</b>；不想选，观望永远合法——没有进度焦虑，也没有「你站错队」。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>10 个触发点、8 个配<b>反事实推演</b>；选项的「内心理由」与第二人称平行世界线都是大模型<b>实时生成</b>（非预写），支持多轮追问——排列出成千上万条路径。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1088,6 +1092,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>问 TA 一个问题，TA 先「说」一句表面回应（反讽或回避），然后<b>两个声部同时响起</b>——理性的在盘算政治风险、本能的因被质疑而暴怒，下面还有一行灰色潜台词（忍住没说的）。每条回复给三个带立场的跟问：<b>王者 / 血亲 / 审慎 / 火焰</b>，每种把对话推向完全不同的方向，灵感来自《极乐迪斯科》。</p>
     <div class="dn-k">真相是你自己逼出来的</div>
     <p>十轮问下来，你对角色的理解远超任何分析文章——因为那是你自己一步步逼出来的，不是别人写的结论。切场景重置轮数，角色严守当前集数边界。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>角色扮演 + <b>四层结构化 JSON</b>（台词 / 双声部独白 / 潜台词 / 跟问）+ 独立人设文档 + 按集数信息边界；路由到中文文学性最强的 <b>Gemini 2.5 Flash dialogue</b>，而非通用轻量模型。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1134,6 +1139,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>符号按七类分（道具 / 色码 / 角色缺席 / 剪辑 / 微表情 / 文化引用 / 交互引导）；没播到的<b>锁住</b>，拖进度才逐格解锁——检索层永远按你的进度过滤未来。</p>
     <div class="dn-k">还能一键回看伏笔源头</div>
     <p>引导类符号点开还能三种跳转：开设定百科解释名词、展开文化梗解析台词、或<b>一键把视频拉回前面的关联场景</b>重温伏笔（比如「铁王座伤口」一键回看 S1E1 首次被割伤）。跟弹幕（观众二创、盖在画面上抢注意力）不同，这是导演本来就埋好的一手信息。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>离线由 <b>Scene-Analyst Agent</b> 自主调用六个工具（知识库检索 / 邻居场景 / 角色档案 / 母题词典 / 字幕提取 / 终止信号）、最多<b>八轮推理</b>输出结构化解读——一集 39 个符号的标注从人工数天压到 AI 数小时。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1213,6 +1219,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>解读分三层——<b>一句话速览 → 为什么是梗 → 完整背景 / 原著对照 / 历史典故</b>，看多深你定，可收藏梗卡；下面还有<b>社区补充</b>，系统没讲到的角度别的剧迷帮你补、按热度浮顶。字幕由 Whisper 从音轨独立转写、带精确时间戳，绕开平台翻译差。</p>
     <div class="dn-k">信息来找你，你不用离开剧情</div>
     <p>信息在台词说出那一秒到达，不早一秒打扰、不晚一秒错过，视频不暂停、眼睛不离画面；共谋模式一键收起全部叠加层。它不只治「翻译差」，而是治「好编剧总在台词里藏东西、观众没工具一层层剥开」。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>字幕由 <b>Whisper</b> 从视频音轨独立转写、带精确到秒的时间戳（绕开平台翻译差与显示错乱）；七条台词梗的三层解读由离线管线预先策展，运行时按时间戳触发。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1245,6 +1252,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>这张图是<b>「活的」</b>——按你当前进度实时算谁已死、谁换了演员、谁是这场戏的焦点（焦点角色发光）；关系数据按集数做<b>时间切片</b>，你看到第五集时，第八集才揭示的婚约和背叛对你还不存在。</p>
     <div class="dn-k">档案是当场写的，不是查的</div>
     <p>点角色头像，侧栏弹出的档案不是数据库里调一段固定文本，而是大模型按<b>「你看到哪了」实时生成</b>——关系图于是不是静态参考工具，而是随你观看进度一起呼吸的叙事机制。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>关系数据离线由 <b>Gemini 百万上下文</b>读原著抽取（25 角色 / 49 关系），按集数<b>时间切片</b>存储；运行时点头像，大模型按当前进度<b>现场生成</b>人物档案。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
@@ -1269,6 +1277,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <p>三种视图随你切——<b>主线模式</b>快速回顾、<b>分支模式</b>深度探索、<b>伏笔线索模式</b>专盯暗线；节点上还叠着你之前投的立场标记（小金点 +「你在这选了支持戴蒙」），让叙事结构和你的选择交织。点节点开侧栏：剧照、概要、对后续的影响、一键跳到对应时间点。</p>
     <div class="dn-k">只点亮你走过的路</div>
     <p>梗概是上帝视角的总结，天然剧透；这条脉络<b>只点亮你已经走过的路</b>，是给「正在看」的人用的防剧透导航，不是看完的目录。</p>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>节点解读离线由 <b>GPT-4o Agent</b> 多轮推理生成、<b>Gemini 百万 token</b> 读完整本原著抽叙事骨架；隐藏节点按播放进度<b>渐进解锁</b>，运行时不调用大模型、零延迟。</div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
