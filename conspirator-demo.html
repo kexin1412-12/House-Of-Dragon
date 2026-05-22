@@ -255,21 +255,6 @@ h2.sec{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bo
 .lorecard .h{font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:6px}
 .lorecard .d{font-size:12.5px;color:var(--dim)}
 
-/* architecture */
-.arch{display:flex;flex-direction:column;gap:10px;margin-top:8px;position:relative}
-.layer{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--card)}
-.layer .lt{font-size:13.5px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.layer .ln{font-size:11px;color:var(--faint);font-weight:400}
-.comp{display:flex;flex-wrap:wrap;gap:7px}
-.comp span{font-size:12px;border:1px solid var(--line2);border-radius:8px;padding:4px 10px;color:var(--dim);background:var(--bg2)}
-.busnote{text-align:center;font-size:12px;color:var(--gold);margin:2px 0;letter-spacing:.04em}
-.l1{border-left:3px solid var(--gold)}
-.l2{border-left:3px solid var(--reason)}
-.l3{border-left:3px solid var(--emotion)}
-.l4{border-left:3px solid var(--green)}
-.l5{border-left:3px solid var(--slate)}
-.l6{border-left:3px solid var(--instinct)}
-
 /* table */
 .tbl{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
 .tbl th,.tbl td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
@@ -879,8 +864,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <a href="#character">角色内心</a>
     <a href="#symbol">符号·防剧透</a>
     <a href="#relations">关系</a>
-    <a href="#timeline">脉络</a>
-    <a href="#arch">架构</a>
+    <a href="#timeline">脉络</a>
     <a href="#ai">AI 原生</a>
     <a href="#diff">差异化</a>
   </div>
@@ -1275,31 +1259,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div>
 </section>
 
-<section id="arch">
-  <div class="eyebrow accent-g">产品架构 · 六层堆栈 + 一条时间总线</div>
-  <h2 class="sec">每一个 AI 功能的出现，<br/>都必须值得它占用的那一秒钟。</h2>
-  <p class="lead">六层各司其职，但共享同一条血管——视频的实时播放时间。它是全局唯一的权威时间源，所有「剧情同步」都从它派生。</p>
 
-  <div class="arch" style="margin-top:28px">
-    <div class="layer l1 reveal"><div class="lt">① 画面叠加层 <span class="ln">Overlay · 8 组件 · 共谋模式总开关统管</span></div>
-      <div class="comp"><span>符号热点</span><span>文化梗高亮</span><span>立场抉择卡</span><span>实时识脸</span><span>全屏 Lore 卡</span><span>分支推演</span><span>关系图按钮</span><span>共谋模式开关</span></div></div>
-    <div class="busnote">▲ 订阅实时播放时间 ▲</div>
-    <div class="layer l2 reveal"><div class="lt">② 右栏 AI 面板 <span class="ln">一个抽屉，三种灵魂，共享同一条消息流</span></div>
-      <div class="comp"><span>AI 解析（事实/解读/推测）</span><span>角色内心（四色声部）</span><span>立场推演（反事实剧本）</span></div></div>
-    <div class="busnote">▲ 立场记录共享 · 识脸结果供给角色候选 ▲</div>
-    <div class="layer l3 reveal"><div class="lt">③ 叙事 X 光 <span class="ln">视频下方常驻 4 页签</span></div>
-      <div class="comp"><span>剧情脉络（隐藏节点渐进解锁）</span><span>人物关系（按集数切片）</span><span>关键线索</span><span>我的立场轨迹</span></div></div>
-    <div class="busnote">▲ 按集数剧透边界 · 时间切片 ▲</div>
-    <div class="layer l4 reveal"><div class="lt">④ 知识底座 <span class="ln">离线 AI 流水线产出 · 150+ 结构化条目</span></div>
-      <div class="comp"><span>14 设定百科</span><span>25 角色档案 · 49 关系</span><span>39 符号标注</span><span>故事线节点图</span><span>10 立场触发器</span></div></div>
-    <div class="busnote">▲ 章节锚点 / 关键事件 ▲</div>
-    <div class="layer l5 reveal"><div class="lt">⑤ 视频播放层 <span class="ln">输出全局唯一的播放时间总线</span></div>
-      <div class="comp"><span>进度条 + 章节锚点</span><span>倍速 / 清晰度 / 全屏</span><span>收藏系统（跨页跳转）</span><span>首页 Hero</span></div></div>
-    <div class="busnote">▲ 模型路由 · 11 任务 × 多供应商 ▲</div>
-    <div class="layer l6 reveal"><div class="lt">⑥ 智能引擎 <span class="ln">路由 + Agent + 流水线 · 用户看不见但决定一切</span></div>
-      <div class="comp"><span>任务级模型路由（11 任务 · 自动降级）</span><span>2 个 Tool-using Agent</span><span>15+ 离线自动化脚本</span></div></div>
-  </div>
-</section>
 
 <!-- AI NATIVE -->
 <section id="ai">
