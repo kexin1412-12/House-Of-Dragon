@@ -191,8 +191,7 @@ h2.sec{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bo
 .count .bar{flex:1;height:4px;border-radius:4px;background:#dadee4;overflow:hidden}
 .count .bar i{display:block;height:100%;width:100%;background:var(--gold);transform-origin:left;animation:cd 10s linear forwards}
 @keyframes cd{from{transform:scaleX(1)}to{transform:scaleX(0)}}
-.spec{margin-top:18px;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:16px;font-family:var(--serif);font-size:14.5px;line-height:1.95;color:#2b2f36;min-height:40px;white-space:pre-wrap}
-.spec .ask{display:inline-block;margin-top:12px;color:var(--gold);border-bottom:1px dashed var(--gold);cursor:pointer}
+/* legacy .spec box rule removed —— 曾导致立场推演「推测」段出现浅色底框 */
 .cursor-blink::after{content:"▋";color:var(--gold);animation:bl 1s steps(2) infinite}
 @keyframes bl{50%{opacity:0}}
 
