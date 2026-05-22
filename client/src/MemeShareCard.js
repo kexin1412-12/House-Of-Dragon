@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './MemeShareCard.css';
 
 // 分享卡 —— 每条梗按内容固定一种最合适的模板，纯前端 Canvas 画，零依赖、@2x 高清：
-//   quote    台词卡   —— 纯排版力：大 serif 金字 + 角色名 + 剧名 + 收藏数（社交货币）
+//   quote    台词卡   —— 上图下文·杂志感：场景剧照(细金框) + 大 serif 台词 + 角色名 + 收藏数
 //   moment   名场面卡 —— 情绪容器：场景帧(▶) + 一句话 + 情绪分布 + “Nk 在此暂停”
 
 const SHOW_TITLE = '龙之家族';
@@ -98,47 +98,127 @@ function footerBrand(ctx) {
   ctx.textAlign = 'left';
 }
 
-// ── 台词卡 ──
-function drawQuote(ctx, riff, card) {
+// 暗角：聚焦中部、压暗四角，给整张卡加景深
+function quoteVignette(ctx) {
+  const r = ctx.createRadialGradient(W / 2, H * 0.42, H * 0.24, W / 2, H * 0.5, H * 0.72);
+  r.addColorStop(0, 'rgba(0,0,0,0)');
+  r.addColorStop(1, 'rgba(0,0,0,0.42)');
+  ctx.fillStyle = r;
+  ctx.fillRect(0, 0, W, H);
+}
+
+// 极淡胶片颗粒，去掉纯色平面的廉价感
+function quoteGrain(ctx) {
+  ctx.save();
+  for (let i = 0; i < 2600; i++) {
+    ctx.fillStyle = `rgba(255,245,225,${Math.random() * 0.022})`;
+    ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+  }
+  ctx.restore();
+}
+
+// ── 台词卡 —— 上图下文·杂志感 ──
+async function drawQuote(ctx, riff, card) {
   const a = riff.anchor || {};
-  const cx = W / 2;
-  ctx.textAlign = 'center';
+
+  // —— 上半：场景剧照（16:9，细金框，底部压暗放时间戳） ——
+  const ix = 16, iy = 16, iw = W - 32, ih = Math.round(iw * 9 / 16);
+  const img = a.keyframe ? await loadImage(`/kb/${a.keyframe}`) : null;
+  ctx.save();
+  roundRect(ctx, ix, iy, iw, ih, 11);
+  ctx.clip();
+  if (img) {
+    drawCover(ctx, img, ix, iy, iw, ih);
+  } else {
+    const pg = ctx.createLinearGradient(ix, iy, ix, iy + ih);
+    pg.addColorStop(0, '#241c12'); pg.addColorStop(1, '#15100a');
+    ctx.fillStyle = pg; ctx.fillRect(ix, iy, iw, ih);
+    ctx.fillStyle = 'rgba(243,201,122,0.18)';
+    ctx.font = `600 64px ${SERIF}`; ctx.textAlign = 'center';
+    ctx.fillText('✦', W / 2, iy + ih / 2 + 22);
+    ctx.textAlign = 'left';
+  }
+  const sg = ctx.createLinearGradient(0, iy + ih - 72, 0, iy + ih);
+  sg.addColorStop(0, 'rgba(10,8,6,0)');
+  sg.addColorStop(1, 'rgba(10,8,6,0.62)');
+  ctx.fillStyle = sg; ctx.fillRect(ix, iy + ih - 72, iw, 72);
+  ctx.restore();
+
+  // 时间戳 pill
+  const time = a.start_time != null ? formatMMSS(a.start_time) : '';
+  if (time) {
+    ctx.font = `600 13px ${SANS}`;
+    const tw = ctx.measureText(time).width;
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    roundRect(ctx, ix + 12, iy + ih - 32, tw + 18, 22, 11); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.textAlign = 'left';
+    ctx.fillText(time, ix + 21, iy + ih - 16);
+  }
+
+  // 细金框
+  ctx.strokeStyle = 'rgba(243,201,122,0.45)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, ix + 0.5, iy + 0.5, iw - 1, ih - 1, 11);
+  ctx.stroke();
+
+  // 暗角（文字之前画，保证台词不被压暗）
+  quoteVignette(ctx);
+
+  const imgBottom = iy + ih;
+  ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
 
-  // 顶部小记号
-  ctx.fillStyle = 'rgba(243,201,122,0.8)';
-  ctx.font = `600 18px ${SANS}`;
-  ctx.fillText('✦', cx, PAD + 36);
+  // —— 装饰引号 ——
+  ctx.fillStyle = 'rgba(243,201,122,0.30)';
+  ctx.font = `italic 700 92px ${SERIF}`;
+  ctx.fillText('“', PAD - 4, imgBottom + 66);
 
-  // 台词主体：大 serif 金字，垂直居中，大量黑留白
-  ctx.font = `italic 600 40px ${SERIF}`;
-  const maxW = W - PAD * 2 - 16;
-  const lines = wrapText(ctx, a.subtitle_en || '', maxW);
-  const lh = 54;
-  let y = H / 2 - (lines.length * lh) / 2 - 10;
-  ctx.fillStyle = '#f3c97a';
-  for (const ln of lines) { ctx.fillText(ln, cx, y); y += lh; }
+  // —— 台词主体：大 serif 暖白，左对齐；行多则自动缩一档 ——
+  const maxW = W - PAD * 2;
+  let qsize = 31, qlh = 42;
+  ctx.font = `italic 600 ${qsize}px ${SERIF}`;
+  let lines = wrapText(ctx, a.subtitle_en || '', maxW);
+  if (lines.length >= 5) {
+    qsize = 27; qlh = 37;
+    ctx.font = `italic 600 ${qsize}px ${SERIF}`;
+    lines = wrapText(ctx, a.subtitle_en || '', maxW);
+  }
+  let y = imgBottom + 104;
+  ctx.fillStyle = '#f4ead2';
+  for (const ln of lines) { ctx.fillText(ln, PAD, y); y += qlh; }
+  y = y - qlh + 30;
 
-  // 角色名
-  y += 24;
-  ctx.fillStyle = 'rgba(240,230,210,0.85)';
-  ctx.font = `500 22px ${SANS}`;
-  ctx.fillText(`— ${card.speaker_zh || card.speaker_en || ''}`, cx, y);
+  // —— 短金线分隔 ——
+  ctx.strokeStyle = 'rgba(243,201,122,0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(PAD + 46, y); ctx.stroke();
 
-  // 剧名
-  y += 30;
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.font = `400 15px ${SANS}`;
-  ctx.fillText(`《${SHOW_TITLE}》 · ${riff.episode || ''}`, cx, y);
+  // —— 角色名（字距拉开，杂志署名感） ——
+  y += 34;
+  ctx.fillStyle = 'rgba(243,228,200,0.95)';
+  ctx.font = `600 19px ${SANS}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+  ctx.fillText(card.speaker_zh || card.speaker_en || '', PAD, y);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
 
-  // 底部收藏数 —— 社交货币
-  ctx.fillStyle = 'rgba(243,201,122,0.78)';
-  ctx.font = `500 17px ${SANS}`;
-  ctx.fillText(`♥ ${formatCount(card.collects || 0)}`, cx, H - PAD - 24);
-  ctx.fillStyle = 'rgba(255,255,255,0.32)';
-  ctx.font = `500 13px ${SANS}`;
-  ctx.fillText(`✦ ${BRAND}`, cx, H - PAD);
+  // —— 剧名 · 集 ——
+  y += 26;
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  ctx.font = `400 14px ${SANS}`;
+  ctx.fillText(`《${SHOW_TITLE}》 · ${riff.episode || ''}`, PAD, y);
+
+  // —— 页脚：收藏数（社交货币）+ 品牌 ——
+  ctx.fillStyle = 'rgba(243,201,122,0.85)';
+  ctx.font = `600 16px ${SANS}`;
+  ctx.fillText(`♥ ${formatCount(card.collects || 0)}`, PAD, H - PAD);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(243,201,122,0.7)';
+  ctx.font = `500 15px ${SANS}`;
+  ctx.fillText(`✦ ${BRAND}`, W - PAD, H - PAD);
   ctx.textAlign = 'left';
+
+  // —— 胶片颗粒（最后铺，极淡） ——
+  quoteGrain(ctx);
 }
 
 // ── 名场面卡 ──
@@ -231,7 +311,7 @@ async function drawCard(canvas, riff) {
 
   const card = riff.card || { type: 'quote' };
   if (card.type === 'moment') await drawMoment(ctx, riff, card);
-  else drawQuote(ctx, riff, card);
+  else await drawQuote(ctx, riff, card);
 
   // 内描金边框（最后画，框住整张）
   ctx.strokeStyle = 'rgba(243,201,122,0.28)';

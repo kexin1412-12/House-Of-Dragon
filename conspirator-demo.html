@@ -116,6 +116,17 @@ h2.sec{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.25;margin-bo
 .g2{grid-template-columns:repeat(2,1fr)}
 @media(max-width:920px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr}}
+/* 交互演示：互动窗口在左(小一点)，解说在右 */
+.demo-2col{display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:start;max-width:1040px;margin:18px auto 0}
+.demo-stage{min-width:0}
+.demo-stage .pw,.demo-stage .stance,.demo-stage .charwrap{margin-top:0}
+.demo-notes{padding-top:4px}
+.demo-notes .dn-k{font-size:13px;font-weight:700;color:var(--text);margin:18px 0 6px;letter-spacing:.01em;display:flex;align-items:center;gap:7px}
+.demo-notes .dn-k:first-child{margin-top:0}
+.demo-notes .dn-k::before{content:"";width:14px;height:2px;background:var(--gold);border-radius:2px;flex:none}
+.demo-notes p{font-size:14px;line-height:1.72;color:var(--dim);margin:0}
+.demo-notes b{color:var(--text);font-weight:600}
+@media(max-width:860px){.demo-2col{grid-template-columns:1fr;gap:18px}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:.22s}
 .card:hover{border-color:var(--line2);transform:translateY(-3px);box-shadow:0 12px 28px rgba(22,24,29,.09)}
 .card h3{font-size:16px;margin-bottom:7px}
@@ -1068,7 +1079,9 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <h2 class="sec">导演埋的彩蛋，我们帮你找到——<br/>而且<span class="accent-r">绝不剧透。</span></h2>
   <p class="lead">画面上呼吸的光点是导演本来就放在那里、大多数观众会错过的信息。<b style="color:var(--text)">点光点看解读；拖动进度条，看防剧透检索层如何按你的进度过滤未来。</b></p>
 
-  <div class="pw" id="symPw" style="margin-top:18px">
+  <div class="demo-2col">
+  <div class="demo-stage">
+  <div class="pw" id="symPw" style="margin-top:0">
     <div class="pw-top">
       <div class="pw-brand">神木林 · 段落开场<span class="pw-sep">·</span><span class="pw-ep">House of the Dragon · S1E5</span></div>
       <button class="pw-mode on" id="symMode" aria-pressed="true"><span class="pw-knob"></span><span>共谋模式</span></button>
@@ -1094,6 +1107,16 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     </div>
   </div>
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">点画面光点 / 角标看解读 · 拖「观看进度」体验防剧透：没播到的符号会锁住、绝不提前揭晓</div>
+  </div><!-- /demo-stage -->
+  <aside class="demo-notes">
+    <div class="dn-k">这一层在做什么</div>
+    <p>导演埋在画面里的视觉信息——一件道具、一处构图、一个一闪而过的徽记——大多数观众会滑过去。我们把它标成一个会「呼吸」的光点，<b>不弹窗、不暂停</b>，你想看才点，主动权始终在你手里。</p>
+    <div class="dn-k">为什么不会剧透</div>
+    <p>同一个符号，在你还没播到那一刻时是<b>锁住</b>的；播到了才解锁解读，越靠后的信息揭晓得越晚。检索层只放出「你已经看到」的部分——拖动进度条，未来会一格格被过滤掉。</p>
+    <div class="dn-k">和弹幕 / 普通注释的区别</div>
+    <p>弹幕是观众的二次创作，盖在画面上抢注意力；这一层是<b>导演本来就放在那里</b>的一手信息，安静地等你来发现，不与原作争夺画面。</p>
+  </aside>
+  </div><!-- /demo-2col -->
 </section>
 
 <!-- MEME + AGENT (smaller demos) -->
