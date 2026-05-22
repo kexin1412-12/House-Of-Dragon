@@ -771,6 +771,55 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 .rs-badge{position:absolute;top:10px;right:10px;font-size:10.5px;letter-spacing:.04em;color:#d6b06a;background:rgba(10,12,18,.72);border:1px solid rgba(214,176,106,.42);border-radius:11px;padding:2px 9px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 
+
+/* —— 文化梗社交层(对齐真实 MemePanel .mp-*) —— */
+.mp-card{margin-top:14px;background:#0c0e13;border:1px solid #20242c;border-radius:14px;padding:16px 18px;box-shadow:0 16px 40px rgba(0,0,0,.22)}
+.mp-card-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.07)}
+.mp-card-tag{font-size:11px;letter-spacing:.04em;color:#d6b06a;border:1px solid rgba(214,176,106,.5);border-radius:11px;padding:2px 9px;flex:none}
+.mp-card-line{font-size:12.5px;color:rgba(255,255,255,.7);font-style:italic}
+.mp-react-row{display:flex;gap:8px;margin-bottom:12px}
+.mp-react{appearance:none;-webkit-appearance:none;flex:1 1 0;position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:rgba(255,255,255,.72);font-size:12.5px;cursor:pointer;font-family:inherit;transition:.12s}
+.mp-react:hover{color:#fff;border-color:rgba(243,201,122,.4)}
+.mp-react.is-on{color:#f3c97a;background:rgba(243,201,122,.08);border-color:rgba(243,201,122,.5)}
+.mp-react-ic{width:16px;height:16px;display:inline-flex}.mp-react-ic svg{width:100%;height:100%;display:block}
+.mp-react-n{color:rgba(255,255,255,.5);font-size:11.5px;font-variant-numeric:tabular-nums}
+.mp-react.is-on .mp-react-n{color:rgba(243,201,122,.85)}
+.mp-detail-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mp-detail-jump,.mp-detail-fav,.mp-social-share{appearance:none;-webkit-appearance:none;padding:7px 14px;background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.7);font-size:12px;border-radius:4px;cursor:pointer;font-family:inherit;transition:.12s}
+.mp-detail-jump:hover,.mp-social-share:hover{color:#f3c97a;border-color:rgba(243,201,122,.5);background:rgba(243,201,122,.06)}
+.mp-detail-fav.is-on{color:#ff5b8a;border-color:rgba(255,91,138,.5)}
+.mp-share-card{margin-top:12px;background:rgba(243,201,122,.06);border:1px solid rgba(243,201,122,.3);border-radius:8px;padding:12px 14px}
+.mp-share-quote{font-size:12.5px;color:#e8e0cc;font-style:italic;line-height:1.6;margin-bottom:9px}
+.mp-share-row{display:flex;gap:8px;align-items:center}
+.mp-share-copy{appearance:none;-webkit-appearance:none;padding:5px 12px;background:linear-gradient(180deg,#f3c97a,#e0b160);border:0;border-radius:4px;color:#1a1208;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.mp-share-close{appearance:none;-webkit-appearance:none;background:none;border:0;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;margin-left:auto;font-family:inherit}
+.mp-notes{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)}
+.mp-notes-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mp-notes-title{color:rgba(255,255,255,.78);font-size:13px;font-weight:500;letter-spacing:.3px}
+.mp-notes-count{color:rgba(255,255,255,.45);font-size:12px;font-variant-numeric:tabular-nums}
+.mp-notes-list{display:flex;flex-direction:column;gap:14px}
+.mp-note{display:flex;gap:10px}
+.mp-note-avatar{flex:0 0 30px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600}
+.mp-note-body{flex:1 1 auto;min-width:0}
+.mp-note-meta{display:flex;align-items:baseline;gap:6px;margin-bottom:3px}
+.mp-note-author{color:rgba(255,255,255,.82);font-size:12.5px;font-weight:500}
+.mp-note-time{color:rgba(255,255,255,.4);font-size:11px}
+.mp-note-text{color:rgba(255,255,255,.72);font-size:12.5px;line-height:1.6}
+.mp-note-up{appearance:none;-webkit-appearance:none;margin-top:6px;padding:3px 8px;display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:rgba(255,255,255,.55);font-size:11px;cursor:pointer;font-variant-numeric:tabular-nums;font-family:inherit;transition:.12s}
+.mp-note-up:hover{color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.25)}
+.mp-note-up.is-on{color:#f3c97a;border-color:rgba(243,201,122,.5);background:rgba(243,201,122,.08)}
+.mp-note-up-ic{font-size:9px;line-height:1}
+.mp-note-add{appearance:none;-webkit-appearance:none;width:100%;margin-top:14px;padding:10px;background:transparent;border:1px dashed rgba(255,255,255,.18);border-radius:6px;color:rgba(255,255,255,.5);font-size:12.5px;cursor:pointer;text-align:center;font-family:inherit;transition:.12s}
+.mp-note-add:hover{color:rgba(243,201,122,.9);border-color:rgba(243,201,122,.4)}
+.mp-note-compose{margin-top:14px}
+.mp-note-input{width:100%;box-sizing:border-box;resize:vertical;padding:10px;background:rgba(255,255,255,.04);border:1px solid rgba(243,201,122,.35);border-radius:6px;color:#eee;font-size:12.5px;line-height:1.55;font-family:inherit}
+.mp-note-input::placeholder{color:rgba(255,255,255,.35)}
+.mp-note-input:focus{outline:none;border-color:rgba(243,201,122,.6)}
+.mp-note-compose-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.mp-note-cancel{appearance:none;-webkit-appearance:none;padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:4px;color:rgba(255,255,255,.6);font-size:12px;cursor:pointer;font-family:inherit}
+.mp-note-submit{appearance:none;-webkit-appearance:none;padding:6px 16px;background:linear-gradient(180deg,#f3c97a,#e0b160);border:0;border-radius:4px;color:#1a1208;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.mp-note-submit:disabled{opacity:.4;cursor:not-allowed}
+
 </style>
 </head>
 <body>
@@ -1052,6 +1101,32 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     </div>
   </div>
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">点字幕里高亮的关键词 → 浮出文化梗解读，可收藏、可展开深读 · 共谋模式一键隐藏全部叠加层</div>
+
+  <div class="mp-card" id="msCard">
+    <div class="mp-card-head"><span class="mp-card-tag">文化梗 · 社区</span><span class="mp-card-line">「It hardly makes a good song…」· 韦赛里斯病榻 · S1E5</span></div>
+    <div class="mp-social">
+      <div class="mp-react-row">
+        <button class="mp-react" data-r="til" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z"/></svg></span>涨知识了<span class="mp-react-n"></span></button>
+        <button class="mp-react" data-r="knew" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1 6 1 7 0"/><path d="M8.7 9.5h.01"/><path d="M15.3 9.5h.01"/></svg></span>早就知道<span class="mp-react-n"></span></button>
+      </div>
+      <div class="mp-detail-actions">
+        <button class="mp-detail-jump" type="button">&#9654; 跳到此处</button>
+        <button class="mp-social-share" type="button">&#10548; 分享</button>
+        <button class="mp-detail-fav" type="button">&#9825; 收藏</button>
+      </div>
+      <div id="msShare"></div>
+      <div class="mp-notes">
+        <div class="mp-notes-head"><span class="mp-notes-title">viewer notes</span><span class="mp-notes-count" id="msCount">3</span></div>
+        <div class="mp-notes-list" id="msList">
+          <div class="mp-note"><span class="mp-note-avatar" style="background:#5a86c2">临</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">临冬城老张</span><span class="mp-note-time">· 2d</span></div><div class="mp-note-text">这句是 Paddy Considine 的封神时刻——他自己说为了演好病榻上的韦赛里斯，瘦到形销骨立。</div><button class="mp-note-up" data-base="128" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">128</span></button></div></div>
+          <div class="mp-note"><span class="mp-note-avatar" style="background:#3f9e7a">血</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">血与火考据</span><span class="mp-note-time">· 15h</span></div><div class="mp-note-text">「百年后的宴会上传唱」是马丁式的残酷反讽：真正被传唱百年的，恰恰是他死后那场把家族烧成灰的「龙之舞」。</div><button class="mp-note-up" data-base="67" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">67</span></button></div></div>
+          <div class="mp-note"><span class="mp-note-avatar" style="background:#c78a3c">弹</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">弹幕考据君</span><span class="mp-note-time">· 3h</span></div><div class="mp-note-text">注意他指的是案头那座君临城模型——他一生都在搭一座自己守不住的城。</div><button class="mp-note-up" data-base="29" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">29</span></button></div></div>
+        </div>
+        <button class="mp-note-add" id="msAdd" type="button"><span aria-hidden="true">+</span> add your note</button>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- RELATIONS DEMO -->
@@ -1644,6 +1719,52 @@ secs.forEach(s=>s&&io2.observe(s));
   apply();
 })();
 </script>
+<script>
+(function(){
+  var card=document.getElementById('msCard'); if(!card) return;
+  var counts={til:1843,knew:624},pick=null;
+  function fmt(n){return n>=1000?(n/1000).toFixed(1).replace(/\.0$/,'')+'k':''+n;}
+  card.querySelectorAll('.mp-react').forEach(function(b){
+    var r=b.dataset.r; b.querySelector('.mp-react-n').textContent=fmt(counts[r]);
+    b.addEventListener('click',function(){
+      if(pick===r){pick=null;b.classList.remove('is-on');counts[r]--;}
+      else{ if(pick){var pv=card.querySelector('.mp-react[data-r="'+pick+'"]');pv.classList.remove('is-on');counts[pick]--;pv.querySelector('.mp-react-n').textContent=fmt(counts[pick]);} pick=r;b.classList.add('is-on');counts[r]++; }
+      b.querySelector('.mp-react-n').textContent=fmt(counts[r]);
+    });
+  });
+  var fav=card.querySelector('.mp-detail-fav');
+  fav.addEventListener('click',function(){var on=fav.classList.toggle('is-on');fav.innerHTML=on?'&#9829; 已收藏':'&#9825; 收藏';});
+  var shareBtn=card.querySelector('.mp-social-share'),shareSlot=document.getElementById('msShare');
+  shareBtn.addEventListener('click',function(){
+    if(shareSlot.innerHTML){shareSlot.innerHTML='';return;}
+    shareSlot.innerHTML='<div class="mp-share-card"><div class="mp-share-quote">「It hardly makes a good song, does it, to be sung at feasts in a hundred years.」<br>—— 韦赛里斯一世 · 《龙之家族》S1E5 · 由 共谋者 解析</div><div class="mp-share-row"><button class="mp-share-copy" type="button">复制分享文案</button><button class="mp-share-close" type="button">关闭</button></div></div>';
+    shareSlot.querySelector('.mp-share-close').addEventListener('click',function(){shareSlot.innerHTML='';});
+    shareSlot.querySelector('.mp-share-copy').addEventListener('click',function(e){e.target.textContent='已复制 ✓';});
+  });
+  var list=document.getElementById('msList'),countEl=document.getElementById('msCount'),addBtn=document.getElementById('msAdd');
+  list.addEventListener('click',function(e){var up=e.target.closest('.mp-note-up');if(!up)return;var on=up.classList.toggle('is-on');var base=+up.dataset.base;up.querySelector('.mp-note-up-n').textContent=on?(base+1):base;});
+  addBtn.addEventListener('click',function(){
+    if(document.getElementById('msCompose'))return;
+    var box=document.createElement('div');box.className='mp-note-compose';box.id='msCompose';
+    box.innerHTML='<textarea class="mp-note-input" rows="3" placeholder="补充你知道的——典故、双关、被字幕吃掉的细节…"></textarea><div class="mp-note-compose-actions"><button class="mp-note-cancel" type="button">取消</button><button class="mp-note-submit" type="button" disabled>发布</button></div>';
+    addBtn.style.display='none';addBtn.parentNode.insertBefore(box,addBtn);
+    var ta=box.querySelector('.mp-note-input'),submit=box.querySelector('.mp-note-submit');
+    ta.focus();
+    ta.addEventListener('input',function(){submit.disabled=!ta.value.trim();});
+    box.querySelector('.mp-note-cancel').addEventListener('click',function(){box.remove();addBtn.style.display='';});
+    submit.addEventListener('click',function(){
+      var t=ta.value.trim(); if(!t)return;
+      var n=document.createElement('div');n.className='mp-note';
+      n.innerHTML='<span class="mp-note-avatar" style="background:#e0b160;color:#1a1208">我</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">我</span><span class="mp-note-time">· 刚刚</span></div><div class="mp-note-text"></div><button class="mp-note-up" data-base="0" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">0</span></button></div>';
+      n.querySelector('.mp-note-text').textContent=t;
+      list.insertBefore(n,list.firstChild);
+      countEl.textContent=(+countEl.textContent+1);
+      box.remove();addBtn.style.display='';
+    });
+  });
+})();
+</script>
+
 
 </body>
 </html>
