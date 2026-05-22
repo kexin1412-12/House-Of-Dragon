@@ -956,7 +956,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="grid g4" style="margin-top:30px">
     <a class="card reveal" href="#meme"><span class="ic" data-i="eye"></span><h3>AI 对话解析剧情</h3><p>对着当前画面直接发问，得「画面描述 → 角色解读 → 金色推测」分层回答，事实与推测分开标。</p><span class="tag">即时追剧搭子 · 守当前集数</span></a>
     <a class="card reveal" href="#stance"><span class="ic" data-i="git-branch"></span><h3>立场抉择 + 推演</h3><p>关键转折弹三选一投票，AI 实时生成「如果引擎」平行世界线。</p><span class="tag">10 触发点 · 8 配推演</span></a>
-    <a class="card reveal" href="#character"><span class="ic" data-i="message-circle"></span><h3>角色内心四色声部</h3><p>《极乐迪斯科》式：外在台词 + 双声部内心 + 潜台词 + 立场跟问。</p><span class="tag">5 角色 · 4 声部 · 10 轮</span></a>
+    <a class="card reveal" href="#character"><span class="ic" data-i="message-circle"></span><h3>角色内心对话</h3><p>分层对话：外在台词 + 双声部内心 + 潜台词 + 立场跟问。</p><span class="tag">5 角色 · 4 声部 · 10 轮</span></a>
     <a class="card reveal" href="#symbol"><span class="ic" data-i="sparkles"></span><h3>符号热点 + 防剧透</h3><p>画面亮起导演埋的彩蛋；按观看进度严格过滤未来信息。</p><span class="tag">39 符号 · 7 类别</span></a>
     <a class="card reveal" href="#linememe"><span class="ic" data-i="message-square"></span><h3>文化梗高亮</h3><p>双语字幕 + 高亮关键词，台词里的话中话自动浮出。</p><span class="tag">三层信息深度</span></a>
     <div class="card reveal"><span class="ic" data-i="scan-face"></span><h3>实时人物识别</h3><p>一点即知「这个人是谁」，结果同时供给四个下游。</p><span class="tag">CV + 视觉大模型兜底</span></div>
@@ -1061,7 +1061,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 <section id="character">
   <div class="eyebrow accent-e">交互演示 ③ · 角色内心</div>
   <h2 class="sec">钻进角色的脑子里，<span class="accent-e">听见两个声音在打架。</span></h2>
-  <p class="lead">选一个在场角色，进入 TA 此刻的内心：表层的自我说服、💭 深层的自我怀疑——灵感来自《极乐迪斯科》。<b style="color:var(--text)">挑一句带立场的话问下去。</b></p>
+  <p class="lead">选一个在场角色，进入 TA 此刻的内心：表层的自我说服、💭 深层的自我怀疑——表层与深层分层呈现。<b style="color:var(--text)">挑一句带立场的话问下去。</b></p>
   <div class="demo-2col">
   <div class="demo-stage">
   <div class="pw" id="cvPw" style="margin-top:0">
@@ -1089,7 +1089,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <div class="dn-k">钻进角色的脑子里</div>
     <p>选一个在场角色（列表由识脸实时供给），先以流式散文呈现 TA 此刻的内心——表层的表面状态 + 深层没说出口的东西，再给三个开场问题让你选方向切入。</p>
     <div class="dn-k">听见 TA 没说出口的那半句</div>
-    <p>问 TA 一个问题，TA 先「说」一句表面回应（反讽或回避），然后<b>两个声部同时响起</b>——理性的在盘算政治风险、本能的因被质疑而暴怒，下面还有一行灰色潜台词（忍住没说的）。每条回复给三个带立场的跟问：<b>王者 / 血亲 / 审慎 / 火焰</b>，每种把对话推向完全不同的方向，灵感来自《极乐迪斯科》。</p>
+    <p>问 TA 一个问题，TA 先「说」一句表面回应（反讽或回避），然后<b>两个声部同时响起</b>——理性的在盘算政治风险、本能的因被质疑而暴怒，下面还有一行灰色潜台词（忍住没说的）。每条回复给三个带立场的跟问：<b>王者 / 血亲 / 审慎 / 火焰</b>，每种把对话推向完全不同的方向。</p>
     <div class="dn-k">真相是你自己逼出来的</div>
     <p>十轮问下来，你对角色的理解远超任何分析文章——因为那是你自己一步步逼出来的，不是别人写的结论。切场景重置轮数，角色严守当前集数边界。</p>
     <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>角色扮演 + <b>四层结构化 JSON</b>（台词 / 双声部独白 / 潜台词 / 跟问）+ 独立人设文档 + 按集数信息边界；路由到中文文学性最强的 <b>Gemini 2.5 Flash dialogue</b>，而非通用轻量模型。</div>
