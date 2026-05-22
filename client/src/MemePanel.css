@@ -559,3 +559,319 @@
 .mp-lore-collapse-link:hover {
   color: rgba(255, 255, 255, 0.75);
 }
+
+/* ─── tag 语义色（默认琥珀走 .mp-tag；这里只加非金色覆盖） ───── */
+
+.mp-tag.tone-violet {
+  background: rgba(140, 107, 212, 0.16);
+  color: rgba(184, 164, 235, 0.92);
+}
+
+.mp-tag.tone-steel {
+  background: rgba(90, 134, 194, 0.15);
+  color: rgba(155, 184, 222, 0.92);
+}
+
+/* ─── 社交层：反应键 / 分享 / viewer notes ───────────────── */
+
+.mp-social {
+  margin-top: 14px;
+}
+
+/* 反应键已自带间距，去掉操作行原本的 margin-top 避免双倍留白 */
+.mp-social .mp-detail-actions {
+  margin-top: 0;
+}
+
+.mp-react-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mp-react {
+  appearance: none;
+  flex: 1 1 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.mp-react:hover {
+  color: #fff;
+  border-color: rgba(243, 201, 122, 0.4);
+}
+
+.mp-react.is-on {
+  color: #f3c97a;
+  background: rgba(243, 201, 122, 0.08);
+  border-color: rgba(243, 201, 122, 0.5);
+}
+
+.mp-react.is-on::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: #f3c97a;
+}
+
+.mp-react-ic {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+}
+.mp-react-ic svg { width: 100%; height: 100%; display: block; }
+
+.mp-react-n {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.mp-react.is-on .mp-react-n { color: rgba(243, 201, 122, 0.85); }
+
+/* 分享键——跟 fav 同款描边风，hover 走金 */
+.mp-social-share {
+  appearance: none;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.mp-social-share:hover {
+  color: #f3c97a;
+  border-color: rgba(243, 201, 122, 0.5);
+  background: rgba(243, 201, 122, 0.06);
+}
+
+/* ── viewer notes ── */
+.mp-notes {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mp-notes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mp-notes-title {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.mp-notes-count {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mp-note {
+  display: flex;
+  gap: 10px;
+}
+
+.mp-note-avatar {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mp-note-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.mp-note-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+
+.mp-note-author {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.mp-note-time {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+
+.mp-note-text {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12.5px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mp-note-text.is-expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.mp-note-more {
+  appearance: none;
+  margin-top: 3px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: #f3c97a;
+  font-size: 11.5px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+}
+.mp-note-more:hover {
+  color: #ffe0a8;
+  text-decoration: underline;
+}
+
+.mp-note-up {
+  appearance: none;
+  margin-top: 6px;
+  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.mp-note-up:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.mp-note-up.is-on {
+  color: #f3c97a;
+  border-color: rgba(243, 201, 122, 0.5);
+  background: rgba(243, 201, 122, 0.08);
+}
+.mp-note-up-ic {
+  font-size: 9px;
+  line-height: 1;
+}
+
+.mp-note.is-mine .mp-note-avatar { color: #1a1208; }
+
+/* ── add your note ── */
+.mp-note-add {
+  appearance: none;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: center;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.mp-note-add:hover {
+  color: rgba(243, 201, 122, 0.9);
+  border-color: rgba(243, 201, 122, 0.4);
+}
+
+.mp-note-compose { margin-top: 14px; }
+
+.mp-note-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(243, 201, 122, 0.35);
+  border-radius: 6px;
+  color: #eee;
+  font-size: 12.5px;
+  line-height: 1.55;
+  font-family: inherit;
+}
+.mp-note-input::placeholder { color: rgba(255, 255, 255, 0.35); }
+.mp-note-input:focus {
+  outline: none;
+  border-color: rgba(243, 201, 122, 0.6);
+}
+
+.mp-note-compose-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mp-note-cancel {
+  appearance: none;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+}
+.mp-note-cancel:hover { color: rgba(255, 255, 255, 0.85); }
+
+.mp-note-submit {
+  appearance: none;
+  padding: 6px 16px;
+  background: linear-gradient(180deg, #f3c97a, #e0b160);
+  border: 0;
+  border-radius: 4px;
+  color: #1a1208;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.mp-note-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.mp-note-submit:not(:disabled):hover { filter: brightness(1.08); }

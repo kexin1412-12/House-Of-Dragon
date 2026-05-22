@@ -6,6 +6,7 @@ import RelationshipGraph from './RelationshipGraph';
 import StorylineXRay from './StorylineXRay';
 import SymbolHotspots from './SymbolHotspots';
 import MemePanel from './MemePanel';
+import DiscussionPanel from './DiscussionPanel';
 import MemeOverlay from './MemeOverlay';
 import MemeToggle from './MemeToggle';
 import InPlayerLoreCard from './InPlayerLoreCard';
@@ -504,7 +505,7 @@ function TencentPlayer({
   // 全屏模式：右边浮一个 icon 按钮，点击展开 AgentPanel 抽屉
   // （非全屏时 aside 里那块 chat 还在原位，无需此抽屉）
   const [aiChatOpen, setAiChatOpen] = useState(false);
-  // 右栏 tab：'agent'（AI 助手）| 'meme'（文化梗）—— 可由 App.js 通过 prop 预设（从我的收藏跳进来时）
+  // 右栏 tab：'agent'（AI 助手）| 'meme'（文化梗）| 'discuss'（讨论）—— 可由 App.js 通过 prop 预设（从我的收藏跳进来时）
   const [rightTab, setRightTab] = useState(initialRightTab || 'agent');
   // 当 MemeOverlay 触发"展开详情"时，设置这个 id；MemePanel 监听后自动展开 + 滚动
   const [pendingExpandRiffId, setPendingExpandRiffId] = useState(initialExpandRiffId || null);
@@ -1882,6 +1883,10 @@ function TencentPlayer({
               className={`tx-right-tab${rightTab === 'meme' ? ' is-active' : ''}`}
               onClick={() => setRightTab('meme')}
             >文化梗</button>
+            <button
+              className={`tx-right-tab${rightTab === 'discuss' ? ' is-active' : ''}`}
+              onClick={() => setRightTab('discuss')}
+            >讨论</button>
           </div>
 
           {rightTab === 'agent' && (
@@ -1929,6 +1934,9 @@ function TencentPlayer({
               expandLoreId={pendingExpandLoreId}
               onConsumeExpandLore={() => setPendingExpandLoreId(null)}
             />
+          )}
+          {rightTab === 'discuss' && (
+            <DiscussionPanel videoId={aiKb} />
           )}
         </aside>
       </main>

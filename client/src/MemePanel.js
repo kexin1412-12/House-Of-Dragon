@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './MemePanel.css';
 import useMemeFavorites from './useMemeFavorites';
+import useMemeSocial from './useMemeSocial';
+import MemeShareCard from './MemeShareCard';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -11,6 +13,55 @@ function formatMMSS(seconds) {
   const ss = (s % 60).toString().padStart(2, '0');
   return `${mm}:${ss}`;
 }
+
+// 大数缩写：1243 → 1.2k，891 → 891。给反应种子数用。
+function formatCount(n) {
+  if (n >= 1000) {
+    const k = n / 1000;
+    return (k >= 10 ? Math.round(k) : Number(k.toFixed(1))) + 'k';
+  }
+  return String(n);
+}
+
+// 网友昵称 → 头像首字（中文取首字，英文取首字母大写）
+function noteInitial(author) {
+  const c = (author || '?').trim().charAt(0) || '?';
+  return /[a-z]/i.test(c) ? c.toUpperCase() : c;
+}
+
+// 头像底色——按昵称哈希分到一组语义色，避免清一色金（配色多样性）
+const AVATAR_COLORS = ['#7c6bd4', '#3f9e7a', '#c78a3c', '#5a86c2', '#b06a8f'];
+function avatarColor(author) {
+  let h = 0;
+  const s = author || '';
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+
+// tag 按语义上色——别一直堆同一个金（对齐配色多样性偏好）。未列出回落琥珀。
+const TAG_TONE = {
+  双关: 'tone-amber', 暗指: 'tone-amber', 隐喻: 'tone-amber', 转喻: 'tone-amber', 时代委婉语: 'tone-amber',
+  典故: 'tone-violet', 经典台词: 'tone-violet',
+  戏剧反讽: 'tone-steel', 地域制度对照: 'tone-steel', 角色弧: 'tone-steel', 身份宣告: 'tone-steel', 演员高光: 'tone-steel',
+};
+function tagToneClass(t) { return TAG_TONE[t] || 'tone-amber'; }
+
+// 反应键图标——简洁内联 SVG（不用花哨 emoji，跟面板审美一致）
+const REACT_TIL_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 18h6" />
+    <path d="M10 21h4" />
+    <path d="M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z" />
+  </svg>
+);
+const REACT_KNEW_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 14.5c1 1 6 1 7 0" />
+    <path d="M8.7 9.5h.01" />
+    <path d="M15.3 9.5h.01" />
+  </svg>
+);
 
 // 从 video_id 推 show slug。demo 期只有 HotD 一部剧，按前缀简单映射；
 // 接其他剧时再扩展或改由 App.js 显式传入 show prop。
@@ -89,7 +140,7 @@ export default function MemePanel({
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const itemRefs = useRef({}); // riff_id -> DOM node
-  const { isFav, toggle: toggleFav, count: favCount } = useMemeFavorites();
+  const { isFav, count: favCount } = useMemeFavorites();
 
   // 段 B：设定百科
   const [loreGroups, setLoreGroups] = useState([]);
@@ -317,7 +368,7 @@ export default function MemePanel({
                           {r.anchor ? formatMMSS(r.anchor.start_time) : ''}
                         </span>
                         {(r.tags || []).map(t => (
-                          <span key={t} className="mp-tag">{t}</span>
+                          <span key={t} className={`mp-tag ${tagToneClass(t)}`}>{t}</span>
                         ))}
                       </div>
                     </div>
@@ -365,19 +416,10 @@ export default function MemePanel({
                         </section>
                       )}
 
-                      <div className="mp-detail-actions">
-                        <button
-                          className="mp-detail-jump"
-                          onClick={() => jumpTo(r.anchor.start_time)}
-                        >▶ 跳到此处</button>
-                        <button
-                          className={`mp-detail-fav${isFav(r.riff_id) ? ' is-on' : ''}`}
-                          onClick={() => toggleFav(r.riff_id)}
-                          title={isFav(r.riff_id) ? '取消收藏' : '收藏这条梗'}
-                        >
-                          {isFav(r.riff_id) ? '♥ 已收藏' : '♡ 收藏'}
-                        </button>
-                      </div>
+                      <MemeSocial
+                        riff={r}
+                        onJump={() => jumpTo(r.anchor.start_time)}
+                      />
                     </div>
                   )}
                 </div>
@@ -388,5 +430,171 @@ export default function MemePanel({
       )}
 
     </div>
+  );
+}
+
+// ─── 社交层：反应键 / 分享 / viewer notes ───────────────
+// 接在条目展开详情底部。三种社交冲动各一块：
+//   涨知识了·早就知道（想知道别人懂没懂）/ 分享（炫耀）/ viewer notes（补充欲）。
+function MemeSocial({ riff, onJump }) {
+  const social = riff.social || {};
+  const seedReactions = social.reactions || {};
+  const seedNotes = social.notes || [];
+
+  const { reactionOf, setReaction, isUpvoted, toggleUpvote, userNotesFor, addNote } = useMemeSocial();
+  const { isFav, toggle: toggleFav } = useMemeFavorites();
+
+  const [shareOpen, setShareOpen] = useState(false);
+  const [composing, setComposing] = useState(false);
+  const [draft, setDraft] = useState('');
+
+  const pick = reactionOf(riff.riff_id);
+  const tilCount = (seedReactions.til || 0) + (pick === 'til' ? 1 : 0);
+  const knewCount = (seedReactions.knew || 0) + (pick === 'knew' ? 1 : 0);
+
+  // 投票排序取代时间排序——高赞补充自然浮顶（含本地点赞 +1 与我新增的）。
+  const notes = [...seedNotes, ...userNotesFor(riff.riff_id)]
+    .map(n => ({ ...n, _up: (n.upvotes || 0) + (isUpvoted(n.note_id) ? 1 : 0) }))
+    .sort((a, b) => b._up - a._up);
+  const fav = isFav(riff.riff_id);
+
+  const submitNote = () => {
+    const body = draft.trim();
+    if (!body) return;
+    addNote(riff.riff_id, body);
+    setDraft('');
+    setComposing(false);
+  };
+
+  return (
+    <div className="mp-social">
+      {social.reactions && (
+        <div className="mp-react-row">
+          <button
+            className={`mp-react${pick === 'til' ? ' is-on' : ''}`}
+            onClick={() => setReaction(riff.riff_id, 'til')}
+          >
+            <span className="mp-react-ic" aria-hidden="true">{REACT_TIL_ICON}</span>
+            涨知识了
+            <span className="mp-react-n">{formatCount(tilCount)}</span>
+          </button>
+          <button
+            className={`mp-react${pick === 'knew' ? ' is-on' : ''}`}
+            onClick={() => setReaction(riff.riff_id, 'knew')}
+          >
+            <span className="mp-react-ic" aria-hidden="true">{REACT_KNEW_ICON}</span>
+            早就知道
+            <span className="mp-react-n">{formatCount(knewCount)}</span>
+          </button>
+        </div>
+      )}
+
+      <div className="mp-detail-actions">
+        <button className="mp-detail-jump" onClick={onJump}>▶ 跳到此处</button>
+        <button className="mp-social-share" onClick={() => setShareOpen(true)}>
+          ⤴ 分享
+        </button>
+        <button
+          className={`mp-detail-fav${fav ? ' is-on' : ''}`}
+          onClick={() => toggleFav(riff.riff_id)}
+          title={fav ? '取消收藏' : '收藏这条梗'}
+        >
+          {fav ? '♥ 已收藏' : '♡ 收藏'}
+        </button>
+      </div>
+
+      <div className="mp-notes">
+        <div className="mp-notes-head">
+          <span className="mp-notes-title">viewer notes</span>
+          <span className="mp-notes-count">{notes.length}</span>
+        </div>
+
+        <div className="mp-notes-list">
+          {notes.map(n => (
+            <div key={n.note_id} className={`mp-note${n.mine ? ' is-mine' : ''}`}>
+              <span
+                className="mp-note-avatar"
+                style={{ background: n.mine ? '#e0b160' : avatarColor(n.author) }}
+              >
+                {noteInitial(n.author)}
+              </span>
+              <div className="mp-note-body">
+                <div className="mp-note-meta">
+                  <span className="mp-note-author">{n.author}</span>
+                  <span className="mp-note-time">· {n.time}</span>
+                </div>
+                <NoteText text={n.text} />
+                <button
+                  className={`mp-note-up${isUpvoted(n.note_id) ? ' is-on' : ''}`}
+                  onClick={() => toggleUpvote(n.note_id)}
+                  title="赞同这条补充"
+                >
+                  <span className="mp-note-up-ic" aria-hidden="true">▲</span>
+                  {n._up}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {composing ? (
+          <div className="mp-note-compose">
+            <textarea
+              className="mp-note-input"
+              value={draft}
+              onChange={e => setDraft(e.target.value)}
+              placeholder="补充你知道的——典故、双关、被字幕吃掉的细节…"
+              rows={3}
+              autoFocus
+            />
+            <div className="mp-note-compose-actions">
+              <button
+                className="mp-note-cancel"
+                onClick={() => { setComposing(false); setDraft(''); }}
+              >取消</button>
+              <button
+                className="mp-note-submit"
+                onClick={submitNote}
+                disabled={!draft.trim()}
+              >发布</button>
+            </div>
+          </div>
+        ) : (
+          <button className="mp-note-add" onClick={() => setComposing(true)}>
+            <span aria-hidden="true">+</span> add your note
+          </button>
+        )}
+      </div>
+
+      {shareOpen && (
+        <MemeShareCard riff={riff} onClose={() => setShareOpen(false)} />
+      )}
+    </div>
+  );
+}
+
+// 单条 note 文本：默认 clamp 到约 3 行，溢出才出现「展开/收起」——
+// 注释区不喧宾夺主，但长补充仍读得全。
+function NoteText({ text }) {
+  const ref = useRef(null);
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (el) setOverflowing(el.scrollHeight > el.clientHeight + 1);
+  }, [text]);
+
+  return (
+    <>
+      <div ref={ref} className={`mp-note-text${expanded ? ' is-expanded' : ''}`}>
+        {text}
+      </div>
+      {overflowing && (
+        <button className="mp-note-more" onClick={() => setExpanded(e => !e)}>
+          {expanded ? '收起' : '展开'}
+        </button>
+      )}
+    </>
   );
 }

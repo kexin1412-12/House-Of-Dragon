@@ -1,0 +1,218 @@
+/* ─── DiscussionPanel — 整集讨论区右栏 tab ───────────────── */
+
+.dp-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 4px 12px 24px;
+  color: #ddd;
+  font-size: 13px;
+}
+
+.dp-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 8px 4px 14px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+}
+.dp-header strong {
+  color: #f3c97a;
+  font-weight: 600;
+}
+.dp-sort {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+
+.dp-empty {
+  padding: 24px 16px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  text-align: center;
+}
+
+.dp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dp-item {
+  display: flex;
+  gap: 10px;
+}
+
+.dp-avatar {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dp-item.is-mine .dp-avatar { color: #1a1208; }
+
+.dp-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dp-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 3px;
+}
+.dp-author {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.dp-time {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 11px;
+}
+
+.dp-text {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 12.5px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.dp-text.is-expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.dp-more {
+  appearance: none;
+  margin-top: 3px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: #f3c97a;
+  font-size: 11.5px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+}
+.dp-more:hover {
+  color: #ffe0a8;
+  text-decoration: underline;
+}
+
+.dp-up {
+  appearance: none;
+  margin-top: 7px;
+  padding: 3px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.dp-up:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.dp-up.is-on {
+  color: #f3c97a;
+  border-color: rgba(243, 201, 122, 0.5);
+  background: rgba(243, 201, 122, 0.08);
+}
+.dp-up-ic {
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* ── 写条讨论 ── */
+.dp-add {
+  appearance: none;
+  width: 100%;
+  margin-top: 18px;
+  padding: 11px;
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: center;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.dp-add:hover {
+  color: rgba(243, 201, 122, 0.9);
+  border-color: rgba(243, 201, 122, 0.4);
+}
+
+.dp-compose { margin-top: 18px; }
+
+.dp-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(243, 201, 122, 0.35);
+  border-radius: 6px;
+  color: #eee;
+  font-size: 12.5px;
+  line-height: 1.55;
+  font-family: inherit;
+}
+.dp-input::placeholder { color: rgba(255, 255, 255, 0.35); }
+.dp-input:focus {
+  outline: none;
+  border-color: rgba(243, 201, 122, 0.6);
+}
+
+.dp-compose-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+.dp-cancel {
+  appearance: none;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  cursor: pointer;
+}
+.dp-cancel:hover { color: rgba(255, 255, 255, 0.85); }
+.dp-submit {
+  appearance: none;
+  padding: 6px 16px;
+  background: linear-gradient(180deg, #f3c97a, #e0b160);
+  border: 0;
+  border-radius: 4px;
+  color: #1a1208;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dp-submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.dp-submit:not(:disabled):hover { filter: brightness(1.08); }
