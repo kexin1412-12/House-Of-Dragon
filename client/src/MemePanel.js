@@ -139,6 +139,7 @@ export default function MemePanel({
 }) {
   const [riffs, setRiffs] = useState([]);
   const [openId, setOpenId] = useState(null);
+  const [listShareRiff, setListShareRiff] = useState(null); // 列表项直接分享(未展开时)
   const itemRefs = useRef({}); // riff_id -> DOM node
   const { isFav, count: favCount } = useMemeFavorites();
 
@@ -374,6 +375,15 @@ export default function MemePanel({
                     </div>
                   </button>
 
+                  {!isOpen && (
+                    <button
+                      className="mp-item-share"
+                      onClick={(e) => { e.stopPropagation(); setListShareRiff(r); }}
+                      title="生成分享卡"
+                      aria-label="分享这条梗"
+                    >⤴</button>
+                  )}
+
                   {isOpen && r.tier3 && (
                     <div className="mp-item-detail">
                       <div className="mp-detail-quote">
@@ -429,6 +439,9 @@ export default function MemePanel({
         </>
       )}
 
+      {listShareRiff && (
+        <MemeShareCard riff={listShareRiff} onClose={() => setListShareRiff(null)} />
+      )}
     </div>
   );
 }

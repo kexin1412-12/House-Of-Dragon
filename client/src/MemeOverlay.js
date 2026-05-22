@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './MemeOverlay.css';
 import useMemeFavorites from './useMemeFavorites';
+import MemeShareCard from './MemeShareCard';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -22,6 +23,7 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
   const [riffs, setRiffs] = useState([]);
   const [activeRiff, setActiveRiff] = useState(null);
   const [hoverOpen, setHoverOpen] = useState(false);
+  const [shareRiff, setShareRiff] = useState(null);
   const hoverCloseTimer = useRef(null);
 
   useEffect(() => {
@@ -52,7 +54,13 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
     return () => v.removeEventListener('timeupdate', tick);
   }, [riffs, videoRef]);
 
-  if (!enabled || !activeRiff || !activeRiff.anchor) return null;
+  // 分享卡独立于 activeRiff 存活：即使播放越过该 riff 时段、字幕浮层下线，
+  // 已打开的分享卡也不该被连带卸载。
+  const shareModal = shareRiff
+    ? <MemeShareCard riff={shareRiff} onClose={() => setShareRiff(null)} />
+    : null;
+
+  if (!enabled || !activeRiff || !activeRiff.anchor) return shareModal;
 
   const { subtitle_en, subtitle_zh, highlight } = activeRiff.anchor;
   const parts = splitHighlight(subtitle_en, highlight);
@@ -73,46 +81,55 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
     onExpandRequest && onExpandRequest(activeRiff.riff_id);
   };
 
-  return (
-    <div className="mo-root">
-      {/* 底部蒙板：盖住烧录字幕 */}
-      <div className="mo-mask" />
+  const handleShare = () => {
+    setHoverOpen(false);
+    setShareRiff(activeRiff);
+  };
 
-      {/* HTML 字幕 */}
-      <div className="mo-subs">
-        <div className="mo-sub-en">
-          {parts.map((p, i) =>
-            p.highlight ? (
-              <span
-                key={i}
-                className="mo-highlight"
-                onMouseEnter={onKeywordEnter}
-                onMouseLeave={onKeywordLeave}
-              >
-                {p.text}
-                {hoverOpen && (
-                  <MemePopover
-                    riff={activeRiff}
-                    onMouseEnter={onKeywordEnter}
-                    onMouseLeave={onKeywordLeave}
-                    onExpand={handleExpand}
-                  />
-                )}
-              </span>
-            ) : (
-              <span key={i}>{p.text}</span>
-            )
+  return (
+    <>
+      <div className="mo-root">
+        {/* 底部蒙板：盖住烧录字幕 */}
+        <div className="mo-mask" />
+
+        {/* HTML 字幕 */}
+        <div className="mo-subs">
+          <div className="mo-sub-en">
+            {parts.map((p, i) =>
+              p.highlight ? (
+                <span
+                  key={i}
+                  className="mo-highlight"
+                  onMouseEnter={onKeywordEnter}
+                  onMouseLeave={onKeywordLeave}
+                >
+                  {p.text}
+                  {hoverOpen && (
+                    <MemePopover
+                      riff={activeRiff}
+                      onMouseEnter={onKeywordEnter}
+                      onMouseLeave={onKeywordLeave}
+                      onExpand={handleExpand}
+                      onShare={handleShare}
+                    />
+                  )}
+                </span>
+              ) : (
+                <span key={i}>{p.text}</span>
+              )
+            )}
+          </div>
+          {subtitle_zh && (
+            <div className="mo-sub-zh">{subtitle_zh}</div>
           )}
         </div>
-        {subtitle_zh && (
-          <div className="mo-sub-zh">{subtitle_zh}</div>
-        )}
       </div>
-    </div>
+      {shareModal}
+    </>
   );
 }
 
-function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand }) {
+function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand, onShare }) {
   const { isFav, toggle: toggleFav } = useMemeFavorites();
   const fav = isFav(riff.riff_id);
   return (
@@ -136,9 +153,14 @@ function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand }) {
       {riff.tier2_punch && (
         <div className="mo-popover-body">{riff.tier2_punch}</div>
       )}
-      <button className="mo-popover-expand" onClick={onExpand}>
-        展开详情 ›
-      </button>
+      <div className="mo-popover-actions">
+        <button className="mo-popover-share" onClick={onShare}>
+          ⤴ 分享
+        </button>
+        <button className="mo-popover-expand" onClick={onExpand}>
+          展开详情 ›
+        </button>
+      </div>
     </div>
   );
 }
