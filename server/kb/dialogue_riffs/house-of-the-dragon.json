@@ -23,7 +23,10 @@
         "highlight": "tea",
         "keyframe": "frames/house_of_dragon_05/scene-146.jpg"
       },
-      "tags": ["隐喻", "暗指"],
+      "tags": [
+        "隐喻",
+        "暗指"
+      ],
       "tier2_punch": "Larys 嘴里这\"茶\"不是普通的茶——是 moon tea，月亮茶，维斯特洛的堕胎药。他在向阿莉森特暗示雷妮拉那一晚的私情，却用了宫廷里能装糊涂的措辞。",
       "tier3": {
         "why_meme": "整场对话 Larys 不说一个露骨的字，全程用\"送茶\"\"我可能弄错了\"\"何等幸事我错了\"这种句式把消息塞进对方耳朵。被告知方阿莉森特一旦消化清楚\"茶\"指的是什么，意味着她已被默认参与了这场政治流言——而 Larys 没留下任何把柄。这是 GoT/HoD 谋士台词的典型范式：信息含量极高，可否认性也极高。",
@@ -36,11 +39,45 @@
         "why_it_matters_now": "这场对话是绿党联盟的起点之一。Larys 借送茶这件事向阿莉森特表态\"我看在眼里、我可以为你所用\"，是他从一个无声跛脚弟弟变成绿党核心情报源的第一步。阿莉森特从这一刻起，开始有了不属于韦赛里斯也不属于雷妮拉的私人情报渠道。"
       },
       "social": {
-        "reactions": { "til": 2143, "knew": 891 },
+        "reactions": {
+          "til": 2143,
+          "knew": 891
+        },
         "notes": [
-          { "note_id": "moon_tea_innuendo_e05_n1", "author": "月亮茶研究所", "time": "3d", "upvotes": 89, "text": "moon tea 在原著里第一次出现是 Lysa 那条线，剧版这里把它当全剧暗号在复用，给到这杯茶基本等于「丑闻已被高层掌握」。" },
-          { "note_id": "moon_tea_innuendo_e05_n2", "author": "临冬城老张", "time": "12h", "upvotes": 34, "text": "Larys 全程没说一个露骨的字，这才是高手——把把柄全留给对方，自己一点不沾。" }
+          {
+            "note_id": "moon_tea_innuendo_e05_n1",
+            "author": "月亮茶研究所",
+            "time": "3d",
+            "upvotes": 89,
+            "text": "moon tea 在原著里第一次出现是 Lysa 那条线，剧版这里把它当全剧暗号在复用，给到这杯茶基本等于「丑闻已被高层掌握」。"
+          },
+          {
+            "note_id": "moon_tea_innuendo_e05_n2",
+            "author": "临冬城老张",
+            "time": "12h",
+            "upvotes": 34,
+            "text": "Larys 全程没说一个露骨的字，这才是高手——把把柄全留给对方，自己一点不沾。"
+          }
         ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "Larys 用一杯「茶」，把整个王国的秘密递到了阿莉森特耳边。",
+        "emotions": [
+          {
+            "label": "细思极恐",
+            "count": 6200
+          },
+          {
+            "label": "头皮发麻",
+            "count": 4100
+          },
+          {
+            "label": "名场面",
+            "count": 3800
+          }
+        ],
+        "paused": "3.1万人在此暂停"
       }
     },
     {
@@ -55,7 +92,10 @@
         "highlight": "goose",
         "keyframe": "frames/house_of_dragon_05/scene-227.jpg"
       },
-      "tags": ["双关", "时代委婉语"],
+      "tags": [
+        "双关",
+        "时代委婉语"
+      ],
       "tier2_punch": "Laenor 用\"喜欢烤鸭还是烤鹅\"向未婚妻委婉出柜。维多利亚到中世纪欧洲贵族圈用食物隐喻指性偏好的传统在这里被剧组直接复刻——\"goose\"对应他的真实取向，\"duck\"是他不得不履行的婚姻义务。",
       "tier3": {
         "why_meme": "这一句是 HoD 粉丝圈反复回味的经典——它不是一个段子，而是 Laenor 这个人物的悲剧压缩。他没法在父亲、王座、贵族体面这些压力面前说一个直接的词，只能借餐桌的小节制玩笑把真相递给雷妮拉。雷妮拉听懂了，没戳破，反过来用同一种委婉语回应他（\"也有人喜欢烤鹅\"\"我嫌它太腻\"）。两个被父辈塞进政治婚姻的年轻人，在公开场合用代号确认了彼此的真实状态——并默契达成了\"对外完成婚约、对内各自吃自己想吃的\"。",
@@ -67,11 +107,48 @@
         "why_it_matters_now": "这一刻确立了雷妮拉与 Laenor 婚姻的实质：它不是一场感情结合，而是一场政治契约下的私人协议。也直接铺垫了下一场 Rhaenyra 对 Criston Cole 的话——既然婚姻只是政治履约，那她和 Criston 的私人关系也可以\"按 Laenor 模式\"延续。Criston 听不懂这个新规则，悲剧由此开始。"
       },
       "social": {
-        "reactions": { "til": 3402, "knew": 1187 },
+        "reactions": {
+          "til": 3402,
+          "knew": 1187
+        },
         "notes": [
-          { "note_id": "duck_to_goose_e05_n1", "author": "鸭鹅之约", "time": "4d", "upvotes": 156, "text": "演员 John Macmillan 采访里说，这场戏他排「装作无意」的语气排了最久。" },
-          { "note_id": "duck_to_goose_e05_n2", "author": "Polari暗语爱好者", "time": "1d", "upvotes": 73, "text": "用食物隐喻性取向是 19 世纪英国地下黑话 Polari 的老传统，编剧明显是故意复刻。" },
-          { "note_id": "duck_to_goose_e05_n3", "author": "弹幕考据君", "time": "6h", "upvotes": 41, "text": "雷妮拉接的那句「也有人偏爱烤鹅」——她听懂了还顺着回，两个人当场达成默契，这段才封神。" }
+          {
+            "note_id": "duck_to_goose_e05_n1",
+            "author": "鸭鹅之约",
+            "time": "4d",
+            "upvotes": 156,
+            "text": "演员 John Macmillan 采访里说，这场戏他排「装作无意」的语气排了最久。"
+          },
+          {
+            "note_id": "duck_to_goose_e05_n2",
+            "author": "Polari暗语爱好者",
+            "time": "1d",
+            "upvotes": 73,
+            "text": "用食物隐喻性取向是 19 世纪英国地下黑话 Polari 的老传统，编剧明显是故意复刻。"
+          },
+          {
+            "note_id": "duck_to_goose_e05_n3",
+            "author": "弹幕考据君",
+            "time": "6h",
+            "upvotes": 41,
+            "text": "雷妮拉接的那句「也有人偏爱烤鹅」——她听懂了还顺着回，两个人当场达成默契，这段才封神。"
+          }
+        ]
+      },
+      "card": {
+        "type": "dialogue",
+        "teaser": "没有一个字提到爱情，却把这段婚姻说尽了。",
+        "lines": [
+          {
+            "who": "a",
+            "speaker": "Laenor",
+            "text": "I prefer roast duck to goose. I cannot say why."
+          },
+          {
+            "who": "b",
+            "speaker": "Rhaenyra",
+            "text": "Some find goose a little rich. But I see no reason you cannot have both duck and goose."
+          }
         ]
       }
     },
@@ -87,7 +164,10 @@
         "highlight": "the crown",
         "keyframe": "frames/house_of_dragon_05/scene-278.jpg"
       },
-      "tags": ["转喻", "身份宣告"],
+      "tags": [
+        "转喻",
+        "身份宣告"
+      ],
       "tier2_punch": "路易十四\"L'État, c'est moi\"（朕即国家）的回响。Rhaenyra 用\"王冠\"代指自己，把 Criston Cole 提议的\"为爱私奔、放弃王座\"那条路当场堵死——她不是在拒绝爱情，她是在拒绝\"自己可以不是王冠\"这个前提。",
       "tier3": {
         "why_meme": "Rhaenyra 这一句不是耍嘴皮，是她整条角色弧的一句话压缩。在此之前她可以是\"被父亲推上王位的女儿\"\"被家族联姻摆布的公主\"——是别人施加在她身上的角色。这一刻她第一次主动声明：王冠不是我背负的负担，王冠就是我本人。这句话从此把她从\"被动继承人\"翻译成了\"主动君主\"。代价是 Criston Cole——他听到的是\"她选择了王座而不是我\"——从骑士变成怨夫，最终成为绿党手里最锋利的一把剑。",
@@ -99,12 +179,39 @@
         "why_it_matters_now": "这是 Rhaenyra 角色质变的瞬间。在此之前她的 agency 是反应式的——回应韦赛里斯的安排、回应 Daemon 的诱惑、回应婚姻的压力。从此以后她是主动的——她开始把自己当作权力主体来思考、说话、行动。也是 Criston Cole 转向绿党的种子时刻：他这一刻被她的话刺中，余下整剧他都在尝试报复这一刻的羞辱。"
       },
       "social": {
-        "reactions": { "til": 1243, "knew": 438 },
+        "reactions": {
+          "til": 1243,
+          "knew": 438
+        },
         "notes": [
-          { "note_id": "i_am_the_crown_e05_n1", "author": "ShakespeareNerd", "time": "2d", "upvotes": 47, "text": "这句对位的是路易十四「朕即国家」，但更狠——路易十四说的是已有的制度，Rhaenyra 说的是「我即将是」，一个还没拿到权力的人提前宣告主权。" },
-          { "note_id": "i_am_the_crown_e05_n2", "author": "美剧老中医", "time": "5h", "upvotes": 31, "text": "中文字幕「我就是王冠」丢了 the crown 的转喻——英文里 crown 既是物也是权力本身，中文只能二选一。" },
-          { "note_id": "i_am_the_crown_e05_n3", "author": "权游补习班", "time": "1d", "upvotes": 62, "text": "别忘了上一句是 Criston 的「a marriage for love, not for the crown」，两人用同一个 the crown 指了相反的东西，这才是这段对白的设计精髓。" }
+          {
+            "note_id": "i_am_the_crown_e05_n1",
+            "author": "ShakespeareNerd",
+            "time": "2d",
+            "upvotes": 47,
+            "text": "这句对位的是路易十四「朕即国家」，但更狠——路易十四说的是已有的制度，Rhaenyra 说的是「我即将是」，一个还没拿到权力的人提前宣告主权。"
+          },
+          {
+            "note_id": "i_am_the_crown_e05_n2",
+            "author": "美剧老中医",
+            "time": "5h",
+            "upvotes": 31,
+            "text": "中文字幕「我就是王冠」丢了 the crown 的转喻——英文里 crown 既是物也是权力本身，中文只能二选一。"
+          },
+          {
+            "note_id": "i_am_the_crown_e05_n3",
+            "author": "权游补习班",
+            "time": "1d",
+            "upvotes": 62,
+            "text": "别忘了上一句是 Criston 的「a marriage for love, not for the crown」，两人用同一个 the crown 指了相反的东西，这才是这段对白的设计精髓。"
+          }
         ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "雷妮拉·坦格利安",
+        "speaker_en": "Rhaenyra Targaryen",
+        "collects": 12400
       }
     },
     {
@@ -119,7 +226,10 @@
         "highlight": "the crown",
         "keyframe": "frames/house_of_dragon_05/scene-274.jpg"
       },
-      "tags": ["经典台词", "角色弧"],
+      "tags": [
+        "经典台词",
+        "角色弧"
+      ],
       "tier2_punch": "Criston Cole 把整段感情压成一句话——为爱可以放弃王冠。这是他向 Rhaenyra 提出私奔时的关键句，也是他这个角色一切后续选择的原点。",
       "tier3": {
         "why_meme": "这是 Criston 整条人物线的种子。他把骑士身份、白袍誓约、未来全压上来要换一个回应。Rhaenyra 紧接着的回答是\"我就是王冠\"——直接把这条路堵死。两句话连起来就是绿党黑党分裂的私人起点。",
@@ -129,10 +239,41 @@
         "why_it_matters_now": "他被这一刻的拒绝刻进骨子里，从这一秒开始从骑士变成怨夫——后续整剧他作为绿党最锋利的剑，根都扎在这句话被否定的那一刻。"
       },
       "social": {
-        "reactions": { "til": 986, "knew": 624 },
+        "reactions": {
+          "til": 986,
+          "knew": 624
+        },
         "notes": [
-          { "note_id": "marry_for_love_e05_n1", "author": "白袍誓约", "time": "3d", "upvotes": 28, "text": "Criston 是国王禁卫军、发过禁欲誓，他说这句等于要拿整个骑士身份换一个回答。" },
-          { "note_id": "marry_for_love_e05_n2", "author": "黑党后援会", "time": "8h", "upvotes": 19, "text": "这句和下一句「我即是王冠」是绿黑分裂的私人起点，整部剧的火药桶就是这两句点着的。" }
+          {
+            "note_id": "marry_for_love_e05_n1",
+            "author": "白袍誓约",
+            "time": "3d",
+            "upvotes": 28,
+            "text": "Criston 是国王禁卫军、发过禁欲誓，他说这句等于要拿整个骑士身份换一个回答。"
+          },
+          {
+            "note_id": "marry_for_love_e05_n2",
+            "author": "黑党后援会",
+            "time": "8h",
+            "upvotes": 19,
+            "text": "这句和下一句「我即是王冠」是绿黑分裂的私人起点，整部剧的火药桶就是这两句点着的。"
+          }
+        ]
+      },
+      "card": {
+        "type": "dialogue",
+        "teaser": "这两句对话之后，一个骑士用余生去恨她。",
+        "lines": [
+          {
+            "who": "a",
+            "speaker": "Criston Cole",
+            "text": "A marriage for love, not for the crown."
+          },
+          {
+            "who": "b",
+            "speaker": "Rhaenyra",
+            "text": "I am the crown, Ser Criston. Or I will be."
+          }
         ]
       }
     },
@@ -141,14 +282,17 @@
       "video_id": "house_of_dragon_05",
       "episode": "S01E05",
       "anchor": {
-        "start_time": 2834.0,
-        "end_time": 2845.0,
+        "start_time": 2834,
+        "end_time": 2845,
         "subtitle_en": "In the Vale, men are made to answer for their crimes. Even Targaryens.",
         "subtitle_zh": "在艾林谷，男人要为自己的罪行负责。坦格利安也不例外。",
         "highlight": "the Vale",
         "keyframe": "frames/house_of_dragon_05/scene-530.jpg"
       },
-      "tags": ["经典台词", "地域制度对照"],
+      "tags": [
+        "经典台词",
+        "地域制度对照"
+      ],
       "tier2_punch": "Ser Gerold Royce 当面指控 Daemon 杀妻。一句话点破维斯特洛核心矛盾：地方法理 vs 王室特权——艾林谷是少数敢公开把这话甩给坦格利安的家族。",
       "tier3": {
         "why_meme": "这种当众挑战王室成员在维斯特洛极少见。罗伊斯家族（青铜符文盔甲那一支）一直是 First Men 古老法理的代表，与坦格利安的\"凌驾法律\"传统天然对立。Royce 这一句把私人复仇说成了制度对抗。",
@@ -159,9 +303,34 @@
         "why_it_matters_now": "这一刻是 Daemon 形象的关键反衬：他可以杀人，但维斯特洛仍有人敢当面叫他出来对账。也提醒观众，王室再大，地方法理仍有牙齿。"
       },
       "social": {
-        "reactions": { "til": 763, "knew": 512 },
+        "reactions": {
+          "til": 763,
+          "knew": 512
+        },
         "notes": [
-          { "note_id": "vale_men_answer_for_crimes_e05_n1", "author": "谷地法律顾问", "time": "2d", "upvotes": 22, "text": "这句在暗示连坦格利安都能被扔下「月门」——地域制度差异的伏笔，后面会回收。" }
+          {
+            "note_id": "vale_men_answer_for_crimes_e05_n1",
+            "author": "谷地法律顾问",
+            "time": "2d",
+            "upvotes": 22,
+            "text": "这句在暗示连坦格利安都能被扔下「月门」——地域制度差异的伏笔，后面会回收。"
+          }
+        ]
+      },
+      "card": {
+        "type": "dialogue",
+        "teaser": "敢当着戴蒙的面说这句话的人，维斯特洛没剩几个。",
+        "lines": [
+          {
+            "who": "a",
+            "speaker": "Ser Gerold Royce",
+            "text": "In the Vale, men are made to answer for their crimes. Even Targaryens."
+          },
+          {
+            "who": "b",
+            "speaker": "Daemon Targaryen",
+            "text": "The Vale is a fine place — to be forgotten in."
+          }
         ]
       }
     },
@@ -170,14 +339,17 @@
       "video_id": "house_of_dragon_05",
       "episode": "S01E05",
       "anchor": {
-        "start_time": 3115.0,
-        "end_time": 3126.0,
+        "start_time": 3115,
+        "end_time": 3126,
         "subtitle_en": "...because if those are kept safe, then so are we all.",
         "subtitle_zh": "……只要那些秘密守得住，我们彼此就都安全。",
         "highlight": "safe",
         "keyframe": "frames/house_of_dragon_05/scene-591.jpg"
       },
-      "tags": ["经典台词", "戏剧反讽"],
+      "tags": [
+        "经典台词",
+        "戏剧反讽"
+      ],
       "tier2_punch": "Joffrey Lonmouth 跟 Criston Cole 提议互相守密——你保护雷妮拉的，我保护 Laenor 的。**几分钟后他就被 Criston 当众打死**。\"safe\"这一刻的反讽密度全集最高。",
       "tier3": {
         "why_meme": "Joffrey 把自己的安危亲手递给了那个最有动机也最有能力杀他的人。剧本在这一句之后立刻让观众见证那个人选择了什么——这种「刚说完保护就被杀掉」的结构在文学里叫 ritual irony。",
@@ -187,10 +359,38 @@
         "why_it_matters_now": "他的死直接把 Rhaenyra 与 Laenor 的婚姻推进了一个伪装阶段，也彻底激活了 Criston 内心被 Rhaenyra 拒绝后的破坏欲——这场暴打不是即兴，是他选择把「骑士」身份扔在地上踩。"
       },
       "social": {
-        "reactions": { "til": 641, "knew": 433 },
+        "reactions": {
+          "til": 641,
+          "knew": 433
+        },
         "notes": [
-          { "note_id": "kept_safe_so_are_we_all_e05_n1", "author": "反讽收集者", "time": "1d", "upvotes": 26, "text": "这句的戏剧反讽在于——台上说「我们都安全」的时候，观众已经知道接下来要出大事了。" }
+          {
+            "note_id": "kept_safe_so_are_we_all_e05_n1",
+            "author": "反讽收集者",
+            "time": "1d",
+            "upvotes": 26,
+            "text": "这句的戏剧反讽在于——台上说「我们都安全」的时候，观众已经知道接下来要出大事了。"
+          }
         ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "他刚说完「我们都安全」，下一秒婚礼就变成了刑场。",
+        "emotions": [
+          {
+            "label": "震撼",
+            "count": 8700
+          },
+          {
+            "label": "意难平",
+            "count": 3200
+          },
+          {
+            "label": "起鸡皮",
+            "count": 5100
+          }
+        ],
+        "paused": "4.2万人在此暂停"
       }
     },
     {
@@ -205,7 +405,11 @@
         "highlight": "a good song",
         "keyframe": "frames/house_of_dragon_05/scene-351.jpg"
       },
-      "tags": ["经典台词", "戏剧反讽", "演员高光"],
+      "tags": [
+        "经典台词",
+        "戏剧反讽",
+        "演员高光"
+      ],
       "tier2_punch": "Paddy Considine 的封神台词。一个自知不配伟大、却仍想被记住的国王，用\"作不成传唱百年的歌\"概括自己的一生。最辛辣的一层是：他死后爆发的\"龙之舞\"内战，恰恰会成为传唱百年的史诗——也就是观众正在看的这部剧本身。",
       "tier3": {
         "why_meme": "这场独白是 Paddy Considine 整季的口碑顶点。台词从\"我会被记成一个好国王吗？\"开始，韦赛里斯一层一层把自己拆开：没打过仗、没征服过、没经历过大败。\"有些人会说这是福气\"——他几乎要说服自己。但接着是这一句——他承认自己最深的恐惧不是被骂，是被遗忘。再下一句他说\"另一个国王可能会鼓励我说我能像征服者伊耿那样崛起，给我一个机会\"——他知道现在没人会这么说他。整段独白没有一个戏剧性的反转，只有一个温和的人在私下面对自己的平庸。这种戏在长剧里是最难演的——没有冲突没有金句，全靠演员的克制。",
@@ -218,11 +422,32 @@
         "why_it_matters_now": "这场独白点破了韦赛里斯整个统治的内核：他是个温和、犹豫、想做对事的人，但他的时代需要的是杀伐果断的君主。他自知不配，却没有路退出。这种自知和无力感，是他后续在继承权问题上反复摇摆、最后说出那一句被听错的临终遗言（\"应许王子\"）的心理底色。"
       },
       "social": {
-        "reactions": { "til": 1502, "knew": 388 },
+        "reactions": {
+          "til": 1502,
+          "knew": 388
+        },
         "notes": [
-          { "note_id": "good_song_in_a_hundred_years_e05_n1", "author": "百年好歌", "time": "2d", "upvotes": 58, "text": "「a hundred years」是全集演员高光，留意他念这句时那个停顿。" },
-          { "note_id": "good_song_in_a_hundred_years_e05_n2", "author": "细节控", "time": "14h", "upvotes": 33, "text": "戏剧反讽叠满——他说百年后会被传唱，可观众知道这场婚礼马上要见血。" }
+          {
+            "note_id": "good_song_in_a_hundred_years_e05_n1",
+            "author": "百年好歌",
+            "time": "2d",
+            "upvotes": 58,
+            "text": "「a hundred years」是全集演员高光，留意他念这句时那个停顿。"
+          },
+          {
+            "note_id": "good_song_in_a_hundred_years_e05_n2",
+            "author": "细节控",
+            "time": "14h",
+            "upvotes": 33,
+            "text": "戏剧反讽叠满——他说百年后会被传唱，可观众知道这场婚礼马上要见血。"
+          }
         ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "韦赛里斯一世",
+        "speaker_en": "Viserys I",
+        "collects": 9800
       }
     }
   ]

@@ -158,3 +158,28 @@
 .mo-popover-expand:hover {
   text-decoration: underline;
 }
+
+/* 浮窗底部操作行：分享(炫耀入口浮到表层) + 展开详情 */
+.mo-popover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mo-popover-share {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(243, 201, 122, 0.4);
+  border-radius: 4px;
+  padding: 4px 10px;
+  color: #f3c97a;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.mo-popover-share:hover {
+  background: rgba(243, 201, 122, 0.12);
+  border-color: rgba(243, 201, 122, 0.7);
+}
