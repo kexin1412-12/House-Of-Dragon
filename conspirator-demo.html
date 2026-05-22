@@ -962,7 +962,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <div class="card reveal"><span class="ic" data-i="activity"></span><h3>剧情脉络 X 光</h3><p>SVG 节点图，三个隐藏节点随进度渐进解锁。</p><span class="tag">7 主线 + 3 隐藏</span></div>
     <div class="card reveal"><span class="ic" data-i="list"></span><h3>关键线索清单</h3><p>全集符号平铺成卡片墙，按七类切换、未播到先蒙住。</p><span class="tag">全集索引视角</span></div>
     <div class="card reveal"><span class="ic" data-i="trending-up"></span><h3>我的立场轨迹</h3><p>记录全程选择，AI 生成逐议题第二人称分析「你是什么样的观众」。</p><span class="tag">不打标签 · 不打分</span></div>
-    <div class="card reveal"><span class="ic" data-i="book-open"></span><h3>设定百科</h3><p>世界观卡片，围绕「这场戏里为什么重要」组织，两层深度。</p><span class="tag">14 张卡片</span></div>
+    <div class="card reveal"><span class="ic" data-i="book-open"></span><h3>设定百科</h3><p>世界观卡片，围绕「这场戏里为什么重要」组织，两层深度。</p><span class="tag">14 张卡片</span></div>
     <div class="card reveal"><span class="ic" data-i="toggle"></span><h3>共谋模式总开关</h3><p>一键让全部 AI 叠加层下线，还原干净播放器——随时隐形。</p><span class="tag">最好的增强是你忘了它在</span></div>
   </div>
 </section>
@@ -998,11 +998,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">完全复刻产品里的 AI 助手面板：双标签 · 简明/深挖 · 即时分析「画面描述 → 角色解读 → 金色推测」 · 严格守当前集数边界</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">你看哪，它就读哪一帧</div>
     <p>抽屉里常驻五个高频快捷问——「这个角色是谁 / 解释这个镜头 / 这是什么梗 / 这句台词什么意思 / 角色内心」，也能自己打字问任何当前剧情相关的问题。回答按 <b>画面描述 → 角色解读 → 金色推测</b> 分层、<b>流式逐字</b>吐出，像有人陪你边看边聊，可切「简明 / 深挖」。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">答的是这一秒，不是百科</div>
     <p>每次提问，后端先按当前播放时间从剧集知识图谱里捞出「这一秒」的场景、在场角色、字幕原文和符号注入 prompt——不是泛泛的维基梗概。所以你问「绿裙代表什么」，它答的是「海塔尔家族战时亮绿火，绿裙＝公开宣战」。每句还标可信度 <b>[事实]/[解读]/[推测]</b>，不用猜它在引用还是在编。</p>
-    <div class="dn-k">不会越界</div>
+    <div class="dn-k">永远只知道你看到这里</div>
     <p>出 prompt 前先按你的进度（精确到集）过滤知识库，后续剧情根本不进上下文——不是「忍着不说」，而是 prompt 里压根没有。这套游标过滤贯穿产品所有 AI 端点。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1043,11 +1043,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">关键转折，给你一次「如果」</div>
     <p>行至关键转折（求私奔、绿裙登场、婚宴血色仪式），右下角浮出半透明卡片 + 十秒倒计时：「如果你是雷妮拉，你会怎么选？」<b>三选一</b>（而非二选一），每个选项都附 AI 写的「内心理由」帮你代入。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">AI 现写你的平行世界线</div>
     <p>选完不是放一段预写文本，而是大模型<b>实时生成的第二人称平行世界线</b>，还能多轮追问——排列组合出成千上万条路径，从根上解决「选了也没用」。它不改原片一帧、不换一句台词，原作叙事权威完整保留，推演是「延伸阅读」而非替代品。</p>
-    <div class="dn-k">观望也合法</div>
+    <div class="dn-k">只记录选择，从不打分</div>
     <p>只记录<b>你选了什么，不打分、不归类、不站队</b>；不想选，观望永远合法——没有进度焦虑，也没有「你站错队」。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1082,11 +1082,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">进入角色 → 表层意识 + 💭 深层意识(双声部) → 挑带立场的反问继续追问 · 严守当前集数边界，绝不剧透</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">钻进角色的脑子里</div>
     <p>选一个在场角色（列表由识脸实时供给），先以流式散文呈现 TA 此刻的内心——表层的表面状态 + 深层没说出口的东西，再给三个开场问题让你选方向切入。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">听见 TA 没说出口的那半句</div>
     <p>问 TA 一个问题，TA 先「说」一句表面回应（反讽或回避），然后<b>两个声部同时响起</b>——理性的在盘算政治风险、本能的因被质疑而暴怒，下面还有一行灰色潜台词（忍住没说的）。每条回复给三个带立场的跟问：<b>王者 / 血亲 / 审慎 / 火焰</b>，每种把对话推向完全不同的方向，灵感来自《极乐迪斯科》。</p>
-    <div class="dn-k">越逼越深、绝不剧透</div>
+    <div class="dn-k">真相是你自己逼出来的</div>
     <p>十轮问下来，你对角色的理解远超任何分析文章——因为那是你自己一步步逼出来的，不是别人写的结论。切场景重置轮数，角色严守当前集数边界。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1128,11 +1128,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">点画面光点 / 角标看解读 · 拖「观看进度」体验防剧透：没播到的符号会锁住、绝不提前揭晓</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">导演埋的，我们帮你看见</div>
     <p>正常看时画面偶尔亮起一个呼吸感小光点——那是我们标注的视觉符号（可能在某人胸前的家族胸针上、在韦赛里斯那块持续恶化的绷带旁）；右下角小徽章显示当前可见符号数。点开告诉你：这一帧能看见什么证据、它意味着什么、一句话「观众外卖」。<b>不弹窗、不暂停</b>，你想看才点。</p>
-    <div class="dn-k">为什么不会剧透</div>
+    <div class="dn-k">没播到的，永远锁着</div>
     <p>符号按七类分（道具 / 色码 / 角色缺席 / 剪辑 / 微表情 / 文化引用 / 交互引导）；没播到的<b>锁住</b>，拖进度才逐格解锁——检索层永远按你的进度过滤未来。</p>
-    <div class="dn-k">不止「找彩蛋」</div>
+    <div class="dn-k">还能一键回看伏笔源头</div>
     <p>引导类符号点开还能三种跳转：开设定百科解释名词、展开文化梗解析台词、或<b>一键把视频拉回前面的关联场景</b>重温伏笔（比如「铁王座伤口」一键回看 S1E1 首次被割伤）。跟弹幕（观众二创、盖在画面上抢注意力）不同，这是导演本来就埋好的一手信息。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1207,11 +1207,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">台词里的话中话，自动浮出</div>
     <p>底部双语字幕带里，经过有深层解读价值的台词时，关键词自动亮金色下划线——不是整句，而是精准标在那个「有故事」的词上（比如雷妮拉饭桌上「鸭肉变鹅肉」，表面聊菜、实则隐晦谈性取向）。鼠标放上去，一句话告诉你它为什么重要。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">想看多深，你自己定</div>
     <p>解读分三层——<b>一句话速览 → 为什么是梗 → 完整背景 / 原著对照 / 历史典故</b>，看多深你定，可收藏梗卡；下面还有<b>社区补充</b>，系统没讲到的角度别的剧迷帮你补、按热度浮顶。字幕由 Whisper 从音轨独立转写、带精确时间戳，绕开平台翻译差。</p>
-    <div class="dn-k">不打断、不挡画面</div>
+    <div class="dn-k">信息来找你，你不用离开剧情</div>
     <p>信息在台词说出那一秒到达，不早一秒打扰、不晚一秒错过，视频不暂停、眼睛不离画面；共谋模式一键收起全部叠加层。它不只治「翻译差」，而是治「好编剧总在台词里藏东西、观众没工具一层层剥开」。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1239,11 +1239,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="tiny center" style="margin-top:14px;color:var(--dim)">点角色 → 显示该角色的剧情冲突线 + 现场生成的人物档案（到当前集为止，绝不剧透更晚剧情）</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">二十五个角色，一张活地图</div>
     <p>二十五个角色以家族肖像节点分布在力导向布局里，四十九条关系按亲属 / 婚姻 / 兄弟 / 父子 / 冲突用不同颜色和虚实线区分。选中某个角色，与 TA 无关的连线全变暗，只留下 TA 的关系网。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">你看到哪，图就长到哪</div>
     <p>这张图是<b>「活的」</b>——按你当前进度实时算谁已死、谁换了演员、谁是这场戏的焦点（焦点角色发光）；关系数据按集数做<b>时间切片</b>，你看到第五集时，第八集才揭示的婚约和背叛对你还不存在。</p>
-    <div class="dn-k">档案随你长出来</div>
+    <div class="dn-k">档案是当场写的，不是查的</div>
     <p>点角色头像，侧栏弹出的档案不是数据库里调一段固定文本，而是大模型按<b>「你看到哪了」实时生成</b>——关系图于是不是静态参考工具，而是随你观看进度一起呼吸的叙事机制。</p>
   </aside>
   </div><!-- /demo-2col -->
@@ -1263,11 +1263,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">横向幕段进度带（铺垫 → 推进 → 关键转折 → 高潮 → 收束）+ 带缩略图的剧情节点 · 未播到的隐藏支线锁住（🔒），拖动观看进度逐格点亮，绝不抢先剧透</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
-    <div class="dn-k">这一层在做什么</div>
+    <div class="dn-k">给这一集做一次 X 光</div>
     <p>一张可缩放拖拽的节点图呈现全集叙事结构——七个主线节点串起从铺垫到收束的六个幕段，三条支线分叉而出；还有三个<b>隐藏节点</b>被锁着，播到对应时间点才渐进解锁（在那之前是带锁的灰方块：你知道那有东西，但还不该知道）。</p>
-    <div class="dn-k">亮点在哪</div>
+    <div class="dn-k">主线 / 分支 / 伏笔，随你切</div>
     <p>三种视图随你切——<b>主线模式</b>快速回顾、<b>分支模式</b>深度探索、<b>伏笔线索模式</b>专盯暗线；节点上还叠着你之前投的立场标记（小金点 +「你在这选了支持戴蒙」），让叙事结构和你的选择交织。点节点开侧栏：剧照、概要、对后续的影响、一键跳到对应时间点。</p>
-    <div class="dn-k">和「剧情梗概」的区别</div>
+    <div class="dn-k">只点亮你走过的路</div>
     <p>梗概是上帝视角的总结，天然剧透；这条脉络<b>只点亮你已经走过的路</b>，是给「正在看」的人用的防剧透导航，不是看完的目录。</p>
   </aside>
   </div><!-- /demo-2col -->
