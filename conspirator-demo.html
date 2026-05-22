@@ -677,6 +677,38 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .lm-pop-expand{background:none;border:0;padding:0;color:#f3c97a;font-size:12px;cursor:pointer;font-family:inherit}
 .lm-pop-expand:hover{text-decoration:underline}
 
+
+/* —— 立场推演抽屉：完整 AI 面板式布局(对齐真实) —— */
+.std-spec{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.std-scroll{flex:1;overflow-y:auto;padding:15px 17px 6px;position:relative;min-height:0}
+.std-rail{position:absolute;top:14px;right:7px;writing-mode:vertical-rl;font-size:10px;letter-spacing:.2em;color:#4a505c;pointer-events:none}
+.std-entries{border:1px dashed rgba(214,176,106,.4);border-radius:9px;padding:11px 13px;margin-bottom:14px}
+.std-entries-h{display:flex;align-items:center;gap:7px;font-size:12px;color:#d6b06a;font-weight:600;margin-bottom:9px}
+.std-entries-h svg{width:15px;height:15px;flex:none}
+.std-entries-n{margin-left:auto;background:rgba(214,176,106,.16);color:#e0b574;border-radius:10px;font-size:11px;padding:1px 8px;font-weight:600}
+.std-entry{display:flex;align-items:center;width:100%;border:1px dashed rgba(255,255,255,.16);border-radius:7px;padding:9px 12px;background:none;color:#cfd3da;font-size:12.5px;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.std-entry:hover{border-color:rgba(214,176,106,.5);color:#f3d9a8}
+.std-entry .ar{margin-left:auto;color:#7b828e}
+.std-para{font-size:13px;line-height:1.82;color:#d4c4a8;margin:0 0 11px}
+.std-para.spec{color:#e8b85a;font-style:italic;opacity:.95}
+.std-foot2{flex:none;border-top:1px solid #20242c;padding:11px 17px 14px;background:rgba(8,9,13,.55)}
+.std-depth{display:flex;align-items:center;gap:9px;margin-bottom:11px;font-size:12px}
+.std-depth-lab{color:#7b828e}
+.std-seg{display:inline-flex;border:1px solid #2a2f38;border-radius:7px;overflow:hidden}
+.std-seg button{background:none;border:0;color:#9aa1ad;font-size:12px;padding:5px 14px;cursor:pointer;font-family:inherit}
+.std-seg button.on{background:#d98a3d;color:#1a1208;font-weight:700}
+.std-clear{margin-left:auto;background:none;border:0;color:#7b828e;font-size:12px;cursor:pointer;font-family:inherit}
+.std-clear:hover{color:#cfd3da}
+.std-thread{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#a89a76;border-top:1px dashed #20242c;padding-top:11px;margin-bottom:11px;line-height:1.5}
+.std-thread b{color:#d6b06a;font-weight:600}
+.std-end{margin-left:auto;background:none;border:1px solid #2a2f38;border-radius:5px;color:#9aa1ad;font-size:11px;padding:4px 10px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.std-end:hover{color:#e8eaf0;border-color:#6b7280}
+.std-input{display:flex;align-items:center;gap:9px;border-top:1px solid #20242c;padding-top:11px}
+.std-input .you{font-size:12.5px;color:#8b929d;flex:none}
+.std-input input{flex:1;background:none;border:0;outline:0;color:#e8eaf0;font-size:12.5px;font-family:inherit;min-width:0}
+.std-input input::placeholder{color:#5a606b;font-style:italic}
+.std-input .send{background:none;border:0;color:#d6b06a;font-size:12.5px;cursor:pointer;flex:none;font-family:inherit}
+
 </style>
 </head>
 <body>
@@ -1144,38 +1176,51 @@ secs.forEach(s=>s&&io2.observe(s));
   var T=[
     {scene:'谷地 · 戴蒙杀妻',t:290,prompt:'戴蒙杀了自己的妻子来挣脱一段他从未想要的政治联姻。',conv:'无论戴蒙杀不杀蕾雅，他与雷妮拉的纠葛都会以同样毁灭性的方式继续 —— 这是火与血血脉的本性，不取决于一颗石头。',opts:[
       {label:'冷血但合理',voice:'这段婚姻困住了他十年，维斯特洛没有离婚这回事。',canon:true},
-      {label:'不可接受',voice:'再不想要这段婚姻，谋杀也不是出路。',canon:false,sp:[
-        '你站在谷地的荒野中，手握缰绳，面对着妻子蕾雅。她的眼中满是鄙夷和愤怒，但你选择了退却，转身，马蹄声夹杂着风声，你离开了她。',
-        '心中积压的厌倦和不满在这一刻如潮水般褪去，取而代之的是一时的清醒。谋杀不是出路，至少现在不是。无论这段婚姻多么令人窒息，你还未准备好用血来解决。',
-        '你回到了有限的城堡生活中，承担起一个不愿承担的丈夫角色。蕾雅对你的冷眼和刺耳的言辞此起彼伏，而你沉默以对，仿佛一座被风暴侵蚀的石像。',
-        '时间将迫使你们的关系更加紧张，内心的欲望和野心终将找寻出口。或许是毒药，或许是某个夜晚的不测事故，婚姻的枷锁总会被你以另一种方式打破。'
-      ],fl:[
-        '在这段无爱的婚姻中，你能否抵御住自己内心的黑暗欲望，还是会走向更险恶的途径？这场婚姻的尽头，是否真的有不同的命运在等待？',
-        '当你与雷妮拉的羁绊被这段婚姻的阴影所压制，你会选择何时、如何打破这层禁锢？在追逐欲望与权力的过程中，你的心底又在渴望什么？'
-      ]},
-      {label:'蕾雅死得不值',voice:'真正该被追究的是当初强行安排这段婚姻的杰赫里斯。',canon:false,sp:['如果当年杰赫里斯没安排这桩联姻 —— 戴蒙年轻时就在君临扎根，提前介入雷妮拉的成长。或许让她更早强大，但也会让奥托盯得更紧 —— 或许奥托根本就不会让阿莉森进宫。']}
+      {label:'不可接受',voice:'再不想要这段婚姻，谋杀也不是出路。',canon:false,
+        spD:[
+          '你站在谷地的荒野中，手握缰绳，面对着妻子蕾雅。她的眼中满是鄙夷和愤怒，但你选择了退却，转身，马蹄声夹杂着风声，你离开了她。',
+          '心中积压的厌倦和不满在这一刻如潮水般褪去，取而代之的是一时的清醒。谋杀不是出路，至少现在不是。无论这段婚姻多么令人窒息，你还未准备好用血来解决。',
+          '你回到了有限的城堡生活中，承担起一个不愿承担的丈夫角色。蕾雅对你的冷眼和刺耳的言辞此起彼伏，而你沉默以对，仿佛一座被风暴侵蚀的石像。',
+          '时间将迫使你们的关系更加紧张，内心的欲望和野心终将找寻出口。或许是毒药，或许是某个夜晚的不测事故，婚姻的枷锁总会被你以另一种方式打破。'
+        ],
+        flD:[
+          '在这段无爱的婚姻中，你能否抵御住自己内心的黑暗欲望，还是会走向更险恶的途径？这场婚姻的尽头，是否真的有不同的命运在等待？',
+          '当你与雷妮拉的羁绊被这段婚姻的阴影所压制，你会选择何时、如何打破这层禁锢？在追逐欲望与权力的过程中，你的心底又在渴望什么？'
+        ],
+        spB:[
+          '你站在谷地的绿野上，手握缰绳，望着不远处正在策马而来的妻子蕾雅。你没有动手，反而选择转身离开。这一刻，蕾雅的命得到了宽恕。',
+          '你知道，这段婚姻如同一副沉重的锁链束缚着你。谋杀不是出路，你不愿意以这种方式将自己更加深陷。你的野心远不止于此，耐心等待另一种机会或许更为明智。',
+          '蕾雅恢复了对你的警惕，尽管你没有动手，但她感知到了你内心的阴冷。她回城后，加强了对你的监视，与家族的联系更加紧密，将你的行动限制得更严。',
+          '随着时间推移，蕾雅的存在仍然是一根刺，每次你试图接近雷妮拉时，它就会刺痛你。你可能会考虑更隐蔽的方式来摆脱她，也许是一场看似自然的事故，亦或是毒药在她的杯中静静等候。'
+        ],
+        flB:[
+          '在这段不见尽头的婚姻中，你将如何继续维持与雷妮拉的秘密关系，而不被蕾雅察觉？',
+          '如果不采取极端措施，你能否在这场棋局中找到突破口，既摆脱婚姻的桎梏，又不沾染鲜血？'
+        ]},
+      {label:'蕾雅死得不值',voice:'真正该被追究的是当初强行安排这段婚姻的杰赫里斯。',canon:false,sp:['如果当年杰赫里斯没安排这桩联姻 —— 戴蒙年轻时就在君临扎根，提前介入雷妮拉的成长。或许让她更早强大，但也会让奥托盯得更紧 —— 或许奥托根本就不会让阿莉森进宫。','他这一生都在为别人的安排买单，而账，最后总是别人来还。']}
     ]},
     {scene:'君临 · 父女诀别',t:468,prompt:'奥托被解除国王之手，临走警告亚莉森：雷妮拉登基之日就是你孩子的死期。',conv:'奥托的预言会自我实现 —— 不论亚莉森信不信。差别只在于她何时学会自己想这件事。',opts:[
-      {label:'奥托说的是事实',voice:'坦格利安家族的历史证明，继承权的竞争者从来活不久。',canon:false,sp:['如果亚莉森这一刻就完全采信父亲 —— 她会从此刻开始算计：把克里斯顿、拉里斯、宫廷里每一个怨怼者都收为己用。绿党会更早成形，但代价是她变成奥托的延伸 —— 失去自己。']},
-      {label:'他在利用女儿的恐惧',voice:'他被罢免了，正在把自己的政治野心包装成父爱。',canon:false,sp:['如果亚莉森公开拒绝奥托的警告 —— 她仍试图与雷妮拉做朋友。她会在韦赛里斯死后的某个清晨发现自己彻底孤立 —— 没有党、没有盟友、孩子真的危险。这是一个比绿党宫变更悲哀的结局。']},
+      {label:'奥托说的是事实',voice:'坦格利安家族的历史证明，继承权的竞争者从来活不久。',canon:false,sp:['如果亚莉森这一刻就完全采信父亲 —— 她会从此刻开始算计：把克里斯顿、拉里斯、宫廷里每一个怨怼者都收为己用。','绿党会更早成形，但代价是她变成奥托的延伸 —— 失去自己。']},
+      {label:'他在利用女儿的恐惧',voice:'他被罢免了，正在把自己的政治野心包装成父爱。',canon:false,sp:['如果亚莉森公开拒绝奥托的警告 —— 她仍试图与雷妮拉做朋友。','她会在韦赛里斯死后的某个清晨发现自己彻底孤立 —— 没有党、没有盟友、孩子真的危险。这是一个比绿党宫变更悲哀的结局。']},
       {label:'话对但动机不纯',voice:'威胁确实存在，但奥托关心的不是外孙，是海塔尔家族的权力。',canon:true}
     ]},
     {scene:'潮汐堡 · 雷妮拉与莱诺谈判',t:1152,prompt:'雷妮拉对莱诺说：我们各尽义务，之后各过各的。你可以继续爱乔弗里，我也有自己的安排。',conv:'维斯特洛的政治婚姻没有"体面"的可能 —— 体面是给观众看的，账总要在多年后由其他人来还。',opts:[
       {label:'务实且体面',voice:'两个人都不用装，这是政治婚姻里最好的结果了。',canon:true},
-      {label:'对莱诺不公平',voice:'她有选择的主动权，莱诺只能被动接受条件。',canon:false,sp:['如果雷妮拉真把"对莱诺不公平"当回事 —— 她要么取消婚约，要么坚持单偶制。前者让科利斯·瓦列利安转向中立，黑党失去最强海军；后者让她每晚被自己嫌弃的丈夫困住，对戴蒙的渴望会爆发得更早。']},
-      {label:'迟早出事',voice:'秘密太多了，任何一环暴露都会连锁崩塌。',canon:false,sp:['如果两人在订立时就承认这必然崩塌 —— 让莱诺以朋友身份退出，避免后来的婚宴血案。但代价是雷妮拉得另觅婚约对象 —— 可能落到艾蒙德或更糟的人手里。']}
+      {label:'对莱诺不公平',voice:'她有选择的主动权，莱诺只能被动接受条件。',canon:false,sp:['如果雷妮拉真把"对莱诺不公平"当回事 —— 她要么取消婚约，要么坚持单偶制。','前者让科利斯·瓦列利安转向中立，黑党失去最强海军；后者让她每晚被自己嫌弃的丈夫困住，对戴蒙的渴望会爆发得更早。']},
+      {label:'迟早出事',voice:'秘密太多了，任何一环暴露都会连锁崩塌。',canon:false,sp:['如果两人在订立时就承认这必然崩塌 —— 让莱诺以朋友身份退出，避免后来的婚宴血案。','但代价是雷妮拉得另觅婚约对象 —— 可能落到艾蒙德或更糟的人手里。']}
     ]},
     {scene:'婚宴 · 亚莉森绿裙登场',t:2563,prompt:'亚莉森穿着绿色礼裙走进大厅，全场起立。从此再无朋友，只有阵营。',conv:'无论穿不穿绿裙，阵营的裂痕已经存在。区别只是战争以什么形式开始 —— 公开宣战，还是地下暗涌。',opts:[
       {label:'她做得对',voice:'不表态就是等死，她的孩子将来需要这条裙子的保护。',canon:true},
-      {label:'她做得太早',voice:'韦赛里斯还活着，现在公开决裂只会加速分裂。',canon:false,sp:['如果她当晚穿了一件银灰色的裙子忍住了 —— 矛盾从明面转入地下。她私下联络旧镇家族，准备依然进行，只是少了一个清晰的宣战时刻。这或许多给雷妮拉几年喘息，但绿党的形成不会停。']},
-      {label:'是奥托在操控',voice:'她自己未必想走到这一步，是父亲把恐惧种进了她脑子里。',canon:false,sp:['如果亚莉森意识到自己被父亲的话支配并反抗 —— 她会用绿裙做一件父亲不期待的事：把它脱下来，公开宣告自己不站任何一方。结果是绿党分裂，海塔尔失去主心骨，但她孩子的危险并不会因此消失。']}
+      {label:'她做得太早',voice:'韦赛里斯还活着，现在公开决裂只会加速分裂。',canon:false,sp:['如果她当晚穿了一件银灰色的裙子忍住了 —— 矛盾从明面转入地下。','她私下联络旧镇家族，准备依然进行，只是少了一个清晰的宣战时刻。这或许多给雷妮拉几年喘息，但绿党的形成不会停。']},
+      {label:'是奥托在操控',voice:'她自己未必想走到这一步，是父亲把恐惧种进了她脑子里。',canon:false,sp:['如果亚莉森意识到自己被父亲的话支配并反抗 —— 她会用绿裙做一件父亲不期待的事：把它脱下来，公开宣告自己不站任何一方。','结果是绿党分裂，海塔尔失去主心骨，但她孩子的危险并不会因此消失。']}
     ]}
   ];
   var pill=document.getElementById('stPill'),empty=document.getElementById('stEmpty'),sceneEl=document.getElementById('stScene'),
       overlay=document.getElementById('stOverlay'),scrub=document.getElementById('stScrub'),played=document.getElementById('stPlayed'),
       track=document.getElementById('stTrack'),timeEl=document.getElementById('stTime'),mode=document.getElementById('stMode'),play=document.getElementById('stPlay'),
       specPanel=document.getElementById('stSpecPanel');
-  var picks={},lastIdx=null,typing=null,cd=8;
+  var picks={},lastIdx=null,typing=null,cd=8,specDepth='brief',curSpec=null;
+  var BRANCH='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M 8 14 L 8 9"/><path d="M 8 9 C 8 7 6 6 4 6 L 4 3"/><path d="M 8 9 C 8 7 10 6 12 6 L 12 3"/><path d="M 2.4 5 L 4 3 L 5.6 5"/><path d="M 10.4 5 L 12 3 L 13.6 5"/></svg>';
   function fmt(m){var mm=Math.floor(m),ss=Math.round((m-mm)*60);if(ss===60){mm++;ss=0;}return (mm<10?'0':'')+mm+':'+(ss<10?'0':'')+ss;}
   function curMin(){return +scrub.value;}
   function activeIdx(){var idx=-1;T.forEach(function(tr,i){if(curMin()*60>=tr.t)idx=i;});return idx;}
@@ -1183,30 +1228,47 @@ secs.forEach(s=>s&&io2.observe(s));
   setInterval(function(){cd--;if(cd<0)cd=8;var e=document.getElementById('stCd');if(e)e.textContent='剩余 00:'+(cd<10?'0'+cd:cd);},1000);
   function setScene(s){if(sceneEl.firstChild&&sceneEl.firstChild.nodeType===3)sceneEl.firstChild.nodeValue=s+' ';}
   function renderTraj(){var wrap=document.getElementById('stTrajWrap'),list=document.getElementById('stTraj');if(Object.keys(picks).length===0){wrap.style.display='none';return;}wrap.style.display='block';list.innerHTML='';T.forEach(function(tr,i){if(picks[i]){var li=document.createElement('li');li.textContent=tr.scene+' · '+picks[i].label;list.appendChild(li);}});}
-  function streamParas(host,paras,done){if(typing){clearInterval(typing);}var i=0;(function next(){if(i>=paras.length){if(done)done();return;}var last=(i===paras.length-1);var el=document.createElement('p');el.className='std-para'+(last?' spec':'');host.appendChild(el);var t=paras[i++],j=0;typing=setInterval(function(){el.textContent=t.slice(0,++j);specPanel.scrollTop=specPanel.scrollHeight;if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,120);}},9);})();}
-  function openSpec(i,o){
-    var tr=T[i];
-    pill.style.display='none';
-    var h='<div class="std-spec-top">推演中 · <b>'+tr.scene+'</b> · 你选了：<b>'+o.label+'</b><button class="std-end" id="stEnd">结束推演</button></div>';
-    h+='<div class="std-q"><span class="you">你</span><span class="dash">—</span><span class="txt">"立场推演 · '+tr.scene+' · 你选了：'+o.label+'"</span></div>';
-    h+='<div id="stSpecBody"></div>';
-    specPanel.innerHTML=h;specPanel.classList.add('open');specPanel.setAttribute('aria-hidden','false');
-    document.getElementById('stEnd').addEventListener('click',closeSpec);
-    var body=document.getElementById('stSpecBody');
-    streamParas(body,o.sp,function(){
-      if(o.fl&&o.fl.length){
-        var lab=document.createElement('div');lab.className='std-foll-lab';lab.textContent='继续追问，把这条世界线再推一步：';body.appendChild(lab);
-        var wrap=document.createElement('div');wrap.className='std-foll';
-        o.fl.forEach(function(q){var b=document.createElement('button');b.className='std-foll-q';b.innerHTML='<span class="qm">[问]</span>'+q;b.addEventListener('click',function(){
-          if(document.getElementById('stFollNote'))return;
-          var n=document.createElement('div');n.className='std-note';n.id='stFollNote';n.textContent='演示到此 —— 完整的多轮「如果引擎」推演在产品内可继续往下推。';body.appendChild(n);specPanel.scrollTop=specPanel.scrollHeight;
-        });wrap.appendChild(b);});
-        body.appendChild(wrap);
+  function renderSpecBody(o){
+    var body=document.getElementById('stSpecBody'),foll=document.getElementById('stFoll');
+    if(!body)return;
+    if(typing){clearInterval(typing);typing=null;}
+    body.innerHTML='';if(foll)foll.innerHTML='';
+    var paras=specDepth==='brief'?(o.spB||o.sp||[]):(o.spD||o.sp||[]);
+    var follows=specDepth==='brief'?(o.flB||o.fl||[]):(o.flD||o.fl||[]);
+    var i=0;
+    (function next(){
+      if(i>=paras.length){
+        follows.forEach(function(q){var b=document.createElement('button');b.className='std-foll-q';b.innerHTML='<span class="qm">[问]</span>'+q;b.addEventListener('click',specNote);foll.appendChild(b);});
+        return;
       }
-      specPanel.scrollTop=0;
-    });
+      var isLast=(i===paras.length-1);
+      var el=document.createElement('p');el.className='std-para'+(isLast?' spec':'');body.appendChild(el);
+      var t=paras[i++],j=0;
+      typing=setInterval(function(){el.textContent=t.slice(0,++j);if(j>=t.length){clearInterval(typing);typing=null;setTimeout(next,110);}},9);
+    })();
   }
-  function closeSpec(){specPanel.classList.remove('open');specPanel.setAttribute('aria-hidden','true');if(typing){clearInterval(typing);typing=null;}renderPill();}
+  function specNote(){var foll=document.getElementById('stFoll');if(!foll||document.getElementById('stSpecNote'))return;var n=document.createElement('div');n.id='stSpecNote';n.style.cssText='font-size:11.5px;color:#7b828e;line-height:1.6;margin-top:10px';n.textContent='演示到此 —— 完整的多轮「如果引擎」推演在产品内可继续往下推。';foll.appendChild(n);}
+  function openSpec(i,o){
+    var tr=T[i];curSpec={i:i,o:o};pill.style.display='none';
+    var h='<div class="std-scroll"><div class="std-rail">S01 · A05 · 02</div>'+
+      '<div class="std-entries"><div class="std-entries-h">'+BRANCH+'你的立场推演<span class="std-entries-n">1</span></div><button class="std-entry">'+tr.scene+'<span class="ar">&#8594;</span></button></div>'+
+      '<div class="std-q"><span class="you">你</span><span class="dash">—</span><span class="txt">"立场推演 · '+tr.scene+' · 你选了：'+o.label+'"</span></div>'+
+      '<div id="stSpecBody"></div></div>'+
+      '<div class="std-foot2">'+
+        '<div class="std-depth"><span class="std-depth-lab">深度</span><span class="std-seg"><button data-d="brief"'+(specDepth==='brief'?' class="on"':'')+'>简明</button><button data-d="deep"'+(specDepth==='deep'?' class="on"':'')+'>深挖</button></span><button class="std-clear" id="stSpecClear">&#8635; 清空</button></div>'+
+        '<div class="std-thread">推演中 · <b>'+tr.scene+'</b> · 你选了：<b>'+o.label+'</b><button class="std-end" id="stEnd">结束推演</button></div>'+
+        '<div class="std-foll" id="stFoll"></div>'+
+        '<div class="std-input"><span class="you">你</span><span class="dash" style="color:#3a414c">—</span><input placeholder="继续追问，让 AI 把这条路再推一步……"><button class="send" id="stSpecSend">发送</button></div>'+
+      '</div>';
+    specPanel.innerHTML=h;specPanel.classList.add('open');specPanel.setAttribute('aria-hidden','false');
+    document.getElementById('stEnd').onclick=closeSpec;
+    document.getElementById('stSpecClear').onclick=closeSpec;
+    specPanel.querySelectorAll('.std-seg button').forEach(function(b){b.onclick=function(){specDepth=b.dataset.d;specPanel.querySelectorAll('.std-seg button').forEach(function(x){x.classList.toggle('on',x===b);});renderSpecBody(o);};});
+    document.getElementById('stSpecSend').onclick=function(){var inp=specPanel.querySelector('.std-input input');if(inp&&inp.value.trim()){specNote();inp.value='';}};
+    renderSpecBody(o);
+  }
+  function closeSpec(){specPanel.classList.remove('open');specPanel.setAttribute('aria-hidden','true');curSpec=null;if(typing){clearInterval(typing);typing=null;}renderPill();}
+  function typeConv(el,text){if(typing){clearInterval(typing);}el.textContent='';var i=0;typing=setInterval(function(){el.textContent=text.slice(0,++i);if(i>=text.length){clearInterval(typing);typing=null;}},16);}
   function wire(i,tr){
     pill.querySelectorAll('.stc-opt').forEach(function(b){var oi=+b.dataset.oi,o=tr.opts[oi];
       b.addEventListener('mouseenter',function(){var v=document.getElementById('stVoice');if(v){v.textContent='「'+o.voice+'」';v.classList.add('show');}});
@@ -1223,7 +1285,6 @@ secs.forEach(s=>s&&io2.observe(s));
     if(picks[i]&&picks[i].canon&&!picks[i].watch){var s=document.getElementById('stSpec');if(s)typeConv(s,tr.conv);}
     if(picks[i]&&picks[i].watch){var s2=document.getElementById('stSpec');if(s2)s2.textContent='你选择不站队。沉默本身，也是一种被记住的表态。';}
   }
-  function typeConv(el,text){if(typing){clearInterval(typing);}el.textContent='';var i=0;typing=setInterval(function(){el.textContent=text.slice(0,++i);if(i>=text.length){clearInterval(typing);typing=null;}},16);}
   function renderPill(){
     var i=activeIdx();
     if(i<0){pill.style.display='none';empty.hidden=false;empty.textContent='继续观看 —— 立场点会在剧情转折自动浮现';setScene('龙之家族');return;}
@@ -1350,9 +1411,8 @@ secs.forEach(s=>s&&io2.observe(s));
     curKey=key;var a=DATA[key];if(!a)return;
     content.innerHTML='<div class="aih-q"><span class="aih-q-you">你</span><span class="aih-q-dash">—</span><span class="aih-q-txt">"'+a.label+'"</span></div><div id="aihSegs"></div>';
     var host=document.getElementById('aihSegs');
-    var segs=[{k:'shi',t:a.shi}];
-    if(depth==='deep')segs.push({k:'jie',t:a.jie});
-    segs.push({k:'tui',t:a.tui});
+    var segs=[{k:'shi',t:a.shi},{k:'jie',t:a.jie}];
+    if(depth==='deep')segs.push({k:'tui',t:a.tui});
     streamSegs(host,segs);
   }
   function renderMeme(){
