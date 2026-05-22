@@ -1818,6 +1818,7 @@ function TencentPlayer({
             <MemeOverlay
               videoId={aiKb}
               videoRef={videoRef}
+              videoUrl={resolveVideoSrc(playing.url)}
               enabled={conspiratorMode}
               onExpandRequest={(riffId) => {
                 setRightTab('meme');

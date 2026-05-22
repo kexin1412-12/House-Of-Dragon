@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './MemeOverlay.css';
 import useMemeFavorites from './useMemeFavorites';
 import MemeShareCard from './MemeShareCard';
+import SceneShareCard from './SceneShareCard';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -19,11 +20,12 @@ function splitHighlight(text, keyword) {
   ].filter(Boolean);
 }
 
-export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpandRequest }) {
+export default function MemeOverlay({ videoId, videoRef, videoUrl, enabled = true, onExpandRequest }) {
   const [riffs, setRiffs] = useState([]);
   const [activeRiff, setActiveRiff] = useState(null);
   const [hoverOpen, setHoverOpen] = useState(false);
   const [shareRiff, setShareRiff] = useState(null);
+  const [sceneRiff, setSceneRiff] = useState(null);
   const hoverCloseTimer = useRef(null);
 
   useEffect(() => {
@@ -55,12 +57,22 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
   }, [riffs, videoRef]);
 
   // 分享卡独立于 activeRiff 存活：即使播放越过该 riff 时段、字幕浮层下线，
-  // 已打开的分享卡也不该被连带卸载。
-  const shareModal = shareRiff
-    ? <MemeShareCard riff={shareRiff} onClose={() => setShareRiff(null)} />
-    : null;
+  // 已打开的卡也不该被连带卸载。
+  const modals = (
+    <>
+      {shareRiff && <MemeShareCard riff={shareRiff} onClose={() => setShareRiff(null)} />}
+      {sceneRiff && (
+        <SceneShareCard
+          riff={sceneRiff}
+          videoUrl={videoUrl}
+          videoRef={videoRef}
+          onClose={() => setSceneRiff(null)}
+        />
+      )}
+    </>
+  );
 
-  if (!enabled || !activeRiff || !activeRiff.anchor) return shareModal;
+  if (!enabled || !activeRiff || !activeRiff.anchor) return modals;
 
   const { subtitle_en, subtitle_zh, highlight } = activeRiff.anchor;
   const parts = splitHighlight(subtitle_en, highlight);
@@ -84,6 +96,11 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
   const handleShare = () => {
     setHoverOpen(false);
     setShareRiff(activeRiff);
+  };
+
+  const handleShareScene = () => {
+    setHoverOpen(false);
+    setSceneRiff(activeRiff);
   };
 
   return (
@@ -111,6 +128,7 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
                       onMouseLeave={onKeywordLeave}
                       onExpand={handleExpand}
                       onShare={handleShare}
+                      onShareScene={handleShareScene}
                     />
                   )}
                 </span>
@@ -124,12 +142,12 @@ export default function MemeOverlay({ videoId, videoRef, enabled = true, onExpan
           )}
         </div>
       </div>
-      {shareModal}
+      {modals}
     </>
   );
 }
 
-function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand, onShare }) {
+function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand, onShare, onShareScene }) {
   const { isFav, toggle: toggleFav } = useMemeFavorites();
   const fav = isFav(riff.riff_id);
   return (
@@ -154,11 +172,14 @@ function MemePopover({ riff, onMouseEnter, onMouseLeave, onExpand, onShare }) {
         <div className="mo-popover-body">{riff.tier2_punch}</div>
       )}
       <div className="mo-popover-actions">
+        <button className="mo-popover-share" onClick={onShareScene}>
+          📷 片段
+        </button>
         <button className="mo-popover-share" onClick={onShare}>
-          ⤴ 分享
+          ⤴ 金句
         </button>
         <button className="mo-popover-expand" onClick={onExpand}>
-          展开详情 ›
+          展开 ›
         </button>
       </div>
     </div>

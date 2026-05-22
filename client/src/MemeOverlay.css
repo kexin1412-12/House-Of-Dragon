@@ -164,7 +164,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
 }
 
 .mo-popover-share {
@@ -172,11 +172,17 @@
   background: transparent;
   border: 1px solid rgba(243, 201, 122, 0.4);
   border-radius: 4px;
-  padding: 4px 10px;
+  padding: 4px 9px;
   color: #f3c97a;
   font-size: 12px;
+  white-space: nowrap;
   cursor: pointer;
   transition: background 120ms ease, border-color 120ms ease;
+}
+
+.mo-popover-actions .mo-popover-expand {
+  margin-left: auto;
+  white-space: nowrap;
 }
 
 .mo-popover-share:hover {
