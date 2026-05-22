@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './MemePanel.css';
 import useMemeFavorites from './useMemeFavorites';
 import useMemeSocial from './useMemeSocial';
+import MemeShareCard from './MemeShareCard';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -443,7 +444,7 @@ function MemeSocial({ riff, onJump }) {
   const { reactionOf, setReaction, isUpvoted, toggleUpvote, userNotesFor, addNote } = useMemeSocial();
   const { isFav, toggle: toggleFav } = useMemeFavorites();
 
-  const [shared, setShared] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [composing, setComposing] = useState(false);
   const [draft, setDraft] = useState('');
 
@@ -451,24 +452,11 @@ function MemeSocial({ riff, onJump }) {
   const tilCount = (seedReactions.til || 0) + (pick === 'til' ? 1 : 0);
   const knewCount = (seedReactions.knew || 0) + (pick === 'knew' ? 1 : 0);
 
-  const notes = [...seedNotes, ...userNotesFor(riff.riff_id)];
+  // 投票排序取代时间排序——高赞补充自然浮顶（含本地点赞 +1 与我新增的）。
+  const notes = [...seedNotes, ...userNotesFor(riff.riff_id)]
+    .map(n => ({ ...n, _up: (n.upvotes || 0) + (isUpvoted(n.note_id) ? 1 : 0) }))
+    .sort((a, b) => b._up - a._up);
   const fav = isFav(riff.riff_id);
-
-  const handleShare = () => {
-    const a = riff.anchor || {};
-    const time = a.start_time != null ? formatMMSS(a.start_time) : '';
-    const text = [
-      a.subtitle_en ? `「${a.subtitle_en}」` : '',
-      riff.tier2_punch || '',
-      time ? `— ${time}` : '',
-    ].filter(Boolean).join('\n');
-    const done = () => { setShared(true); setTimeout(() => setShared(false), 2000); };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, done);
-    } else {
-      done();
-    }
-  };
 
   const submitNote = () => {
     const body = draft.trim();
@@ -503,8 +491,8 @@ function MemeSocial({ riff, onJump }) {
 
       <div className="mp-detail-actions">
         <button className="mp-detail-jump" onClick={onJump}>▶ 跳到此处</button>
-        <button className="mp-social-share" onClick={handleShare}>
-          {shared ? '已复制 ✓' : '⤴ 分享'}
+        <button className="mp-social-share" onClick={() => setShareOpen(true)}>
+          ⤴ 分享
         </button>
         <button
           className={`mp-detail-fav${fav ? ' is-on' : ''}`}
@@ -522,34 +510,31 @@ function MemeSocial({ riff, onJump }) {
         </div>
 
         <div className="mp-notes-list">
-          {notes.map(n => {
-            const up = (n.upvotes || 0) + (isUpvoted(n.note_id) ? 1 : 0);
-            return (
-              <div key={n.note_id} className={`mp-note${n.mine ? ' is-mine' : ''}`}>
-                <span
-                  className="mp-note-avatar"
-                  style={{ background: n.mine ? '#e0b160' : avatarColor(n.author) }}
-                >
-                  {noteInitial(n.author)}
-                </span>
-                <div className="mp-note-body">
-                  <div className="mp-note-meta">
-                    <span className="mp-note-author">{n.author}</span>
-                    <span className="mp-note-time">· {n.time}</span>
-                  </div>
-                  <div className="mp-note-text">{n.text}</div>
-                  <button
-                    className={`mp-note-up${isUpvoted(n.note_id) ? ' is-on' : ''}`}
-                    onClick={() => toggleUpvote(n.note_id)}
-                    title="赞同这条补充"
-                  >
-                    <span className="mp-note-up-ic" aria-hidden="true">▲</span>
-                    {up}
-                  </button>
+          {notes.map(n => (
+            <div key={n.note_id} className={`mp-note${n.mine ? ' is-mine' : ''}`}>
+              <span
+                className="mp-note-avatar"
+                style={{ background: n.mine ? '#e0b160' : avatarColor(n.author) }}
+              >
+                {noteInitial(n.author)}
+              </span>
+              <div className="mp-note-body">
+                <div className="mp-note-meta">
+                  <span className="mp-note-author">{n.author}</span>
+                  <span className="mp-note-time">· {n.time}</span>
                 </div>
+                <NoteText text={n.text} />
+                <button
+                  className={`mp-note-up${isUpvoted(n.note_id) ? ' is-on' : ''}`}
+                  onClick={() => toggleUpvote(n.note_id)}
+                  title="赞同这条补充"
+                >
+                  <span className="mp-note-up-ic" aria-hidden="true">▲</span>
+                  {n._up}
+                </button>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
         {composing ? (
@@ -580,6 +565,36 @@ function MemeSocial({ riff, onJump }) {
           </button>
         )}
       </div>
+
+      {shareOpen && (
+        <MemeShareCard riff={riff} onClose={() => setShareOpen(false)} />
+      )}
     </div>
+  );
+}
+
+// 单条 note 文本：默认 clamp 到约 3 行，溢出才出现「展开/收起」——
+// 注释区不喧宾夺主，但长补充仍读得全。
+function NoteText({ text }) {
+  const ref = useRef(null);
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (el) setOverflowing(el.scrollHeight > el.clientHeight + 1);
+  }, [text]);
+
+  return (
+    <>
+      <div ref={ref} className={`mp-note-text${expanded ? ' is-expanded' : ''}`}>
+        {text}
+      </div>
+      {overflowing && (
+        <button className="mp-note-more" onClick={() => setExpanded(e => !e)}>
+          {expanded ? '收起' : '展开'}
+        </button>
+      )}
+    </>
   );
 }

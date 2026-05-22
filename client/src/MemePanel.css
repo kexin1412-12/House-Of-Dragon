@@ -739,6 +739,32 @@
   color: rgba(255, 255, 255, 0.72);
   font-size: 12.5px;
   line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mp-note-text.is-expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.mp-note-more {
+  appearance: none;
+  margin-top: 3px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: #f3c97a;
+  font-size: 11.5px;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+}
+.mp-note-more:hover {
+  color: #ffe0a8;
+  text-decoration: underline;
 }
 
 .mp-note-up {
