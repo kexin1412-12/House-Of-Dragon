@@ -891,7 +891,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 #face .fc-shot img{display:block;width:100%;height:auto}
 
 /* linememe · 截图与社区卡左右并排 */
-#linememe .lm-below{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start}
+#linememe .lm-below{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:18px;align-items:start}
 #linememe .lm-shot{margin:0;border-radius:12px;overflow:hidden;background:var(--panel);
   border:1px solid var(--line2);box-shadow:0 14px 30px rgba(22,24,29,.08)}
 #linememe .lm-shot img{display:block;width:100%;height:auto}
@@ -1325,13 +1325,8 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
         <div class="mp-notes-head"><span class="mp-notes-title">viewer notes</span><span class="mp-notes-count" id="msCount">6</span></div>
         <div class="mp-notes-list" id="msList">
           <div class="mp-note"><span class="mp-note-avatar" style="background:#5a86c2">临</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">临冬城老张</span><span class="mp-note-time">· 2d</span></div><div class="mp-note-text">这句是 Paddy Considine 的封神时刻——他自己说为了演好病榻上的韦赛里斯，瘦到形销骨立。</div><button class="mp-note-up" data-base="128" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">128</span></button></div></div>
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#7c6bd4">守</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">守夜人阿黎</span><span class="mp-note-time">· 6h</span></div><div class="mp-note-text">皇帝最怕的从来不是死，是被遗忘。韦赛里斯一生都想做个好人，偏偏成了全剧最不被人记住的好人。</div><button class="mp-note-up" data-base="96" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">96</span></button></div></div>
           <div class="mp-note"><span class="mp-note-avatar" style="background:#3f9e7a">血</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">血与火考据</span><span class="mp-note-time">· 15h</span></div><div class="mp-note-text">「百年后的宴会上传唱」是马丁式的残酷反讽：真正被传唱百年的，恰恰是他死后那场把家族烧成灰的「龙之舞」。</div><button class="mp-note-up" data-base="67" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">67</span></button></div></div>
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#b06a8f">龙</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">龙石岛来客</span><span class="mp-note-time">· 1d</span></div><div class="mp-note-text">song 在这里是双关——既是字面的「歌谣」，也指那首贯穿始终的「冰与火之歌」。他在说：自己进不了那首歌。</div><button class="mp-note-up" data-base="54" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">54</span></button></div></div>
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#c78a3c">弹</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">弹幕考据君</span><span class="mp-note-time">· 3h</span></div><div class="mp-note-text">注意他指的是案头那座君临城模型——他一生都在搭一座自己守不住的城。</div><button class="mp-note-up" data-base="29" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">29</span></button></div></div>
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#c78a3c">君</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">君临吃瓜群众</span><span class="mp-note-time">· 8h</span></div><div class="mp-note-text">「作不成传唱百年的歌」——打工人狠狠共情了，这不就是我的年终总结。</div><button class="mp-note-up" data-base="12" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">12</span></button></div></div>
         </div>
-        <button class="mp-note-add" id="msAdd" type="button"><span aria-hidden="true">+</span> add your note</button>
       </div>
     </div>
   </div>
@@ -2022,8 +2017,8 @@ secs.forEach(s=>s&&io2.observe(s));
     });
   }
   var list=document.getElementById('msList'),countEl=document.getElementById('msCount'),addBtn=document.getElementById('msAdd');
-  list.addEventListener('click',function(e){var up=e.target.closest('.mp-note-up');if(!up)return;var on=up.classList.toggle('is-on');var base=+up.dataset.base;up.querySelector('.mp-note-up-n').textContent=on?(base+1):base;});
-  addBtn.addEventListener('click',function(){
+  if(list){list.addEventListener('click',function(e){var up=e.target.closest('.mp-note-up');if(!up)return;var on=up.classList.toggle('is-on');var base=+up.dataset.base;up.querySelector('.mp-note-up-n').textContent=on?(base+1):base;});}
+  if(addBtn){addBtn.addEventListener('click',function(){
     if(document.getElementById('msCompose'))return;
     var box=document.createElement('div');box.className='mp-note-compose';box.id='msCompose';
     box.innerHTML='<textarea class="mp-note-input" rows="3" placeholder="补充你知道的——典故、双关、被字幕吃掉的细节…"></textarea><div class="mp-note-compose-actions"><button class="mp-note-cancel" type="button">取消</button><button class="mp-note-submit" type="button" disabled>发布</button></div>';
@@ -2041,7 +2036,7 @@ secs.forEach(s=>s&&io2.observe(s));
       countEl.textContent=(+countEl.textContent+1);
       box.remove();addBtn.style.display='';
     });
-  });
+  });}
 })();
 </script>
 
