@@ -885,57 +885,15 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .scp-corner.bl{bottom:16px;left:16px}.scp-corner.bl::before{bottom:0;left:0}.scp-corner.bl::after{bottom:0;left:0}
 .scp-corner.br{bottom:16px;right:16px}.scp-corner.br::before{bottom:0;right:0}.scp-corner.br::after{bottom:0;right:0}
 
-/* face recognition demo */
-#face .fc-screen{aspect-ratio:16/9;position:relative;overflow:hidden;background:radial-gradient(120% 80% at 50% 35%, #2a2418 0%, #131017 60%, #08070d 100%)}
-#face .fc-scene{position:absolute;inset:0;background:
-  radial-gradient(46% 70% at 50% 78%, rgba(191,125,30,.18) 0%, transparent 65%),
-  radial-gradient(60% 100% at 50% 0%, rgba(35,28,42,.45) 0%, transparent 60%),
-  linear-gradient(180deg, transparent 40%, rgba(0,0,0,.55) 100%)}
-#face .fc-figure{position:absolute;bottom:0;width:84px;height:58%;transform:translateX(-50%);
-  background:linear-gradient(180deg, rgba(40,42,50,0) 0%, rgba(28,30,38,.78) 38%, rgba(14,14,20,1) 100%);
-  border-radius:46px 46px 0 0;opacity:.92}
-#face .fc-figure-center{width:108px;height:70%}
-#face .fc-tag{position:absolute;transform:translate(-50%,-100%);background:rgba(13,15,21,.86);
-  border:1px solid rgba(191,125,30,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  border-radius:9px;padding:7px 11px 8px;min-width:120px;text-align:left;
-  box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 0 1px rgba(191,125,30,.18);
-  animation:fc-pop .45s ease-out backwards}
-#face .fc-tag::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);
-  width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
-  border-top:8px solid rgba(13,15,21,.86);filter:drop-shadow(0 1px 0 rgba(191,125,30,.4))}
-#face .fc-tag-bright{border-color:rgba(191,125,30,.85);
-  box-shadow:0 8px 24px rgba(191,125,30,.2), 0 0 0 1px rgba(191,125,30,.34)}
-#face .fc-tag-name{color:#f1d99c;font-size:12.5px;font-weight:700;letter-spacing:.01em;line-height:1.25}
-#face .fc-tag-role{color:#cfd3da;font-size:11px;margin-top:2px;opacity:.85}
-#face .fc-tag-src{color:#bf7d1e;font-size:10px;margin-top:5px;letter-spacing:.05em;
-  padding-top:4px;border-top:1px solid rgba(191,125,30,.22);text-transform:none}
-#face .fc-tag.is-fallback{border-color:rgba(106,69,181,.55);box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 0 1px rgba(106,69,181,.2)}
-#face .fc-tag.is-fallback::after{border-top-color:rgba(13,15,21,.86);filter:drop-shadow(0 1px 0 rgba(106,69,181,.5))}
-#face .fc-tag.is-fallback .fc-tag-name{color:#dccbf3}
-#face .fc-tag.is-fallback .fc-tag-src{color:#a791d6;border-top-color:rgba(106,69,181,.28)}
-#face .fc-arrival{position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:9px;
-  padding:7px 13px 7px 10px;background:rgba(13,15,21,.84);border:1px solid rgba(191,125,30,.5);
-  border-radius:999px;color:#f1d99c;font-size:12px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  box-shadow:0 6px 16px rgba(0,0,0,.45)}
-#face .fc-arrival b{color:#fff;font-weight:600;font-size:12px;letter-spacing:.02em}
-#face .fc-arrival-sub{color:#cfd3da;font-weight:400;font-size:11.5px}
-#face .fc-arrival-dot{width:8px;height:8px;border-radius:50%;background:#bf7d1e;
-  box-shadow:0 0 0 4px rgba(191,125,30,.22)}
-#face .fc-countdown{position:absolute;right:14px;bottom:14px;font-size:10.5px;color:rgba(241,217,156,.65);
-  letter-spacing:.05em;border:1px solid rgba(191,125,30,.28);border-radius:999px;padding:3px 9px;background:rgba(13,15,21,.6)}
-#face .fc-btn{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;
-  font-weight:600;letter-spacing:.02em;color:#f1d99c;background:rgba(191,125,30,.12);
-  border:1px solid rgba(191,125,30,.55);border-radius:999px;padding:5px 13px 5px 11px;cursor:pointer;
-  animation:fc-glow 2.6s ease-in-out infinite}
-#face .fc-btn-dot{width:7px;height:7px;border-radius:50%;background:#bf7d1e;flex:none;
-  box-shadow:0 0 0 3px rgba(191,125,30,.25)}
+/* face recognition demo · 截图 + 下游说明 */
+#face .fc-shot{margin:0;border-radius:14px;overflow:hidden;background:#0b0d12;
+  border:1px solid #20242c;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+#face .fc-shot img{display:block;width:100%;height:auto}
 #face .fanout{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 #face .fanout-item{padding:9px 10px;border:1px solid rgba(191,125,30,.32);border-left:2px solid var(--intuition);
   background:rgba(191,125,30,.05);border-radius:6px;font-size:11.5px;color:var(--dim);line-height:1.55}
 #face .fanout-item b{display:block;color:var(--text);font-size:12px;font-weight:700;margin-bottom:2px}
 @media(max-width:680px){#face .fanout{grid-template-columns:1fr 1fr}}
-@keyframes fc-glow{0%,100%{box-shadow:0 0 0 0 rgba(191,125,30,0)}50%{box-shadow:0 0 0 7px rgba(191,125,30,.18)}}
-@keyframes fc-pop{from{opacity:0;transform:translate(-50%,-100%) translateY(6px)} to{opacity:1;transform:translate(-50%,-100%)}}
 
 </style>
 </head>
@@ -1105,50 +1063,10 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
   <div class="demo-2col">
   <div class="demo-stage">
-  <div class="pw" id="fcPw" style="margin-top:0">
-    <div class="pw-top">
-      <div class="pw-brand">王座厅 · 议事场<span class="pw-sep">·</span><span class="pw-ep">House of the Dragon · S1E3</span></div>
-      <button class="pw-mode on" aria-pressed="true" type="button"><span class="pw-knob"></span><span>共谋模式</span></button>
-    </div>
-    <div class="pw-screen fc-screen">
-      <div class="fc-scene"></div>
-      <div class="fc-figure" style="left:22%"></div>
-      <div class="fc-figure fc-figure-center" style="left:50%"></div>
-      <div class="fc-figure" style="left:78%"></div>
-      <div class="fc-tag" style="left:22%;top:46%;animation-delay:.05s">
-        <div class="fc-tag-name">雷妮拉 · 坦格利安</div>
-        <div class="fc-tag-role">公主继承人</div>
-        <div class="fc-tag-src">✓ 特征库命中 · 0.92</div>
-      </div>
-      <div class="fc-tag fc-tag-bright" style="left:50%;top:38%;animation-delay:.15s">
-        <div class="fc-tag-name">韦赛里斯 一世</div>
-        <div class="fc-tag-role">铁王座之主</div>
-        <div class="fc-tag-src">✓ 特征库命中 · 0.97</div>
-      </div>
-      <div class="fc-tag is-fallback" style="left:78%;top:48%;animation-delay:.25s">
-        <div class="fc-tag-name">奥托 · 海塔尔</div>
-        <div class="fc-tag-role">国王之手</div>
-        <div class="fc-tag-src">视觉模型兜底</div>
-      </div>
-      <div class="fc-arrival">
-        <span class="fc-arrival-dot"></span>
-        <b>角色出场</b>
-        <span class="fc-arrival-sub">· 本集首次：奥托 · 海塔尔</span>
-      </div>
-      <div class="fc-countdown">标签 6s 后淡出</div>
-    </div>
-    <div class="pw-bar">
-      <button class="pw-play" aria-label="播放" type="button">&#9654;</button>
-      <span class="pw-time">23:14</span>
-      <div class="pw-track">
-        <div class="pw-buf"></div>
-        <div class="pw-played" style="width:38%"></div>
-      </div>
-      <span class="pw-dur">62:00</span>
-      <button class="fc-btn" type="button" aria-label="识别画面中的人物"><span class="fc-btn-dot"></span>人物识别</button>
-    </div>
-  </div>
-  <div class="tiny center" style="margin-top:12px;color:var(--dim)">点播放器右下角「人物识别」 · 当前画面里的所有面孔同时打标 · 本集首次出场单独提醒 · 6 秒自动淡出</div>
+    <figure class="fc-shot">
+      <img src="face-recognition.png" alt="实时人物识别截图：识脸按钮点击后，画面里多个角色头上同时浮出名字与身份标签" loading="lazy" />
+    </figure>
+    <div class="tiny center" style="margin-top:12px;color:var(--dim)">点播放器右下角「人物识别」 · 当前画面里的所有面孔同时打标 · 本集首次出场单独提醒 · 6 秒自动淡出</div>
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
     <div class="dn-k">先匹配特征库，匹配不上的让视觉模型兜底</div>
