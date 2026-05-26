@@ -117,105 +117,258 @@ function quoteGrain(ctx) {
   ctx.restore();
 }
 
-// ── 台词卡 —— 上图下文·杂志感 ──
-async function drawQuote(ctx, riff, card) {
-  const a = riff.anchor || {};
-
-  // —— 上半：场景剧照（16:9，细金框，底部压暗放时间戳） ——
-  const ix = 16, iy = 16, iw = W - 32, ih = Math.round(iw * 9 / 16);
-  const img = a.keyframe ? await loadImage(`/kb/${a.keyframe}`) : null;
-  ctx.save();
-  roundRect(ctx, ix, iy, iw, ih, 11);
-  ctx.clip();
-  if (img) {
-    drawCover(ctx, img, ix, iy, iw, ih);
-  } else {
-    const pg = ctx.createLinearGradient(ix, iy, ix, iy + ih);
-    pg.addColorStop(0, '#241c12'); pg.addColorStop(1, '#15100a');
-    ctx.fillStyle = pg; ctx.fillRect(ix, iy, iw, ih);
-    ctx.fillStyle = 'rgba(243,201,122,0.18)';
-    ctx.font = `600 64px ${SERIF}`; ctx.textAlign = 'center';
-    ctx.fillText('✦', W / 2, iy + ih / 2 + 22);
-    ctx.textAlign = 'left';
+// 四角金色装饰角（古典藏书票感）：每角一个 L 形细线 + 内点
+function drawCornerOrnaments(ctx) {
+  const c = 'rgba(243,201,122,0.55)';
+  const dot = 'rgba(243,201,122,0.7)';
+  const off = 28, len = 16;
+  ctx.strokeStyle = c;
+  ctx.lineWidth = 1;
+  const corners = [
+    [off, off, 1, 1],
+    [W - off, off, -1, 1],
+    [off, H - off, 1, -1],
+    [W - off, H - off, -1, -1],
+  ];
+  for (const [x, y, dx, dy] of corners) {
+    ctx.beginPath();
+    ctx.moveTo(x + dx * len, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y + dy * len);
+    ctx.stroke();
+    ctx.fillStyle = dot;
+    ctx.beginPath();
+    ctx.arc(x + dx * 4, y + dy * 4, 1.4, 0, Math.PI * 2);
+    ctx.fill();
   }
-  const sg = ctx.createLinearGradient(0, iy + ih - 72, 0, iy + ih);
-  sg.addColorStop(0, 'rgba(10,8,6,0)');
-  sg.addColorStop(1, 'rgba(10,8,6,0.62)');
-  ctx.fillStyle = sg; ctx.fillRect(ix, iy + ih - 72, iw, 72);
+}
+
+// 顶部带集号的装饰金线：── ✦ S1 · E05 · 09:51 ✦ ──
+function drawTopOrnament(ctx, episode, timeStr) {
+  const y = 44;
+  const label = [episode ? episode.replace(/^S0?(\d+)E0?(\d+)$/i, 'S$1 · E$2') : '', timeStr]
+    .filter(Boolean).join(' · ');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `500 11px ${SANS}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '2.4px';
+  ctx.fillStyle = 'rgba(243,201,122,0.78)';
+  const textW = ctx.measureText(label).width + 6;
+  ctx.fillText(label.toUpperCase(), W / 2, y);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  // 两侧 ✦
+  ctx.font = `500 13px ${SERIF}`;
+  ctx.fillStyle = 'rgba(243,201,122,0.55)';
+  const dStar = textW / 2 + 16;
+  ctx.fillText('✦', W / 2 - dStar, y);
+  ctx.fillText('✦', W / 2 + dStar, y);
+  // 两侧金线
+  ctx.strokeStyle = 'rgba(243,201,122,0.42)';
+  ctx.lineWidth = 1;
+  const lineStart = dStar + 14;
+  const lineEnd = W / 2 - PAD - 4;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - lineEnd, y); ctx.lineTo(W / 2 - lineStart, y);
+  ctx.moveTo(W / 2 + lineStart, y); ctx.lineTo(W / 2 + lineEnd, y);
+  ctx.stroke();
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+// 罗马数字（够用范围 1~30，足以覆盖单季集号）
+function toRoman(n) {
+  const m = [
+    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+  ];
+  let s = '';
+  for (const [v, sym] of m) { while (n >= v) { s += sym; n -= v; } }
+  return s || '';
+}
+
+// 无图模式：中央"藏书票"装饰 —— 暗金渐变底 + 大罗马数字 + 上下花线 + 集名/称号
+function drawDecoCenterpiece(ctx, riff, card) {
+  const ix = 16, iy = 70, iw = W - 32, ih = 250;
+  // 底
+  ctx.save();
+  roundRect(ctx, ix, iy, iw, ih, 12);
+  ctx.clip();
+  const pg = ctx.createLinearGradient(ix, iy, ix, iy + ih);
+  pg.addColorStop(0, '#1d160d');
+  pg.addColorStop(0.55, '#13100a');
+  pg.addColorStop(1, '#0c0906');
+  ctx.fillStyle = pg; ctx.fillRect(ix, iy, iw, ih);
+  // 极淡辐射高光
+  const rg = ctx.createRadialGradient(W / 2, iy + ih * 0.45, 30, W / 2, iy + ih * 0.45, ih * 0.8);
+  rg.addColorStop(0, 'rgba(243,201,122,0.10)');
+  rg.addColorStop(1, 'rgba(243,201,122,0)');
+  ctx.fillStyle = rg; ctx.fillRect(ix, iy, iw, ih);
   ctx.restore();
 
-  // 时间戳 pill
-  const time = a.start_time != null ? formatMMSS(a.start_time) : '';
-  if (time) {
-    ctx.font = `600 13px ${SANS}`;
-    const tw = ctx.measureText(time).width;
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
-    roundRect(ctx, ix + 12, iy + ih - 32, tw + 18, 22, 11); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.textAlign = 'left';
-    ctx.fillText(time, ix + 21, iy + ih - 16);
-  }
+  // 大罗马数字章节号（取自 episode 末段）
+  const epNum = (() => {
+    const m = String(riff.episode || '').match(/E0?(\d+)/i);
+    return m ? Number(m[1]) : 0;
+  })();
+  const roman = epNum ? toRoman(epNum) : '✦';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(243,201,122,0.16)';
+  ctx.font = `600 132px ${SERIF}`;
+  ctx.fillText(roman, W / 2, iy + 160);
+  // 描金细边
+  ctx.strokeStyle = 'rgba(243,201,122,0.32)';
+  ctx.lineWidth = 0.8;
+  ctx.strokeText(roman, W / 2, iy + 160);
 
-  // 细金框
+  // 上方小标 "CHAPTER" / 下方花线 ❖ ── ❖
+  ctx.font = `500 10px ${SANS}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '3px';
+  ctx.fillStyle = 'rgba(243,201,122,0.55)';
+  ctx.fillText('CHAPTER', W / 2, iy + 50);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  // 花线
   ctx.strokeStyle = 'rgba(243,201,122,0.45)';
   ctx.lineWidth = 1;
-  roundRect(ctx, ix + 0.5, iy + 0.5, iw - 1, ih - 1, 11);
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - 60, iy + 200); ctx.lineTo(W / 2 - 12, iy + 200);
+  ctx.moveTo(W / 2 + 12, iy + 200); ctx.lineTo(W / 2 + 60, iy + 200);
   ctx.stroke();
+  ctx.font = `400 14px ${SERIF}`;
+  ctx.fillStyle = 'rgba(243,201,122,0.7)';
+  ctx.fillText('❖', W / 2, iy + 205);
+
+  // 框
+  ctx.strokeStyle = 'rgba(243,201,122,0.32)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, ix + 0.5, iy + 0.5, iw - 1, ih - 1, 12);
+  ctx.stroke();
+  ctx.textAlign = 'left';
+
+  return iy + ih; // bottom y
+}
+
+// ── 台词卡 —— 上图下文·杂志感（无图自动切换"藏书票"模式） ──
+async function drawQuote(ctx, riff, card) {
+  const a = riff.anchor || {};
+  const time = a.start_time != null ? formatMMSS(a.start_time) : '';
+  drawTopOrnament(ctx, riff.episode, time);
+
+  // —— 上半：场景剧照（有 keyframe 且加载成功）或藏书票装饰区 ——
+  const ix = 16, iy = 70, iw = W - 32, ih = Math.round(iw * 9 / 16);
+  const img = a.keyframe ? await loadImage(`/kb/${a.keyframe}`) : null;
+  let imgBottom;
+  if (img) {
+    ctx.save();
+    roundRect(ctx, ix, iy, iw, ih, 12);
+    ctx.clip();
+    drawCover(ctx, img, ix, iy, iw, ih);
+    // 底部压暗，放时间戳
+    const sg = ctx.createLinearGradient(0, iy + ih - 72, 0, iy + ih);
+    sg.addColorStop(0, 'rgba(10,8,6,0)');
+    sg.addColorStop(1, 'rgba(10,8,6,0.62)');
+    ctx.fillStyle = sg; ctx.fillRect(ix, iy + ih - 72, iw, 72);
+    ctx.restore();
+
+    // 时间戳 pill（图模式下显示，无图模式顶部金线已带）
+    if (time) {
+      ctx.font = `600 13px ${SANS}`;
+      const tw = ctx.measureText(time).width;
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      roundRect(ctx, ix + 12, iy + ih - 32, tw + 18, 22, 11); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.textAlign = 'left';
+      ctx.fillText(time, ix + 21, iy + ih - 16);
+    }
+
+    // 细金框
+    ctx.strokeStyle = 'rgba(243,201,122,0.5)';
+    ctx.lineWidth = 1;
+    roundRect(ctx, ix + 0.5, iy + 0.5, iw - 1, ih - 1, 12);
+    ctx.stroke();
+    imgBottom = iy + ih;
+  } else {
+    imgBottom = drawDecoCenterpiece(ctx, riff, card);
+  }
 
   // 暗角（文字之前画，保证台词不被压暗）
   quoteVignette(ctx);
 
-  const imgBottom = iy + ih;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
 
-  // —— 装饰引号 ——
+  // —— 大开引号（左上压在内容上方） ——
   ctx.fillStyle = 'rgba(243,201,122,0.30)';
   ctx.font = `italic 700 92px ${SERIF}`;
-  ctx.fillText('“', PAD - 4, imgBottom + 66);
+  ctx.fillText('“', PAD - 6, imgBottom + 56);
 
-  // —— 台词主体：大 serif 暖白，左对齐；行多则自动缩一档 ——
+  // —— 台词主体：大 serif 暖白；行多则自动缩一档 ——
   const maxW = W - PAD * 2;
-  let qsize = 31, qlh = 42;
+  let qsize = 30, qlh = 41;
   ctx.font = `italic 600 ${qsize}px ${SERIF}`;
   let lines = wrapText(ctx, a.subtitle_en || '', maxW);
   if (lines.length >= 5) {
-    qsize = 27; qlh = 37;
+    qsize = 26; qlh = 36;
     ctx.font = `italic 600 ${qsize}px ${SERIF}`;
     lines = wrapText(ctx, a.subtitle_en || '', maxW);
   }
-  let y = imgBottom + 104;
+  let y = imgBottom + 90;
   ctx.fillStyle = '#f4ead2';
   for (const ln of lines) { ctx.fillText(ln, PAD, y); y += qlh; }
-  y = y - qlh + 30;
+  const lastBaseline = y - qlh;
 
-  // —— 短金线分隔 ——
-  ctx.strokeStyle = 'rgba(243,201,122,0.6)';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(PAD + 46, y); ctx.stroke();
+  // —— 闭引号（右下，呼应开引号） ——
+  ctx.fillStyle = 'rgba(243,201,122,0.22)';
+  ctx.font = `italic 700 56px ${SERIF}`;
+  ctx.textAlign = 'right';
+  ctx.fillText('”', W - PAD + 4, lastBaseline + 22);
+  ctx.textAlign = 'left';
 
-  // —— 角色名（字距拉开，杂志署名感） ——
-  y += 34;
-  ctx.fillStyle = 'rgba(243,228,200,0.95)';
-  ctx.font = `600 19px ${SANS}`;
-  if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
+  y = lastBaseline + 30;
+
+  // —— 短金线分隔（左对齐） ——
+  ctx.strokeStyle = 'rgba(243,201,122,0.65)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(PAD + 42, y); ctx.stroke();
+
+  // —— 角色名（中文大字 + 英文 italic 副标题，杂志署名感） ——
+  y += 26;
+  ctx.fillStyle = 'rgba(243,228,200,0.96)';
+  ctx.font = `600 18px ${SANS}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '1.4px';
   ctx.fillText(card.speaker_zh || card.speaker_en || '', PAD, y);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  if (card.speaker_en && card.speaker_zh) {
+    y += 18;
+    ctx.fillStyle = 'rgba(243,201,122,0.55)';
+    ctx.font = `italic 400 13px ${SERIF}`;
+    ctx.fillText(card.speaker_en, PAD, y);
+  }
 
   // —— 剧名 · 集 ——
-  y += 26;
-  ctx.fillStyle = 'rgba(255,255,255,0.42)';
-  ctx.font = `400 14px ${SANS}`;
-  ctx.fillText(`《${SHOW_TITLE}》 · ${riff.episode || ''}`, PAD, y);
+  y += 22;
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = `400 12.5px ${SANS}`;
+  ctx.fillText(`《${SHOW_TITLE}》  ·  ${riff.episode || ''}`, PAD, y);
 
-  // —— 页脚：收藏数（社交货币）+ 品牌 ——
+  // —— 页脚：收藏数 + 品牌（带轻量装饰点） ——
   ctx.fillStyle = 'rgba(243,201,122,0.85)';
-  ctx.font = `600 16px ${SANS}`;
-  ctx.fillText(`♥ ${formatCount(card.collects || 0)}`, PAD, H - PAD);
+  ctx.font = `600 15px ${SANS}`;
+  ctx.fillText(`♥  ${formatCount(card.collects || 0)}`, PAD, H - PAD);
   ctx.textAlign = 'right';
-  ctx.fillStyle = 'rgba(243,201,122,0.7)';
-  ctx.font = `500 15px ${SANS}`;
-  ctx.fillText(`✦ ${BRAND}`, W - PAD, H - PAD);
+  ctx.fillStyle = 'rgba(243,201,122,0.72)';
+  ctx.font = `500 14px ${SANS}`;
+  ctx.fillText(`✦  ${BRAND}`, W - PAD, H - PAD);
   ctx.textAlign = 'left';
+  // 页脚两端之间的虚线（极淡）
+  ctx.strokeStyle = 'rgba(243,201,122,0.18)';
+  ctx.lineWidth = 1;
+  if (ctx.setLineDash) ctx.setLineDash([2, 4]);
+  ctx.beginPath();
+  ctx.moveTo(PAD + 70, H - PAD - 5);
+  ctx.lineTo(W - PAD - 78, H - PAD - 5);
+  ctx.stroke();
+  if (ctx.setLineDash) ctx.setLineDash([]);
+
+  // —— 四角金色装饰角（古典藏书票） ——
+  drawCornerOrnaments(ctx);
 
   // —— 胶片颗粒（最后铺，极淡） ——
   quoteGrain(ctx);
