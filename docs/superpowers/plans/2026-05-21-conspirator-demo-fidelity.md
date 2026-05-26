@@ -60,7 +60,7 @@ Expected: 现在会命中若干处（现有模块标题里的英文名 + cursor_
 ## Task 2: 新增「人物关系图 + 人物档案」模块（交互演示 ⑤）
 
 **Files:**
-- Modify: `conspirator-demo.html` — 在 `#symbol` section 后、`#meme` section 前插入新 `<section id="relations">`；在 `<style>` 末尾追加 `.rg2-*` 样式；在 `</script>` 前追加 RG IIFE。
+- Modify: `conspirator-demo.html` — 在 `#meme` section 之后、`<!-- ARCHITECTURE -->`（`#arch`）之前插入新 `<section id="relations">`（保持交互演示 ①→⑥ 连续编号）；在 `</style>` 前追加 `.rg2-*` 样式；在 `</script>` 前追加 RG IIFE。
 
 - [ ] **Step 1: 策展关系图数据 `RG_DATA`**
 
