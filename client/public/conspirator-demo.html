@@ -1170,6 +1170,40 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>角色扮演 + <b>四层结构化 JSON</b>（台词 / 双声部独白 / 潜台词 / 跟问）+ 独立人设文档 + 按集数信息边界；路由到中文文学性最强的 <b>Gemini 2.5 Flash dialogue</b>，而非通用轻量模型。</div>
   </aside>
   </div><!-- /demo-2col -->
+
+  <!-- Prompt design architecture diagram for the inner-dialogue feature -->
+  <div class="pa-wrap" style="margin-top:36px;padding-top:28px;border-top:1px solid var(--line)">
+    <div class="eyebrow accent-e" style="margin-bottom:10px">角色内心对话 · Prompt 设计架构</div>
+    <h3 class="sec" style="font-size:clamp(20px,2.4vw,28px);line-height:1.25;margin:0 0 10px">不只是「聊角色」，而是让 AI <span class="accent-e">「成为」角色。</span></h3>
+    <p class="lead" style="margin-bottom:22px">下图是《共谋者》AI 核心能力全景。<b style="color:var(--text)">角色内心对话</b>对应第 <b style="color:var(--text)">③</b> 节「角色扮演 + 结构化输出」——两个端点（<b style="color:var(--text)">角色内心 · 开场</b> / <b style="color:var(--text)">角色内心 · 对话</b>）都路由到中文文学性最强的 <b style="color:var(--text)">Gemini 2.5 Flash dialogue</b>，而不是通用轻量模型。</p>
+
+    <figure class="pa-fig" style="margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start">
+      <img src="/inner-dialogue-prompt-architecture.png" alt="共谋者 AI Prompt 设计架构全景 · 11 任务级路由" style="display:block;max-width:min(620px,100%);width:100%;height:auto;justify-self:center;border:1px solid var(--line);border-radius:14px;background:#ffffff;box-shadow:0 12px 36px rgba(22,24,29,.08)">
+
+      <figcaption style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;max-width:980px;margin:0 auto;font-size:13.5px;line-height:1.6;color:var(--dim)">
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:6px">① 输入 · 角色 + 边界 + 在场</div>
+          每个角色挂一份<b style="color:var(--text)">独立人设文档</b>（说话风格 / 核心矛盾 / 知识边界）；按当前集数<b style="color:var(--text)">切片过滤</b>未播剧情；从识脸结果取「当前在场角色」作为可对话名单。
+        </div>
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:6px">② 任务路由 · Gemini 2.5 Flash dialogue</div>
+          路由层在 11 个任务里为「角色对话」单独挑了<b style="color:var(--text)">中文文学性最强</b>的模型；主模型不可用时自动降级到 <b style="color:var(--text)">GPT-4o</b>，上层调用方无感知。
+        </div>
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:6px">③ 输出 · 四层结构化 JSON</div>
+          每轮必须同时产出：<b style="color:var(--text)">外在台词</b>（反讽 / 回避）· <b style="color:var(--text)">双声部内心独白</b>（理性 vs 本能，张力来自不同心理类别）· <b style="color:var(--text)">一行潜台词</b>（忍住没说的）· <b style="color:var(--text)">三个带立场跟问</b>（王者 / 血亲 / 审慎 / 火焰）。
+        </div>
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px">
+          <div style="font-weight:700;color:var(--text);margin-bottom:6px">④ 流式 SSE · 逐字下发</div>
+          走 <b style="color:var(--text)">SSE 流式输出</b>，台词、独白、潜台词、跟问逐字到达前端——分层渲染为四种 UI 元素，不让用户对着加载动画发呆。
+        </div>
+      </figcaption>
+
+      <div class="tiny center" style="color:var(--dim);max-width:780px;margin:6px auto 0;line-height:1.6">
+        <b style="color:var(--text)">为什么不能用普通 prompt？</b>「角色扮演 + 多层结构化输出 + 信息边界约束」三件事同时压在一个模型上——它必须既是好演员（语言风格 + 情绪状态），又是守规矩的格式化输出器（严格 JSON schema），还得守住知识边界（不剧透）。普通问答 prompt 做不到，预写对话树会在第 1001 个问题超界，关键词规则引擎做不出文学质感的双声部——所以这是<b style="color:var(--text)">只有 LLM 才能催生的全新交互形态</b>。
+      </div>
+    </figure>
+  </div>
 </section>
 
 <!-- SYMBOL + SPOILER DEMO -->
