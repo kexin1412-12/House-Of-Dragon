@@ -840,7 +840,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .msc-btn-primary{background:linear-gradient(180deg,#f3c97a,#e0b160);border:0;color:#1a1208;font-weight:600}
 .msc-btn-primary:hover{filter:brightness(1.08);color:#1a1208}
 /* 台词卡 poster —— 对齐 drawQuote(540x760 竖版,藏书票/杂志感) */
-.scp{position:relative;width:270px;height:380px;box-sizing:border-box;display:flex;flex-direction:column;padding:22px 28px 20px;background:linear-gradient(180deg,#16120b 0%,#13100a 55%,#0a0806 100%);overflow:hidden;font-family:-apple-system,'Microsoft YaHei',sans-serif}
+.scp{position:relative;width:270px;height:472px;box-sizing:border-box;display:flex;flex-direction:column;padding:22px 28px 20px;background:linear-gradient(180deg,#16120b 0%,#13100a 55%,#0a0806 100%);overflow:hidden;font-family:-apple-system,'Microsoft YaHei',sans-serif}
 .scp::after{content:"";position:absolute;inset:8px;border:1px solid rgba(243,201,122,.28);border-radius:7px;pointer-events:none}
 /* 顶部带集号金线 */
 .scp-meta{display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(243,201,122,.78);font-size:8px;letter-spacing:1.6px;text-transform:uppercase;font-weight:500;margin:0 0 6px}
@@ -861,6 +861,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .scp-open{top:-12px;left:-6px;font-size:40px}
 .scp-close{bottom:-20px;right:-2px;font-size:26px;color:rgba(243,201,122,.22)}
 .scp-quote{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;color:#f4ead2;font-size:13px;line-height:1.5;text-align:left;padding:0 2px}
+/* 中文译文(译者笔记感) */
+.scp-trans{color:rgba(228,216,192,.78);font-size:10.5px;line-height:1.55;text-align:left;margin:14px 2px 0;padding-top:8px;border-top:1px dashed rgba(243,201,122,.22)}
+/* 解读(✦ 批注感,左侧细金引线) */
+.scp-note{position:relative;color:rgba(218,206,180,.78);font-size:10px;line-height:1.62;text-align:left;margin:10px 0 0;padding:1px 0 1px 10px;border-left:1.5px solid rgba(243,201,122,.5)}
+.scp-note-tag{display:inline-block;color:rgba(243,201,122,.85);font-weight:600;font-size:8.5px;letter-spacing:1.2px;margin-right:4px;text-transform:uppercase}
 /* 短金线 + 角色 */
 .scp-rule{width:22px;height:1.5px;background:rgba(243,201,122,.65);margin:18px 0 8px}
 .scp-speaker-zh{color:rgba(243,228,200,.96);font-size:11.5px;font-weight:600;letter-spacing:1.2px}
@@ -879,6 +884,58 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .scp-corner.tr{top:16px;right:16px}.scp-corner.tr::before{top:0;right:0}.scp-corner.tr::after{top:0;right:0}
 .scp-corner.bl{bottom:16px;left:16px}.scp-corner.bl::before{bottom:0;left:0}.scp-corner.bl::after{bottom:0;left:0}
 .scp-corner.br{bottom:16px;right:16px}.scp-corner.br::before{bottom:0;right:0}.scp-corner.br::after{bottom:0;right:0}
+
+/* face recognition demo */
+#face .fc-screen{aspect-ratio:16/9;position:relative;overflow:hidden;background:radial-gradient(120% 80% at 50% 35%, #2a2418 0%, #131017 60%, #08070d 100%)}
+#face .fc-scene{position:absolute;inset:0;background:
+  radial-gradient(46% 70% at 50% 78%, rgba(191,125,30,.18) 0%, transparent 65%),
+  radial-gradient(60% 100% at 50% 0%, rgba(35,28,42,.45) 0%, transparent 60%),
+  linear-gradient(180deg, transparent 40%, rgba(0,0,0,.55) 100%)}
+#face .fc-figure{position:absolute;bottom:0;width:84px;height:58%;transform:translateX(-50%);
+  background:linear-gradient(180deg, rgba(40,42,50,0) 0%, rgba(28,30,38,.78) 38%, rgba(14,14,20,1) 100%);
+  border-radius:46px 46px 0 0;opacity:.92}
+#face .fc-figure-center{width:108px;height:70%}
+#face .fc-tag{position:absolute;transform:translate(-50%,-100%);background:rgba(13,15,21,.86);
+  border:1px solid rgba(191,125,30,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  border-radius:9px;padding:7px 11px 8px;min-width:120px;text-align:left;
+  box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 0 1px rgba(191,125,30,.18);
+  animation:fc-pop .45s ease-out backwards}
+#face .fc-tag::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);
+  width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
+  border-top:8px solid rgba(13,15,21,.86);filter:drop-shadow(0 1px 0 rgba(191,125,30,.4))}
+#face .fc-tag-bright{border-color:rgba(191,125,30,.85);
+  box-shadow:0 8px 24px rgba(191,125,30,.2), 0 0 0 1px rgba(191,125,30,.34)}
+#face .fc-tag-name{color:#f1d99c;font-size:12.5px;font-weight:700;letter-spacing:.01em;line-height:1.25}
+#face .fc-tag-role{color:#cfd3da;font-size:11px;margin-top:2px;opacity:.85}
+#face .fc-tag-src{color:#bf7d1e;font-size:10px;margin-top:5px;letter-spacing:.05em;
+  padding-top:4px;border-top:1px solid rgba(191,125,30,.22);text-transform:none}
+#face .fc-tag.is-fallback{border-color:rgba(106,69,181,.55);box-shadow:0 8px 20px rgba(0,0,0,.55), 0 0 0 1px rgba(106,69,181,.2)}
+#face .fc-tag.is-fallback::after{border-top-color:rgba(13,15,21,.86);filter:drop-shadow(0 1px 0 rgba(106,69,181,.5))}
+#face .fc-tag.is-fallback .fc-tag-name{color:#dccbf3}
+#face .fc-tag.is-fallback .fc-tag-src{color:#a791d6;border-top-color:rgba(106,69,181,.28)}
+#face .fc-arrival{position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:9px;
+  padding:7px 13px 7px 10px;background:rgba(13,15,21,.84);border:1px solid rgba(191,125,30,.5);
+  border-radius:999px;color:#f1d99c;font-size:12px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  box-shadow:0 6px 16px rgba(0,0,0,.45)}
+#face .fc-arrival b{color:#fff;font-weight:600;font-size:12px;letter-spacing:.02em}
+#face .fc-arrival-sub{color:#cfd3da;font-weight:400;font-size:11.5px}
+#face .fc-arrival-dot{width:8px;height:8px;border-radius:50%;background:#bf7d1e;
+  box-shadow:0 0 0 4px rgba(191,125,30,.22)}
+#face .fc-countdown{position:absolute;right:14px;bottom:14px;font-size:10.5px;color:rgba(241,217,156,.65);
+  letter-spacing:.05em;border:1px solid rgba(191,125,30,.28);border-radius:999px;padding:3px 9px;background:rgba(13,15,21,.6)}
+#face .fc-btn{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;
+  font-weight:600;letter-spacing:.02em;color:#f1d99c;background:rgba(191,125,30,.12);
+  border:1px solid rgba(191,125,30,.55);border-radius:999px;padding:5px 13px 5px 11px;cursor:pointer;
+  animation:fc-glow 2.6s ease-in-out infinite}
+#face .fc-btn-dot{width:7px;height:7px;border-radius:50%;background:#bf7d1e;flex:none;
+  box-shadow:0 0 0 3px rgba(191,125,30,.25)}
+#face .fanout{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#face .fanout-item{padding:9px 10px;border:1px solid rgba(191,125,30,.32);border-left:2px solid var(--intuition);
+  background:rgba(191,125,30,.05);border-radius:6px;font-size:11.5px;color:var(--dim);line-height:1.55}
+#face .fanout-item b{display:block;color:var(--text);font-size:12px;font-weight:700;margin-bottom:2px}
+@media(max-width:680px){#face .fanout{grid-template-columns:1fr 1fr}}
+@keyframes fc-glow{0%,100%{box-shadow:0 0 0 0 rgba(191,125,30,0)}50%{box-shadow:0 0 0 7px rgba(191,125,30,.18)}}
+@keyframes fc-pop{from{opacity:0;transform:translate(-50%,-100%) translateY(6px)} to{opacity:1;transform:translate(-50%,-100%)}}
 
 </style>
 </head>
@@ -988,7 +1045,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <a class="card reveal" href="#character"><span class="ic" data-i="message-circle"></span><h3>角色内心对话</h3><p>分层对话：外在台词 + 双声部内心 + 潜台词 + 立场跟问。</p></a>
     <a class="card reveal" href="#symbol"><span class="ic" data-i="sparkles"></span><h3>符号热点 + 防剧透</h3><p>画面亮起导演埋的彩蛋；按观看进度严格过滤未来信息。</p></a>
     <a class="card reveal" href="#linememe"><span class="ic" data-i="message-square"></span><h3>文化梗高亮</h3><p>双语字幕 + 高亮关键词，台词里的话中话自动浮出。</p></a>
-    <div class="card reveal"><span class="ic" data-i="scan-face"></span><h3>实时人物识别</h3><p>一点即知「这个人是谁」，结果同时供给四个下游。</p></div>
+    <a class="card reveal" href="#face"><span class="ic" data-i="scan-face"></span><h3>实时人物识别</h3><p>一点即知「这个人是谁」，结果同时供给四个下游。</p></a>
     <div class="card reveal"><span class="ic" data-i="share-2"></span><h3>人物关系图</h3><p>力导向布局、按集数时间切片、点击现场生成人物档案。</p></div>
     <div class="card reveal"><span class="ic" data-i="activity"></span><h3>剧情脉络 X 光</h3><p>SVG 节点图，三个隐藏节点随进度渐进解锁。</p></div>
     <div class="card reveal"><span class="ic" data-i="list"></span><h3>关键线索清单</h3><p>全集符号平铺成卡片墙，按七类切换、未播到先蒙住。</p></div>
@@ -1040,8 +1097,79 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div><!-- /demo-2col -->
 </section>
 
+<!-- FACE RECOGNITION DEMO -->
+<section id="face">
+  <div class="eyebrow" style="color:var(--intuition)">交互演示 ② · 实时人物识别</div>
+  <h2 class="sec">这个人是谁——<span style="color:var(--intuition)">一点即知，背后四条数据河流同时流动。</span></h2>
+  <p class="lead">复杂剧集最常见的困扰就是「这个人是谁来着」。点一下播放器里的识脸按钮，系统截当前帧，先走人脸特征匹配快速锁定，没匹配上的再让视觉大模型按文字档案兜底——浮动标签贴到画面里对应位置，<b style="color:var(--text)">6 秒后自动消失，不喧宾夺主</b>。</p>
+
+  <div class="demo-2col">
+  <div class="demo-stage">
+  <div class="pw" id="fcPw" style="margin-top:0">
+    <div class="pw-top">
+      <div class="pw-brand">王座厅 · 议事场<span class="pw-sep">·</span><span class="pw-ep">House of the Dragon · S1E3</span></div>
+      <button class="pw-mode on" aria-pressed="true" type="button"><span class="pw-knob"></span><span>共谋模式</span></button>
+    </div>
+    <div class="pw-screen fc-screen">
+      <div class="fc-scene"></div>
+      <div class="fc-figure" style="left:22%"></div>
+      <div class="fc-figure fc-figure-center" style="left:50%"></div>
+      <div class="fc-figure" style="left:78%"></div>
+      <div class="fc-tag" style="left:22%;top:46%;animation-delay:.05s">
+        <div class="fc-tag-name">雷妮拉 · 坦格利安</div>
+        <div class="fc-tag-role">公主继承人</div>
+        <div class="fc-tag-src">✓ 特征库命中 · 0.92</div>
+      </div>
+      <div class="fc-tag fc-tag-bright" style="left:50%;top:38%;animation-delay:.15s">
+        <div class="fc-tag-name">韦赛里斯 一世</div>
+        <div class="fc-tag-role">铁王座之主</div>
+        <div class="fc-tag-src">✓ 特征库命中 · 0.97</div>
+      </div>
+      <div class="fc-tag is-fallback" style="left:78%;top:48%;animation-delay:.25s">
+        <div class="fc-tag-name">奥托 · 海塔尔</div>
+        <div class="fc-tag-role">国王之手</div>
+        <div class="fc-tag-src">视觉模型兜底</div>
+      </div>
+      <div class="fc-arrival">
+        <span class="fc-arrival-dot"></span>
+        <b>角色出场</b>
+        <span class="fc-arrival-sub">· 本集首次：奥托 · 海塔尔</span>
+      </div>
+      <div class="fc-countdown">标签 6s 后淡出</div>
+    </div>
+    <div class="pw-bar">
+      <button class="pw-play" aria-label="播放" type="button">&#9654;</button>
+      <span class="pw-time">23:14</span>
+      <div class="pw-track">
+        <div class="pw-buf"></div>
+        <div class="pw-played" style="width:38%"></div>
+      </div>
+      <span class="pw-dur">62:00</span>
+      <button class="fc-btn" type="button" aria-label="识别画面中的人物"><span class="fc-btn-dot"></span>人物识别</button>
+    </div>
+  </div>
+  <div class="tiny center" style="margin-top:12px;color:var(--dim)">点播放器右下角「人物识别」 · 当前画面里的所有面孔同时打标 · 本集首次出场单独提醒 · 6 秒自动淡出</div>
+  </div><!-- /demo-stage -->
+  <aside class="demo-notes">
+    <div class="dn-k">先匹配特征库，匹配不上的让视觉模型兜底</div>
+    <p>截帧之后先在<b>离线烘焙好的人脸特征库</b>里做向量匹配，命中已知角色直接出名字；剩下没匹配上的面孔再调多模态视觉模型，结合角色文字档案——「银甲、坐在王座旁、表情阴沉的年轻人」——兜底识别。</p>
+    <div class="dn-k">本集首次出现的，单独提醒一下</div>
+    <p>识别结果以浮动标签贴到画面里对应位置，名字 + 身份一目了然；本集第一次出现的角色额外浮一个「角色出场」气泡。<b>6 秒后标签淡出</b>，绝不盖住剧情。</p>
+    <div class="dn-k">一次点击，四条数据河流同时流动</div>
+    <p>用户感知到的只是一个标签。但识别结果在背后同步广播给四个下游——一次点击完成一整套信息同步。</p>
+    <div class="fanout">
+      <div class="fanout-item"><b>在场角色</b>右栏面板候选刷新</div>
+      <div class="fanout-item"><b>内心对话</b>可选角色名单更新</div>
+      <div class="fanout-item"><b>关系图</b>当前焦点角色高亮</div>
+      <div class="fanout-item"><b>解析上下文</b>补「画面里有谁」</div>
+    </div>
+    <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>截帧 → 独立部署的 <b>face_service</b>（人脸检测 + ArcFace 特征向量匹配）→ 命中走 Gallery 直接出名 / 漏检的脸再调多模态视觉模型按文字档案兜底 → 识别结果按 4 路下游事件广播（在场列表 · 内心候选 · 关系图焦点 · 解析上下文）。</div>
+  </aside>
+  </div><!-- /demo-2col -->
+</section>
+
 <section id="stance">
-  <div class="eyebrow accent-gold">交互演示 ② · 立场投票与推演</div>
+  <div class="eyebrow accent-gold">交互演示 ③ · 立场投票与推演</div>
   <h2 class="sec">打破固定结局的「如果引擎」</h2>
   <p class="lead">每一部剧只有一个结局。立场推演不改一帧画面，却在关键转折打开一扇通往平行世界的门。<b style="color:var(--text)">试试做出选择 → 展开推演。</b></p>
 
@@ -1088,7 +1216,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 <!-- CHARACTER DEMO -->
 <section id="character">
-  <div class="eyebrow accent-e">交互演示 ③ · 角色内心</div>
+  <div class="eyebrow accent-e">交互演示 ④ · 角色内心</div>
   <h2 class="sec">钻进角色的脑子里，<span class="accent-e">听见两个声音在打架。</span></h2>
   <p class="lead">选一个在场角色，进入 TA 此刻的内心：表层的自我说服、💭 深层的自我怀疑——表层与深层分层呈现。<b style="color:var(--text)">挑一句带立场的话问下去。</b></p>
   <div class="demo-2col">
@@ -1128,7 +1256,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 <!-- SYMBOL + SPOILER DEMO -->
 <section id="symbol">
-  <div class="eyebrow accent-r">交互演示 ④ · 符号热点 + 三层防剧透</div>
+  <div class="eyebrow accent-r">交互演示 ⑤ · 符号热点 + 三层防剧透</div>
   <h2 class="sec">导演埋的彩蛋，我们帮你找到——<br/>而且<span class="accent-r">绝不剧透。</span></h2>
   <p class="lead">画面上呼吸的光点是导演本来就放在那里、大多数观众会错过的信息。<b style="color:var(--text)">点光点看解读；拖动进度条，看防剧透检索层如何按你的进度过滤未来。</b></p>
 
@@ -1178,7 +1306,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 <!-- LINE MEME DEMO -->
 <section id="linememe">
-  <div class="eyebrow accent-gold">交互演示 ⑤ · 文化梗 / 台词梗</div>
+  <div class="eyebrow accent-gold">交互演示 ⑥ · 文化梗 / 台词梗</div>
   <h2 class="sec">台词里的「话中话」，自动浮出来。</h2>
   <p class="lead">双语字幕里被高亮的词，是藏在台词里的文化梗、双关、封神时刻。<b style="color:var(--text)">点字幕里发金光的词，看它到底在说什么。</b></p>
   <div class="demo-2col">
@@ -1255,7 +1383,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 <!-- RELATIONS DEMO -->
 <section id="relations">
-  <div class="eyebrow accent-r">交互演示 ⑥ · 人物关系与档案</div>
+  <div class="eyebrow accent-r">交互演示 ⑦ · 人物关系与档案</div>
   <h2 class="sec">谁和谁，因何而站到了桌子的两端。</h2>
   <p class="lead">点一个角色，看 TA 牵动的盟友与敌对，<b style="color:var(--text)">右侧滑出这个人到此刻为止的档案——绝不剧透更晚的剧情。</b></p>
   <div class="demo-2col">
@@ -1288,7 +1416,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 
 <!-- TIMELINE -->
 <section id="timeline">
-  <div class="eyebrow accent-g">交互演示 ⑦ · 故事线脉络</div>
+  <div class="eyebrow accent-g">交互演示 ⑧ · 故事线脉络</div>
   <h2 class="sec">看到哪，故事就解锁到哪。</h2>
   <p class="lead">未播的节点是锁住的——<b style="color:var(--text)">拖动观看进度，剧情脉络随你一格格点亮，不抢先剧透。</b></p>
   <div class="demo-2col">
