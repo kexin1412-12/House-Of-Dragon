@@ -1816,10 +1816,10 @@ secs.forEach(s=>s&&io2.observe(s));
     badges.innerHTML='';
     ORDER.forEach(function(k){
       var s=SY[k]; if(s.loc) return;
-      var u=unlocked(s);
+      if(!unlocked(s)) return;
       var b=document.createElement('button');
-      b.className='sh-badge'+(u?'':' locked'); b.dataset.s=k;
-      b.innerHTML='<span class="shb-mk"></span>'+(u? s.name : '&#128274; '+fmt(s.at/60)+' 解锁');
+      b.className='sh-badge'; b.dataset.s=k;
+      b.innerHTML='<span class="shb-mk"></span>'+s.name;
       b.addEventListener('click',function(e){ e.stopPropagation(); openTip(k,b); });
       badges.appendChild(b);
     });
