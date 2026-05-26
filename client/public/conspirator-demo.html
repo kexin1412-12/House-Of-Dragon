@@ -839,17 +839,46 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 .msc-btn:hover{color:#f3c97a;border-color:rgba(243,201,122,.5);background:rgba(243,201,122,.06)}
 .msc-btn-primary{background:linear-gradient(180deg,#f3c97a,#e0b160);border:0;color:#1a1208;font-weight:600}
 .msc-btn-primary:hover{filter:brightness(1.08);color:#1a1208}
-/* 台词卡 poster —— 对齐 drawQuote(540x760 竖版) */
-.scp{position:relative;width:270px;height:380px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 22px;background:linear-gradient(180deg,#16120b,#0a0806)}
+/* 台词卡 poster —— 对齐 drawQuote(540x760 竖版,藏书票/杂志感) */
+.scp{position:relative;width:270px;height:380px;box-sizing:border-box;display:flex;flex-direction:column;padding:22px 28px 20px;background:linear-gradient(180deg,#16120b 0%,#13100a 55%,#0a0806 100%);overflow:hidden;font-family:-apple-system,'Microsoft YaHei',sans-serif}
 .scp::after{content:"";position:absolute;inset:8px;border:1px solid rgba(243,201,122,.28);border-radius:7px;pointer-events:none}
-.scp-top{color:rgba(243,201,122,.8);font-size:14px}
-.scp-mid{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center}
-.scp-quote{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;color:#f3c97a;font-size:19px;line-height:1.46}
-.scp-speaker{color:rgba(240,230,210,.85);font-size:13.5px;margin-top:20px}
-.scp-show{color:rgba(255,255,255,.4);font-size:11.5px;margin-top:9px}
-.scp-foot{display:flex;flex-direction:column;align-items:center;gap:7px}
-.scp-collect{color:rgba(243,201,122,.78);font-size:13px}
-.scp-brand{color:rgba(255,255,255,.32);font-size:11px}
+/* 顶部带集号金线 */
+.scp-meta{display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(243,201,122,.78);font-size:8px;letter-spacing:1.6px;text-transform:uppercase;font-weight:500;margin:0 0 6px}
+.scp-meta-line{flex:0 0 32px;height:1px;background:rgba(243,201,122,.4)}
+.scp-meta-star{font-family:Georgia,serif;color:rgba(243,201,122,.55);font-size:9px}
+/* 中央藏书票装饰区(无图 fallback) */
+.scp-deco{position:relative;flex:0 0 auto;margin:2px 14px 2px;padding:10px 0 8px;text-align:center;background:radial-gradient(ellipse at center,rgba(243,201,122,.10) 0%,rgba(243,201,122,0) 70%);border-radius:6px}
+.scp-deco::before,.scp-deco::after{content:"";position:absolute;left:0;right:0;height:1px;background:rgba(243,201,122,.18)}
+.scp-deco::before{top:0}
+.scp-deco::after{bottom:0}
+.scp-chap{color:rgba(243,201,122,.55);font-size:7.5px;letter-spacing:2.6px;font-weight:500}
+.scp-roman{font-family:Georgia,'Times New Roman',serif;font-weight:600;font-size:62px;line-height:1;color:rgba(243,201,122,.16);-webkit-text-stroke:.5px rgba(243,201,122,.42);margin:2px 0 4px}
+.scp-floral{display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(243,201,122,.65);font-size:11px;line-height:1}
+.scp-floral-line{flex:0 0 28px;height:1px;background:rgba(243,201,122,.45)}
+/* 台词主体 + 大引号 */
+.scp-quote-wrap{position:relative;margin:14px 0 4px;padding:0 8px}
+.scp-open,.scp-close{position:absolute;font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:700;line-height:1;color:rgba(243,201,122,.28)}
+.scp-open{top:-12px;left:-6px;font-size:40px}
+.scp-close{bottom:-20px;right:-2px;font-size:26px;color:rgba(243,201,122,.22)}
+.scp-quote{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;color:#f4ead2;font-size:13px;line-height:1.5;text-align:left;padding:0 2px}
+/* 短金线 + 角色 */
+.scp-rule{width:22px;height:1.5px;background:rgba(243,201,122,.65);margin:18px 0 8px}
+.scp-speaker-zh{color:rgba(243,228,200,.96);font-size:11.5px;font-weight:600;letter-spacing:1.2px}
+.scp-speaker-en{color:rgba(243,201,122,.55);font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:9.5px;margin-top:2px;letter-spacing:.3px}
+.scp-show{color:rgba(255,255,255,.4);font-size:9px;margin-top:5px}
+/* 底部页脚 */
+.scp-foot{margin-top:auto;display:flex;align-items:center;gap:8px;padding-top:4px}
+.scp-collect{color:rgba(243,201,122,.85);font-size:10px;font-weight:600;letter-spacing:.3px}
+.scp-dash{flex:1 1 auto;border-top:1px dashed rgba(243,201,122,.22)}
+.scp-brand{color:rgba(243,201,122,.72);font-size:9px;font-weight:500;letter-spacing:.4px}
+/* 四角金色装饰角(L 形细线 + 内点) */
+.scp-corner{position:absolute;width:8px;height:8px;pointer-events:none}
+.scp-corner::before{content:"";position:absolute;width:100%;height:1px;background:rgba(243,201,122,.55)}
+.scp-corner::after{content:"";position:absolute;width:1px;height:100%;background:rgba(243,201,122,.55)}
+.scp-corner.tl{top:16px;left:16px}.scp-corner.tl::before{top:0;left:0}.scp-corner.tl::after{top:0;left:0}
+.scp-corner.tr{top:16px;right:16px}.scp-corner.tr::before{top:0;right:0}.scp-corner.tr::after{top:0;right:0}
+.scp-corner.bl{bottom:16px;left:16px}.scp-corner.bl::before{bottom:0;left:0}.scp-corner.bl::after{bottom:0;left:0}
+.scp-corner.br{bottom:16px;right:16px}.scp-corner.br::before{bottom:0;right:0}.scp-corner.br::after{bottom:0;right:0}
 
 </style>
 </head>
@@ -1881,7 +1910,7 @@ secs.forEach(s=>s&&io2.observe(s));
   function openShare(){
     if(document.getElementById('mscBack'))return;
     var b=document.createElement('div');b.className='msc-backdrop';b.id='mscBack';
-    b.innerHTML='<div class="msc-dialog"><button class="msc-close" type="button" aria-label="关闭">&#10005;</button><div class="msc-type">台词卡</div><div class="msc-canvas-wrap"><div class="scp"><div class="scp-top">&#10022;</div><div class="scp-mid"><div class="scp-quote">It hardly makes a good song, does it, to be sung at feasts in a hundred years.</div><div class="scp-speaker">&#8212; 韦赛里斯一世</div><div class="scp-show">《龙之家族》 · S1E5</div></div><div class="scp-foot"><div class="scp-collect">&#9829; 2.3k</div><div class="scp-brand">&#10022; 共谋者</div></div></div></div><div class="msc-hint">存图发朋友圈 / 小红书 —— 你发现的有趣知识</div><div class="msc-actions"><button class="msc-btn msc-btn-primary" type="button" data-act="dl">下载图片</button><button class="msc-btn" type="button" data-act="cp">复制图片</button></div></div>';
+    b.innerHTML='<div class="msc-dialog"><button class="msc-close" type="button" aria-label="关闭">&#10005;</button><div class="msc-type">台词卡</div><div class="msc-canvas-wrap"><div class="scp"><div class="scp-meta"><span class="scp-meta-line"></span><span class="scp-meta-star">&#10022;</span><span>S1 &middot; E5 &middot; 34:44</span><span class="scp-meta-star">&#10022;</span><span class="scp-meta-line"></span></div><div class="scp-deco"><div class="scp-chap">CHAPTER</div><div class="scp-roman">V</div><div class="scp-floral"><span class="scp-floral-line"></span>&#10070;<span class="scp-floral-line"></span></div></div><div class="scp-quote-wrap"><span class="scp-open">&#8220;</span><div class="scp-quote">It hardly makes a good song, does it, to be sung at feasts in a hundred years.</div><span class="scp-close">&#8221;</span></div><div class="scp-rule"></div><div class="scp-speaker-zh">韦赛里斯一世</div><div class="scp-speaker-en">Viserys I</div><div class="scp-show">《龙之家族》 &middot; S1E5</div><div class="scp-foot"><span class="scp-collect">&#9829; 2.3k</span><span class="scp-dash"></span><span class="scp-brand">&#10022; 共谋者</span></div><span class="scp-corner tl"></span><span class="scp-corner tr"></span><span class="scp-corner bl"></span><span class="scp-corner br"></span></div></div><div class="msc-hint">存图发朋友圈 / 小红书 —— 你发现的有趣知识</div><div class="msc-actions"><button class="msc-btn msc-btn-primary" type="button" data-act="dl">下载图片</button><button class="msc-btn" type="button" data-act="cp">复制图片</button></div></div>';
     document.body.appendChild(b);
     function close(){b.remove();document.removeEventListener('keydown',onKey);}
     function onKey(e){if(e.key==='Escape')close();}
