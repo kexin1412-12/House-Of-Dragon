@@ -891,15 +891,13 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   border:1px solid #20242c;box-shadow:0 24px 60px rgba(0,0,0,.28)}
 #face .fc-shot img{display:block;width:100%;height:auto}
 
-/* linememe · 截图与社区卡左右并排 */
-#linememe .lm-below{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:18px;align-items:start}
-#linememe .lm-shot{margin:0;border-radius:12px;overflow:hidden;background:var(--panel);
+/* linememe · 截图 + 右栏社区卡 */
+#linememe .lm-shot{margin:18px 0 0;border-radius:12px;overflow:hidden;background:var(--panel);
   border:1px solid var(--line2);box-shadow:0 14px 30px rgba(22,24,29,.08)}
 #linememe .lm-shot img{display:block;width:100%;height:auto}
-#linememe .lm-shot figcaption{padding:8px 12px 10px;font-size:11.5px;color:var(--dim);
+#linememe .lm-shot figcaption{padding:9px 14px 11px;font-size:12px;color:var(--dim);
   letter-spacing:.04em;border-top:1px solid var(--line);background:var(--bg2)}
-#linememe .lm-below .mp-card{margin-top:0}
-@media(max-width:780px){#linememe .lm-below{grid-template-columns:1fr}}
+#linememe .demo-notes .mp-card{margin-top:18px;padding:14px 15px}
 #face .fanout{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 #face .fanout-item{padding:9px 10px;border:1px solid rgba(191,125,30,.32);border-left:2px solid var(--intuition);
   background:rgba(191,125,30,.05);border-radius:6px;font-size:11.5px;color:var(--dim);line-height:1.55}
@@ -1270,34 +1268,10 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div>
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">点字幕里高亮的关键词 → 浮出文化梗解读，可收藏、可展开深读 · 共谋模式一键隐藏全部叠加层</div>
 
-  <div class="lm-below">
   <figure class="lm-shot">
     <img src="linememe-shot.png" alt="文化梗高亮截图：字幕里的关键词浮起金色下划线，鼠标停留弹出梗卡" loading="lazy" />
     <figcaption>文化梗高亮 · 字幕区悬停弹出</figcaption>
   </figure>
-  <div class="mp-card" id="msCard">
-    <div class="mp-card-head"><span class="mp-card-tag">文化梗 · 社区</span><span class="mp-card-line">「It hardly makes a good song…」· 韦赛里斯病榻 · S1E5</span></div>
-    <div class="mp-card-meme"><b>✦ 这个梗</b>Paddy Considine 的封神台词。一个自知不配伟大、却仍想被记住的国王，用「作不成传唱百年的歌」概括了自己的一生——而最辛辣的一层是：他死后那场「龙之舞」内战，恰恰会被后世传唱百年。</div>
-    <div class="mp-social">
-      <div class="mp-react-row">
-        <button class="mp-react" data-r="til" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z"/></svg></span>涨知识了<span class="mp-react-n"></span></button>
-        <button class="mp-react" data-r="knew" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1 6 1 7 0"/><path d="M8.7 9.5h.01"/><path d="M15.3 9.5h.01"/></svg></span>早就知道<span class="mp-react-n"></span></button>
-      </div>
-      <div class="mp-detail-actions">
-        <button class="mp-detail-jump" type="button">&#9654; 跳到此处</button>
-        <button class="mp-social-share" type="button">&#10548; 分享</button>
-        <button class="mp-detail-fav" type="button">&#9825; 收藏</button>
-      </div>
-      <div class="mp-notes">
-        <div class="mp-notes-head"><span class="mp-notes-title">viewer notes</span><span class="mp-notes-count" id="msCount">6</span></div>
-        <div class="mp-notes-list" id="msList">
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#5a86c2">临</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">临冬城老张</span><span class="mp-note-time">· 2d</span></div><div class="mp-note-text">这句是 Paddy Considine 的封神时刻——他自己说为了演好病榻上的韦赛里斯，瘦到形销骨立。</div><button class="mp-note-up" data-base="128" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">128</span></button></div></div>
-          <div class="mp-note"><span class="mp-note-avatar" style="background:#3f9e7a">血</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">血与火考据</span><span class="mp-note-time">· 15h</span></div><div class="mp-note-text">「百年后的宴会上传唱」是马丁式的残酷反讽：真正被传唱百年的，恰恰是他死后那场把家族烧成灰的「龙之舞」。</div><button class="mp-note-up" data-base="67" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">67</span></button></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div><!-- /lm-below -->
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
     <div class="dn-k">台词里的话中话，自动浮出</div>
@@ -1307,6 +1281,23 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
     <div class="dn-k">信息来找你，你不用离开剧情</div>
     <p>信息在台词说出那一秒到达，不早一秒打扰、不晚一秒错过，视频不暂停、眼睛不离画面；共谋模式一键收起全部叠加层。它不只治「翻译差」，而是治「好编剧总在台词里藏东西、观众没工具一层层剥开」。</p>
     <div class="dn-ai"><span class="lab">⚙ AI 工作路径</span>七条台词梗的三层解读由离线管线预先策展，运行时按时间戳触发。</div>
+    <div class="mp-card" id="msCard">
+      <div class="mp-card-head"><span class="mp-card-tag">文化梗 · 社区</span><span class="mp-card-line">「It hardly makes a good song…」· S1E5</span></div>
+      <div class="mp-card-meme"><b>✦ 这个梗</b>Paddy Considine 的封神台词。一个自知不配伟大、却仍想被记住的国王，用「作不成传唱百年的歌」概括了自己的一生——而最辛辣的一层是：他死后那场「龙之舞」内战，恰恰会被后世传唱百年。</div>
+      <div class="mp-social">
+        <div class="mp-react-row">
+          <button class="mp-react" data-r="til" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.4.3.6.8.6 1.2v1h6v-1c0-.4.2-.9.6-1.2A6 6 0 0 0 12 3Z"/></svg></span>涨知识了<span class="mp-react-n"></span></button>
+          <button class="mp-react" data-r="knew" type="button"><span class="mp-react-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1 6 1 7 0"/><path d="M8.7 9.5h.01"/><path d="M15.3 9.5h.01"/></svg></span>早就知道<span class="mp-react-n"></span></button>
+        </div>
+        <div class="mp-notes">
+          <div class="mp-notes-head"><span class="mp-notes-title">viewer notes</span><span class="mp-notes-count" id="msCount">6</span></div>
+          <div class="mp-notes-list" id="msList">
+            <div class="mp-note"><span class="mp-note-avatar" style="background:#5a86c2">临</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">临冬城老张</span><span class="mp-note-time">· 2d</span></div><div class="mp-note-text">这句是 Paddy Considine 的封神时刻——他自己说为了演好病榻上的韦赛里斯，瘦到形销骨立。</div><button class="mp-note-up" data-base="128" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">128</span></button></div></div>
+            <div class="mp-note"><span class="mp-note-avatar" style="background:#3f9e7a">血</span><div class="mp-note-body"><div class="mp-note-meta"><span class="mp-note-author">血与火考据</span><span class="mp-note-time">· 15h</span></div><div class="mp-note-text">「百年后的宴会上传唱」是马丁式的残酷反讽：真正被传唱百年的，恰恰是他死后那场把家族烧成灰的「龙之舞」。</div><button class="mp-note-up" data-base="67" type="button"><span class="mp-note-up-ic">&#9650;</span><span class="mp-note-up-n">67</span></button></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </aside>
   </div><!-- /demo-2col -->
 </section>
