@@ -889,6 +889,16 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
 #face .fc-shot{margin:0;border-radius:14px;overflow:hidden;background:#0b0d12;
   border:1px solid #20242c;box-shadow:0 24px 60px rgba(0,0,0,.28)}
 #face .fc-shot img{display:block;width:100%;height:auto}
+
+/* linememe · 截图与社区卡左右并排 */
+#linememe .lm-below{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;align-items:start}
+#linememe .lm-shot{margin:0;border-radius:12px;overflow:hidden;background:var(--panel);
+  border:1px solid var(--line2);box-shadow:0 14px 30px rgba(22,24,29,.08)}
+#linememe .lm-shot img{display:block;width:100%;height:auto}
+#linememe .lm-shot figcaption{padding:8px 12px 10px;font-size:11.5px;color:var(--dim);
+  letter-spacing:.04em;border-top:1px solid var(--line);background:var(--bg2)}
+#linememe .lm-below .mp-card{margin-top:0}
+@media(max-width:780px){#linememe .lm-below{grid-template-columns:1fr}}
 #face .fanout{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 #face .fanout-item{padding:9px 10px;border:1px solid rgba(191,125,30,.32);border-left:2px solid var(--intuition);
   background:rgba(191,125,30,.05);border-radius:6px;font-size:11.5px;color:var(--dim);line-height:1.55}
@@ -1293,6 +1303,11 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
   </div>
   <div class="tiny center" style="margin-top:12px;color:var(--dim)">点字幕里高亮的关键词 → 浮出文化梗解读，可收藏、可展开深读 · 共谋模式一键隐藏全部叠加层</div>
 
+  <div class="lm-below">
+  <figure class="lm-shot">
+    <img src="linememe-shot.png" alt="文化梗高亮截图：字幕里的关键词浮起金色下划线，鼠标停留弹出梗卡" loading="lazy" />
+    <figcaption>文化梗高亮 · 字幕区悬停弹出</figcaption>
+  </figure>
   <div class="mp-card" id="msCard">
     <div class="mp-card-head"><span class="mp-card-tag">文化梗 · 社区</span><span class="mp-card-line">「It hardly makes a good song…」· 韦赛里斯病榻 · S1E5</span></div>
     <div class="mp-card-meme"><b>✦ 这个梗</b>Paddy Considine 的封神台词。一个自知不配伟大、却仍想被记住的国王，用「作不成传唱百年的歌」概括了自己的一生——而最辛辣的一层是：他死后那场「龙之舞」内战，恰恰会被后世传唱百年。</div>
@@ -1320,6 +1335,7 @@ footer .big{font-size:clamp(18px,2.6vw,26px);color:var(--text);font-weight:600;m
       </div>
     </div>
   </div>
+  </div><!-- /lm-below -->
   </div><!-- /demo-stage -->
   <aside class="demo-notes">
     <div class="dn-k">台词里的话中话，自动浮出</div>
