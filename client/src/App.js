@@ -588,6 +588,15 @@ function TencentPlayer({
     submitStanceSpeculation(trigger, choice);
   }
 
+  // 立场推演 chooser（panelMode='speculation'）用：拼一个 trigger_id → choice 的映射，
+  // 让 chooser 卡上能标"已投"/"你的票"角标。每次 render 重读一次 localStorage 即可
+  // —— 投票后立场卡 dismiss 也会触发 re-render，这里始终是新鲜的。
+  function buildVotedMap() {
+    const out = {};
+    for (const c of getStanceChoices()) out[c.trigger_id] = c;
+    return out;
+  }
+
   useEffect(() => {
     const onFs = () => {
       const fs = !!document.fullscreenElement;
@@ -1675,6 +1684,13 @@ function TencentPlayer({
                       onBackToChooser={exitCharacter}
                       turnLimit={CHAR_TURN_LIMIT}
                     />
+                  ) : panelMode === 'speculation' ? (
+                    <SpeculationChooserPanel
+                      triggers={stance.allTriggers}
+                      voted={buildVotedMap()}
+                      onPick={(tg, ch) => handleOpenSpeculation(tg, ch)}
+                      onExit={() => setPanelMode('analysis')}
+                    />
                   ) : (
                     <AgentPanel
                       messages={aiMessages}
@@ -1687,6 +1703,7 @@ function TencentPlayer({
                       setDepth={setAiDepth}
                       onClear={clearAiMessages}
                       onEnterCharacterMode={() => setPanelMode('character')}
+                      onEnterSpeculationMode={() => setPanelMode('speculation')}
                       speculationEntries={computeSpeculationEntries(stance.allTriggers)}
                       onOpenSpeculation={handleOpenSpeculation}
                       speculationThread={speculationThread}
@@ -1909,6 +1926,13 @@ function TencentPlayer({
                 onBackToChooser={exitCharacter}
                 turnLimit={CHAR_TURN_LIMIT}
               />
+            ) : panelMode === 'speculation' ? (
+              <SpeculationChooserPanel
+                triggers={stance.allTriggers}
+                voted={buildVotedMap()}
+                onPick={(tg, ch) => handleOpenSpeculation(tg, ch)}
+                onExit={() => setPanelMode('analysis')}
+              />
             ) : (
               <AgentPanel
                 messages={aiMessages}
@@ -1921,6 +1945,9 @@ function TencentPlayer({
                 setDepth={setAiDepth}
                 onClear={clearAiMessages}
                 onEnterCharacterMode={() => setPanelMode('character')}
+                onEnterSpeculationMode={() => setPanelMode('speculation')}
+                speculationEntries={computeSpeculationEntries(stance.allTriggers)}
+                onOpenSpeculation={handleOpenSpeculation}
                 speculationThread={speculationThread}
                 onExitSpeculation={exitSpeculation}
               />
@@ -2188,6 +2215,7 @@ function AgentPanel({
   depth = 'brief', setDepth = () => {},
   onClear,
   onEnterCharacterMode,
+  onEnterSpeculationMode,
   speculationEntries = [],
   onOpenSpeculation,
   speculationThread = null,
@@ -2329,6 +2357,15 @@ function AgentPanel({
                     disabled={sending}
                     title="钻进角色脑子里和 TA 对话"
                   >角色内心</button>
+                )}
+                {onEnterSpeculationMode && (
+                  <button
+                    type="button"
+                    className="tx-agent-de-chip tx-agent-de-chip-mode tx-agent-de-chip-spec-mode"
+                    onClick={() => !sending && onEnterSpeculationMode()}
+                    disabled={sending}
+                    title="不必先投票 —— 挑一个分支点，推演一条没走的路"
+                  >立场推演</button>
                 )}
               </>
             )}
@@ -2607,6 +2644,91 @@ function CharLine({ message, speakerName }) {
           {showCursor && lastIdx === 'sub' && <span className="de-cursor">▍</span>}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ─── 立场推演 chooser · AgentPanel 的第三种模态 ────────────────
+   不依赖"先投票"这条路径 —— 用户随时进来，挑一个分支点 + 一个反事实
+   选项，直接走 submitStanceSpeculation。投过的选项小角标"已投"，
+   canonical 选项灰掉（"剧中走向"）。 */
+function SpeculationChooserPanel({ triggers, voted, onPick, onExit }) {
+  const eligible = (triggers || []).filter(t => t?.speculation?.by_option);
+  return (
+    <div className="tx-agent-de tx-spec-mode">
+      <div className="tx-agent-de-rail" aria-hidden="true">
+        <span className="tx-agent-de-page">S01·A05·SPEC</span>
+      </div>
+
+      <div className="tx-char-header">
+        <button className="tx-char-back" onClick={onExit} title="回到 AI 解析">‹ 解析模式</button>
+        <div className="tx-char-title">
+          <div className="tx-char-name tx-char-name-dim">本集分支 · 选一个场景，挑一条没走的路</div>
+        </div>
+      </div>
+
+      <div className="tx-spec-chooser">
+        {eligible.length === 0 ? (
+          <div className="tx-agent-de-empty">本集暂时没有可推演的分支点。</div>
+        ) : (
+          <div className="tx-spec-grid">
+            {eligible.map(tg => {
+              const userChoice = voted[tg.trigger_id];
+              const byOpt = tg.speculation?.by_option || {};
+              return (
+                <div key={tg.trigger_id} className="tx-spec-card">
+                  <div className="tx-spec-card-head">
+                    <span className="tx-spec-card-scene">{tg.scene_label}</span>
+                    {userChoice && (
+                      <span className="tx-spec-card-badge" title={`你之前投了：${userChoice.option_label}`}>
+                        已投
+                      </span>
+                    )}
+                  </div>
+                  {Array.isArray(tg.prompt_lines) && tg.prompt_lines.length > 0 && (
+                    <div className="tx-spec-card-prompt">
+                      {tg.prompt_lines.join(' ')}
+                    </div>
+                  )}
+                  <div className="tx-spec-card-options">
+                    {(tg.options || []).map(opt => {
+                      const isCanon = !!opt.is_canonical;
+                      const inByOpt = !!byOpt[opt.id];
+                      const disabled = isCanon || !inByOpt;
+                      const isYours = userChoice?.option_id === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          className={
+                            'tx-spec-opt' +
+                            (isCanon ? ' is-canonical' : '') +
+                            (isYours ? ' is-yours' : '')
+                          }
+                          onClick={() => {
+                            if (disabled) return;
+                            onPick(tg, {
+                              option_id: opt.id,
+                              option_label: opt.label,
+                              option_inner_voice: opt.inner_voice,
+                            });
+                          }}
+                          disabled={disabled}
+                          title={isCanon ? '剧情就是这么走的，没有"如果"' : `推演：${opt.label}`}
+                        >
+                          <span className="tx-spec-opt-label">{opt.label}</span>
+                          {isCanon && <span className="tx-spec-opt-tag">剧中走向</span>}
+                          {isYours && !isCanon && <span className="tx-spec-opt-tag tx-spec-opt-tag-yours">你的票</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
