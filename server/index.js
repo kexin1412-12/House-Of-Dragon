@@ -111,6 +111,20 @@ app.get('/api/videos', (req, res) => {
       };
     });
   }
+  const seenVideoIds = new Set(videos.map(v => v.id || v.filename));
+  for (const [filename, meta] of Object.entries(catalog)) {
+    if (!videoExts.test(filename) || seenVideoIds.has(filename)) continue;
+    const originalName = filename.replace(/^\d+-/, '').replace(/\.[^.]+$/, '');
+    videos.push({
+      id: filename,
+      name: meta.name || originalName,
+      filename,
+      url: meta.url || `/uploads/${encodeURIComponent(filename)}`,
+      size: meta.size || null,
+      uploadedAt: meta.uploadedAt || null,
+      ...meta,
+    });
+  }
   if (videos.length === 0) {
     const manifestPath = path.join(__dirname, 'demo-videos.json');
     if (fs.existsSync(manifestPath)) {
