@@ -1,5 +1,7 @@
 // OpenAI Provider —— 把厂商无关的 messages 转成 OpenAI 格式。
 
+const { createOpenAIClient } = require('../openai-client');
+
 class OpenAIProvider {
   constructor() {
     this.client = null;
@@ -12,8 +14,7 @@ class OpenAIProvider {
   _client() {
     if (this.client) return this.client;
     if (!this.isAvailable()) return null;
-    const OpenAI = require('openai');
-    this.client = new OpenAI();
+    this.client = createOpenAIClient();
     return this.client;
   }
 

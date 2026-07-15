@@ -1,0 +1,163 @@
+{
+  "_schema_version": 4,
+  "_notes": [
+    "Stance Tracking for S03E01 is intentionally sparse: only major moral or strategic forks become vote prompts.",
+    "The episode has 8 main storyline nodes; this file keeps 4 voting moments so the feature feels selective rather than noisy.",
+    "Canonical options do not expose speculation CTA; non-canonical options include by_option hints for counterfactual follow-up."
+  ],
+  "video_id": "house_of_dragon_s03e01",
+  "show_id": "house-of-the-dragon",
+  "episode": "S03E01",
+  "triggers": [
+    {
+      "trigger_id": "s3e1_rhaena_claims_sheepstealer",
+      "type": "faction_choice",
+      "timestamp": 482,
+      "scene_label": "雾谷 · 雷妮亚驯龙",
+      "headline": "立场抉择",
+      "prompt_lines": [
+        "雷妮亚终于把“没有龙”的弱势，变成了一份危险的新力量。",
+        "问题不是她敢不敢骑龙，而是这份力量该不该被立刻纳入战争。"
+      ],
+      "speculation": {
+        "convergence_hint": "偷羊贼已经认主，黑党获得新龙骑几乎不可逆；真正变化的是雷妮亚会被保护、被利用，还是被允许自己定义力量。",
+        "by_option": {
+          "keep_rhaena_off_board": "如果雷妮亚被暂时藏起来，黑党会多一张秘密牌，但她也会再次被当成“需要安排的人”。这会推迟她的成长，同时让后续海战少一份空中筹码。",
+          "rhaena_is_being_used": "如果把驯龙看成又一次家族利用，雷妮亚会更早意识到自己不是被接纳，而是被征用。她可能仍然参战，但和雷妮拉的关系会变得更锋利。"
+        }
+      },
+      "options": [
+        {
+          "id": "rhaena_earned_place",
+          "label": "她终于赢得位置",
+          "inner_voice": "她不是被施舍了一条龙，是自己在恐惧里夺回了存在感。",
+          "is_canonical": true
+        },
+        {
+          "id": "keep_rhaena_off_board",
+          "label": "先别让她上牌桌",
+          "inner_voice": "刚驯服巨龙就被卷进战争，太像把一个孩子推到火里。"
+        },
+        {
+          "id": "rhaena_is_being_used",
+          "label": "家族又在利用她",
+          "inner_voice": "以前她因为没有龙被忽视，现在因为有龙被需要，本质并没有温柔多少。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s3e1_rhaenyra_targets_kings_landing",
+      "type": "faction_choice",
+      "timestamp": 1285,
+      "scene_label": "龙石岛 · 君临计划",
+      "headline": "立场抉择",
+      "prompt_lines": [
+        "雷妮拉拒绝继续把希望押在和平建议上，开始把目标指向君临。",
+        "这是主动夺回王权，还是把战争推向更不可控的一步？"
+      ],
+      "speculation": {
+        "convergence_hint": "无论是否立刻攻君临，黑绿双方都已经无法回到谈判桌。差别在于雷妮拉是把主动权拿在手里，还是继续让局势替她做决定。",
+        "by_option": {
+          "peace_last_chance": "如果雷妮拉继续给和平一次机会，阿莉森或许还能拖住绿党内部一小段时间。但伊蒙德和军事派会把这视为黑党的虚弱，喉道伏击依然可能发生，而且黑党反应会更慢。",
+          "attack_is_reckless": "如果这一步被内部认定为鲁莽，杰斯和科利斯会更强硬地限制女王行动。黑党的秩序会短暂更稳，但雷妮拉会越来越像被自己的拥护者软禁。"
+        }
+      },
+      "options": [
+        {
+          "id": "take_initiative",
+          "label": "该主动夺回君临",
+          "inner_voice": "王权不会因为她克制就自动回到她手里。",
+          "is_canonical": true
+        },
+        {
+          "id": "peace_last_chance",
+          "label": "和平还没彻底死",
+          "inner_voice": "一旦目标变成君临，所有人的退路都会被她亲手烧掉。"
+        },
+        {
+          "id": "attack_is_reckless",
+          "label": "这太冒进",
+          "inner_voice": "她想证明自己不是软弱的女王，却可能正因此被战争牵着走。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s3e1_rhaenyra_joins_battle",
+      "type": "faction_choice",
+      "timestamp": 2720,
+      "scene_label": "龙石岛 · 女王亲征",
+      "headline": "立场抉择",
+      "prompt_lines": [
+        "喉道伏击来报，杰斯锁门阻止母亲参战，雷妮拉仍然骑龙冲向战场。",
+        "女王应该亲自救人，还是必须把自己留给王位？"
+      ],
+      "speculation": {
+        "convergence_hint": "雷妮拉亲征让黑党看见了一个会行动的女王，也把王权本身暴露在箭雨和混战里。她不去，代价会落在儿子和盟友身上；她去了，代价会落在整个继承秩序上。",
+        "by_option": {
+          "jace_was_right": "如果杰斯成功拦下她，黑党会保住女王的安全，却更可能失去战场上的士气与救援速度。杰斯会被迫独自承担王储和儿子的双重责任，最后的牺牲可能来得更孤立。",
+          "rhaenyra_chases_grief": "如果把亲征看成被悲痛驱使，雷妮拉的每一次英勇都会带上自毁的影子。黑党会更难区分“女王的勇气”和“母亲的失控”。"
+        }
+      },
+      "options": [
+        {
+          "id": "queen_must_fight",
+          "label": "女王必须亲自去",
+          "inner_voice": "她不能只让别人替她流血，尤其是自己的儿子和舰队。",
+          "is_canonical": true
+        },
+        {
+          "id": "jace_was_right",
+          "label": "杰斯拦得对",
+          "inner_voice": "她不是普通龙骑士，她一旦出事，黑党的合法性会一起坠海。"
+        },
+        {
+          "id": "rhaenyra_chases_grief",
+          "label": "她是在追着悲痛走",
+          "inner_voice": "这看起来像勇敢，也像一个母亲再也受不了旁观。"
+        }
+      ]
+    },
+    {
+      "trigger_id": "s3e1_jace_falls",
+      "type": "faction_choice",
+      "timestamp": 3738,
+      "scene_label": "喉道 · 杰斯中箭坠海",
+      "headline": "立场抉择",
+      "prompt_lines": [
+        "杰斯和沃马克斯落入海中，王储在箭雨里被击中。",
+        "这场损失最应该算在谁头上？"
+      ],
+      "speculation": {
+        "convergence_hint": "杰斯之死会把喉道之战从一次救援变成继承危机。不同归因不会改变悲剧发生，但会改变雷妮拉之后怎样理解儿子、战争和自己的责任。",
+        "by_option": {
+          "blame_jace_himself": "如果责任被归到杰斯自己的选择上，黑党会把他塑造成主动赴死的王储。这样能保住雷妮拉的政治形象，却会让她更难承认自己把儿子推到了怎样的位置。",
+          "blame_rhaenyra_strategy": "如果责任指向雷妮拉的战略，黑党内部会出现更深的质疑：她既要母亲的救援冲动，也要女王的战争目标。科利斯和贝妮拉可能更早要求她付出解释。",
+          "blame_green_ambush": "如果全部归咎绿党的伏击，黑党会更快进入复仇叙事。悲伤会被转化成合法的怒火，但也会让下一步报复更难收束。"
+        }
+      },
+      "options": [
+        {
+          "id": "blame_war_machine",
+          "label": "战争机器吞掉了他",
+          "inner_voice": "这不是一个人的错，是所有人把孩子送上棋盘后的结果。",
+          "is_canonical": true
+        },
+        {
+          "id": "blame_jace_himself",
+          "label": "杰斯自己选择了冲上去",
+          "inner_voice": "他想成为王储，不只是被保护的儿子。"
+        },
+        {
+          "id": "blame_rhaenyra_strategy",
+          "label": "雷妮拉的战略要负责",
+          "inner_voice": "她想救所有人，却把最珍贵的继承人也带进了局。"
+        },
+        {
+          "id": "blame_green_ambush",
+          "label": "绿党的伏击才是根源",
+          "inner_voice": "没有这场伏击，就没有这场被迫展开的空海混战。"
+        }
+      ]
+    }
+  ]
+}

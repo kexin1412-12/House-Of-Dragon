@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
 const charactersLib = require('./lib/characters');
+const locationsLib = require('./lib/locations');
 const seasonLib = require('./lib/season');
 const ai = require('./lib/ai');
 const { retrieve: retrieveKnowledge } = require('./lib/retrieval');
@@ -142,6 +143,15 @@ function getCharacterDb(showId) {
   }
 }
 
+function getLocationDb(showId) {
+  if (!showId) return null;
+  try {
+    return locationsLib.loadLocationDb(showId);
+  } catch {
+    return null;
+  }
+}
+
 function enrichCharacters(kb, sceneCharacters, cursorTime) {
   const ids = (sceneCharacters || []).map(c => c.id).filter(Boolean);
   if (ids.length === 0) return [];
@@ -181,6 +191,32 @@ function loadKB(videoId) {
   try {
     const kb = JSON.parse(fs.readFileSync(file, 'utf8'));
     if (!Array.isArray(kb.scenes)) return null;
+
+    const sceneSymbolsFile = path.join(KB_DIR, 'scene_symbols', `${videoId}.json`);
+    if (fs.existsSync(sceneSymbolsFile)) {
+      const overlay = JSON.parse(fs.readFileSync(sceneSymbolsFile, 'utf8'));
+      const symbolAnalysis = overlay.symbol_analysis || {};
+      const symbolsByScene = new Map(
+        (overlay.scenes || []).map(scene => [scene.scene_id, scene])
+      );
+      for (const scene of kb.scenes) {
+        const overlayScene = symbolsByScene.get(scene.scene_id);
+        if (!overlayScene) continue;
+        const additions = (overlayScene.symbols || []).map(symbol => ({
+          ...(symbolAnalysis[symbol.symbol_id] || {}),
+          ...symbol,
+        }));
+        const removals = new Set(overlayScene.remove_symbol_ids || []);
+        const merged = new Map(
+          (scene.symbols || [])
+            .filter(symbol => !removals.has(symbol.symbol_id))
+            .map(symbol => [symbol.symbol_id, symbol])
+        );
+        for (const symbol of additions) merged.set(symbol.symbol_id, symbol);
+        scene.symbols = Array.from(merged.values());
+      }
+    }
+
     return kb;
   } catch {
     return null;
@@ -529,6 +565,7 @@ function detectIntents(question = '') {
     shot: /镜头|构图|景别|运镜|光线|画面|色调|剪辑|特写|远景|空镜|俯拍|仰拍|低角度|高角度/.test(q),
     plot: /发生了什么|剧情|没看懂|这段|前面|刚才|讲什么|什么意思/.test(q),
     character: /为什么|动机|沉默|表情|情绪|心情|想法|人物|角色|他|她/.test(q),
+    location: /这是哪|这里是哪|在哪|哪里|地点|地理|地图|城堡|城市|海峡|岛上|区域/.test(q),
     foreshadow: /伏笔|细节|彩蛋|铺垫|暗示|留意|重要吗|有什么用/.test(q),
     emotion: /紧张|压抑|恐惧|悲伤|爽|震撼|节奏|高潮|反转/.test(q),
     navigation: /只看|跳到|整理|回顾|时间线|人物线|线索线|重排/.test(q)
@@ -538,6 +575,7 @@ function detectIntents(question = '') {
 function inferPrimaryIntent(intents) {
   if (intents.shot) return 'shot';
   if (intents.foreshadow) return 'foreshadow';
+  if (intents.location) return 'location';
   if (intents.character) return 'character';
   if (intents.navigation) return 'navigation';
   if (intents.emotion) return 'emotion';
@@ -599,6 +637,20 @@ function getEmotionState(kb, t) {
   };
 }
 
+function getLocationState(kb, t) {
+  const scene = currentScene(kb, t);
+  if (!scene) return null;
+  const db = getLocationDb(kb.show_id);
+  if (!db) return { raw_label: scene.location || null, locations: [], match: null };
+  return locationsLib.resolveSceneLocations(db, scene);
+}
+
+function getMentionedLocations(kb, question) {
+  const db = getLocationDb(kb.show_id);
+  if (!db) return [];
+  return locationsLib.matchLocationsInText(db, question, { limit: 8 });
+}
+
 function getNavigationContext(kb, t, question) {
   const pastScenes = scenesUpTo(kb, t);
 
@@ -633,6 +685,8 @@ function getNavigationContext(kb, t, question) {
 
 function buildToolBundle(kb, t, question) {
   const intents = detectIntents(question);
+  const mentionedLocations = getMentionedLocations(kb, question);
+  if (mentionedLocations.length) intents.location = true;
   const primary = inferPrimaryIntent(intents);
 
   return {
@@ -642,6 +696,8 @@ function buildToolBundle(kb, t, question) {
     plot: getPlotContext(kb, t),
     foreshadow: intents.foreshadow ? getForeshadowContext(kb, t) : null,
     characters: intents.character ? getCharacterState(kb, t) : null,
+    location: intents.location ? getLocationState(kb, t) : null,
+    location_matches: intents.location ? mentionedLocations : [],
     emotion: intents.emotion || intents.shot ? getEmotionState(kb, t) : null,
     navigation: intents.navigation ? getNavigationContext(kb, t, question) : null
   };
@@ -670,6 +726,7 @@ function buildContext(kb, params) {
       narrative: scene.narrative || null,
       shot: scene.shot || null,
       characters: enrichCharacters(kb, scene.characters, cursorTime),
+      location: getLocationState(kb, cursorTime),
       foreshadow_setup_hint: scene.foreshadow?.setup_hint || null,
       tags: scene.tags || []
     } : null,
@@ -853,6 +910,7 @@ const SYSTEM_PROMPT = `
 9. 如果 mode 是 study，可以分成"镜头 / 情绪 / 叙事作用"三小句，但仍然简洁。
 10. 当用户问"这是谁/他俩什么关系/他现在什么身份"时，使用 current_scene.characters[] 里的 display_name / house / current_status / relationships 作答；只引用字段里实际存在的称号、立场、关系；relationships 已按当前进度过滤，可放心使用。如果某字段为 null，说明此刻还看不出来，直接说"这段暂时还看不出来"。
 11. 关键：如果用户消息附带了画面图像，那个图像才是当前真正发生的事实。Context 里的 KB 数据可能是粗略骨架或老的预处理结果，**只能作为人物词典/家族关系的背景参考**。如果 KB 描述与图像明显冲突（人物对不上、动作对不上、地点对不上），相信图像，按图像描述当前画面，并对识别到的角色用 KB 里的身份/关系信息补充。如果图像里的人物 KB 里查不到，就用你对该剧的常识识别其角色名 + 简短身份。
+12. 当用户问地点时，如果 tool_bundle.location_matches[] 非空，优先回答用户点名的地点；否则使用 current_scene.location.locations[]。official_map_entry=true 表示 HBO 官方地图直接收录；false 表示单集场景补充。回答时可以引用 summary，但不得把 episode_extension 说成 HBO 官方地图条目。两处都为空时，直接说明具体地理位置暂不明确。
 
 输出要求：
 只输出自然语言，不要 JSON，不要代码块，不要说"根据上下文"。
@@ -895,6 +953,13 @@ function generateTemplate(context, question) {
 
   if (primary === 'foreshadow' && scene.foreshadow_setup_hint) {
     return `${scene.foreshadow_setup_hint} 这里先留意就好，暂时不展开。`;
+  }
+
+  if (primary === 'location') {
+    const location = context.tool_bundle?.location_matches?.[0] || scene.location?.locations?.[0];
+    if (!location) return '这段只能看出室内或野外环境，具体地理位置暂时还无法可靠确定。';
+    const sourceNote = location.official_map_entry ? '这是 HBO 官方地图收录的地点。' : '这是按当前单集场景补充绑定的地点。';
+    return `${location.display_name}${location.region ? `，位于${location.region}` : ''}。${location.summary || ''}${sourceNote}`;
   }
 
   if (primary === 'character' && scene.characters?.length) {
@@ -1060,10 +1125,12 @@ async function recognizeViaLLM({ image, db, cursor }) {
       if (charId) dbEntry = (db.characters || []).find(x => x.character_id === charId);
       if (!dbEntry && c.display_name_zh) {
         const target = String(c.display_name_zh).replace(/\s/g, '');
-        dbEntry = (db.characters || []).find(x =>
-          String(x.display_name_zh || '').replace(/\s/g, '') === target ||
-          String(x.canonical_name || '').replace(/\s/g, '').toLowerCase() === target.toLowerCase()
-        );
+        dbEntry = (db.characters || []).find(x => {
+          const names = [x.display_name_zh, x.canonical_name, ...(x.aliases || [])]
+            .filter(Boolean)
+            .map(name => String(name).replace(/\s/g, '').toLowerCase());
+          return names.includes(target.toLowerCase());
+        });
       }
       if (dbEntry) {
         charId = dbEntry.character_id;
@@ -1120,6 +1187,41 @@ function mergeRecognitions(faceChars, llmChars) {
 }
 
 function register(app) {
+  app.get('/api/agent/locations', (req, res) => {
+    const showId = String(req.query.showId || 'house-of-the-dragon');
+    const db = getLocationDb(showId);
+    if (!db) return res.status(404).json({ show_id: showId, count: 0, locations: [] });
+    const limit = Math.min(Math.max(Number(req.query.limit) || 100, 1), 250);
+    const locations = locationsLib.searchLocations(db, req.query.q || '', {
+      officialOnly: String(req.query.officialOnly || '').toLowerCase() === 'true',
+      parentId: req.query.parentId || null,
+      limit,
+    });
+    res.json({
+      show_id: showId,
+      source: db.source || null,
+      official_location_count: db.official_location_count || 0,
+      supplemental_location_count: db.supplemental_location_count || 0,
+      count: locations.length,
+      locations,
+    });
+  });
+
+  app.get('/api/agent/location/current', (req, res) => {
+    const kb = loadKB(req.query.videoId);
+    if (!kb) return res.status(404).json({ has_kb: false, location: null });
+    const cursorTime = normalizeTime(req.query.t);
+    const scene = currentScene(kb, cursorTime);
+    const db = getLocationDb(kb.show_id);
+    const location = db && scene ? locationsLib.resolveSceneLocations(db, scene) : null;
+    res.json({
+      has_kb: true,
+      scene_id: scene?.scene_id || null,
+      cursor_time: cursorTime,
+      location,
+    });
+  });
+
   app.get('/api/agent/characters/on-screen', (req, res) => {
     const { videoId, t } = req.query;
     const kb = loadKB(videoId);
@@ -1356,6 +1458,9 @@ function register(app) {
       if (kb) {
         const cursorTime = normalizeTime(req.query.t);
         cursor = charactersLib.cursorAtTime(kb, cursorTime);
+        if (!cursor) {
+          cursor = kb.episode || kb.episode_map?.[0]?.episode || null;
+        }
       }
     }
 
@@ -1765,6 +1870,7 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
         if (!entry) continue;
         if (entry.display_name_zh) charNames.push(entry.display_name_zh);
         if (entry.canonical_name) charAliases.push(entry.canonical_name);
+        if (Array.isArray(entry.aliases)) charAliases.push(...entry.aliases);
         if (entry.house) charAliases.push(entry.house);
         if (entry.short_identity_zh) charAliases.push(entry.short_identity_zh);
       }
@@ -1788,6 +1894,7 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
       const currentSceneSlice = scene ? {
         scene_id: scene.scene_id,
         time_range: [scene.start_time, scene.end_time],
+        location: kb ? getLocationState(kb, prepared.cursorTime) : null,
         plot_fact: scene.plot?.fact || null,
         plot_reading: scene.plot?.reading || null,
         narrative: scene.narrative || null,
@@ -1864,6 +1971,7 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
         },
         conversation,
         character_dictionary: characterDictionary,
+        mentioned_locations: prepared.context.tool_bundle?.location_matches || [],
         // 用打分检索后的相关知识替换无脑 slice(0,12)
         retrieved_knowledge: retrievedKnowledge,
         analysis_patterns: ANALYSIS_PATTERNS,
@@ -3011,9 +3119,11 @@ ${stanceListStr}
         bbox: sym.bbox === undefined ? null : sym.bbox,
         confidence: sym.confidence,
         evidence_in_frame: sym.evidence_in_frame,
-        category: dict.category || null,
+        category: sym.category || dict.category || null,
         meaning_zh: sym.meaning_zh || dict.meaning_zh || null,
         viewer_takeaway: sym.viewer_takeaway || dict.viewer_takeaway || null,
+        selection_basis: sym.selection_basis || null,
+        expressive_function: sym.expressive_function || null,
         // 单符号自带的 deep_reading（agent 生成的）；前端会优先用它，回落到 scene.plot.deep_reading
         deep_reading: sym.deep_reading || null,
         source: sym.source || null,
@@ -3073,9 +3183,12 @@ ${stanceListStr}
           last_scene_start: scene.start_time,
           occurrences: 1,
           keyframe: scene.keyframe || null,
-          category: dict.category || null,
+          category: sym.category || dict.category || null,
           meaning_zh: sym.meaning_zh || dict.meaning_zh || null,
           viewer_takeaway: sym.viewer_takeaway || dict.viewer_takeaway || null,
+          selection_basis: sym.selection_basis || null,
+          expressive_function: sym.expressive_function || null,
+          deep_reading: sym.deep_reading || null,
           evidence_in_frame: sym.evidence_in_frame || null,
           confidence: sym.confidence || null,
           cta: sym.cta || null,
@@ -3182,6 +3295,8 @@ ${stanceListStr}
       if (hotspot.meaning_zh) entry.meaning_zh = hotspot.meaning_zh;
       if (hotspot.viewer_takeaway) entry.viewer_takeaway = hotspot.viewer_takeaway;
       if (hotspot.deep_reading) entry.deep_reading = hotspot.deep_reading;
+      if (hotspot.selection_basis) entry.selection_basis = hotspot.selection_basis;
+      if (hotspot.expressive_function) entry.expressive_function = hotspot.expressive_function;
 
       scene.symbols = scene.symbols || [];
       const existingIdx = scene.symbols.findIndex(s => s.symbol_id === entry.symbol_id);

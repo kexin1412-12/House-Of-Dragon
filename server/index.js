@@ -87,7 +87,12 @@ const upload = multer({
 // 视频清单：先扫本地 uploads/（开发模式）；本地为空时回落到 demo-videos.json
 // （部署模式：视频已传到 Cloudflare R2，URL 由 client 用 REACT_APP_VIDEO_CDN 拼出）
 app.get('/api/videos', (req, res) => {
-  const videoExts = /\.(mp4|mov|avi|mkv|webm|flv|wmv|m4v)$/i;
+  const videoExts = /\.(mp4|webm|m4v)$/i;
+  const catalogPath = path.join(__dirname, 'video-catalog.json');
+  let catalog = {};
+  if (fs.existsSync(catalogPath)) {
+    try { catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8')); } catch {}
+  }
   let videos = [];
   if (fs.existsSync(UPLOADS_DIR)) {
     const files = fs.readdirSync(UPLOADS_DIR).filter(f => videoExts.test(f));
@@ -102,6 +107,7 @@ app.get('/api/videos', (req, res) => {
         url: `/uploads/${encodeURIComponent(f)}`,
         size: stat.size,
         uploadedAt: isNaN(ts) ? stat.mtime.toISOString() : new Date(ts).toISOString(),
+        ...(catalog[f] || {}),
       };
     });
   }
@@ -111,7 +117,12 @@ app.get('/api/videos', (req, res) => {
       try { videos = JSON.parse(fs.readFileSync(manifestPath, 'utf8')); } catch {}
     }
   }
-  videos.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+  videos.sort((a, b) => {
+    if (Number.isFinite(a.season) && Number.isFinite(b.season)) {
+      return a.season - b.season || a.episode - b.episode;
+    }
+    return new Date(a.uploadedAt) - new Date(b.uploadedAt);
+  });
   res.json(videos);
 });
 

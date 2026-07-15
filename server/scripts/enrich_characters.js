@@ -170,6 +170,23 @@ const SUGGESTION_SCHEMA = {
   },
 };
 
+const OFFICIAL_CANON_SOURCES = [
+  {
+    name: 'HBO House of the Dragon Interactive Guide',
+    url: 'https://hotd-interactive-map.micro.hbo.com/',
+    priority: 'official',
+    use_for: [
+      'canonical_name',
+      'title_en',
+      'house',
+      'family',
+      'faction',
+      'map_context',
+      'dragon_entries',
+    ],
+  },
+];
+
 const SYSTEM_PROMPT = `你是 HBO 剧集《House of the Dragon》/《Game of Thrones》的角色考据员。
 你会拿到：
 1. 主角色字典里某个角色的当前条目（display_name / short_identity / state_timeline 等）
@@ -210,6 +227,11 @@ ${JSON.stringify(characterEntry, null, 2)}
 同剧其他主要角色（避免姓名混淆，仅作参考）：
 \`\`\`json
 ${JSON.stringify(otherChars, null, 2)}
+\`\`\`
+
+Official canon sources to prefer when checking canonical English names, titles, houses, factions, maps, and dragons:
+\`\`\`json
+${JSON.stringify(OFFICIAL_CANON_SOURCES, null, 2)}
 \`\`\`
 
 下面附了 ${frames.length} 张该角色在本集的出镜帧（按场景时间顺序）。请结合画面与你对该剧的常识，给出对这条条目的校对建议（严格按 schema 输出 JSON）。`;
@@ -360,6 +382,7 @@ async function main() {
     show_id: showId,
     generated_at: new Date().toISOString(),
     generated_by: `enrich_characters.js (${ai.describe().vision.active.provider}/${ai.describe().vision.active.model})`,
+    official_canon_sources: OFFICIAL_CANON_SOURCES,
     reviews: allReviews,
     apply_thresholds: { replace: 0.85, add_state_timeline_entry: 0.7 },
   };

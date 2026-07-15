@@ -3,9 +3,6 @@ import './TrajectoryChart.css';
 import { getChoices, resetAll } from './stanceStore';
 
 const API = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-// 总结针对当前集（v1：S1E5 only）。后续多集开放再做 show 级聚合。
-const VIDEO_ID = 'house_of_dragon_05';
-
 // 立场轨迹图 = 一份你做过的选择的清单 + AI 立场总结。
 // 不打分、不归类、不画曲线 —— 选择本身就是产物。
 //
@@ -14,9 +11,11 @@ const VIDEO_ID = 'house_of_dragon_05';
 // 总结按钮点击后流式 LLM 输出"读你的立场轨迹"——
 // 严格 issue-by-issue，禁止 persona 标签 / 党派 banner（红线写在 prompt 里）。
 
-export default function TrajectoryChart() {
+export default function TrajectoryChart({ videoId }) {
   const [choices, setChoices] = useState(() =>
-    getChoices().filter(c => c.type === 'faction_choice' || c.type === 'recall')
+    getChoices().filter(c =>
+      (c.type === 'faction_choice' || c.type === 'recall')
+      && (!videoId || c.video_id === videoId))
   );
 
   // AI 总结：按需触发，不自动跑（避免每次开 tab 都掉 token）
@@ -48,7 +47,7 @@ export default function TrajectoryChart() {
     fetch(`${API}/api/agent/stance/summary`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ videoId: VIDEO_ID, choices }),
+      body: JSON.stringify({ videoId, choices }),
       signal: ctrl.signal,
     })
       .then(async (resp) => {

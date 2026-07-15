@@ -1,0 +1,550 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "S03E01 场景符号覆盖层；加载时按 scene_id 与 symbol_id 合并到主 KB。",
+    "沿用 S01E05 的人工种子、内容对齐、逐帧复核、去重与词典化流程。",
+    "只保留同时具备画面证据、上下文支撑、解读价值和明确表现作用的项目。",
+    "删除仅为诗意画面或功能性战斗物件的 dragons_as_homecoming、shipboard_ballista，以及与后续解读重复的 entangled_dragons。",
+    "bbox 仅用于画面位置稳定、证据明确的物件或构图。"
+  ],
+  "_selection_standard": [
+    "画面或声音中能指出具体证据，不以人物列表或剧情猜测代替。",
+    "解读由前后呼应、构图反讽、礼制文化、色彩编码或剪辑关系支撑。",
+    "必须说明它如何改变观众对人物、权力或冲突的理解。",
+    "同一作用只保留证据最强的一项，普通武器和纯剧情动作不收录。"
+  ],
+  "symbol_analysis": {
+    "embroidery": {
+      "selection_basis": "片头媒介贯穿整段，并把人物、战斗与龙统一为可被编排的线迹。",
+      "expressive_function": "把个人悲剧压缩成可继承的王朝叙事，先于正片建立“历史如何被书写”的主题。"
+    },
+    "red_thread": {
+      "selection_basis": "同一红线同时承担家谱连接与血迹联想，含义来自片头内部的视觉双关。",
+      "expressive_function": "让血缘与流血共享一种颜色，使家族纽带从开场就带有冲突预感。"
+    },
+    "rhaena_sheepstealer_bond": {
+      "selection_basis": "开场的无鞍温柔接近与战场上的失控形成明确前后反转。",
+      "expressive_function": "建立“信任不等于控制”的视觉母题，并在海战中回收私人纽带的局限。"
+    },
+    "caged_king_carriage": {
+      "selection_basis": "栅栏式构图与“一无所有之王”的台词同场出现，形成可验证的视觉反讽。",
+      "expressive_function": "在对白解释之前先把伊耿的失势视觉化，让国王称号与实际处境发生冲突。"
+    },
+    "aegons_crown": {
+      "selection_basis": "王冠被藏匿、出示又遭否认，物件在同一场戏中直接改变身份判断。",
+      "expressive_function": "把抽象合法性变成可藏匿、可暴露、可交易的物证，推动逃亡身份危机。"
+    },
+    "aemond_on_iron_throne": {
+      "selection_basis": "人物身体已经占据权力中心，而正式继承仍未完成，座位本身构成政治信息。",
+      "expressive_function": "用占据王座代替正式宣告，让“代行”与“取代”保持暧昧张力。"
+    },
+    "aemond_alicent_boundary_crossing": {
+      "selection_basis": "伊蒙德主动俯身、阿莉森没有迎合且吻后僵住移开视线，动作与反应在连续镜头中可复核。",
+      "expressive_function": "把阿莉森为政治目的提供的母爱，转成伊蒙德无法区分认可与占有的越界行为，揭示操纵的反噬。"
+    },
+    "hightower_green": {
+      "selection_basis": "这是上一集词典已确立的阵营色码，本集在私人场景中持续复现。",
+      "expressive_function": "让安静的母女谈话仍被政治身份包围，提示人物无法退出派系战争。"
+    },
+    "paired_wine_cups": {
+      "selection_basis": "成对酒杯先被主动摆出，随后承接科利斯迟到的亲子道歉，形式与内容同步。",
+      "expressive_function": "先创造平等交谈的桌面形式，再让它承载父子关系短暂而有限的修复。"
+    },
+    "velaryon_seahorse_sigil": {
+      "selection_basis": "公开家徽与“从未给儿子名分”的对白同框，物件和台词形成直接矛盾。",
+      "expressive_function": "把家族荣耀与私人亏欠压在科利斯胸前，放大他对亚当的亏欠。"
+    },
+    "armor_at_sea": {
+      "selection_basis": "重甲的利弊先被对白提出，随后在接舷战中以同一装备获得实战回收。",
+      "expressive_function": "建立并兑现“甲板保命、落水致命”的装备悖论，把海战风险具体化。"
+    },
+    "written_power_transfer": {
+      "selection_basis": "信件特写、首次改称国王与军令生效连续发生，权力变化有完整因果链。",
+      "expressive_function": "让权力更替先于仪式抵达前线，展示战争中的王权如何通过文字实际运作。"
+    },
+    "locked_door_reversal": {
+      "selection_basis": "门闩把“保护女王”的理由转化为可见禁闭，抽象争执获得物理边界。",
+      "expressive_function": "把保护反转成剥夺行动权，让母子冲突升级为君主权力之争。"
+    },
+    "rhaenyra_red_black": {
+      "selection_basis": "既有王朝色码与被门框阻挡的身体同镜出现，身份宣言和行动受限形成反差。",
+      "expressive_function": "强化雷妮拉的主权姿态，同时让服色宣言暴露她此刻无法执行命令的困境。"
+    },
+    "soundings_and_needle_rocks": {
+      "selection_basis": "测深口令跨三个连续场景重复，并从信息收集推进到穿越礁区的结果。",
+      "expressive_function": "把不可见海床变成可听见的数据，让经验与知识而非火力主导悬念。"
+    },
+    "severed_anchor_line": {
+      "selection_basis": "砍绳被近景突出，并与减重脱困的命令同步，动作具有明确不可逆性。",
+      "expressive_function": "用一次断裂表现“放弃稳定以换取行动”，给战术选择附上可见代价。"
+    },
+    "crowded_dragon_skies": {
+      "selection_basis": "交叉飞行、回避口令与此前友军误伤共同构成协同失效的因果链。",
+      "expressive_function": "把数量优势转成协同压力，用空中构图制造碰撞与误伤焦虑。"
+    },
+    "sea_snake_flooded_cabin": {
+      "selection_basis": "“海蛇”的称号与被海水困在封闭船舱的处境形成明确空间反讽。",
+      "expressive_function": "剥夺科利斯在开阔海域的经验优势，把传奇称号反转为困境。"
+    },
+    "dragonrider_shared_wound": {
+      "selection_basis": "镜头先给龙在水下中箭，再切骑手中箭，剪辑主动建立共同受创关系。",
+      "expressive_function": "让骑手与龙共享同一种伤口，并用普通箭矢把王储降为海面上的普通目标。"
+    }
+  },
+  "video_id": "house_of_dragon_s03e01",
+  "scenes": [
+    {
+      "scene_id": "s002",
+      "symbols": [
+        {
+          "symbol_id": "embroidery",
+          "confidence": "high",
+          "evidence_in_frame": "片头布面上，倒地人形、持剑者与两条龙都由清晰线迹缝成。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "王朝史被压成可编排的家族图样，个人被家族叙事吞没。",
+          "viewer_takeaway": "这不是装饰，而是被缝进布里的王朝史。",
+          "deep_reading": "刺绣把战争固定成可继承、可观看的图案：历史看似被保存，也被重新编排。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "house_targaryen",
+            "label": "了解坦格利安家族 →"
+          },
+          "category": "editing"
+        },
+        {
+          "symbol_id": "red_thread",
+          "confidence": "high",
+          "evidence_in_frame": "红色绣线在倒地人形之间延伸，把血脉与战斗织进同一幅布面。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "维系家族的血脉，也是把家族拖入流血的同一条线。",
+          "viewer_takeaway": "血脉连接他们，也让他们彼此流血。",
+          "deep_reading": "同一种红既可读作家谱的连接，也可读作冲突留下的血迹。",
+          "category": "color_code"
+        }
+      ]
+    },
+    {
+      "scene_id": "s004",
+      "remove_symbol_ids": [
+        "dragon"
+      ],
+      "symbols": [
+        {
+          "symbol_id": "rhaena_sheepstealer_bond",
+          "confidence": "high",
+          "evidence_in_frame": "雷妮亚背对镜头站在近景，偷羊贼低头把巨大头颈贴近她，两者之间没有缰绳或鞍具。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "bbox": [
+            0.1,
+            0,
+            0.89,
+            0.56
+          ],
+          "meaning_zh": "雷妮亚与偷羊贼靠距离和信任建立接近，这并不等于它已被器械化地控制。",
+          "viewer_takeaway": "没有鞍具的靠近，更像彼此试探出的信任。",
+          "deep_reading": "巨龙主动压低头颈，让力量关系暂时从征服改写为协商。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "house_targaryen",
+            "label": "了解驭龙者血脉 →"
+          },
+          "category": "micro_signal"
+        }
+      ]
+    },
+    {
+      "scene_id": "s006",
+      "symbols": [
+        {
+          "symbol_id": "caged_king_carriage",
+          "category": "editing",
+          "confidence": "high",
+          "evidence_in_frame": "马车内两侧密集木栅像牢笼一样包住伊耿与拉里斯；伊耿此时自称“一无所有之王”。",
+          "source": "manual_video_keyframe_audit_2026-07-15",
+          "meaning_zh": "逃亡把国王从王座中心挤进囚车式构图，护送与看押在视觉上难以区分。",
+          "viewer_takeaway": "他仍被当作国王护送，看起来却更像被押运。",
+          "deep_reading": "木栅把人物切成狭窄纵格，王权仍存在于称呼里，身体却已失去行动空间。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s008",
+      "symbols": [
+        {
+          "symbol_id": "aegons_crown",
+          "confidence": "high",
+          "evidence_in_frame": "拉里斯亮出随身藏匿的王冠；伊耿随即否认它属于自己。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "姓名可以否认，伤痕可以编故事，王冠却把秘密身份变成可被交易的物证。",
+          "viewer_takeaway": "王冠在这里不是荣耀，而是一件会暴露主人的证物。",
+          "deep_reading": "合法性的标志被缩成行李里的证据，也让王权显出可携带、可出卖的一面。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "iron_throne_hall",
+            "label": "了解王权空间 →"
+          },
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s012",
+      "symbols": [
+        {
+          "symbol_id": "aemond_on_iron_throne",
+          "confidence": "high",
+          "evidence_in_frame": "伊蒙德坐在铁王座剑刃簇拥的中心，来者站在前景面对他；台词正在追问失踪的伊耿。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "正式继承尚未发生，权力位置已经先被身体占据。",
+          "viewer_takeaway": "谁坐在王座上，本身就是一句政治宣言。",
+          "deep_reading": "画面让“代行”与“取代”只剩一个座位的距离。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "iron_throne_hall",
+            "label": "了解铁王座大厅 →"
+          },
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s026",
+      "symbols": [
+        {
+          "symbol_id": "hightower_green",
+          "confidence": "high",
+          "evidence_in_frame": "海伦娜穿着饱和祖母绿长裙，谈论伊耿离开以及伊蒙德重新感到恐惧。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "海塔尔绿已从一次公开表态，沉淀为绿党王室成员的日常制服。",
+          "viewer_takeaway": "颜色不再需要宣告，它已经成为阵营身份。",
+          "deep_reading": "安静室内的绿色把宏大派系冲突压回母女谈话，却仍提醒观众她们无法脱离阵营。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "house_hightower",
+            "label": "了解海塔尔家族 →"
+          },
+          "category": "color_code"
+        }
+      ]
+    },
+    {
+      "scene_id": "s028",
+      "symbols": [
+        {
+          "symbol_id": "paired_wine_cups",
+          "confidence": "high",
+          "evidence_in_frame": "科利斯把开瓶的伊班岛酒倒进两只杯子，并说自己不打算独饮。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "成对酒杯把命令关系暂时改写成一次迟到的私人邀约。",
+          "viewer_takeaway": "第二只杯子，是科利斯先于道歉递出的和解动作。",
+          "deep_reading": "他先创造“共同饮用”的形式，才尝试说出父子之间一直缺席的话。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "high_tide",
+            "label": "了解瓦列利安家族根基 →"
+          },
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s029",
+      "symbols": [
+        {
+          "symbol_id": "paired_wine_cups",
+          "confidence": "high",
+          "evidence_in_frame": "科利斯说酒名粗略译作“龙之水”，随后承认无法完全修补裂痕，并为从未给儿子名分道歉。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "成对酒杯从邀饮变成迟到修复关系的桌面仪式。",
+          "viewer_takeaway": "酒能共享，名字与失去的年月却不能补回。",
+          "deep_reading": "道歉发生在酒已倒好之后：科利斯能提供一个当下的席位，却无法重写过去。",
+          "category": "prop"
+        },
+        {
+          "symbol_id": "velaryon_seahorse_sigil",
+          "confidence": "high",
+          "evidence_in_frame": "科利斯胸前的金色海马徽记清晰可见；他正承认自己给儿子安稳生活，却从未给名分。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "他把家名穿在胸口，却曾把同一姓氏从亲子关系中扣下。",
+          "viewer_takeaway": "最醒目的家徽，反而照出那个没有被承认的家名。",
+          "deep_reading": "海马徽记把公共身份与私人亏欠压在同一画面里。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "high_tide",
+            "label": "了解潮头岛与瓦列利安家 →"
+          },
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s031",
+      "symbols": [
+        {
+          "symbol_id": "armor_at_sea",
+          "category": "prop",
+          "confidence": "high",
+          "evidence_in_frame": "甲板上的指挥者身披全套板甲；对话紧接着争论重甲落水会成为负担、接舷时又能保命。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "同一套盔甲在甲板上是防护，落水后却可能变成拖人下沉的重量。",
+          "viewer_takeaway": "海战里的安全装备，也可能在下一秒成为锚。",
+          "deep_reading": "台词没有给出万能答案，而是让装备价值随战斗空间变化：甲板与海水采用两套相反的生存规则。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s033",
+      "symbols": [
+        {
+          "symbol_id": "written_power_transfer",
+          "category": "prop",
+          "confidence": "high",
+          "evidence_in_frame": "信使当众展开手写军令；就在此前，他第一次用“伊蒙德国王”称呼新的发令者。",
+          "source": "manual_video_keyframe_audit_2026-07-15",
+          "bbox": [
+            0.08,
+            0,
+            0.84,
+            0.88
+          ],
+          "meaning_zh": "远离王都的军队先通过一张纸接触权力更替，文字比加冕仪式更早抵达前线。",
+          "viewer_takeaway": "在战场上，新国王首先是一封带来新命令的信。",
+          "deep_reading": "镜头把纸张放大到几乎占满画面：王权的变化尚不可见，却已能通过署名和命令改变军队行动。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s038",
+      "symbols": [
+        {
+          "symbol_id": "aemond_alicent_boundary_crossing",
+          "category": "micro_signal",
+          "confidence": "high",
+          "evidence_in_frame": "伊蒙德在阿莉森双手仍扶着他衣襟时主动俯身亲吻；吻后镜头切到阿莉森睁眼僵住，随后移开视线。",
+          "source": "user_reference_verified_against_video_2026-07-15",
+          "bbox": [
+            0.24,
+            0.03,
+            0.55,
+            0.76
+          ],
+          "meaning_zh": "阿莉森给予的政治认可被伊蒙德误读成越过母子边界的亲密许可，而她的僵住显示双方意图并不对称。",
+          "viewer_takeaway": "她给的是认可，他把它读成了可以越界的许可。",
+          "deep_reading": "镜头先把母子放在壁炉前的对称双人构图里，再用吻后阿莉森不回应的特写打破对称；关系错位由动作而不是对白暴露。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s044",
+      "symbols": [
+        {
+          "symbol_id": "locked_door_reversal",
+          "confidence": "high",
+          "evidence_in_frame": "杰卡里斯命令洛伦特爵士把门闩上并上锁；雷妮拉停在门口，试图越过他的阻拦。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "保护在这一刻变成禁闭，继承人借铁卫誓言暂时压过女王命令。",
+          "viewer_takeaway": "同一扇门既能守护君主，也能剥夺君主的行动权。",
+          "deep_reading": "门闩把抽象的“为她好”变成可见的权力边界。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "kingsguard_oath",
+            "label": "了解御林铁卫誓言 →"
+          },
+          "category": "prop"
+        },
+        {
+          "symbol_id": "rhaenyra_red_black",
+          "confidence": "high",
+          "evidence_in_frame": "雷妮拉身穿红黑骑装、伸手撑住门框，与阻止她出战的杰卡里斯对峙。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "bbox": [
+            0.52,
+            0.15,
+            0.47,
+            0.85
+          ],
+          "meaning_zh": "服色仍在宣告坦格利安君主身份，行动权却正被家人收走。",
+          "viewer_takeaway": "她穿着王朝颜色，却被挡在自己的命令之外。",
+          "deep_reading": "颜色的主权宣言与门框的物理阻拦形成同一镜头里的冲突。",
+          "cta": {
+            "kind": "lore",
+            "target_id": "house_targaryen",
+            "label": "了解坦格利安家族 →"
+          },
+          "category": "color_code"
+        }
+      ]
+    },
+    {
+      "scene_id": "s058",
+      "symbols": [
+        {
+          "symbol_id": "soundings_and_needle_rocks",
+          "confidence": "high",
+          "evidence_in_frame": "科利斯一方下令收帆、放下船桨并反复抛出测深绳。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "航海经验先把看不见的水深变成可读数据，才可能把地形变成武器。",
+          "viewer_takeaway": "海蛇的优势不是更快，而是知道哪里能走。",
+          "deep_reading": "战斗节奏突然让位给测量口令，显示胜负取决于对海床的知识。",
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s059",
+      "symbols": [
+        {
+          "symbol_id": "soundings_and_needle_rocks",
+          "confidence": "high",
+          "evidence_in_frame": "测深员连续报告水深，瞭望兵同时确认退潮、碎浪与暗流；船只按科利斯的细小舵令进入窄道。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "水深、潮汐和暗流被组合成只有熟悉海域者才能使用的路线。",
+          "viewer_takeaway": "追兵看见同一片海，却读不懂同一张地图。",
+          "deep_reading": "口令把自然条件逐项转译为战术选择，知识开始替代火力成为优势。",
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s060",
+      "symbols": [
+        {
+          "symbol_id": "soundings_and_needle_rocks",
+          "confidence": "high",
+          "evidence_in_frame": "水深口令持续变浅，科利斯亲自接管指挥；船只最终穿过尖石礁。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "尖石礁把狭窄通道变成筛选经验的门槛：能通过者脱身，盲目跟随者承担风险。",
+          "viewer_takeaway": "危险地形没有消失，只是被科利斯先读懂了。",
+          "deep_reading": "“通过尖石礁”让前两幕的测量获得结果，但不替观众预告追兵的结局。",
+          "category": "prop"
+        }
+      ]
+    },
+    {
+      "scene_id": "s065",
+      "symbols": [
+        {
+          "symbol_id": "severed_anchor_line",
+          "category": "prop",
+          "confidence": "high",
+          "evidence_in_frame": "船员在近景挥斧砍断粗绳；同期命令明确要求切断锚、减轻重量并降低吃水。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "bbox": [
+            0,
+            0.08,
+            0.5,
+            0.86
+          ],
+          "meaning_zh": "锚原本提供停泊稳定，此刻却必须被牺牲，船只才能重新获得移动空间。",
+          "viewer_takeaway": "为了脱困，他们先切掉最能让船稳定的东西。",
+          "deep_reading": "断锚把战略代价变成一个不可逆动作：活过眼前浅滩，代价是失去之后安全停泊的能力。",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_s03e01",
+            "timestamp": 2920,
+            "label": "回看水深开始下降 →"
+          }
+        }
+      ]
+    },
+    {
+      "scene_id": "s068",
+      "symbols": [
+        {
+          "symbol_id": "armor_at_sea",
+          "category": "prop",
+          "confidence": "high",
+          "evidence_in_frame": "登舰命令响起时，重甲战士站在摇晃甲板与索具之间，早先关于“甲板保命、落水致命”的争论开始兑现。",
+          "source": "manual_video_keyframe_audit_2026-07-15",
+          "meaning_zh": "重甲终于进入它最有利的近战距离，但脚下仍是随时可能把优势反转的海水。",
+          "viewer_takeaway": "接舷让盔甲成为优势，失足又会让优势立刻反转。",
+          "deep_reading": "同一符号第二次出现时已经从口头争论变成实战条件，形成装备风险的前后呼应。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s071",
+      "symbols": [
+        {
+          "symbol_id": "rhaena_sheepstealer_bond",
+          "confidence": "high",
+          "evidence_in_frame": "偷羊贼贴着舰船俯冲喷火；字幕连续喊“不……偷羊贼”和“他们不是敌人”。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "bbox": [
+            0.18,
+            0,
+            0.63,
+            0.93
+          ],
+          "meaning_zh": "获得巨龙并不等于获得战场控制，原本用于保护的力量正在威胁友军。",
+          "viewer_takeaway": "信任能让巨龙靠近，却不能自动让它分清敌我。",
+          "deep_reading": "本场景反转雷妮亚最初的温柔接近：私人纽带一旦进入混乱战场，就要接受控制力的检验。",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_s03e01",
+            "timestamp": 154,
+            "label": "回看雷妮亚初次接近偷羊贼 →"
+          },
+          "category": "micro_signal"
+        }
+      ]
+    },
+    {
+      "scene_id": "s074",
+      "symbols": [
+        {
+          "symbol_id": "crowded_dragon_skies",
+          "category": "editing",
+          "confidence": "high",
+          "evidence_in_frame": "两条巨龙在舰队上空以相反方向交叉，骑手同时下令回避；烟雾与船只进一步压缩可用空间。",
+          "source": "manual_video_keyframe_audit_2026-07-15",
+          "bbox": [
+            0.06,
+            0.02,
+            0.88,
+            0.86
+          ],
+          "meaning_zh": "龙越多，空中战力越强，也越需要协同；拥挤战场会把数量优势转成碰撞与误伤风险。",
+          "viewer_takeaway": "更多巨龙不只带来火力，也让天空变得不够用。",
+          "deep_reading": "交叉飞行把“龙群优势”改写成交通与指挥问题，预示私人驭龙关系必须服从集体战术。"
+        }
+      ]
+    },
+    {
+      "scene_id": "s080",
+      "symbols": [
+        {
+          "symbol_id": "sea_snake_flooded_cabin",
+          "confidence": "high",
+          "evidence_in_frame": "海水不断涌进狭窄船舱，科利斯一边与敌人搏斗，一边被上涨的水位压缩活动空间。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "以“海蛇”闻名的人，此刻反而被海水困在无法施展航海经验的封闭空间。",
+          "viewer_takeaway": "最熟悉海的人，也可能被海夺走主动。",
+          "deep_reading": "开阔海域里的知识优势被封闭船舱反转成视觉讽刺；文案只描述眼前困境，不判定结果。",
+          "category": "editing"
+        }
+      ]
+    },
+    {
+      "scene_id": "s082",
+      "symbols": [
+        {
+          "symbol_id": "dragonrider_shared_wound",
+          "confidence": "high",
+          "evidence_in_frame": "杰斯与沃马克斯一同落海；镜头先给水下沃马克斯遭箭雨，再切杰斯背部中箭，二者仍在同一片水面挣扎。",
+          "source": "manual_video_and_subtitle_audit_2026-07-15",
+          "meaning_zh": "骑手与龙的绑定在这里从共同力量变成共同脆弱性。",
+          "viewer_takeaway": "他们共享飞行，也共享坠落与伤口。",
+          "deep_reading": "水下交叉剪辑把人和龙放进同一种无处躲避的攻击里；王储的血统没有换来英雄式保护，只让他成为箭雨中的普通目标。",
+          "cta": {
+            "kind": "callback",
+            "video_id": "house_of_dragon_s03e01",
+            "timestamp": 2740,
+            "label": "回看龙群压入海战 →"
+          },
+          "category": "editing"
+        }
+      ]
+    }
+  ]
+}

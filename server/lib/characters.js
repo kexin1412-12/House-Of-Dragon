@@ -99,6 +99,7 @@ function lookupCharacter(db, characterId, cursor) {
     character_id: ch.character_id,
     canonical_name: ch.canonical_name,
     display_name: ch.display_name_zh || ch.canonical_name,
+    aliases: Array.isArray(ch.aliases) ? ch.aliases : [],
     short_identity: ch.short_identity_zh || null,
     house: ch.house || null,
     tags: ch.tags || [],

@@ -26,6 +26,7 @@ server/kb/frames/
 server/kb/characters/face_refs/
 # server/references — third-party books (Blood and Fire) + cached pages
 server/references/
+references/
 # Loose video files anywhere in the repo (uploads should never enter Git)
 *.mp4
 *.mov
@@ -33,8 +34,10 @@ server/references/
 *.webm
 *.avi
 *.m4v
+*.qkdownloading
 
 # --- Backups & scratch ---
+lapian-notes/
 *.backup-*.json
 *.backup-*
 server/scripts/apply_log.txt

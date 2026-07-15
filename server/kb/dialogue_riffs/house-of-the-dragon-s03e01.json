@@ -1,0 +1,999 @@
+{
+  "_schema_version": 1,
+  "_notes": [
+    "《龙之家族》S03E01 独立台词卡数据，共 16 张。",
+    "所有 anchor 时间均依据本地英文 SRT；subtitle_zh 为忠实、适合展示的中文译文。",
+    "keyframe 指向 client/public/kb/frames/house_of_dragon_s03e01。"
+  ],
+  "show": "house-of-the-dragon",
+  "season_canon": "S03",
+  "riffs": [
+    {
+      "riff_id": "king_of_nothing_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 313.446,
+        "end_time": 320.453,
+        "subtitle_en": "I'm the king of nothing. With raven shit for a throne and a cripple for a protector.",
+        "subtitle_zh": "我是一无所有之王，以渡鸦粪便为王座，瘸子为守护者。",
+        "highlight": "king of nothing",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-00513-king-of-nothing.jpg"
+      },
+      "tags": [
+        "反王权自嘲",
+        "失势君主",
+        "伊耿二世"
+      ],
+      "tier2_punch": "“一无所有之王”把王号、王座和护卫全部翻成了羞辱：伊耿仍有国王称谓，却已失去宫殿、军队和支配现实的能力。",
+      "tier3": {
+        "why_meme": "这句台词故意套用庄严的君主句式，再逐层拆毁它。先说“我是国王”，紧接着用“什么都没有”取消王权内容；渡鸦粪变成临时王座，唯一的保护者也被他拿来发泄绝望。笑点和痛感来自称号与处境的巨大落差。",
+        "background": [
+          "伊耿已经逃离君临，王冠虽然仍被承认，实际统治工具却留在城内。",
+          "“王座”在这里既指坐具，也代指统治权；把它说成沾满渡鸦粪的落脚处，是对自己政治处境的极端降格。",
+          "拉里斯仍称他为国王，说明合法称号和现实控制力在内战中已经分离。"
+        ],
+        "why_it_matters_now": "这不是伊耿突然谦逊，而是他第一次准确说出自己只剩名号。后续任何复位计划，都必须先回答一个问题：没有军队、领地与公开支持，王冠还能换来什么？"
+      },
+      "social": {
+        "reactions": {
+          "til": 2481,
+          "knew": 903
+        },
+        "notes": [
+          {
+            "note_id": "king_of_nothing_s03e01_n1",
+            "author": "渡鸦车书记官",
+            "time": "18h",
+            "upvotes": 164,
+            "text": "最狠的是拉里斯还在叫他“陛下”，礼仪没少一项，权力却已经空了。"
+          },
+          {
+            "note_id": "king_of_nothing_s03e01_n2",
+            "author": "王冠资产评估师",
+            "time": "7h",
+            "upvotes": 91,
+            "text": "这句不是放弃王位，而是承认现在的王位只剩一个品牌名。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "伊耿二世·坦格利安",
+        "speaker_en": "Aegon II Targaryen",
+        "collects": 13700
+      }
+    },
+    {
+      "riff_id": "more_lions_to_hunt_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1018.025,
+        "end_time": 1021.362,
+        "subtitle_en": "Very good. We've got more lions to hunt.",
+        "subtitle_zh": "很好。我们还有很多狮子要猎。",
+        "highlight": "lions",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-01658-more-lions.jpg"
+      },
+      "tags": [
+        "家徽隐喻",
+        "战场黑话",
+        "戴蒙"
+      ],
+      "tier2_punch": "这里的“狮子”不是野兽，而是把兰尼斯特家族直接叫成了他们的金狮家徽。戴蒙把敌军说成猎物，一句话同时完成阵营识别和战场去人化。",
+      "tier3": {
+        "why_meme": "《权游》宇宙经常让人物用家徽替代家名：狼指史塔克、鹿指拜拉席恩、狮子指兰尼斯特。这样的说法比直接报姓氏更像士兵口中的战场速记，也带着挑衅——敌人不再是拥有姓名和封号的贵族，而是等待围猎的兽群。戴蒙先说“Very good”，再平静地补上“还有很多狮子要猎”，把刚结束的杀戮压成一项尚未完成的清单，因此格外冷。",
+        "background": [
+          "兰尼斯特家徽是红底金狮；在维斯特洛的军旗、盾牌和披风上，家徽往往比姓名更快暴露一支军队的归属。",
+          "中世纪纹章本来就承担战场识别功能：全身甲会遮住面孔，旗帜、盾徽和罩袍上的图案才是远距离辨认敌我的语言。",
+          "“hunt”把会反击的敌军降格成猎物，符合戴蒙此刻以进攻和威慑推进河间地战事的姿态。"
+        ],
+        "why_it_matters_now": "这句把黑党在陆地战线上的目标说得极清楚：一次胜利并没有结束战争，兰尼斯特兵力仍是必须继续清除的威胁。戴蒙把政治战争处理成连续狩猎，也预告了他会越来越依赖恐惧来维持军队和盟友的服从。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1286,
+          "knew": 744
+        },
+        "notes": [
+          {
+            "note_id": "more_lions_to_hunt_s03e01_n1",
+            "author": "纹章速查员",
+            "time": "9h",
+            "upvotes": 83,
+            "text": "维斯特洛人真的很爱用家徽代称：看到“狮子”就该自动翻译成兰尼斯特。"
+          },
+          {
+            "note_id": "more_lions_to_hunt_s03e01_n2",
+            "author": "河间地战报",
+            "time": "4h",
+            "upvotes": 46,
+            "text": "最狠的是 Daemon 的语气，像在说今天还有几件差事没做完。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "戴蒙·坦格利安",
+        "speaker_en": "Daemon Targaryen",
+        "collects": 7200
+      }
+    },
+    {
+      "riff_id": "ulf_titles_cannot_feed_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1290.13,
+        "end_time": 1306.105,
+        "subtitle_en": "What do I need with a fucking horse? I've got a dragon. I can't live in a title. Or drink it.",
+        "subtitle_zh": "我要一匹该死的马做什么？我已经有一条龙了。头衔又不能当饭吃，也不能当酒喝。",
+        "highlight": "I've got a dragon",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-02130-ulf-titles.jpg"
+      },
+      "tags": [
+        "阶级笑话",
+        "龙种",
+        "乌尔夫"
+      ],
+      "tier2_punch": "别人还在给乌尔夫补“骑士—领主—城堡”这套封建晋升课，他一句“我已经有龙了”直接掀桌：马匹、爵位和礼仪都只是权力包装，真正让人低头的是巨龙。",
+      "tier3": {
+        "why_meme": "这段笑点靠连续错位成立。骑士通常得到的是身份、军役位置和一匹像样的战马，不会自动获封城堡；只有得到土地与领主头衔，才可能拥有可继承的封地。乌尔夫完全不在乎这套精细等级——他先用龙碾压马，再用吃饭和喝酒衡量头衔，最后把贵族秩序还原成最粗暴的事实：谁掌握毁灭性力量，谁就能逼别人表示敬意。",
+        "background": [
+          "“Ser”是骑士称号，并不等于“Lord”。维斯特洛有大量没有土地的雇佣骑士、家族骑士和游侠骑士。",
+          "城堡通常附着于封地与领主权，不是受封骑士的标准奖品；乌尔夫把骑士和领主混为一谈，暴露了他的平民出身。",
+          "龙种原本处在社会边缘，驯龙后却突然拥有超过多数贵族军队的力量。这种力量与身份的不匹配，是黑党后续必须处理的政治风险。"
+        ],
+        "why_it_matters_now": "乌尔夫把“王室赐予的合法身份”看得远不如“自己已经掌握的龙”重要。黑党需要龙种作战，却未必能只靠爵位让他们服从；这句玩笑提前暴露了奖励体系与真实力量之间的断裂。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1638,
+          "knew": 519
+        },
+        "notes": [
+          {
+            "note_id": "ulf_titles_cannot_feed_s03e01_n1",
+            "author": "封建制度补习班",
+            "time": "1d",
+            "upvotes": 112,
+            "text": "骑士不自动送城堡，Lord 才对应封地。Ulf 的错误反而把他的出身写得特别真。"
+          },
+          {
+            "note_id": "ulf_titles_cannot_feed_s03e01_n2",
+            "author": "龙比马快",
+            "time": "7h",
+            "upvotes": 77,
+            "text": "“我要马干什么，我有龙”大概是本集最无法反驳的一句话。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "贵族给他画了一座城堡，乌尔夫只问：头衔能吃，还是能喝？",
+        "emotions": [
+          {
+            "label": "笑出声",
+            "count": 6800
+          },
+          {
+            "label": "无法反驳",
+            "count": 4900
+          },
+          {
+            "label": "阶级暴击",
+            "count": 3100
+          }
+        ],
+        "paused": "2.8万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "vhagar_forgot_fear_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1412.544,
+        "end_time": 1423.055,
+        "subtitle_en": "After he claimed Vhagar, he forgot what fear was. But he remembers now. He knows that if he has to face Rhaenyra's dragons, he'll die.",
+        "subtitle_zh": "他驯服瓦格哈尔之后，便忘了恐惧为何物。但他现在想起来了：面对雷妮拉的龙群，他必死无疑。",
+        "highlight": "forgot what fear was",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-02332-vhagar-fear.jpg"
+      },
+      "tags": [
+        "权力心理",
+        "瓦格哈尔",
+        "海伦娜"
+      ],
+      "tier2_punch": "瓦格哈尔没有消灭伊蒙德的恐惧，只是让他长期不用面对恐惧；当对手也拥有龙群，借来的无畏就开始失效。",
+      "tier3": {
+        "why_meme": "台词把“得到最强巨龙”写成一次心理改造：伊蒙德并非天生无畏，而是在压倒性优势中忘记了害怕。海伦娜随后用“他现在想起来了”轻轻翻转整句，让恐惧从软弱变成重新认识现实的能力。",
+        "background": [
+          "瓦格哈尔的体量和战绩长期给伊蒙德提供压倒性威慑，使多数对手在正面交战前就已退让。",
+          "黑党获得更多龙骑后，单条巨龙的优势不再等同于绝对安全。",
+          "海伦娜不参与军事指挥，却能从伊蒙德的回避中看见他不肯承认的心理变化。"
+        ],
+        "why_it_matters_now": "伊蒙德接下来的每个战略选择都会夹在自我形象与真实风险之间。他必须继续扮演无所畏惧的统治者，却已经知道瓦格哈尔并不能保证他活着回来。"
+      },
+      "social": {
+        "reactions": {
+          "til": 2864,
+          "knew": 1142
+        },
+        "notes": [
+          {
+            "note_id": "vhagar_forgot_fear_s03e01_n1",
+            "author": "红堡心理观察室",
+            "time": "1d",
+            "upvotes": 206,
+            "text": "“忘了恐惧”不等于勇敢，更像是长期拥有碾压优势后失去风险感。"
+          },
+          {
+            "note_id": "vhagar_forgot_fear_s03e01_n2",
+            "author": "梦火旁听生",
+            "time": "9h",
+            "upvotes": 118,
+            "text": "海伦娜没有说他胆小，她只是说现实终于追上了他。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "海伦娜·坦格利安",
+        "speaker_en": "Helaena Targaryen",
+        "collects": 14900
+      }
+    },
+    {
+      "riff_id": "dragon_water_translation_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1515.814,
+        "end_time": 1527.701,
+        "subtitle_en": "I forget the guttural name they have for it. But I believe a rough interpretation is \"dragon water.\" An acquired taste, perhaps.",
+        "subtitle_zh": "我忘了他们给它取了什么古怪难读的名字，但粗略翻译过来，意思就是“龙之水”。也许多喝几次就习惯了。",
+        "highlight": "dragon water",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-02515-dragon-water.jpg"
+      },
+      "tags": [
+        "翻译笑点",
+        "异文化命名",
+        "狭海饮酒"
+      ],
+      "tier2_punch": "“龙之水”不是百科给出的正式酒名，而是角色承认自己记不住原词后做的粗略翻译；笑点在于他一边嫌名字难念，一边已经准备继续喝。",
+      "tier3": {
+        "why_meme": "台词先用“guttural”把陌生语言描述成喉音，再给出一个过于直白的意译“dragon water”。最后的“需要培养口味”又把外交场合的客气话变成酒桌自救：不好喝，但还不能扫兴。",
+        "background": [
+          "本集没有交代这种饮品的标准配方，因此“dragon water”应理解为角色的临时意译，而不是确定的维斯特洛酒类分类。",
+          "跨越狭海的联盟不仅带来舰队，也带来口音、饮食和礼仪上的错位。",
+          "“an acquired taste”常用于礼貌表达第一次并不喜欢、但可能逐渐习惯的食物或饮品。"
+        ],
+        "why_it_matters_now": "这场酒桌交流把三女儿王国与维斯特洛之间的距离压进一个酒名里：双方可以签订军事合同，却仍在语言和文化上彼此陌生。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1732,
+          "knew": 488
+        },
+        "notes": [
+          {
+            "note_id": "dragon_water_translation_s03e01_n1",
+            "author": "狭海酒单翻译组",
+            "time": "14h",
+            "upvotes": 93,
+            "text": "重点是 rough interpretation：这不是官方译名，是他实在记不住之后现场瞎概括。"
+          },
+          {
+            "note_id": "dragon_water_translation_s03e01_n2",
+            "author": "龙石岛品酒会",
+            "time": "5h",
+            "upvotes": 52,
+            "text": "“需要培养口味”就是贵族版的“第一口确实不好喝”。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "记不住名字，就把异国烈酒统称为“龙之水”。",
+        "emotions": [
+          {
+            "label": "翻译事故",
+            "count": 4200
+          },
+          {
+            "label": "酒桌外交",
+            "count": 3300
+          },
+          {
+            "label": "文化差异",
+            "count": 2700
+          }
+        ],
+        "paused": "1.8万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "death_on_deck_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1740.789,
+        "end_time": 1743.75,
+        "subtitle_en": "We will face death on this deck before we face it in the sea.",
+        "subtitle_zh": "在我们落海前，会先在甲板上分出胜负。",
+        "highlight": "on this deck",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-02900-death-on-deck.jpg"
+      },
+      "tags": [
+        "海战悖论",
+        "盔甲与溺水",
+        "战前豪言"
+      ],
+      "tier2_punch": "重甲能让人活过接舷战，却可能让落水变成死刑。这句豪言不是否认风险，而是选择先把生死押在甲板上。",
+      "tier3": {
+        "why_meme": "前一句还在争论盔甲会不会把人拖进海里，这句立刻把争论改写成态度宣言：既然落海几乎必死，那就让战斗在落海之前结束。它同时回答了装备问题和士气问题。",
+        "background": [
+          "接舷战需要抵挡刀剑、弩箭与碎木，盔甲能显著提高甲板上的生存机会。",
+          "海水会限制动作，重甲、靴子和武器也会增加自救难度，因此水手与重装战士对装备的风险判断不同。",
+          "喉道战场兼有近距离登船和复杂水流，使两种风险同时存在。"
+        ],
+        "why_it_matters_now": "三女儿舰队选择主动逼近，意味着他们宁愿把海战变成甲板上的近战。这个决定也解释了后续为什么一旦航线或阵形出错，撤退空间会迅速消失。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1519,
+          "knew": 431
+        },
+        "notes": [
+          {
+            "note_id": "death_on_deck_s03e01_n1",
+            "author": "甲板生存指南",
+            "time": "17h",
+            "upvotes": 87,
+            "text": "这不是说盔甲不危险，而是说他们已经决定不把“落水后怎么办”当作计划的一部分。"
+          },
+          {
+            "note_id": "death_on_deck_s03e01_n2",
+            "author": "喉道水手乙",
+            "time": "8h",
+            "upvotes": 49,
+            "text": "海军和骑士看同一套盔甲，想到的是两种完全相反的安全感。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "甲板上，盔甲是命；掉进海里，它可能就是锚。",
+        "emotions": [
+          {
+            "label": "硬核海战",
+            "count": 4900
+          },
+          {
+            "label": "战前豪言",
+            "count": 4100
+          },
+          {
+            "label": "细思极险",
+            "count": 3500
+          }
+        ],
+        "paused": "2.1万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "one_king_as_good_as_another_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1933.94,
+        "end_time": 1935.859,
+        "subtitle_en": "One king is as good as another.",
+        "subtitle_zh": "哪个国王当政都一样。",
+        "highlight": "One king",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-03213-one-king.jpg"
+      },
+      "tags": [
+        "政治犬儒",
+        "军队视角",
+        "王位更替"
+      ],
+      "tier2_punch": "宫廷为谁才是合法国王争得你死我活，行军中的人只问下一道命令从谁那里来。“哪个都一样”把神圣王权压回了后勤现实。",
+      "tier3": {
+        "why_meme": "这句短到近乎敷衍，却把内战的价值体系切成两半。对王族而言，名字决定继承与合法性；对疲惫的军队而言，只要口粮、营地和命令继续运转，王号更换可能只是公文抬头变化。",
+        "background": [
+          "消息先把伊蒙德称为国王，立即引出对伊耿是否已死的猜测。",
+          "说话者没有追问继承程序，而是直接安排信使吃饭休息，表现军队更关心可执行的命令。",
+          "这种态度不代表真正中立，而是长期战争下对王权叙事的麻木。"
+        ],
+        "why_it_matters_now": "绿党若不能证明权力交接稳定，军队的服从就会从忠诚滑向便利。今天“哪个都一样”，明天也可能变成“谁能让我们活下去就听谁的”。"
+      },
+      "social": {
+        "reactions": {
+          "til": 2196,
+          "knew": 782
+        },
+        "notes": [
+          {
+            "note_id": "one_king_as_good_as_another_s03e01_n1",
+            "author": "军营现实主义者",
+            "time": "20h",
+            "upvotes": 152,
+            "text": "王都在争合法性，前线只想知道今晚谁发粮。"
+          },
+          {
+            "note_id": "one_king_as_good_as_another_s03e01_n2",
+            "author": "继承法补习班",
+            "time": "6h",
+            "upvotes": 66,
+            "text": "越是随口说“都一样”，越说明王权在士兵眼里已经失去神圣感。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "克里斯顿·科尔",
+        "speaker_en": "Criston Cole",
+        "collects": 11200
+      }
+    },
+    {
+      "riff_id": "you_are_the_crown_now_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2057.146,
+        "end_time": 2065.321,
+        "subtitle_en": "But you are the crown now. And Rhaenyra will send her new dragons here for you. Soon or late.",
+        "subtitle_zh": "但你现在就是王冠了。雷妮拉迟早会派她的新龙来杀你。",
+        "highlight": "you are the crown",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-03417-crown-now.jpg"
+      },
+      "tags": [
+        "跨季回声",
+        "王冠转喻",
+        "阿莉森与伊蒙德"
+      ],
+      "tier2_punch": "第一季雷妮拉说“我就是王冠”；如今阿莉森对伊蒙德说“你现在就是王冠”。同一句转喻从主动宣言变成了死亡警告。",
+      "tier3": {
+        "why_meme": "英文没有说“你现在是国王”，而是“you are the crown”——用王冠代指君主本人。这个句式直接回响第一季雷妮拉对克里斯顿的“I am the crown”，但语境完全反转：当年的王冠代表不可放弃的身份，这里的王冠代表敌方一定会追杀的目标。",
+        "background": [
+          "转喻是用紧密相关的事物代替对象；“the crown”可以同时指王冠、君主本人和王权机构。",
+          "伊蒙德反复说自己不害怕，阿莉森却用“你就是王冠”迫使他承认个人安全已与政权存亡绑定。",
+          "中文若只译为“你现在是国王”，信息正确，却会弱化与第一季台词的词面呼应。"
+        ],
+        "why_it_matters_now": "伊蒙德不能再只把自己当作骑着瓦格哈尔的战士。他成为王冠后，每一次冒险都可能让整个绿党失去新的权力中心。"
+      },
+      "social": {
+        "reactions": {
+          "til": 3372,
+          "knew": 1286
+        },
+        "notes": [
+          {
+            "note_id": "you_are_the_crown_now_s03e01_n1",
+            "author": "跨季台词对照组",
+            "time": "1d",
+            "upvotes": 241,
+            "text": "S1 是 Rhaenyra 主动说 I am the crown，S3 变成 Alicent 对 Aemond 的警告，原词真的一模一样。"
+          },
+          {
+            "note_id": "you_are_the_crown_now_s03e01_n2",
+            "author": "字幕转喻观察员",
+            "time": "10h",
+            "upvotes": 109,
+            "text": "翻成“你现在是国王”更自然，但会丢掉 crown 这条跨季暗线。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "阿莉森·海塔尔",
+        "speaker_en": "Alicent Hightower",
+        "collects": 16100
+      }
+    },
+    {
+      "riff_id": "who_made_you_king_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2248.379,
+        "end_time": 2251.507,
+        "subtitle_en": "I say we remain. Who made you fucking king?",
+        "subtitle_zh": "我说我们该留下。——谁他妈让你当国王了？",
+        "highlight": "Who made you",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-03729-who-made-king.jpg"
+      },
+      "tags": [
+        "龙种失控",
+        "临时指挥权",
+        "阶级反弹"
+      ],
+      "tier2_punch": "他们都得到了龙，却没人得到指挥其他龙骑的正式权力。一次普通的“留下还是撤退”，立刻升级成“你凭什么命令我”。",
+      "tier3": {
+        "why_meme": "这句粗口不是单纯抬杠，而是在追问新龙骑之间的权力来源。血统、贵族头衔、年龄和骑龙实力都可能被拿来争领导权，但女王只交代了任务，没有建立现场指挥链。",
+        "background": [
+          "任务要求伏击瓦格哈尔，却没有规定目标迟迟不出现时由谁决定撤退。",
+          "龙种从边缘人物突然获得战略级武力，旧有社会等级无法自动转化为他们之间的服从关系。",
+          "“king”在这里不是正式争夺王位，而是讽刺对方擅自发号施令。"
+        ],
+        "why_it_matters_now": "黑党增加了龙的数量，却也新增了一组难以控制的武装个体。没有清晰指挥体系，更多巨龙未必等于更稳定的战力。"
+      },
+      "social": {
+        "reactions": {
+          "til": 3049,
+          "knew": 971
+        },
+        "notes": [
+          {
+            "note_id": "who_made_you_king_s03e01_n1",
+            "author": "龙种项目管理办",
+            "time": "12h",
+            "upvotes": 198,
+            "text": "给了四个人战略武器，却没指定现场负责人，会议变成这样一点也不意外。"
+          },
+          {
+            "note_id": "who_made_you_king_s03e01_n2",
+            "author": "谁让你当国王",
+            "time": "4h",
+            "upvotes": 127,
+            "text": "本集最适合做群聊表情包的一句。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "人人都有龙，没人愿意承认别人是队长。",
+        "emotions": [
+          {
+            "label": "笑出声",
+            "count": 7300
+          },
+          {
+            "label": "团队崩坏",
+            "count": 5200
+          },
+          {
+            "label": "权力真空",
+            "count": 4100
+          }
+        ],
+        "paused": "3.2万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "at_last_be_king_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2330.711,
+        "end_time": 2334.215,
+        "subtitle_en": "If you die... Then you will at last be king.",
+        "subtitle_zh": "如果你死了……——那你终于可以当国王了。",
+        "highlight": "at last be king",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-03850-at-last-king.jpg"
+      },
+      "tags": [
+        "继承悖论",
+        "母子冲突",
+        "雷妮拉"
+      ],
+      "tier2_punch": "杰卡里斯说的是“我怕失去母亲”，雷妮拉却把它翻译成继承顺位：她若死，阻止她出战的儿子就会得到他正在保护的王位。",
+      "tier3": {
+        "why_meme": "两句对白对同一个“死”使用不同语言。杰卡里斯停在亲情和恐惧上，雷妮拉则用冷酷的制度答案反击：君主死亡会立刻制造下一位君主。她不是祝愿儿子继位，而是在指控他的保护行为也包含潜在受益。",
+        "background": [
+          "杰卡里斯既是儿子，也是黑党的王储；母亲的生命与他的继承位置无法被完全分开。",
+          "战时保护君主具有政治合理性，但被保护者也可能把它体验为剥夺行动权。",
+          "“at last”带有尖锐讽刺，暗示继承不是奖赏，而是必须等上一代死亡才会发生的制度。"
+        ],
+        "why_it_matters_now": "这句把母子争执推进到无法只靠亲情解决的层面。杰卡里斯越努力保护女王，就越容易被怀疑在替未来的自己保存王位。"
+      },
+      "social": {
+        "reactions": {
+          "til": 4218,
+          "knew": 1537
+        },
+        "notes": [
+          {
+            "note_id": "at_last_be_king_s03e01_n1",
+            "author": "龙石岛家庭调解员",
+            "time": "22h",
+            "upvotes": 284,
+            "text": "Jace 说的是“别死”，Rhaenyra 听成了“别让我失去继承”，两个人根本不在同一层说话。"
+          },
+          {
+            "note_id": "at_last_be_king_s03e01_n2",
+            "author": "王储悖论研究会",
+            "time": "8h",
+            "upvotes": 143,
+            "text": "继承人保护君主越用力，越容易被怀疑是在保护自己的未来。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "雷妮拉·坦格利安",
+        "speaker_en": "Rhaenyra Targaryen",
+        "collects": 18800
+      }
+    },
+    {
+      "riff_id": "queensguard_including_herself_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2354.944,
+        "end_time": 2374.63,
+        "subtitle_en": "You are a knight of the Queensguard, Ser Lorent. You swore to protect Her Grace from all threats. Including herself. Your life... for hers.",
+        "subtitle_zh": "你是女王铁卫的骑士，洛伦特爵士。你发誓保护女王陛下不受任何威胁——包括她自己。用你的命，换她的命。",
+        "highlight": "Including herself",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-03914-queensguard.jpg"
+      },
+      "tags": [
+        "誓言悖论",
+        "女王铁卫",
+        "母子冲突"
+      ],
+      "tier2_punch": "杰卡里斯把护卫誓言拧成了一个政治悖论：若女王本人正在把王权置于危险中，“保护她”是否可以包括违抗她、甚至把她锁起来？",
+      "tier3": {
+        "why_meme": "“Including herself”只有两个词，却把忠诚的方向彻底翻转。洛伦特的职责本来是服从女王，杰卡里斯却要求他用更高一层的“保护”否定女王的即时命令。护卫因此被迫在君主本人、王储和王权延续之间选择。台词把一场家庭争执升级成宪制问题：当君主的身体同时属于她自己和整个政权，究竟谁有权决定她可以冒多大风险？",
+        "background": [
+          "女王铁卫沿用御林铁卫的终身誓言传统：舍弃土地、婚姻和个人继承，以生命保护君主。",
+          "誓言强调保护，却没有给骑士独立裁定君主是否“失去理智”的明确权力；杰卡里斯是在危机中主动扩张这层解释。",
+          "王储保护母亲也保护自己的继承链。雷妮拉若战死，杰卡里斯会成为国王，因此他的命令同时带有亲情与利益冲突。"
+        ],
+        "why_it_matters_now": "黑党最核心的资产不是某条龙，而是雷妮拉作为合法女王仍然活着。杰卡里斯第一次用命令限制她的行动，说明战争压力已经让母子对“女王应当亲征还是应当被保存”产生公开分歧。"
+      },
+      "social": {
+        "reactions": {
+          "til": 2034,
+          "knew": 681
+        },
+        "notes": [
+          {
+            "note_id": "queensguard_including_herself_s03e01_n1",
+            "author": "誓言漏洞研究会",
+            "time": "16h",
+            "upvotes": 139,
+            "text": "这句最可怕的地方是 Lorent 无论开不开门都可能被说成违誓。"
+          },
+          {
+            "note_id": "queensguard_including_herself_s03e01_n2",
+            "author": "龙石岛法务",
+            "time": "6h",
+            "upvotes": 58,
+            "text": "Jace 不是单纯顶撞母亲，他是在主张“王权的安全高于女王个人命令”。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "杰卡里斯·瓦列利安",
+        "speaker_en": "Jacaerys Velaryon",
+        "collects": 10400
+      }
+    },
+    {
+      "riff_id": "win_your_kings_war_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2594.809,
+        "end_time": 2602.483,
+        "subtitle_en": "Do you think I sailed across the Narrow Sea to win your king's war for him? Those were the terms of the contract.",
+        "subtitle_zh": "你以为我航行过狭海，是为了替你的国王赢得战争吗？——合约上就是这么写的。",
+        "highlight": "your king's war",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-04314-kings-war.jpg"
+      },
+      "tags": [
+        "契约同盟",
+        "私人复仇",
+        "三女儿王国"
+      ],
+      "tier2_punch": "一边谈合约，一边谈二十年的私仇：这支舰队受雇参加国王的战争，洛哈却把整场行动当成追杀海蛇的机会。",
+      "tier3": {
+        "why_meme": "对白把联盟的两套逻辑正面撞在一起。泰兰坚持合同目标与舰队秩序，洛哈则直说自己不是来替陌生国王完成事业。正式条款能把双方带到同一片海，却不能保证他们优先追逐同一个目标。",
+        "background": [
+          "三女儿王国舰队与绿党的合作建立在交换条件上，而不是封臣式忠诚。",
+          "洛哈随后提到海蛇长期迫害自己的同伴，说明个人与群体仇恨正在压过合同中的战略任务。",
+          "雇佣或契约联盟的风险在于：参战动机可以一致，胜利定义却可能不同。"
+        ],
+        "why_it_matters_now": "当指挥官把复仇置于舰队整体目标之上，原本用于打破封锁的力量就可能被一次追击拖进科利斯熟悉的地形。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1985,
+          "knew": 674
+        },
+        "notes": [
+          {
+            "note_id": "win_your_kings_war_s03e01_n1",
+            "author": "三女儿合同审查组",
+            "time": "15h",
+            "upvotes": 121,
+            "text": "合同写的是打仗，Lohar 理解的是终于能追杀二十年的仇人。"
+          },
+          {
+            "note_id": "win_your_kings_war_s03e01_n2",
+            "author": "泰兰法务代表",
+            "time": "6h",
+            "upvotes": 72,
+            "text": "“合约上就是这么写的”是本集最无力但最职业的一句反驳。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "合同让他们成为盟友，复仇决定他们把船开向哪里。",
+        "emotions": [
+          {
+            "label": "职场既视感",
+            "count": 4700
+          },
+          {
+            "label": "同盟裂缝",
+            "count": 3900
+          },
+          {
+            "label": "复仇上头",
+            "count": 3600
+          }
+        ],
+        "paused": "2.0万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "heart_and_spirit_of_a_king_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2720.142,
+        "end_time": 2724.772,
+        "subtitle_en": "I may appear to have the weak and feeble body of a woman, but I possess the heart and spirit of a king.",
+        "subtitle_zh": "或许我有着女人的娇弱身躯，但我拥有国王的意志和精神。",
+        "highlight": "heart and spirit of a king",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-04520-heart-of-king.jpg"
+      },
+      "tags": [
+        "历史引用",
+        "伊丽莎白一世",
+        "女王宣言"
+      ],
+      "tier2_punch": "这不是普通的战前金句，而是明显改写了伊丽莎白一世 1588 年蒂尔伯里演说中“虽有柔弱女子之躯，却有国王之心”的名句，把现实历史中的女王宣言移植给了雷妮拉。",
+      "tier3": {
+        "why_meme": "原典是英格兰面临西班牙无敌舰队威胁时，伊丽莎白一世向蒂尔伯里驻军发表的演说。最著名的句式把社会强加给女性身体的“柔弱”，与君主应有的勇气和意志对置。本集将原句的“heart and stomach of a king”改成“heart and spirit of a king”，既保留听觉上的历史辨识度，也让台词更贴合雷妮拉要突破保护、亲自骑龙参战的行动。",
+        "background": [
+          "蒂尔伯里演说发生在 1588 年西班牙无敌舰队危机期间，后来成为英语文化中最著名的女性统治者战时演说之一。",
+          "原句先承认“弱而柔的女人身体”，再宣告拥有“国王的心与胆魄”；本集把后半改为“国王的心与精神”。",
+          "剪辑紧接着切入喉道海战，让这段历史引用不只评价性别与王权，也直接进入一场舰队危机。"
+        ],
+        "why_it_matters_now": "雷妮拉拒绝只做被保存的王权象征。她用这句宣言夺回对自己身体和军事角色的决定权，随后亲自加入战场；但女王参战也把黑党的合法性核心暴露在弩炮、龙焰和海战混乱之中。"
+      },
+      "social": {
+        "reactions": {
+          "til": 3127,
+          "knew": 947
+        },
+        "notes": [
+          {
+            "note_id": "heart_and_spirit_of_a_king_s03e01_n1",
+            "author": "蒂尔伯里旁听生",
+            "time": "2d",
+            "upvotes": 218,
+            "text": "听到 weak and feeble body of a woman 就确定了，后半只是把 stomach 改成了 spirit。"
+          },
+          {
+            "note_id": "heart_and_spirit_of_a_king_s03e01_n2",
+            "author": "海战剪辑课代表",
+            "time": "11h",
+            "upvotes": 121,
+            "text": "历史原句也来自舰队危机，台词落下立刻切喉道海战，这个转场很故意。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "雷妮拉·坦格利安",
+        "speaker_en": "Rhaenyra Targaryen",
+        "collects": 15600
+      }
+    },
+    {
+      "riff_id": "lohar_dragon_slayer_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2845.643,
+        "end_time": 2850.648,
+        "subtitle_en": "Call me Lohar, Dragon-Slayer! Press the pursuit!",
+        "subtitle_zh": "叫我“屠龙者洛哈”！继续追击！",
+        "highlight": "Dragon-Slayer",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-04725-dragon-slayer.jpg"
+      },
+      "tags": [
+        "自封称号",
+        "战场宣传",
+        "洛哈"
+      ],
+      "tier2_punch": "龙还没有被确认击杀，称号已经先起好了。“屠龙者”既是战吼，也是洛哈为自己抢写的战报标题。",
+      "tier3": {
+        "why_meme": "传统战功称号通常在事迹被承认后由别人传播，洛哈却在追击途中主动要求所有人改口。夸张的自我命名把战场瞬间变成个人品牌发布会，也暴露她此刻更在意荣耀叙事而非谨慎确认战果。",
+        "background": [
+          "“Dragon-Slayer”是复合称号，直接把一次行动包装成足以定义人物身份的传奇。",
+          "台词紧接“继续追击”，说明这个称号同时承担鼓舞士气、推动舰队冒险的功能。",
+          "自封称号需要后续战果支撑；一旦目标逃脱，它也会迅速从威名变成讽刺。"
+        ],
+        "why_it_matters_now": "洛哈越相信自己已经成为屠龙者，就越可能把舰队继续压向危险航道。名声欲在这里不只是性格点缀，而是直接影响战术选择。"
+      },
+      "social": {
+        "reactions": {
+          "til": 3651,
+          "knew": 1028
+        },
+        "notes": [
+          {
+            "note_id": "lohar_dragon_slayer_s03e01_n1",
+            "author": "战报标题先写好",
+            "time": "1d",
+            "upvotes": 263,
+            "text": "龙还在飞，个人简介已经更新成 Dragon-Slayer 了。"
+          },
+          {
+            "note_id": "lohar_dragon_slayer_s03e01_n2",
+            "author": "三女儿公关部",
+            "time": "9h",
+            "upvotes": 147,
+            "text": "先抢称号再补战果，古代版个人品牌运营。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "沙拉科·洛哈",
+        "speaker_en": "Sharako Lohar",
+        "collects": 17400
+      }
+    },
+    {
+      "riff_id": "six_fathoms_leadline_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2920.426,
+        "end_time": 2940.903,
+        "subtitle_en": "Leadsmen, to the channels. Cast the leadline! Depth, six fathoms!",
+        "subtitle_zh": "测深员，到舷侧测深台。抛出测深绳！水深六英寻！",
+        "highlight": "six fathoms",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-04840-six-fathoms.jpg"
+      },
+      "tags": [
+        "航海术语",
+        "测深绳",
+        "喉道海战"
+      ],
+      "tier2_punch": "没有声呐的年代，船员靠绑着铅锤的测深绳探水深。“六英寻”约等于十一米；在暗礁密布又快速退潮的隘口里，这声回报就是整条船的实时雷达。",
+      "tier3": {
+        "why_meme": "这段海战没有用一句泛泛的“前方危险”，而是完整还原帆船时代的测深流程：测深员到舷侧平台，把带铅锤且做过深度标记的绳索抛向前方，等铅锤触底后读取标记，再把结果高声传回指挥位置。紧接着水深从六英寻一路下降，观众能听见船在数字倒数中逼近搁浅线。专业术语因此不只是考据装饰，而是制造悬念的节拍器。",
+        "background": [
+          "一英寻（fathom）等于六英尺，约 1.8288 米；六英寻约为 10.97 米。",
+          "leadline 是末端系铅锤的测深绳，绳上用不同材料或结法标出固定深度，让水手能在低能见度下凭触感读数。",
+          "channels 在这里不是“航道”，而是帆船舷外供测深员站立作业的侧台区域。"
+        ],
+        "why_it_matters_now": "科利斯的优势不是单纯船多，而是他理解潮汐、暗流和船只吃水。伏击把战场选在喉道，迫使舰队把每一英寻水深都变成生死判断，也让“海蛇”的经验真正成为可见的战斗力。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1764,
+          "knew": 362
+        },
+        "notes": [
+          {
+            "note_id": "six_fathoms_leadline_s03e01_n1",
+            "author": "帆船术语翻译组",
+            "time": "19h",
+            "upvotes": 96,
+            "text": "这里的 fathom 是“英寻”，不是随口报数字；水深每降一次，搁浅风险都在上升。"
+          },
+          {
+            "note_id": "six_fathoms_leadline_s03e01_n2",
+            "author": "海蛇船员甲",
+            "time": "8h",
+            "upvotes": 55,
+            "text": "这场戏最爽的是命令都真的有用，听水深变化就能脑补船底离礁石多近。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "一根铅锤、一条刻度绳，就是帆船穿越暗礁时的声呐。",
+        "emotions": [
+          {
+            "label": "硬核考据",
+            "count": 5200
+          },
+          {
+            "label": "屏住呼吸",
+            "count": 4300
+          },
+          {
+            "label": "海战细节",
+            "count": 3900
+          }
+        ],
+        "paused": "2.2万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "cut_anchors_raise_draft_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 3142.23,
+        "end_time": 3149.863,
+        "subtitle_en": "Cut the anchors! Drop weight and raise our draft. Quickly! Aye, Commander! Cut the anchors!",
+        "subtitle_zh": "切断锚！减轻重量、降低吃水，快点！遵命，司令！切断锚！",
+        "highlight": "raise our draft",
+        "keyframe": "frames/house_of_dragon_s03e01/riff-05222-cut-anchors.jpg"
+      },
+      "tags": [
+        "航海术语",
+        "减载脱浅",
+        "临场指挥"
+      ],
+      "tier2_punch": "船一旦擦上浅滩，第一反应不是加速，而是让它“变轻”：砍掉锚具等重物，船体就会上浮、吃水变浅，才有机会从礁底挣脱。",
+      "tier3": {
+        "why_meme": "“draft”是船体从水线到龙骨最低点的垂直深度，也就是吃水。船越重，压进水里越深；抛弃重物后排水量下降，船体会上浮。英文命令用“raise our draft”表达把船体抬高，中文字幕把实际效果译成“减少吃水量”。在敌舰逼近、船体搁浅的几秒里，砍锚不是夸张动作，而是用昂贵装备换回机动性。",
+        "background": [
+          "锚、锚链和缆具是集中在船首或船侧的重物，危急时切弃可以迅速减载，但会让船失去之后稳泊的关键装备。",
+          "吃水决定船能否通过浅滩；同一艘船在载重、淡水、人员和武器变化后，安全水深也会变化。",
+          "海战里的脱浅必须与操舵、收桨和人员移位同时进行，只减重而不控制船身，仍可能被潮流重新推回礁石。"
+        ],
+        "why_it_matters_now": "伏击者把瓦列利安舰队逼进不能自由转向的浅水区，等于暂时废掉了海蛇最擅长的机动战。科利斯的部下只能牺牲装备、重新分配重量，在接舷战开始前抢回几尺水下空间。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1189,
+          "knew": 407
+        },
+        "notes": [
+          {
+            "note_id": "cut_anchors_raise_draft_s03e01_n1",
+            "author": "吃水线观察员",
+            "time": "13h",
+            "upvotes": 74,
+            "text": "不是把锚收起来，是直接切掉：他们在拿后续停泊能力换眼前不搁死。"
+          },
+          {
+            "note_id": "cut_anchors_raise_draft_s03e01_n2",
+            "author": "甲板减重办",
+            "time": "5h",
+            "upvotes": 39,
+            "text": "前面一直报水深，这里终于兑现——数字降到危险线后，所有命令都围绕减小吃水。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "搁浅时最贵的东西不是锚，是再也动不了的整条船。",
+        "emotions": [
+          {
+            "label": "紧急脱浅",
+            "count": 4700
+          },
+          {
+            "label": "临场教科书",
+            "count": 3600
+          },
+          {
+            "label": "海战压迫感",
+            "count": 3300
+          }
+        ],
+        "paused": "1.9万人在此暂停"
+      }
+    }
+  ]
+}

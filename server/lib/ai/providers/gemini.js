@@ -45,7 +45,13 @@ class GeminiProvider {
         if (!m) throw new Error('Gemini: image part must be a base64 data URL');
         return { inlineData: { mimeType: m[1], data: m[2] } };
       }
-      return { text: '' };
+      if (part.type === 'file') {
+        if (!part.uri || !part.mimeType) {
+          throw new Error('Gemini: file part requires uri and mimeType');
+        }
+        return { fileData: { fileUri: part.uri, mimeType: part.mimeType } };
+      }
+      throw new Error(`Gemini: unsupported content part type: ${part.type}`);
     });
   }
 
@@ -57,6 +63,12 @@ class GeminiProvider {
     for (const [k, v] of Object.entries(schema)) {
       if (k === 'additionalProperties' || k === '$schema') continue;
       if (k === 'strict') continue;
+      if (k === 'type' && Array.isArray(v)) {
+        const concreteTypes = v.filter(type => type !== 'null');
+        out.type = concreteTypes[0] || 'string';
+        if (v.includes('null')) out.nullable = true;
+        continue;
+      }
       out[k] = this._convertSchema(v);
     }
     return out;
@@ -129,14 +141,14 @@ class GeminiProvider {
     };
   }
 
-  async generateStructured({ system, messages, model, schema, temperature = 0.1 }) {
+  async generateStructured({ system, messages, model, schema, temperature = 0.1, maxTokens }) {
     const client = this._client();
     if (!client) throw new Error('Gemini provider not configured (GEMINI_API_KEY missing)');
 
     const resp = await client.models.generateContent({
       model,
       contents: this._convertContents(messages),
-      config: this._buildConfig({ system, temperature, schema }),
+      config: this._buildConfig({ system, temperature, schema, maxTokens }),
     });
     const text = resp.text || '';
     if (!text) return {};

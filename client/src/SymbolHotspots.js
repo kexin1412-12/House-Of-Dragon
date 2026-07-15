@@ -48,6 +48,12 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
       {sym.viewer_takeaway && (
         <p className="sh-tooltip-takeaway">「{sym.viewer_takeaway}」</p>
       )}
+      {sym.selection_basis && (
+        <p className="sh-tooltip-basis"><strong>成立依据：</strong>{sym.selection_basis}</p>
+      )}
+      {sym.expressive_function && (
+        <p className="sh-tooltip-function"><strong>表现作用：</strong>{sym.expressive_function}</p>
+      )}
       {/* 优先用单符号自带的 deep_reading（agent 写入），回落到 scene 全局 deep_reading */}
       {(sym.deep_reading || deepReading) && (
         <p className="sh-tooltip-deep">{sym.deep_reading || deepReading}</p>

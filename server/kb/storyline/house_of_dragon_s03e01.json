@@ -1,0 +1,194 @@
+{
+  "_schema_version": 1,
+  "show": "house-of-the-dragon",
+  "season_canon": "S03",
+  "video_id": "house_of_dragon_s03e01",
+  "main_track_node_ids": [
+    "n_rhaena_tames_sheepstealer",
+    "n_kings_landing_plan",
+    "n_sheepstealer_bonds",
+    "n_gullet_ambush",
+    "n_rhaenyra_joins_battle",
+    "n_corlys_boarding",
+    "n_baela_moondancer",
+    "n_jace_falls"
+  ],
+  "side_tracks": [
+    {
+      "side_track_id": "st_aegon_exposed",
+      "after_node_id": "n_rhaena_tames_sheepstealer",
+      "node_ids": [
+        "n_aegon_exposed"
+      ]
+    },
+    {
+      "side_track_id": "st_jace_protects_queen",
+      "after_node_id": "n_gullet_ambush",
+      "node_ids": [
+        "n_jace_locks_door"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "node_id": "n_rhaena_tames_sheepstealer",
+      "title": "雾谷驯龙",
+      "start_time": 154,
+      "end_time": 482,
+      "track": "main",
+      "narrative_function": "铺垫",
+      "summary": "雷妮亚终于把流亡与无龙的弱势，变成了新的力量入口。",
+      "impact": "雷妮亚在雾谷直面偷羊贼并建立最初的控制。黑党因此获得一名潜在龙骑，也为后续海战中的空中力量扩张埋下伏笔。",
+      "related_node_ids": [
+        null,
+        "n_kings_landing_plan"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-004.jpg"
+    },
+    {
+      "node_id": "n_aegon_exposed",
+      "title": "伊耿身份暴露",
+      "start_time": 397,
+      "end_time": 482,
+      "track": "side",
+      "narrative_function": "推进",
+      "summary": "失踪的国王从逃亡者变回了所有阵营争夺的政治筹码。",
+      "impact": "守卫识破伪装成信使的伊耿并决定押送他。伊耿的行踪不再只关乎个人生死，而会直接改变黑绿双方对君临与王位合法性的部署。",
+      "related_node_ids": [
+        "n_rhaena_tames_sheepstealer",
+        null
+      ],
+      "is_hidden": true,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-008.jpg"
+    },
+    {
+      "node_id": "n_kings_landing_plan",
+      "title": "君临夺城计划",
+      "start_time": 482,
+      "end_time": 1285,
+      "track": "main",
+      "narrative_function": "推进",
+      "summary": "雷妮拉拒绝把希望押在和平提议上，主动把目标指向君临。",
+      "impact": "龙石岛议事会上，雷妮拉重新评估阿莉森的和平提议并制定夺取君临的计划。黑党从被动守势转向主动争夺王都，整集的军事目标由此确立。",
+      "related_node_ids": [
+        "n_rhaena_tames_sheepstealer",
+        "n_sheepstealer_bonds"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-009.jpg"
+    },
+    {
+      "node_id": "n_gullet_ambush",
+      "title": "喉道伏击来报",
+      "start_time": 2296,
+      "end_time": 2720,
+      "track": "main",
+      "narrative_function": "关键转折",
+      "summary": "原本指向君临的计划，被一场突如其来的海上伏击强行改写。",
+      "impact": "喉道遭到伏击的消息传回龙石岛，舰队与继承人同时陷入危险。雷妮拉必须在王权安全与亲自救援之间做出选择，战争从谋划阶段转入即时危机。",
+      "related_node_ids": [
+        "n_sheepstealer_bonds",
+        "n_rhaenyra_joins_battle"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-042.jpg"
+    },
+    {
+      "node_id": "n_rhaenyra_joins_battle",
+      "title": "女王骑龙参战",
+      "start_time": 2720,
+      "end_time": 3137,
+      "track": "main",
+      "narrative_function": "关键转折",
+      "summary": "雷妮拉拒绝继续充当被保护的王权象征，亲自飞向战场。",
+      "impact": "雷妮拉突破阻拦，骑龙加入喉道海战。她以行动宣告自己既是统治者也是战士，但这也让黑党的核心王权直接暴露在战场风险中。",
+      "related_node_ids": [
+        "n_gullet_ambush",
+        "n_corlys_boarding"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-053.jpg"
+    },
+    {
+      "node_id": "n_corlys_boarding",
+      "title": "科利斯陷入接舷战",
+      "start_time": 3137,
+      "end_time": 3339,
+      "track": "main",
+      "narrative_function": "高潮",
+      "summary": "海蛇的舰队被逼进狭窄水道，海战从调度彻底变成贴身厮杀。",
+      "impact": "敌舰逼近搁浅船只，双方进入近距离接舷战。伏击者成功压缩了瓦列利安舰队的机动空间，空中的龙焰也无法消除甲板上的混乱。",
+      "related_node_ids": [
+        "n_rhaenyra_joins_battle",
+        "n_baela_moondancer"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-065.jpg"
+    },
+    {
+      "node_id": "n_jace_falls",
+      "title": "杰斯坠海中箭",
+      "start_time": 3738,
+      "end_time": 3936.672,
+      "track": "main",
+      "narrative_function": "收束",
+      "summary": "黑党的空中优势在海面上付出最惨烈的代价。",
+      "impact": "杰卡里斯与沃马克斯坠入海中并遭到箭雨攻击，王储也被射中。结尾把喉道之战从一次救援行动变成王位继承危机，为下一集留下直接后果。",
+      "related_node_ids": [
+        "n_baela_moondancer",
+        null
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-082.jpg"
+    },
+    {
+      "node_id": "n_sheepstealer_bonds",
+      "title": "偷羊贼认主",
+      "start_time": 1285,
+      "end_time": 2296,
+      "track": "main",
+      "narrative_function": "推进",
+      "summary": "雷妮亚与偷羊贼的关系，从冒险尝试进入真正的磨合。",
+      "impact": "雷妮亚继续安抚并命令偷羊贼，逐步把偶然接触变成稳定的骑手与巨龙关系。她获得力量的同时，也必须证明自己能驾驭这份力量。",
+      "related_node_ids": [
+        "n_kings_landing_plan",
+        "n_gullet_ambush"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-024.jpg"
+    },
+    {
+      "node_id": "n_jace_locks_door",
+      "title": "杰斯锁门护母",
+      "start_time": 2344,
+      "end_time": 2434,
+      "track": "side",
+      "narrative_function": "关键转折",
+      "summary": "王储第一次用强硬命令，把母亲当作必须被保护的王权。",
+      "impact": "杰卡里斯命令洛伦特爵士锁门阻止雷妮拉参战。这个保护动作既展现他的责任感，也暴露母子在谁有权决定女王行动上的冲突。",
+      "related_node_ids": [
+        "n_gullet_ambush",
+        null
+      ],
+      "is_hidden": true,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-044.jpg"
+    },
+    {
+      "node_id": "n_baela_moondancer",
+      "title": "月舞俯冲敌舰",
+      "start_time": 3339,
+      "end_time": 3738,
+      "track": "main",
+      "narrative_function": "高潮",
+      "summary": "龙焰扭转局部战局，却也让混战变得更加不可控。",
+      "impact": "贝妮拉骑月舞俯冲攻击敌舰，给瓦列利安舰队争取喘息空间，但误伤也揭示海空协同的混乱。龙骑不再只是优势，也成为新的风险来源。",
+      "related_node_ids": [
+        "n_corlys_boarding",
+        "n_jace_falls"
+      ],
+      "is_hidden": false,
+      "keyframe": "frames/house_of_dragon_s03e01/scene-071.jpg"
+    }
+  ]
+}

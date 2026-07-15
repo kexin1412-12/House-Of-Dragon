@@ -1,0 +1,70 @@
+{
+  "_schema_version": 1,
+  "show_id": "house-of-the-dragon",
+  "season": 3,
+  "season_label_zh": "第三季",
+  "arcs": [
+    {
+      "id": "gullet",
+      "label_zh": "喉道之战",
+      "ep_range": [1, 1],
+      "subtitle_zh": "舰队、龙骑与王权同时承压"
+    }
+  ],
+  "factions": [
+    { "id": "black", "label_zh": "雷妮拉派（黑党）", "color_hint": "#7f1d1d" },
+    { "id": "green", "label_zh": "伊蒙德派（绿党）", "color_hint": "#14532d" },
+    { "id": "neutral", "label_zh": "中立", "color_hint": "#475569" }
+  ],
+  "faction_membership": {
+    "rhaenyra_targaryen": "black",
+    "daemon_targaryen": "black",
+    "corlys_velaryon": "black",
+    "jacaerys_velaryon": "black",
+    "baela_targaryen": "black",
+    "rhaena_targaryen": "black",
+    "addam_of_hull": "black",
+    "alyn_of_hull": "black",
+    "mysaria": "black",
+    "ulf_white": "black",
+    "hugh_hammer": "black",
+    "oscar_tully": "black",
+    "roderick_dustin": "black",
+    "aegon_targaryen_ii": "green",
+    "aemond_targaryen": "green",
+    "alicent_hightower": "green",
+    "helaena_targaryen": "green",
+    "larys_strong": "green",
+    "criston_cole": "green",
+    "gwayne_hightower": "green",
+    "ormund_hightower": "green",
+    "tyland_lannister": "green",
+    "sharako_lohar": "green",
+    "alys_rivers": "neutral"
+  },
+  "episodes": [
+    {
+      "episode": "S03E01",
+      "ep_num": 1,
+      "title": "Salt and Sea, Fire and Blood",
+      "title_zh": "盐与海，火与血",
+      "tag": "喉道之战",
+      "synopsis": "伊耿失踪后，黑绿双方重新调动军队。喉道伏击将雷妮拉、杰卡里斯、科利斯和年轻龙骑一并拖入海空大战。",
+      "synopsis_long": "本集从失踪的伊耿、伊蒙德的追查与黑党的君临计划展开。雷妮亚驯服偷羊贼，戴蒙继续河间地战事。后半集聚焦喉道：杰卡里斯试图阻止雷妮拉亲征，科利斯在狭窄水道迎战舰队，多名龙骑加入战场并付出代价。",
+      "key_events": [
+        { "t": "02:34", "crit": true, "text": "雷妮亚在雾谷尝试驯服偷羊贼" },
+        { "t": "06:37", "crit": true, "text": "伊耿以信使身份被守卫识破" },
+        { "t": "08:02", "crit": true, "text": "雷妮拉在龙石岛制定夺取君临的计划" },
+        { "t": "21:25", "crit": true, "text": "雷妮亚成功驯服偷羊贼" },
+        { "t": "38:16", "crit": true, "text": "喉道伏击消息抵达龙石岛" },
+        { "t": "39:04", "crit": true, "text": "杰卡里斯命令铁卫锁门阻止雷妮拉参战" },
+        { "t": "45:20", "crit": true, "text": "雷妮拉突破阻拦并骑龙加入海战" },
+        { "t": "52:17", "crit": true, "text": "科利斯的舰船在隘口陷入接舷战" },
+        { "t": "55:39", "crit": true, "text": "贝妮拉骑月舞俯冲攻击敌舰" },
+        { "t": "62:18", "crit": true, "text": "杰斯与沃马克斯在海中遭到攻击" }
+      ],
+      "video_id": "house_of_dragon_s03e01"
+    }
+  ],
+  "causal_links": []
+}

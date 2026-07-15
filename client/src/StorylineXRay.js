@@ -319,7 +319,7 @@ export default function StorylineXRay({
           />
         )}
         {activeTab === 'stance' && (
-          <TrajectoryChart />
+          <TrajectoryChart videoId={videoId} />
         )}
       </div>
       )}

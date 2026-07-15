@@ -94,7 +94,7 @@ async function chat({ task, system, messages, maxTokens, temperature }) {
   return { ...result, provider: providerName, model };
 }
 
-async function generateStructured({ task, system, messages, schema, schemaName, temperature }) {
+async function generateStructured({ task, system, messages, schema, schemaName, temperature, maxTokens }) {
   const { provider, model, providerName } = _resolve(task);
   const data = await provider.generateStructured({
     system,
@@ -103,6 +103,7 @@ async function generateStructured({ task, system, messages, schema, schemaName, 
     schema,
     schemaName,
     temperature,
+    maxTokens,
   });
   return { data, provider: providerName, model };
 }

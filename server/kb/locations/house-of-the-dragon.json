@@ -1,0 +1,1360 @@
+{
+  "_schema_version": 1,
+  "show_id": "house-of-the-dragon",
+  "source": {
+    "publisher": "HBO",
+    "official_map_page": "https://www.hbo.com/house-of-the-dragon/map-of-westeros",
+    "interactive_app": "https://hotd-interactive-map.micro.hbo.com/",
+    "next_build_id": "R68QNyzRnrWzMFefWrpnE",
+    "content_build_id": "12/03/2025_16:00:00",
+    "bundle_url": null,
+    "bundle_sha256": "ca3344e02d6bd8a4b12456618e1e835f12101b29b174144bcfb003542884f343",
+    "synced_at": "2026-07-15T03:02:39.248Z",
+    "scope_note_zh": "官方地图数据覆盖第一季第 1-10 集；S03E01 所需但地图未单列的地点以 source_class=episode_extension 明确区分。"
+  },
+  "official_location_count": 32,
+  "supplemental_location_count": 5,
+  "locations": [
+    {
+      "location_id": "altar-room",
+      "canonical_name": "Altar Room",
+      "display_name_zh": "祭坛厅",
+      "aliases": [
+        "Altar Room",
+        "祭坛厅",
+        "祭坛室"
+      ],
+      "kind": "room",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_altar-room_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "chamber-painted-table",
+      "canonical_name": "Chamber of the Painted Table",
+      "display_name_zh": "彩绘桌厅",
+      "aliases": [
+        "Chamber of the Painted Table",
+        "彩绘桌厅",
+        "彩绘桌议事厅",
+        "龙石岛议事厅",
+        "龙石岛，议事厅"
+      ],
+      "kind": "council_chamber",
+      "region_zh": "龙石岛",
+      "parent_location_id": "dragonstone",
+      "poi_group_id": "dragonstone",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_chamber-painted-table_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "courtyard",
+      "canonical_name": "Outer Courtyard",
+      "display_name_zh": "外庭院",
+      "aliases": [
+        "Outer Courtyard",
+        "外庭院",
+        "红堡外庭院"
+      ],
+      "kind": "courtyard",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_courtyard_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "dragonmont",
+      "canonical_name": "Dragonmont",
+      "display_name_zh": "龙山",
+      "aliases": [
+        "Dragonmont",
+        "龙山",
+        "Dragonmont 火山"
+      ],
+      "kind": "volcano",
+      "region_zh": "龙石岛",
+      "parent_location_id": "dragonstone",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "龙山是笼罩龙石岛的巨大火山，城堡坐落在山脚。火山内部温暖的洞窟适合巨龙栖居、繁殖和产卵。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonmont_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonmont_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "dragonpit",
+      "canonical_name": "The Dragonpit",
+      "display_name_zh": "龙穴",
+      "aliases": [
+        "The Dragonpit",
+        "龙穴",
+        "君临龙穴",
+        "雷妮丝丘龙穴"
+      ],
+      "kind": "dragon_habitat",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "龙穴位于君临的雷妮丝丘，是坦格利安家族在都城中圈养巨龙的巨大建筑。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonpit_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonpit_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "dragonstone",
+      "canonical_name": "Dragonstone",
+      "display_name_zh": "龙石岛",
+      "aliases": [
+        "Dragonstone",
+        "龙石岛",
+        "龙石城",
+        "Dragonstone Castle"
+      ],
+      "kind": "island_castle",
+      "region_zh": "狭海",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [
+        "chamber-painted-table",
+        "rhaenyras-apartments",
+        "stone-bridge",
+        "dragonmont"
+      ],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": "THE SEAT OF THE HEIR APPARENT",
+      "official_tagline_zh": "王储之座",
+      "official_description_available": true,
+      "summary_zh": "龙石岛是狭海中的火山岛。瓦雷利亚覆灭后，岛上的同名城堡成为坦格利安家族的祖传居城。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonstone_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonstone_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_dragonstone_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "driftmark",
+      "canonical_name": "Driftmark",
+      "display_name_zh": "潮头岛",
+      "aliases": [
+        "Driftmark",
+        "潮头岛",
+        "漂木岛",
+        "Driftmark Island"
+      ],
+      "kind": "island",
+      "region_zh": "狭海",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [
+        "high-tide",
+        "hall-of-nine",
+        "skull",
+        "statue",
+        "elephant-shell",
+        "vase"
+      ],
+      "first_listed_episode": "S01E05",
+      "official_map_entry": true,
+      "official_tagline_en": "THE SEAT OF HOUSE VELARYON",
+      "official_tagline_zh": "瓦列利安家族领地",
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_driftmark_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": null,
+          "desktop_width": null,
+          "desktop_height": null,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "elephant-shell",
+      "canonical_name": null,
+      "display_name_zh": "象贝壳陈列（官方未命名）",
+      "aliases": [
+        "象贝壳陈列（官方未命名）",
+        "大象贝壳"
+      ],
+      "kind": "artifact",
+      "region_zh": "潮头岛 / 九航厅",
+      "parent_location_id": "driftmark",
+      "poi_group_id": "hall-of-nine",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_elephant-shell_large.png",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "flea-bottom",
+      "canonical_name": "Flea Bottom",
+      "display_name_zh": "跳蚤窝",
+      "aliases": [
+        "Flea Bottom",
+        "跳蚤窝",
+        "跳蚤底"
+      ],
+      "kind": "district",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E10",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "跳蚤窝是君临极度贫困的街区，贫穷、犯罪、乞丐和妓院共同构成其日常环境。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_flea-bottom_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_flea-bottom_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "godswood",
+      "canonical_name": "Godswood",
+      "display_name_zh": "神木林",
+      "aliases": [
+        "Godswood",
+        "神木林",
+        "红堡神木林"
+      ],
+      "kind": "garden",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_godswood_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "great-sept",
+      "canonical_name": "The Great Sept",
+      "display_name_zh": "大圣堂",
+      "aliases": [
+        "The Great Sept",
+        "大圣堂",
+        "君临大圣堂"
+      ],
+      "kind": "religious_site",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "大圣堂是君临城内七神信仰的宗教礼拜中心。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_great-sept_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_great-sept_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "hall-of-nine",
+      "canonical_name": "Hall of Nine",
+      "display_name_zh": "九航厅",
+      "aliases": [
+        "Hall of Nine",
+        "九航厅",
+        "九航大厅"
+      ],
+      "kind": "great_hall",
+      "region_zh": "潮头岛 / 高潮城",
+      "parent_location_id": "driftmark",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E05",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "九航厅内设漂木王座，并陈列海蛇九次远航从世界各地带回的艺术品与奇珍。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_hall-of-nine_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_hall-of-nine_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "harrenhal",
+      "canonical_name": "Harrenhal",
+      "display_name_zh": "赫伦堡",
+      "aliases": [
+        "Harrenhal",
+        "赫伦堡",
+        "Harrenhal Castle"
+      ],
+      "kind": "castle",
+      "region_zh": "河间地",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": "THE CURSED CASTLE",
+      "official_tagline_zh": "受诅咒的城堡",
+      "official_description_available": true,
+      "summary_zh": "赫伦堡位于河间地神眼湖北岸，是维斯特洛规模最大的城堡。征服战争中它曾被伊耿与贝勒里恩焚毁，后来接连统治此地的家族多遭厄运，因此被普遍视为受诅咒之地。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_harrenhal_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_harrenhal_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_harrenhal_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "high-tide",
+      "canonical_name": "High Tide",
+      "display_name_zh": "高潮城",
+      "aliases": [
+        "High Tide",
+        "高潮城",
+        "潮汐堡",
+        "高潮堡"
+      ],
+      "kind": "castle",
+      "region_zh": "潮头岛",
+      "parent_location_id": "driftmark",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E05",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "潮头岛是瓦列利安家族的祖居。科利斯以九次远航积累的财富修建高潮城，用它取代岛另一侧较古老的漂木堡，作为家族的新权力中心。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_high-tide_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_high-tide_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "kings-apartments",
+      "canonical_name": "King’s Apartments",
+      "display_name_zh": "国王寝宫",
+      "aliases": [
+        "King’s Apartments",
+        "国王寝宫",
+        "国王居所",
+        "红堡国王寝宫"
+      ],
+      "kind": "residence",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kings-apartments_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "kings-landing",
+      "canonical_name": "King’s Landing",
+      "display_name_zh": "君临",
+      "aliases": [
+        "King’s Landing",
+        "君临",
+        "君临城",
+        "King's Landing"
+      ],
+      "kind": "capital_city",
+      "region_zh": "王领",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [
+        "red-keep",
+        "throne-room",
+        "small-council",
+        "tower-hand",
+        "kings-apartments",
+        "godswood",
+        "altar-room",
+        "courtyard",
+        "dragonpit",
+        "tournament-grounds",
+        "great-sept",
+        "flea-bottom"
+      ],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": "CAPITAL OF THE SEVEN KINGDOMS",
+      "official_tagline_zh": "七大王国首都",
+      "official_description_available": true,
+      "summary_zh": "君临位于维斯特洛东岸、黑水湾畔，是七大王国的首都。红堡、龙穴和大圣堂都位于城内。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kings-landing_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kings-landing_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kings-landing_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "kingswood",
+      "canonical_name": "Kingswood",
+      "display_name_zh": "御林",
+      "aliases": [
+        "Kingswood",
+        "御林",
+        "国王森林"
+      ],
+      "kind": "forest",
+      "region_zh": "王领",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": "THE KING'S HUNTING GROUNDS",
+      "official_tagline_zh": "国王猎场",
+      "official_description_available": true,
+      "summary_zh": "御林是维斯特洛在位君主的私人狩猎区域。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kingswood_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kingswood_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_kingswood_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "pentos",
+      "canonical_name": "Pentos",
+      "display_name_zh": "潘托斯",
+      "aliases": [
+        "Pentos",
+        "潘托斯",
+        "Pentos Free City"
+      ],
+      "kind": "free_city",
+      "region_zh": "厄斯索斯",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E06",
+      "official_map_entry": true,
+      "official_tagline_en": "A FREE CITY",
+      "official_tagline_zh": "自由贸易城邦",
+      "official_description_available": true,
+      "summary_zh": "潘托斯是九大自由贸易城邦之一，位于厄斯索斯、君临正东方向，是富庶的城邦。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_pentos_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_pentos_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_pentos_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "red-keep",
+      "canonical_name": "The Red Keep",
+      "display_name_zh": "红堡",
+      "aliases": [
+        "The Red Keep",
+        "红堡",
+        "君临红堡",
+        "King's Landing, Red Keep"
+      ],
+      "kind": "castle",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "红堡位于君临东南角，是坦格利安国王的王室城堡，也是铁王座所在之处。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_red-keep_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_red-keep_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "rhaenyras-apartments",
+      "canonical_name": "Rhaenyra's Apartments",
+      "display_name_zh": "雷妮拉寝宫",
+      "aliases": [
+        "Rhaenyra's Apartments",
+        "雷妮拉寝宫",
+        "雷妮拉居所"
+      ],
+      "kind": "residence",
+      "region_zh": "龙石岛",
+      "parent_location_id": "dragonstone",
+      "poi_group_id": "dragonstone",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E10",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_rhaenyras-apartments_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "runestone",
+      "canonical_name": "Runestone",
+      "display_name_zh": "符石城",
+      "aliases": [
+        "Runestone",
+        "符石城",
+        "奔石城",
+        "Runestone Castle"
+      ],
+      "kind": "castle",
+      "region_zh": "艾林谷",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E05",
+      "official_map_entry": true,
+      "official_tagline_en": "THE SEAT OF HOUSE ROYCE",
+      "official_tagline_zh": "罗伊斯家族领地",
+      "official_description_available": true,
+      "summary_zh": "符石城位于艾林谷、海鸥镇以北的狭海沿岸，是罗伊斯家族的居城。罗伊斯家族曾统治谷地，后来效忠于艾林家族。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_runestone_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_runestone_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_runestone_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "skull",
+      "canonical_name": null,
+      "display_name_zh": "龙骨陈列（官方未命名）",
+      "aliases": [
+        "龙骨陈列（官方未命名）",
+        "头骨陈列"
+      ],
+      "kind": "artifact",
+      "region_zh": "潮头岛 / 九航厅",
+      "parent_location_id": "driftmark",
+      "poi_group_id": "hall-of-nine",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_skull_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "small-council",
+      "canonical_name": "Small Council Chamber",
+      "display_name_zh": "御前会议厅",
+      "aliases": [
+        "Small Council Chamber",
+        "御前会议厅",
+        "小议会厅"
+      ],
+      "kind": "council_chamber",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_small-council_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "statue",
+      "canonical_name": null,
+      "display_name_zh": "雕像陈列（官方未命名）",
+      "aliases": [
+        "雕像陈列（官方未命名）",
+        "九航厅雕像"
+      ],
+      "kind": "artifact",
+      "region_zh": "潮头岛 / 九航厅",
+      "parent_location_id": "driftmark",
+      "poi_group_id": "hall-of-nine",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_statue_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "stepstones",
+      "canonical_name": "The Stepstones",
+      "display_name_zh": "石阶列岛",
+      "aliases": [
+        "The Stepstones",
+        "石阶列岛",
+        "踏脚石群岛"
+      ],
+      "kind": "archipelago",
+      "region_zh": "维斯特洛与厄斯索斯之间",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": "THE DISPUTED LANDS",
+      "official_tagline_zh": "争议之地",
+      "official_description_available": true,
+      "summary_zh": "石阶列岛是一串位于维斯特洛与厄斯索斯之间的小岛。商船前往世界主要市场时往往必须经过这里。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_stepstones_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_stepstones_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_stepstones_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "stone-bridge",
+      "canonical_name": "Stone Bridge",
+      "display_name_zh": "石桥",
+      "aliases": [
+        "Stone Bridge",
+        "石桥",
+        "龙石岛石桥"
+      ],
+      "kind": "bridge",
+      "region_zh": "龙石岛",
+      "parent_location_id": "dragonstone",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E03",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "这座石桥连接龙石城堡与岛上其余区域。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_stone-bridge_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_stone-bridge_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "storms-end",
+      "canonical_name": "Storm's End",
+      "display_name_zh": "风息堡",
+      "aliases": [
+        "Storm's End",
+        "风息堡",
+        "Storm's End Castle"
+      ],
+      "kind": "castle",
+      "region_zh": "风暴地",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E05",
+      "official_map_entry": true,
+      "official_tagline_en": "THE SEAT OF HOUSE BARATHEON",
+      "official_tagline_zh": "拜拉席恩家族领地",
+      "official_description_available": true,
+      "summary_zh": "风息堡位于维斯特洛东岸的风暴地，是拜拉席恩家族的祖居。它被视为大陆上最坚固的堡垒之一，长久以来从未被风暴或围城攻陷。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_storms-end_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_storms-end_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_storms-end_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "throne-room",
+      "canonical_name": "Throne Room",
+      "display_name_zh": "王座厅",
+      "aliases": [
+        "Throne Room",
+        "王座厅",
+        "君临王座厅",
+        "King's Landing, Throne Room",
+        "红堡王座厅"
+      ],
+      "kind": "throne_room",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_throne-room_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "tournament-grounds",
+      "canonical_name": "Tournament Grounds",
+      "display_name_zh": "比武场",
+      "aliases": [
+        "Tournament Grounds",
+        "比武场",
+        "君临比武场"
+      ],
+      "kind": "arena",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": true,
+      "summary_zh": "君临的比武场可容纳大量观众，来自各地的骑士在此展示马上长枪和剑术。",
+      "assets": {
+        "thumbnail": null,
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_tournament-grounds_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_tournament-grounds_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "tower-hand",
+      "canonical_name": "Tower of the Hand",
+      "display_name_zh": "首相塔",
+      "aliases": [
+        "Tower of the Hand",
+        "首相塔",
+        "国王之手塔"
+      ],
+      "kind": "tower",
+      "region_zh": "君临 / 红堡",
+      "parent_location_id": "kings-landing",
+      "poi_group_id": "red-keep",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_tower-hand_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "valyria",
+      "canonical_name": "Valyria",
+      "display_name_zh": "瓦雷利亚",
+      "aliases": [
+        "Valyria",
+        "瓦雷利亚",
+        "旧瓦雷利亚",
+        "Old Valyria"
+      ],
+      "kind": "ruined_city",
+      "region_zh": "厄斯索斯",
+      "parent_location_id": null,
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S01E01",
+      "official_map_entry": true,
+      "official_tagline_en": "THE RUINED CITY",
+      "official_tagline_zh": "毁灭之城",
+      "official_description_available": true,
+      "summary_zh": "瓦雷利亚位于厄斯索斯，是坦格利安与瓦列利安家族的祖地。末日浩劫摧毁了这座城市，如今只剩废墟。",
+      "assets": {
+        "thumbnail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_valyria_thumb.jpg",
+          "desktop_width": 800,
+          "desktop_height": 800,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        },
+        "background": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_valyria_bg.ktx2",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_valyria_bg_m.ktx2",
+          "mobile_width": 1080,
+          "mobile_height": 1920
+        },
+        "detail": null
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "vase",
+      "canonical_name": null,
+      "display_name_zh": "花瓶陈列（官方未命名）",
+      "aliases": [
+        "花瓶陈列（官方未命名）",
+        "九航厅花瓶"
+      ],
+      "kind": "artifact",
+      "region_zh": "潮头岛 / 九航厅",
+      "parent_location_id": "driftmark",
+      "poi_group_id": "hall-of-nine",
+      "related_location_ids": [],
+      "first_listed_episode": "S01E08",
+      "official_map_entry": true,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "summary_zh": null,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": {
+          "desktop_url": "https://hotd-interactive-map.micro.hbo.com/images/locations/location_vase_large.jpg",
+          "desktop_width": 1920,
+          "desktop_height": 1080,
+          "mobile_url": null,
+          "mobile_width": null,
+          "mobile_height": null
+        }
+      },
+      "source_class": "hbo_official_map"
+    },
+    {
+      "location_id": "narrow-sea",
+      "canonical_name": "Narrow Sea",
+      "display_name_zh": "狭海",
+      "aliases": [
+        "Narrow Sea",
+        "狭海",
+        "狭海海域"
+      ],
+      "kind": "sea",
+      "region_zh": "维斯特洛东岸与厄斯索斯之间",
+      "parent_location_id": null,
+      "summary_zh": "狭海位于维斯特洛东岸与厄斯索斯西岸之间；官方地图的龙石岛、符石城和潘托斯说明都以它作为地理参照。",
+      "source_class": "official_description_reference",
+      "source_note_zh": "HBO 官方地图正文提及，但没有设置独立地图标记。",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S03E01",
+      "official_map_entry": false,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": null
+      }
+    },
+    {
+      "location_id": "vale-of-arryn",
+      "canonical_name": "Vale of Arryn",
+      "display_name_zh": "艾林谷",
+      "aliases": [
+        "Vale of Arryn",
+        "艾林谷",
+        "谷地",
+        "山谷",
+        "The Vale"
+      ],
+      "kind": "region",
+      "region_zh": "维斯特洛东部",
+      "parent_location_id": null,
+      "summary_zh": "S03E01 场景使用的区域级地点；官方地图通过符石城条目确认其位于艾林谷，但没有单列谷地标记。",
+      "source_class": "episode_extension",
+      "source_note_zh": "用于绑定 S03E01 的区域级场景。",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S03E01",
+      "official_map_entry": false,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": null
+      }
+    },
+    {
+      "location_id": "riverlands",
+      "canonical_name": "Riverlands",
+      "display_name_zh": "河间地",
+      "aliases": [
+        "Riverlands",
+        "河间地",
+        "河间地战场"
+      ],
+      "kind": "region",
+      "region_zh": "维斯特洛中部",
+      "parent_location_id": null,
+      "summary_zh": "S03E01 河间地战线的区域级地点；官方地图的赫伦堡条目确认赫伦堡位于河间地。",
+      "source_class": "episode_extension",
+      "source_note_zh": "用于绑定戴蒙、冬狼军与佣兵相关场景。",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S03E01",
+      "official_map_entry": false,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": null
+      }
+    },
+    {
+      "location_id": "the-gullet",
+      "canonical_name": "The Gullet",
+      "display_name_zh": "喉道",
+      "aliases": [
+        "The Gullet",
+        "喉道",
+        "喉道海战现场",
+        "龙石岛隘口",
+        "龙石岛隘口上空",
+        "海上战场",
+        "海上战场上空",
+        "海上战船",
+        "海上战船及上空",
+        "海上，龙石岛隘口附近"
+      ],
+      "kind": "strait",
+      "region_zh": "狭海 / 龙石岛与潮头岛附近",
+      "parent_location_id": "narrow-sea",
+      "summary_zh": "S03E01 海战使用的海峡级地点，位于龙石岛与潮头岛相关航道附近。它不属于当前 HBO 官方地图的 32 个独立标记。",
+      "source_class": "episode_extension",
+      "source_note_zh": "来自 S03E01 场景知识库与单集参考资料。",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S03E01",
+      "official_map_entry": false,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": null
+      }
+    },
+    {
+      "location_id": "kings-landing-gates",
+      "canonical_name": "King's Landing Gates",
+      "display_name_zh": "君临城门",
+      "aliases": [
+        "King's Landing Gates",
+        "君临城门",
+        "君临城门外"
+      ],
+      "kind": "city_gate",
+      "region_zh": "君临",
+      "parent_location_id": "kings-landing",
+      "summary_zh": "S03E01 用于区分君临城门场景与红堡内部场景的子地点。",
+      "source_class": "episode_extension",
+      "source_note_zh": "当前 HBO 官方地图未设置独立城门标记。",
+      "poi_group_id": null,
+      "related_location_ids": [],
+      "first_listed_episode": "S03E01",
+      "official_map_entry": false,
+      "official_tagline_en": null,
+      "official_tagline_zh": null,
+      "official_description_available": false,
+      "assets": {
+        "thumbnail": null,
+        "background": null,
+        "detail": null
+      }
+    }
+  ]
+}

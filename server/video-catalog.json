@@ -1,0 +1,17 @@
+{
+  "house_of_dragon_05.mp4": {
+    "name": "龙之家族",
+    "season": 1,
+    "episode": 5,
+    "episodeTag": "S01E05",
+    "episodeTitle": "我们照亮道路"
+  },
+  "house_of_dragon_s03e01.mp4": {
+    "name": "龙之家族",
+    "season": 3,
+    "episode": 1,
+    "episodeTag": "S03E01",
+    "episodeTitle": "盐与海，火与血",
+    "subtitleUrl": "/uploads/house_of_dragon_s03e01.vtt"
+  }
+}

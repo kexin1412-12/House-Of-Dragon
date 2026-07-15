@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "preprocess": "node scripts/preprocess.js",
+    "scene-candidates": "node scripts/build_scene_candidates.js",
+    "cut-ai-clips": "node scripts/cut_ai_clips.js",
     "transcribe": "node scripts/transcribe.js",
     "annotate": "node scripts/annotate.js",
     "extract-essence": "node scripts/extract_srt_essence.js",
@@ -12,7 +14,14 @@
     "fetch-wiki": "node scripts/fetch_wiki_lore.js",
     "character-card": "node scripts/character_card.js",
     "track-characters": "node scripts/track_characters.js",
-    "enrich-characters": "node scripts/enrich_characters.js"
+    "enrich-characters": "node scripts/enrich_characters.js",
+    "bind-keyframes": "node scripts/bind_scene_keyframes.js",
+    "extend-s3-characters": "node scripts/extend_house_dragon_s3_characters.js",
+    "extend-s3-reference-characters": "node scripts/extend_house_dragon_s3_reference_characters.js",
+    "extend-s3-roleplay": "node scripts/extend_house_dragon_s3_roleplay.js",
+    "backfill-scene-characters": "node scripts/backfill_scene_characters_from_text.js",
+    "import-hbo-locations": "node scripts/import_hbo_official_locations.js",
+    "bind-scene-locations": "node scripts/bind_scene_locations.js"
   },
   "dependencies": {
     "@google/genai": "^1.50.1",
@@ -21,6 +30,7 @@
     "express": "^4.18.0",
     "multer": "^2.1.1",
     "openai": "^6.34.0",
-    "pdf-parse": "^2.4.5"
+    "pdf-parse": "^2.4.5",
+    "undici": "^8.7.0"
   }
 }

@@ -14,6 +14,7 @@ import FavoritesView from './FavoritesView';
 import DEMO_VIDEOS from './demoVideos';
 import StanceCard from './StanceCard';
 import useStanceTriggers from './useStanceTriggers';
+import { getEpisodeConfig } from './episodes';
 import {
   recordFactionChoice,
   recordRecallResolution,
@@ -32,6 +33,10 @@ function resolveVideoSrc(url) {
   if (!url) return '';
   if (/^https?:\/\//i.test(url)) return url;
   return `${VIDEO_CDN}${url}`;
+}
+
+function videoEpisodeTag(video) {
+  return video?.episodeTag || episodeTag(video?.filename);
 }
 
 // 从 allTriggers + localStorage 选择记录拼出 AgentPanel "你的立场推演" 入口列表。
@@ -146,7 +151,7 @@ export default function App() {
 
   useEffect(() => { fetchVideos(); }, [fetchVideos]);
 
-  const heroPreview = featured || videos[0];
+  const heroPreview = featured || videos[videos.length - 1];
   const enterPlayer = () => {
     if (!heroPreview) return;
     setFeatured(heroPreview);
@@ -264,10 +269,12 @@ export default function App() {
 
             <div className="hero-preview-meta">
               <div className="hero-preview-title-row">
-                <span className="hero-preview-name">龙之家族</span>
-                <span className="hero-preview-ep">S1·E05</span>
+                <span className="hero-preview-name">{heroPreview.name || '龙之家族'}</span>
+                {videoEpisodeTag(heroPreview) && (
+                  <span className="hero-preview-ep">{videoEpisodeTag(heroPreview)}</span>
+                )}
               </div>
-              <div className="hero-preview-sub">迎光赴礼</div>
+              <div className="hero-preview-sub">{heroPreview.episodeTitle || '长视频 AI 互动体验'}</div>
             </div>
 
             <button className="hero-preview-add" onClick={(e) => e.stopPropagation()}>
@@ -388,7 +395,10 @@ export default function App() {
             setPendingExpandRiffId(null);
             setPendingRightTab(null);
           }}
-          onSelect={setPlaying}
+          onSelect={video => {
+            setFeatured(video);
+            setPlaying(video);
+          }}
           initialSeekTime={pendingSeekTime}
           initialExpandRiffId={pendingExpandRiffId}
           initialRightTab={pendingRightTab}
@@ -496,6 +506,8 @@ function TencentPlayer({
 
   const videoRef = useRef(null);
   const [aiKb, setAiKb] = useState('');
+  const requestedVideoId = (playing.filename || '').replace(/\.[^.]+$/, '');
+  const episodeConfig = getEpisodeConfig(aiKb || requestedVideoId);
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [aiDepth, setAiDepth] = useState('brief'); // 'brief' | 'deep'
@@ -1615,7 +1627,18 @@ function TencentPlayer({
                 if (!v) return;
                 if (v.paused) v.play(); else v.pause();
               }}
-            />
+            >
+              {playing.subtitleUrl && (
+                <track
+                  key={playing.subtitleUrl}
+                  kind="subtitles"
+                  src={resolveVideoSrc(playing.subtitleUrl)}
+                  srcLang="zh-CN"
+                  label="简体中文"
+                  default
+                />
+              )}
+            </video>
 
             {/* top-right toolbar: 人物识别 + 文化注释总开关（同一族 chrome，flex 排列） */}
             <div className="tx-player-toolbar">
@@ -1668,6 +1691,7 @@ function TencentPlayer({
                 <div className="tx-player-aichat-drawer" onClick={e => e.stopPropagation()}>
                   {panelMode === 'character' ? (
                     <CharacterPanel
+                      episodeLabel={episodeConfig.railLabel}
                       selected={charSelected}
                       candidates={charCandidates}
                       sceneBeat={charSceneBeat}
@@ -1686,6 +1710,7 @@ function TencentPlayer({
                     />
                   ) : panelMode === 'speculation' ? (
                     <SpeculationChooserPanel
+                      episodeLabel={episodeConfig.railLabel}
                       triggers={stance.allTriggers}
                       voted={buildVotedMap()}
                       onPick={(tg, ch) => handleOpenSpeculation(tg, ch)}
@@ -1693,6 +1718,8 @@ function TencentPlayer({
                     />
                   ) : (
                     <AgentPanel
+                      episodeLabel={episodeConfig.railLabel}
+                      quickQuestions={episodeConfig.quickQuestions}
                       messages={aiMessages}
                       input={aiInput}
                       setInput={setAiInput}
@@ -1868,7 +1895,8 @@ function TencentPlayer({
             <PlayerControls
               videoRef={videoRef}
               videoId={aiKb}
-              hasNext={videos.length > 1}
+              season={playing.season || 1}
+              hasNext={videos.some((video, index) => video.id === playing.id && index < videos.length - 1)}
               onNext={() => {
                 const idx = videos.findIndex(v => v.id === playing.id);
                 if (idx >= 0 && idx < videos.length - 1) onSelect(videos[idx + 1]);
@@ -1883,8 +1911,27 @@ function TencentPlayer({
         <aside className="tx-right">
           <div className="tx-title-row">
             <h1 className="tx-title" title={playing.name}>{playing.name || '未选择视频'}</h1>
-            {episodeTag(playing.filename) && (
-              <span className="tx-lang">{episodeTag(playing.filename)}</span>
+            {videoEpisodeTag(playing) && (
+              <span className="tx-lang">{videoEpisodeTag(playing)}</span>
+            )}
+            {videos.length > 1 && (
+              <label className="tx-episode-picker">
+                <span className="sr-only">选择剧集</span>
+                <select
+                  value={playing.id}
+                  onChange={event => {
+                    const selected = videos.find(video => video.id === event.target.value);
+                    if (selected) onSelect(selected);
+                  }}
+                  aria-label="选择剧集"
+                >
+                  {videos.map(video => (
+                    <option key={video.id} value={video.id}>
+                      {videoEpisodeTag(video) || video.name}{video.episodeTitle ? ` · ${video.episodeTitle}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
             )}
             <span className="conspirator-badge" title="共谋者 · Co-Conspirator">
               共谋者
@@ -1910,6 +1957,7 @@ function TencentPlayer({
           {rightTab === 'agent' && (
             panelMode === 'character' ? (
               <CharacterPanel
+                episodeLabel={episodeConfig.railLabel}
                 selected={charSelected}
                 candidates={charCandidates}
                 sceneBeat={charSceneBeat}
@@ -1928,6 +1976,7 @@ function TencentPlayer({
               />
             ) : panelMode === 'speculation' ? (
               <SpeculationChooserPanel
+                episodeLabel={episodeConfig.railLabel}
                 triggers={stance.allTriggers}
                 voted={buildVotedMap()}
                 onPick={(tg, ch) => handleOpenSpeculation(tg, ch)}
@@ -1935,6 +1984,8 @@ function TencentPlayer({
               />
             ) : (
               <AgentPanel
+                episodeLabel={episodeConfig.railLabel}
+                quickQuestions={episodeConfig.quickQuestions}
                 messages={aiMessages}
                 input={aiInput}
                 setInput={setAiInput}
@@ -2220,6 +2271,8 @@ function AgentPanel({
   onOpenSpeculation,
   speculationThread = null,
   onExitSpeculation,
+  episodeLabel = 'EP',
+  quickQuestions = QUICK_QUESTIONS,
 }) {
   const weighted = depth === 'deep';
   const inSpeculation = !!speculationThread;
@@ -2234,7 +2287,7 @@ function AgentPanel({
     <div className="tx-agent-de">
       {/* 极淡侧栏页码（DE 是 01A11；这里沿用 S01·A05·turn 计数） */}
       <div className="tx-agent-de-rail" aria-hidden="true">
-        <span className="tx-agent-de-page">S01·A05·{String(messages.length).padStart(2, '0')}</span>
+        <span className="tx-agent-de-page">{episodeLabel}·{String(messages.length).padStart(2, '0')}</span>
       </div>
 
       {/* "你的立场推演" 入口行 —— 投过票且后端标记为可推演的场景才会出现这里 */}
@@ -2339,7 +2392,7 @@ function AgentPanel({
               ))
             : (
               <>
-                {QUICK_QUESTIONS.map(q => (
+                {quickQuestions.map(q => (
                   <button
                     key={q}
                     type="button"
@@ -2396,6 +2449,7 @@ function AgentPanel({
    未选角色 → 渲染 chooser；选定后 → 渲染对话流 + 三个跟问选项。
    外观沿用 AgentPanel 的容器，避免在画面上出现风格断层。 */
 function CharacterPanel({
+  episodeLabel = 'EP',
   selected, candidates, sceneBeat,
   opening = { monologue: '', questions: [] },
   messages, input, setInput,
@@ -2420,7 +2474,7 @@ function CharacterPanel({
   return (
     <div className="tx-agent-de tx-char-mode">
       <div className="tx-agent-de-rail" aria-hidden="true">
-        <span className="tx-agent-de-page">S01·A05·{String(messages.length).padStart(2, '0')}</span>
+        <span className="tx-agent-de-page">{episodeLabel}·{String(messages.length).padStart(2, '0')}</span>
       </div>
 
       {/* 顶部：模态切换 + 当前所选角色头牌 */}
@@ -2652,12 +2706,12 @@ function CharLine({ message, speakerName }) {
    不依赖"先投票"这条路径 —— 用户随时进来，挑一个分支点 + 一个反事实
    选项，直接走 submitStanceSpeculation。投过的选项小角标"已投"，
    canonical 选项灰掉（"剧中走向"）。 */
-function SpeculationChooserPanel({ triggers, voted, onPick, onExit }) {
+function SpeculationChooserPanel({ triggers, voted, onPick, onExit, episodeLabel = 'EP' }) {
   const eligible = (triggers || []).filter(t => t?.speculation?.by_option);
   return (
     <div className="tx-agent-de tx-spec-mode">
       <div className="tx-agent-de-rail" aria-hidden="true">
-        <span className="tx-agent-de-page">S01·A05·SPEC</span>
+        <span className="tx-agent-de-page">{episodeLabel}·SPEC</span>
       </div>
 
       <div className="tx-char-header">
@@ -2790,7 +2844,7 @@ function fmtTime(s) {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 
-function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
+function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -2853,7 +2907,7 @@ function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
     if (!videoId) { setChapters([]); return; }
     let cancelled = false;
     axios.get(`${API}/api/agent/timeline/season`, {
-      params: { videoId, t: '0', showId: 'house-of-the-dragon', season: 1 },
+      params: { videoId, t: '0', showId: 'house-of-the-dragon', season },
       timeout: 8000,
     }).then(r => {
       if (cancelled) return;
@@ -2889,7 +2943,7 @@ function PlayerControls({ videoRef, videoId, hasNext, onNext }) {
       setChapters(kept);
     }).catch(() => { if (!cancelled) setChapters([]); });
     return () => { cancelled = true; };
-  }, [videoId]);
+  }, [videoId, season]);
 
   const togglePlay = () => {
     const v = videoRef.current;

@@ -304,7 +304,8 @@ class ToolBox {
       const lower = character_id.toLowerCase();
       const fuzzy = (this.charDb.characters || []).find(x =>
         (x.display_name_zh || '').toLowerCase().includes(lower) ||
-        (x.canonical_name || '').toLowerCase().includes(lower)
+        (x.canonical_name || '').toLowerCase().includes(lower) ||
+        (x.aliases || []).some(alias => String(alias).toLowerCase().includes(lower))
       );
       if (!fuzzy) return { ok: false, error: `character not found: ${character_id}. Try canonical id (e.g. rhaenyra_targaryen).` };
       return this._getCharacterProfile({ character_id: fuzzy.character_id });
