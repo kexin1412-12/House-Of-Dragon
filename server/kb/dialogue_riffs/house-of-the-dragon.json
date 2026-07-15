@@ -9,7 +9,7 @@
     "tags 在右栏列表显示，详情卡里不再重复（避免冗余）。"
   ],
   "show": "house-of-the-dragon",
-  "season_canon": "S01",
+  "season_canon": "S01-S03",
   "riffs": [
     {
       "riff_id": "moon_tea_innuendo_e05",
@@ -457,6 +457,381 @@
         "speaker_zh": "韦赛里斯一世",
         "speaker_en": "Viserys I",
         "collects": 9800
+      }
+    },
+    {
+      "riff_id": "more_lions_to_hunt_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1018.025,
+        "end_time": 1021.362,
+        "subtitle_en": "Very good. We've got more lions to hunt.",
+        "subtitle_zh": "很好。我们还有很多狮子要猎。",
+        "highlight": "lions",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-017-daemon.jpg"
+      },
+      "tags": [
+        "家徽隐喻",
+        "战场黑话",
+        "戴蒙"
+      ],
+      "tier2_punch": "这里的“狮子”不是野兽，而是把兰尼斯特家族直接叫成了他们的金狮家徽。戴蒙把敌军说成猎物，一句话同时完成阵营识别和战场去人化。",
+      "tier3": {
+        "why_meme": "《权游》宇宙经常让人物用家徽替代家名：狼指史塔克、鹿指拜拉席恩、狮子指兰尼斯特。这样的说法比直接报姓氏更像士兵口中的战场速记，也带着挑衅——敌人不再是拥有姓名和封号的贵族，而是等待围猎的兽群。戴蒙先说“Very good”，再平静地补上“还有很多狮子要猎”，把刚结束的杀戮压成一项尚未完成的清单，因此格外冷。",
+        "background": [
+          "兰尼斯特家徽是红底金狮；在维斯特洛的军旗、盾牌和披风上，家徽往往比姓名更快暴露一支军队的归属。",
+          "中世纪纹章本来就承担战场识别功能：全身甲会遮住面孔，旗帜、盾徽和罩袍上的图案才是远距离辨认敌我的语言。",
+          "“hunt”把会反击的敌军降格成猎物，符合戴蒙此刻以进攻和威慑推进河间地战事的姿态。"
+        ],
+        "why_it_matters_now": "这句把黑党在陆地战线上的目标说得极清楚：一次胜利并没有结束战争，兰尼斯特兵力仍是必须继续清除的威胁。戴蒙把政治战争处理成连续狩猎，也预告了他会越来越依赖恐惧来维持军队和盟友的服从。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1286,
+          "knew": 744
+        },
+        "notes": [
+          {
+            "note_id": "more_lions_to_hunt_s03e01_n1",
+            "author": "纹章速查员",
+            "time": "9h",
+            "upvotes": 83,
+            "text": "维斯特洛人真的很爱用家徽代称：看到“狮子”就该自动翻译成兰尼斯特。"
+          },
+          {
+            "note_id": "more_lions_to_hunt_s03e01_n2",
+            "author": "河间地战报",
+            "time": "4h",
+            "upvotes": 46,
+            "text": "最狠的是 Daemon 的语气，像在说今天还有几件差事没做完。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "戴蒙·坦格利安",
+        "speaker_en": "Daemon Targaryen",
+        "collects": 7200
+      }
+    },
+    {
+      "riff_id": "ulf_titles_cannot_feed_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 1290.13,
+        "end_time": 1306.105,
+        "subtitle_en": "What do I need with a fucking horse? I've got a dragon. I can't live in a title. Or drink it.",
+        "subtitle_zh": "我要一匹该死的马做什么？我已经有一条龙了。头衔又不能当饭吃，也不能当酒喝。",
+        "highlight": "I've got a dragon",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-024.jpg"
+      },
+      "tags": [
+        "阶级笑话",
+        "龙种",
+        "乌尔夫"
+      ],
+      "tier2_punch": "别人还在给乌尔夫补“骑士—领主—城堡”这套封建晋升课，他一句“我已经有龙了”直接掀桌：马匹、爵位和礼仪都只是权力包装，真正让人低头的是巨龙。",
+      "tier3": {
+        "why_meme": "这段笑点靠连续错位成立。骑士通常得到的是身份、军役位置和一匹像样的战马，不会自动获封城堡；只有得到土地与领主头衔，才可能拥有可继承的封地。乌尔夫完全不在乎这套精细等级——他先用龙碾压马，再用吃饭和喝酒衡量头衔，最后把贵族秩序还原成最粗暴的事实：谁掌握毁灭性力量，谁就能逼别人表示敬意。",
+        "background": [
+          "“Ser”是骑士称号，并不等于“Lord”。维斯特洛有大量没有土地的雇佣骑士、家族骑士和游侠骑士。",
+          "城堡通常附着于封地与领主权，不是受封骑士的标准奖品；乌尔夫把骑士和领主混为一谈，暴露了他的平民出身。",
+          "龙种原本处在社会边缘，驯龙后却突然拥有超过多数贵族军队的力量。这种力量与身份的不匹配，是黑党后续必须处理的政治风险。"
+        ],
+        "why_it_matters_now": "乌尔夫把“王室赐予的合法身份”看得远不如“自己已经掌握的龙”重要。黑党需要龙种作战，却未必能只靠爵位让他们服从；这句玩笑提前暴露了奖励体系与真实力量之间的断裂。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1638,
+          "knew": 519
+        },
+        "notes": [
+          {
+            "note_id": "ulf_titles_cannot_feed_s03e01_n1",
+            "author": "封建制度补习班",
+            "time": "1d",
+            "upvotes": 112,
+            "text": "骑士不自动送城堡，Lord 才对应封地。Ulf 的错误反而把他的出身写得特别真。"
+          },
+          {
+            "note_id": "ulf_titles_cannot_feed_s03e01_n2",
+            "author": "龙比马快",
+            "time": "7h",
+            "upvotes": 77,
+            "text": "“我要马干什么，我有龙”大概是本集最无法反驳的一句话。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "贵族给他画了一座城堡，乌尔夫只问：头衔能吃，还是能喝？",
+        "emotions": [
+          {
+            "label": "笑出声",
+            "count": 6800
+          },
+          {
+            "label": "无法反驳",
+            "count": 4900
+          },
+          {
+            "label": "阶级暴击",
+            "count": 3100
+          }
+        ],
+        "paused": "2.8万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "queensguard_including_herself_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2354.944,
+        "end_time": 2374.63,
+        "subtitle_en": "You are a knight of the Queensguard, Ser Lorent. You swore to protect Her Grace from all threats. Including herself. Your life... for hers.",
+        "subtitle_zh": "你是女王铁卫的骑士，洛伦特爵士。你发誓保护女王陛下不受任何威胁——包括她自己。用你的命，换她的命。",
+        "highlight": "Including herself",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-045.jpg"
+      },
+      "tags": [
+        "誓言悖论",
+        "女王铁卫",
+        "母子冲突"
+      ],
+      "tier2_punch": "杰卡里斯把护卫誓言拧成了一个政治悖论：若女王本人正在把王权置于危险中，“保护她”是否可以包括违抗她、甚至把她锁起来？",
+      "tier3": {
+        "why_meme": "“Including herself”只有两个词，却把忠诚的方向彻底翻转。洛伦特的职责本来是服从女王，杰卡里斯却要求他用更高一层的“保护”否定女王的即时命令。护卫因此被迫在君主本人、王储和王权延续之间选择。台词把一场家庭争执升级成宪制问题：当君主的身体同时属于她自己和整个政权，究竟谁有权决定她可以冒多大风险？",
+        "background": [
+          "女王铁卫沿用御林铁卫的终身誓言传统：舍弃土地、婚姻和个人继承，以生命保护君主。",
+          "誓言强调保护，却没有给骑士独立裁定君主是否“失去理智”的明确权力；杰卡里斯是在危机中主动扩张这层解释。",
+          "王储保护母亲也保护自己的继承链。雷妮拉若战死，杰卡里斯会成为国王，因此他的命令同时带有亲情与利益冲突。"
+        ],
+        "why_it_matters_now": "黑党最核心的资产不是某条龙，而是雷妮拉作为合法女王仍然活着。杰卡里斯第一次用命令限制她的行动，说明战争压力已经让母子对“女王应当亲征还是应当被保存”产生公开分歧。"
+      },
+      "social": {
+        "reactions": {
+          "til": 2034,
+          "knew": 681
+        },
+        "notes": [
+          {
+            "note_id": "queensguard_including_herself_s03e01_n1",
+            "author": "誓言漏洞研究会",
+            "time": "16h",
+            "upvotes": 139,
+            "text": "这句最可怕的地方是 Lorent 无论开不开门都可能被说成违誓。"
+          },
+          {
+            "note_id": "queensguard_including_herself_s03e01_n2",
+            "author": "龙石岛法务",
+            "time": "6h",
+            "upvotes": 58,
+            "text": "Jace 不是单纯顶撞母亲，他是在主张“王权的安全高于女王个人命令”。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "杰卡里斯·瓦列利安",
+        "speaker_en": "Jacaerys Velaryon",
+        "collects": 10400
+      }
+    },
+    {
+      "riff_id": "heart_and_spirit_of_a_king_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2720.142,
+        "end_time": 2724.772,
+        "subtitle_en": "I may appear to have the weak and feeble body of a woman, but I possess the heart and spirit of a king.",
+        "subtitle_zh": "或许我有着女人的娇弱身躯，但我拥有国王的意志和精神。",
+        "highlight": "heart and spirit of a king",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-053-queen.jpg"
+      },
+      "tags": [
+        "历史引用",
+        "伊丽莎白一世",
+        "女王宣言"
+      ],
+      "tier2_punch": "这不是普通的战前金句，而是明显改写了伊丽莎白一世 1588 年蒂尔伯里演说中“虽有柔弱女子之躯，却有国王之心”的名句，把现实历史中的女王宣言移植给了雷妮拉。",
+      "tier3": {
+        "why_meme": "原典是英格兰面临西班牙无敌舰队威胁时，伊丽莎白一世向蒂尔伯里驻军发表的演说。最著名的句式把社会强加给女性身体的“柔弱”，与君主应有的勇气和意志对置。本集将原句的“heart and stomach of a king”改成“heart and spirit of a king”，既保留听觉上的历史辨识度，也让台词更贴合雷妮拉要突破保护、亲自骑龙参战的行动。",
+        "background": [
+          "蒂尔伯里演说发生在 1588 年西班牙无敌舰队危机期间，后来成为英语文化中最著名的女性统治者战时演说之一。",
+          "原句先承认“弱而柔的女人身体”，再宣告拥有“国王的心与胆魄”；本集把后半改为“国王的心与精神”。",
+          "剪辑紧接着切入喉道海战，让这段历史引用不只评价性别与王权，也直接进入一场舰队危机。"
+        ],
+        "why_it_matters_now": "雷妮拉拒绝只做被保存的王权象征。她用这句宣言夺回对自己身体和军事角色的决定权，随后亲自加入战场；但女王参战也把黑党的合法性核心暴露在弩炮、龙焰和海战混乱之中。"
+      },
+      "social": {
+        "reactions": {
+          "til": 3127,
+          "knew": 947
+        },
+        "notes": [
+          {
+            "note_id": "heart_and_spirit_of_a_king_s03e01_n1",
+            "author": "蒂尔伯里旁听生",
+            "time": "2d",
+            "upvotes": 218,
+            "text": "听到 weak and feeble body of a woman 就确定了，后半只是把 stomach 改成了 spirit。"
+          },
+          {
+            "note_id": "heart_and_spirit_of_a_king_s03e01_n2",
+            "author": "海战剪辑课代表",
+            "time": "11h",
+            "upvotes": 121,
+            "text": "历史原句也来自舰队危机，台词落下立刻切喉道海战，这个转场很故意。"
+          }
+        ]
+      },
+      "card": {
+        "type": "quote",
+        "speaker_zh": "雷妮拉·坦格利安",
+        "speaker_en": "Rhaenyra Targaryen",
+        "collects": 15600
+      }
+    },
+    {
+      "riff_id": "six_fathoms_leadline_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 2920.426,
+        "end_time": 2940.903,
+        "subtitle_en": "Leadsmen, to the channels. Cast the leadline! Depth, six fathoms!",
+        "subtitle_zh": "测深员，到舷侧测深台。抛出测深绳！水深六英寻！",
+        "highlight": "six fathoms",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-059.jpg"
+      },
+      "tags": [
+        "航海术语",
+        "测深绳",
+        "喉道海战"
+      ],
+      "tier2_punch": "没有声呐的年代，船员靠绑着铅锤的测深绳探水深。“六英寻”约等于十一米；在暗礁密布又快速退潮的隘口里，这声回报就是整条船的实时雷达。",
+      "tier3": {
+        "why_meme": "这段海战没有用一句泛泛的“前方危险”，而是完整还原帆船时代的测深流程：测深员到舷侧平台，把带铅锤且做过深度标记的绳索抛向前方，等铅锤触底后读取标记，再把结果高声传回指挥位置。紧接着水深从六英寻一路下降，观众能听见船在数字倒数中逼近搁浅线。专业术语因此不只是考据装饰，而是制造悬念的节拍器。",
+        "background": [
+          "一英寻（fathom）等于六英尺，约 1.8288 米；六英寻约为 10.97 米。",
+          "leadline 是末端系铅锤的测深绳，绳上用不同材料或结法标出固定深度，让水手能在低能见度下凭触感读数。",
+          "channels 在这里不是“航道”，而是帆船舷外供测深员站立作业的侧台区域。"
+        ],
+        "why_it_matters_now": "科利斯的优势不是单纯船多，而是他理解潮汐、暗流和船只吃水。伏击把战场选在喉道，迫使舰队把每一英寻水深都变成生死判断，也让“海蛇”的经验真正成为可见的战斗力。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1764,
+          "knew": 362
+        },
+        "notes": [
+          {
+            "note_id": "six_fathoms_leadline_s03e01_n1",
+            "author": "帆船术语翻译组",
+            "time": "19h",
+            "upvotes": 96,
+            "text": "这里的 fathom 是“英寻”，不是随口报数字；水深每降一次，搁浅风险都在上升。"
+          },
+          {
+            "note_id": "six_fathoms_leadline_s03e01_n2",
+            "author": "海蛇船员甲",
+            "time": "8h",
+            "upvotes": 55,
+            "text": "这场戏最爽的是命令都真的有用，听水深变化就能脑补船底离礁石多近。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "一根铅锤、一条刻度绳，就是帆船穿越暗礁时的声呐。",
+        "emotions": [
+          {
+            "label": "硬核考据",
+            "count": 5200
+          },
+          {
+            "label": "屏住呼吸",
+            "count": 4300
+          },
+          {
+            "label": "海战细节",
+            "count": 3900
+          }
+        ],
+        "paused": "2.2万人在此暂停"
+      }
+    },
+    {
+      "riff_id": "cut_anchors_raise_draft_s03e01",
+      "video_id": "house_of_dragon_s03e01",
+      "episode": "S03E01",
+      "anchor": {
+        "start_time": 3142.23,
+        "end_time": 3149.863,
+        "subtitle_en": "Cut the anchors! Drop weight and raise our draft. Quickly! Aye, Commander! Cut the anchors!",
+        "subtitle_zh": "切断锚！减轻重量、降低吃水，快点！遵命，司令！切断锚！",
+        "highlight": "raise our draft",
+        "keyframe": "frames/house_of_dragon_s03e01/scene-065.jpg"
+      },
+      "tags": [
+        "航海术语",
+        "减载脱浅",
+        "临场指挥"
+      ],
+      "tier2_punch": "船一旦擦上浅滩，第一反应不是加速，而是让它“变轻”：砍掉锚具等重物，船体就会上浮、吃水变浅，才有机会从礁底挣脱。",
+      "tier3": {
+        "why_meme": "“draft”是船体从水线到龙骨最低点的垂直深度，也就是吃水。船越重，压进水里越深；抛弃重物后排水量下降，船体会上浮。英文命令用“raise our draft”表达把船体抬高，中文字幕把实际效果译成“减少吃水量”。在敌舰逼近、船体搁浅的几秒里，砍锚不是夸张动作，而是用昂贵装备换回机动性。",
+        "background": [
+          "锚、锚链和缆具是集中在船首或船侧的重物，危急时切弃可以迅速减载，但会让船失去之后稳泊的关键装备。",
+          "吃水决定船能否通过浅滩；同一艘船在载重、淡水、人员和武器变化后，安全水深也会变化。",
+          "海战里的脱浅必须与操舵、收桨和人员移位同时进行，只减重而不控制船身，仍可能被潮流重新推回礁石。"
+        ],
+        "why_it_matters_now": "伏击者把瓦列利安舰队逼进不能自由转向的浅水区，等于暂时废掉了海蛇最擅长的机动战。科利斯的部下只能牺牲装备、重新分配重量，在接舷战开始前抢回几尺水下空间。"
+      },
+      "social": {
+        "reactions": {
+          "til": 1189,
+          "knew": 407
+        },
+        "notes": [
+          {
+            "note_id": "cut_anchors_raise_draft_s03e01_n1",
+            "author": "吃水线观察员",
+            "time": "13h",
+            "upvotes": 74,
+            "text": "不是把锚收起来，是直接切掉：他们在拿后续停泊能力换眼前不搁死。"
+          },
+          {
+            "note_id": "cut_anchors_raise_draft_s03e01_n2",
+            "author": "甲板减重办",
+            "time": "5h",
+            "upvotes": 39,
+            "text": "前面一直报水深，这里终于兑现——数字降到危险线后，所有命令都围绕减小吃水。"
+          }
+        ]
+      },
+      "card": {
+        "type": "moment",
+        "caption": "搁浅时最贵的东西不是锚，是再也动不了的整条船。",
+        "emotions": [
+          {
+            "label": "紧急脱浅",
+            "count": 4700
+          },
+          {
+            "label": "临场教科书",
+            "count": 3600
+          },
+          {
+            "label": "海战压迫感",
+            "count": 3300
+          }
+        ],
+        "paused": "1.9万人在此暂停"
       }
     }
   ]

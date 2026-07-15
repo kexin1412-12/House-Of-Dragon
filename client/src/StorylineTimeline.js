@@ -715,6 +715,7 @@ export default function StorylineTimeline({
                 const y = layout.mainLineY - NODE_H / 2 - 30;
                 const choice = userChoicesByTrigger[tg.trigger_id];
                 const locked = currentTime < tg.timestamp;
+                if (locked) return null;
                 return (
                   <StanceMarker
                     key={tg.trigger_id}

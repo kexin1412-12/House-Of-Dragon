@@ -19,6 +19,18 @@ const DEMO_VIDEOS = [
     size: 311015435,
     uploadedAt: '2026-04-30T00:00:00.000Z',
   },
+  {
+    id: 'house_of_dragon_s03e01.mp4',
+    name: '龙之家族',
+    filename: 'house_of_dragon_s03e01.mp4',
+    url: `${VIDEO_CDN}/uploads/house_of_dragon_s03e01.mp4`,
+    size: 422973034,
+    uploadedAt: '2026-07-14T07:56:33.000Z',
+    season: 3,
+    episode: 1,
+    episodeTag: 'S03E01',
+    episodeTitle: '盐与海，火与血',
+  },
 ];
 
 export default DEMO_VIDEOS;

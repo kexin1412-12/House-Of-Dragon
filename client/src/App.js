@@ -39,6 +39,27 @@ function videoEpisodeTag(video) {
   return video?.episodeTag || episodeTag(video?.filename);
 }
 
+function resolveSubtitleSrc(video) {
+  const filename = video?.filename || video?.id || '';
+  if (!filename) return '';
+  const vttName = /\.[^.]+$/.test(filename)
+    ? filename.replace(/\.[^.]+$/, '.vtt')
+    : `${filename}.vtt`;
+  const url = video?.url || '';
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const u = new URL(url);
+      const parts = u.pathname.split('/');
+      parts[parts.length - 1] = encodeURIComponent(vttName);
+      u.pathname = parts.join('/');
+      u.search = '';
+      u.hash = '';
+      return u.toString();
+    } catch (_) {}
+  }
+  return `${VIDEO_CDN}/uploads/${encodeURIComponent(vttName)}`;
+}
+
 // 从 allTriggers + localStorage 选择记录拼出 AgentPanel "你的立场推演" 入口列表。
 // 一项 = { trigger, choice }；只收 (a) trigger 配了 speculation.by_option (b) 用户
 // 投的那个 option_id 在 by_option 里 —— 即 "与剧情不一样" 的选项。投了 canonical
@@ -540,6 +561,7 @@ function TencentPlayer({
   const [search, setSearch] = useState('');
 
   const videoRef = useRef(null);
+  const [subtitle, setSubtitle] = useState('中文');
   const [aiKb, setAiKb] = useState('');
   const requestedVideoId = (playing.filename || '').replace(/\.[^.]+$/, '');
   const episodeConfig = getEpisodeConfig(aiKb || requestedVideoId);
@@ -571,6 +593,20 @@ function TencentPlayer({
     else v.addEventListener('loadedmetadata', seek, { once: true });
     return () => { try { v.removeEventListener('loadedmetadata', seek); } catch {} };
   }, [initialSeekTime, playing.id]);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const applySubtitleMode = () => {
+      for (const track of Array.from(v.textTracks || [])) {
+        track.mode = subtitle === '关闭' ? 'disabled' : 'showing';
+      }
+    };
+    applySubtitleMode();
+    v.addEventListener('loadedmetadata', applySubtitleMode);
+    return () => v.removeEventListener('loadedmetadata', applySubtitleMode);
+  }, [subtitle, playing.id]);
+
   // 共谋模式总开关：覆盖文化注释 + 符号热点 + 场景热点。localStorage 由 MemeToggle 自维护初值。
   const [conspiratorMode, setConspiratorMode] = useState(true);
   // 没有 riffs 时直接隐藏 toggle —— fetch 一次同样的端点判断
@@ -1663,13 +1699,13 @@ function TencentPlayer({
                 if (v.paused) v.play(); else v.pause();
               }}
             >
-              {playing.subtitleUrl && (
+              {subtitle !== '关闭' && (
                 <track
-                  key={playing.subtitleUrl}
+                  key={`${playing.id}-subtitles`}
                   kind="subtitles"
-                  src={resolveVideoSrc(playing.subtitleUrl)}
-                  srcLang="zh-CN"
-                  label="简体中文"
+                  src={playing.subtitleUrl ? resolveVideoSrc(playing.subtitleUrl) : resolveSubtitleSrc(playing)}
+                  srcLang="zh"
+                  label="中英双语"
                   default
                 />
               )}
@@ -1931,6 +1967,8 @@ function TencentPlayer({
               videoRef={videoRef}
               videoId={aiKb}
               season={playing.season || 1}
+              subtitle={subtitle}
+              setSubtitle={setSubtitle}
               hasNext={videos.some((video, index) => video.id === playing.id && index < videos.length - 1)}
               onNext={() => {
                 const idx = videos.findIndex(v => v.id === playing.id);
@@ -2050,7 +2088,9 @@ function TencentPlayer({
             />
           )}
           {rightTab === 'discuss' && (
-            <DiscussionPanel videoId={aiKb} />
+            <DiscussionPanel
+              videoId={aiKb || (playing.filename || '').replace(/\.[^.]+$/, '')}
+            />
           )}
         </aside>
       </main>
@@ -2311,13 +2351,6 @@ function AgentPanel({
 }) {
   const weighted = depth === 'deep';
   const inSpeculation = !!speculationThread;
-  // 在推演会话里：取最新一条 agent speculation 消息上 parser 抓出来的 1-3 个开放问句，
-  // 用它们替换默认 quick chip，让用户一点就把这条假设世界线再往下推。
-  const lastSpeculationMsg = inSpeculation
-    ? [...messages].reverse().find(m => m.role === 'agent' && m.kind === 'speculation' && !m.streaming)
-    : null;
-  const followupQuestions = (lastSpeculationMsg?.parsedQuestions || []).filter(Boolean);
-
   return (
     <div className="tx-agent-de">
       {/* 极淡侧栏页码（DE 是 01A11；这里沿用 S01·A05·turn 计数） */}
@@ -2414,49 +2447,34 @@ function AgentPanel({
         )}
 
         <div className="tx-agent-de-chips">
-          {inSpeculation
-            ? followupQuestions.map((q, i) => (
-                <button
-                  key={`spq-${i}`}
-                  type="button"
-                  className="tx-agent-de-chip tx-agent-de-chip-spec"
-                  onClick={() => !sending && onSubmit(q)}
-                  disabled={sending}
-                  title="顺着这个问题让 AI 继续往下推"
-                >{q}</button>
-              ))
-            : (
-              <>
-                {quickQuestions.map(q => (
-                  <button
-                    key={q}
-                    type="button"
-                    className={`tx-agent-de-chip ${weighted ? 'is-weighted' : ''}`}
-                    onClick={() => !sending && onSubmit(q)}
-                    disabled={sending}
-                    title="点击直接发送"
-                  >{q}</button>
-                ))}
-                {onEnterCharacterMode && (
-                  <button
-                    type="button"
-                    className="tx-agent-de-chip tx-agent-de-chip-mode"
-                    onClick={() => !sending && onEnterCharacterMode()}
-                    disabled={sending}
-                    title="钻进角色脑子里和 TA 对话"
-                  >角色内心</button>
-                )}
-                {onEnterSpeculationMode && (
-                  <button
-                    type="button"
-                    className="tx-agent-de-chip tx-agent-de-chip-mode tx-agent-de-chip-spec-mode"
-                    onClick={() => !sending && onEnterSpeculationMode()}
-                    disabled={sending}
-                    title="不必先投票 —— 挑一个分支点，推演一条没走的路"
-                  >立场推演</button>
-                )}
-              </>
-            )}
+          {QUICK_QUESTIONS.map(q => (
+            <button
+              key={q}
+              type="button"
+              className={`tx-agent-de-chip ${weighted ? 'is-weighted' : ''}`}
+              onClick={() => !sending && onSubmit(q)}
+              disabled={sending}
+              title="点击直接发送"
+            >{q}</button>
+          ))}
+          {!inSpeculation && onEnterCharacterMode && (
+            <button
+              type="button"
+              className="tx-agent-de-chip tx-agent-de-chip-mode"
+              onClick={() => !sending && onEnterCharacterMode()}
+              disabled={sending}
+              title="钻进角色脑子里和 TA 对话"
+            >角色内心</button>
+          )}
+          {!inSpeculation && onEnterSpeculationMode && (
+            <button
+              type="button"
+              className="tx-agent-de-chip tx-agent-de-chip-mode tx-agent-de-chip-spec-mode"
+              onClick={() => !sending && onEnterSpeculationMode()}
+              disabled={sending}
+              title="不必先投票 —— 挑一个分支点，推演一条没走的路"
+            >立场推演</button>
+          )}
         </div>
 
         {/* 自由输入：平面下划线，不是实色卡片 */}
@@ -2879,7 +2897,15 @@ function fmtTime(s) {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 
-function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
+function PlayerControls({
+  videoRef,
+  videoId,
+  season = 1,
+  subtitle = '中文',
+  setSubtitle = () => {},
+  hasNext,
+  onNext,
+}) {
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -2890,7 +2916,6 @@ function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [quality, setQuality] = useState('标清 480P');
-  const [subtitle, setSubtitle] = useState('中文');
   const [audioTrack, setAudioTrack] = useState('默认');
   const [dragPreview, setDragPreview] = useState(null); // {time, leftPct} while dragging
   // 进度条 chapter ticks —— 来自 KB 的章节锚点（act + branch_point）。
