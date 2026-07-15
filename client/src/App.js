@@ -151,7 +151,12 @@ export default function App() {
 
   useEffect(() => { fetchVideos(); }, [fetchVideos]);
 
-  const heroPreview = featured || videos[videos.length - 1];
+  const heroEpisodes = [...videos].sort((a, b) => {
+    const tagA = videoEpisodeTag(a) || '';
+    const tagB = videoEpisodeTag(b) || '';
+    return tagA.localeCompare(tagB, undefined, { numeric: true }) || String(a.name || '').localeCompare(String(b.name || ''));
+  });
+  const heroPreview = featured || heroEpisodes[heroEpisodes.length - 1] || videos[videos.length - 1];
   const enterPlayer = () => {
     if (!heroPreview) return;
     setFeatured(heroPreview);
@@ -259,38 +264,68 @@ export default function App() {
         </div>
 
         {heroPreview && (
-          <div className="hero-preview" onClick={enterPlayer}>
-            <video
-              key={heroPreview.id}
-              src={`${resolveVideoSrc(heroPreview.url)}#t=60`}
-              autoPlay loop muted playsInline
-            />
-            <div className="hero-preview-mask" />
+          <div className="hero-preview-stack">
+            <div className="hero-preview" onClick={enterPlayer}>
+              <video
+                key={heroPreview.id}
+                src={`${resolveVideoSrc(heroPreview.url)}#t=60`}
+                autoPlay loop muted playsInline
+              />
+              <div className="hero-preview-mask" />
 
-            <div className="hero-preview-meta">
-              <div className="hero-preview-title-row">
-                <span className="hero-preview-name">{heroPreview.name || '龙之家族'}</span>
-                {videoEpisodeTag(heroPreview) && (
-                  <span className="hero-preview-ep">{videoEpisodeTag(heroPreview)}</span>
-                )}
+              <div className="hero-preview-meta">
+                <div className="hero-preview-title-row">
+                  <span className="hero-preview-name">{heroPreview.name || '龙之家族'}</span>
+                  {videoEpisodeTag(heroPreview) && (
+                    <span className="hero-preview-ep">{videoEpisodeTag(heroPreview)}</span>
+                  )}
+                </div>
+                <div className="hero-preview-sub">{heroPreview.episodeTitle || '长视频 AI 互动体验'}</div>
               </div>
-              <div className="hero-preview-sub">{heroPreview.episodeTitle || '长视频 AI 互动体验'}</div>
+
+              <button className="hero-preview-add" onClick={(e) => e.stopPropagation()}>
+                <span>+</span> 加入列表
+              </button>
+
+              <button
+                className="hero-preview-watch"
+                onClick={(e) => { e.stopPropagation(); enterPlayer(); }}
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                立刻观看
+              </button>
             </div>
 
-            <button className="hero-preview-add" onClick={(e) => e.stopPropagation()}>
-              <span>+</span> 加入列表
-            </button>
-
-            <button
-              className="hero-preview-watch"
-              onClick={(e) => { e.stopPropagation(); enterPlayer(); }}
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-              立刻观看
-            </button>
-
+            {heroEpisodes.length > 1 && (
+              <div className="hero-episode-rail" aria-label="剧集切换">
+                <div className="hero-episode-rail-head">
+                  <span>选集</span>
+                  <small>{heroEpisodes.length} 集可看</small>
+                </div>
+                <div className="hero-episode-list">
+                  {heroEpisodes.map((video, index) => {
+                    const active = video.id === heroPreview.id;
+                    const tag = videoEpisodeTag(video) || `EP${String(index + 1).padStart(2, '0')}`;
+                    return (
+                      <button
+                        key={video.id || video.filename || index}
+                        className={`hero-episode-card${active ? ' is-active' : ''}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setFeatured(video);
+                        }}
+                      >
+                        <span className="hero-episode-tag">{tag}</span>
+                        <span className="hero-episode-title">{video.episodeTitle || video.name || '龙之家族'}</span>
+                        {active && <span className="hero-episode-now">当前</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>
