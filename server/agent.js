@@ -994,16 +994,73 @@ function prepareRequest(kb, bodyOrQuery = {}) {
   };
 }
 
-// ─── 人物识别：face_service 优先 + 智能跳过 LLM ─────────────
-// 思路：face_service 跑完知道画面里**总检出多少张脸 + 匹配上多少张**。
-// 检出 N 张 = 匹配 N 张 → 整帧已识完，直接返回，不调 LLM（这是最大头：
-// 命中场景下从 ~2s 降到 ~200ms）。否则（face_service 没起 / 没检出脸 /
-// 半匹配）才调 Gemini 兜底，再按 bbox 合并 face_service 已匹配的部分。
-//
-// 代价：相比纯并行版，半匹配/face_service down 时多串行一段 ~200ms；但
-// 这种场景下 LLM 调用本来 ~2s 起步，多几百毫秒整体感受不出来 —— 而完全
-// 命中的常见路径却能省掉一整个 Gemini 调用 + 它的 token 成本。
+// ─── 对话主题守门：所有自由输入的 AI 对话先过这里 ─────────────
+// 目标是挡掉明显跑题/越狱/工具型请求，同时放过“这是什么意思”这类依赖当前画面的短问。
 
+const TOPIC_GUARD_REPLY = '这个问题离当前剧情有点远。可以换个问法，围绕这一幕的人物、台词、关系、情绪或选择继续问。';
+
+function guardDialogueTopic(text, options = {}) {
+  const raw = String(text || '').trim();
+  if (!raw) return { ok: true };
+
+  const normalized = raw.toLowerCase().replace(/\s+/g, ' ');
+  const compact = normalized.replace(/\s+/g, '');
+  const banned = [
+    /天气|气温|下雨|股票|基金|彩票|汇率|房价|外卖|菜谱|健身|减肥|旅游攻略|酒店|机票/,
+    /写代码|写个代码|帮我编程|python|javascript|java\b|sql\b|正则|接口文档|debug|报错/,
+    /数学题|算一下|方程|物理题|化学题|考试答案|论文|简历|邮件|商业计划/,
+    /新闻|总统|选举|nba|足球|世界杯|奥运|比特币|crypto|weather|stock|recipe/,
+    /忽略.*(提示|规则|系统)|ignore .*instruction|system prompt|越狱|jailbreak/,
+  ];
+
+  if (banned.some(pattern => pattern.test(compact) || pattern.test(normalized))) {
+    return { ok: false, reason: 'blocked_obvious_off_topic', message: TOPIC_GUARD_REPLY };
+  }
+
+  const topicHints = [
+    '这', '那', '刚才', '现在', '这里', '这一幕', '这段', '这个场景', '画面', '镜头', '台词', '对白',
+    '他', '她', '他们', '她们', '人物', '角色', '关系', '动机', '立场', '选择', '情绪', '为什么',
+    '什么意思', '发生', '剧情', '伏笔', '暗示', '象征', '文化梗', '梗', '龙', '王', '王冠', '王位',
+    '继承', '家族', '坦格利安', '海塔尔', '瓦列利安', '黑党', '绿党', '雷妮拉', '戴蒙', '阿莉森特',
+    '伊耿', '伊蒙德', '克里斯顿', '科尔', '拉里斯', '韦赛里斯', 'vhagar', 'rhaenyra', 'daemon',
+    'alicent', 'aegon', 'aemond', 'criston', 'larys', 'viserys', 'targaryen', 'hightower',
+    'velaryon', 'dragon', 'crown', 'king', 'queen',
+  ];
+  if (topicHints.some(hint => compact.includes(hint.toLowerCase().replace(/\s+/g, '')))) {
+    return { ok: true };
+  }
+
+  const dynamicTerms = Array.isArray(options.dynamicTerms) ? options.dynamicTerms : [];
+  const normalizedTerms = dynamicTerms
+    .filter(Boolean)
+    .map(term => String(term).toLowerCase().replace(/\s+/g, ''))
+    .filter(term => term.length >= 2);
+  if (normalizedTerms.some(term => compact.includes(term))) {
+    return { ok: true };
+  }
+
+  if (raw.length <= 8 && /^(展开|继续|详细点|说下去|再说|然后呢|怎么了|为什么|啥意思|什么意思|说清楚)[？?吗呢嘛啊呀]?$/.test(raw)) {
+    return { ok: true };
+  }
+
+  return { ok: false, reason: 'low_topic_signal', message: TOPIC_GUARD_REPLY };
+}
+
+function dialogueTopicTerms(kb, t, extraTerms = []) {
+  const terms = [...extraTerms, kb?.title, kb?.show_id, kb?.episode].filter(Boolean);
+  const scene = kb ? currentScene(kb, normalizeTime(t)) : null;
+  if (scene?.location) terms.push(scene.location);
+  for (const tag of (scene?.tags || [])) terms.push(tag);
+  const showId = kb?.show_id || 'house-of-the-dragon';
+  const db = getCharacterDb(showId);
+  for (const c of (db?.characters || [])) {
+    terms.push(c.character_id, c.display_name_zh, c.canonical_name, c.house, c.short_identity_zh);
+    if (Array.isArray(c.aliases)) terms.push(...c.aliases);
+  }
+  return terms;
+}
+
+// ─── 人物识别：face_service 优先 + 智能跳过 LLM ─────────────
 async function recognizeViaFaceService({ image, db, cursor }) {
   const url = process.env.FACE_SERVICE_URL;
   if (!url) return null;
@@ -1505,6 +1562,22 @@ function register(app) {
     }
 
     const prepared = prepareRequest(kb, req.body);
+    const topicGuard = guardDialogueTopic(prepared.question, {
+      dynamicTerms: dialogueTopicTerms(kb, prepared.cursorTime),
+    });
+    if (!topicGuard.ok) {
+      return res.json({
+        answer: topicGuard.message,
+        has_kb: true,
+        source: 'topic_guard',
+        cursor_time: prepared.cursorTime,
+        mode: prepared.mode,
+        primary_intent: null,
+        intents: {},
+        guard_reason: topicGuard.reason,
+      });
+    }
+
     let answer = await generateWithLLM(prepared.context, prepared.question);
     const source = answer ? 'llm' : 'template';
 
@@ -1565,6 +1638,15 @@ function register(app) {
       intents: prepared.context.tool_bundle?.intents || {},
       mode_used: (hasImageEarly ? 'vision' : 'kb'),
     });
+
+    const topicGuard = guardDialogueTopic(prepared.question, {
+      dynamicTerms: dialogueTopicTerms(kb, prepared.cursorTime),
+    });
+    if (!topicGuard.ok) {
+      send('text', { delta: topicGuard.message });
+      send('done', { source: 'topic_guard', reason: topicGuard.reason });
+      return res.end();
+    }
 
     // 任务类型在拿到 image/clipFrames 之后再决定（visualMode 才走 vision_chat）
     const controller = new AbortController();
@@ -2860,6 +2942,19 @@ ${doesNotKnow || '（无）'}
       send('done', { source: 'error' });
       return res.end();
     }
+    const topicGuard = guardDialogueTopic(userMsg, {
+      dynamicTerms: dialogueTopicTerms(kb, req.body?.t, [
+        characterId,
+        profile.display_name,
+        profile.display_name_zh,
+        profile.canonical_name,
+      ]),
+    });
+    if (!topicGuard.ok) {
+      send('text', { delta: topicGuard.message });
+      send('done', { source: 'topic_guard', reason: topicGuard.reason });
+      return res.end();
+    }
     if (!ai.isAvailable('dialogue')) {
       send('text', { delta: '当前没有可用的对谈 LLM provider。' });
       send('done', { source: 'error' });
@@ -3527,6 +3622,21 @@ ${convergence ? `【这条路上的张力暗流（最后那 1-2 个问句要踩�
 
     const optionHint = trigger.speculation?.by_option?.[optionId] || '';
     const convergence = trigger.speculation?.convergence_hint || '';
+    const topicGuard = guardDialogueTopic(userQ, {
+      dynamicTerms: dialogueTopicTerms(kb, trigger.timestamp, [
+        trigger.scene_label,
+        option.label,
+        option.inner_voice,
+        ...(trigger.prompt_lines || []),
+        optionHint,
+        convergence,
+      ]),
+    });
+    if (!topicGuard.ok) {
+      send('text', { delta: topicGuard.message });
+      send('done', { source: 'topic_guard', reason: topicGuard.reason });
+      return res.end();
+    }
 
     const system = `你是 HBO ${showName} 编剧组的成员，正在和观众一起把一条"假设世界线"往下推。
 观众已经替剧中人做了一个不同于原剧的选择，前面已经有过几段推演，现在观众有了新的追问。
