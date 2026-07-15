@@ -1,0 +1,11 @@
+﻿.git
+node_modules
+client/node_modules
+server/node_modules
+face-service
+lapian-notes
+*.mp4
+*.mkv
+server/uploads
+server/references
+client/build
