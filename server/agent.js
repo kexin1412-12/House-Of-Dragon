@@ -544,6 +544,13 @@ function currentScene(kb, cursorTime) {
   return kb.scenes.find(s => s.start_time <= cursorTime && cursorTime < s.end_time) || null;
 }
 
+function currentVisualBeat(scene, cursorTime) {
+  if (!scene || !Array.isArray(scene.visual_beats)) return null;
+  return scene.visual_beats.find(beat =>
+    beat.start_time <= cursorTime && cursorTime < beat.end_time
+  ) || null;
+}
+
 function scenesUpTo(kb, cursorTime) {
   return kb.scenes.filter(s => s.start_time <= cursorTime);
 }
@@ -721,6 +728,7 @@ function buildContext(kb, params) {
     current_scene: scene ? {
       scene_id: scene.scene_id,
       time_range: [scene.start_time, scene.end_time],
+      timed_visual_beat: currentVisualBeat(scene, cursorTime),
       plot_fact: scene.plot?.fact,
       plot_reading: scene.plot?.reading,
       narrative: scene.narrative || null,
@@ -840,31 +848,26 @@ A: 他在确认这位骑士能不能被海塔尔家收编。
     return `
 
 ═══ 输出格式（deep / 深挖）═══
-三层都要写，**每层质感必须不同**：
+三层都要写，**先识别，再解释，最后划清事实边界**：
 
-[事实]（≤ 60 字）—— **不只描述发生了什么，要加视觉细节**：
-  - 景别 / 构图 / 光（"特写""逆光剪影""中景平视"）
-  - 服装色 / 站位 / 道具（"她坐左下、他立右上"）
-  - 对白原文片段（如有可引）
+[事实]（80-140 字）—— **先回答“是谁、什么事件”，再给识别证据**：
+  - 第一处就写具体人物、物件或历史事件，禁止只说“某位国王”“一种徽记”
+  - 用服装、王冠、武器、龙、血迹、站位、相邻镜头等可见特征说明为什么这样认
+  - timed_visual_beat 已核验的身份和事件必须优先采用，不得被单帧猜测覆盖
 
-[解读]（≤ 80 字）—— **必须给至少 2 个角度**：
-  - "从 X 角度看……但从 Y 角度看……"
-  - 或"对她而言……对家族而言……"
-  - **只给一种解读 = 不及格**
+[解读]（180-320 字）—— **至少覆盖三种真正相关的层次**：
+  - 历史背景：这具体对应哪次权力转折、宗教妥协或家族关系
+  - 符号与表现力：道具、构图、色彩、剪辑为什么这样安排
+  - 叙事镜像：它如何照见当前已经播出的剧情，形成历史循环、反差或戏剧讽刺
+  - 艺术语言：挂毯、壁画等形式如何把活生生的人变成被后世编织和解释的历史
+  - 不要为了凑角度硬塞理论；每一层都必须能回到当前画面的具体细节
 
-[推测]（≤ 60 字）—— **必须给替代可能 A/B**：
-  - "可能 A，也可能 B"
-  - "未必是 X 看起来的那样，也许只是 Y"
-  - 用"也许""可能""我怀疑"明确标不确定
+[推测]（40-100 字）—— **只写真实存在的争议或证据边界**：
+  - 明确区分“史料可确认”“剧集视觉化表达”“观众常见解读”
+  - 有 A/B 可能才列替代解释；没有争议就写哪些细节仍不能仅凭这一帧确定
+  - 用“可能”“常被解读为”“不能据此断定”标注不确定，绝不为满足格式编造第二种可能
 
 每个 tag 在一次回答里最多 1 次。tag 后空一格再写正文。
-
-例：
-Q: 阿丽森穿绿礼服意味着什么？
-A:
-[事实] 中景平视镜头，她身穿海塔尔家族绿色礼服独自走入大厅，宾客静默回头。
-[解读] 对绿党而言，这是公开亮阵营、向韦赛里斯施压；对她个人，是父亲被撤后母性立场的一次反扑。
-[推测] 也许她并非主动选这件礼服，可能是奥托提前耳语；也可能她已嗅到雷尼拉处境的危险，提前划清界限。
 `;
   }
 
@@ -1712,6 +1715,15 @@ function register(app) {
 ═══ 信息来源优先级 ═══
 回答前按这个顺序判断：
 
+0. current_scene.timed_visual_beat
+   - 这是对当前秒数逐帧核验后的专属注解，身份、事件和画面元素优先级最高
+   - 用户问“这是谁 / 这个镜头什么意思”时，第一句直接说出 identified_people 和 event，不得退回“某个国王”“某种象征”
+   - verified_facts 可以确定陈述；historical_ambiguity 必须保留为争议，不能擅自选定一种死因
+
+0.5 current_scene.tapestry_meta_reading
+   - 这是片头挂毯的整体验读框架：历史循环、戏剧反差与“人物终成丝线”的史书视角
+   - 只在片头刺绣画面中使用；不能拿它套普通对话或动作场面
+
 1. character_dictionary
    - 如果识别到人物，必须优先使用人物名字
    - 如果字典给了关系，就用关系解释
@@ -1754,6 +1766,32 @@ function register(app) {
 - 元层级：嵌入剧集自身的设定（"传唱百年的歌"——剧名就是 A Song of Ice and Fire）
 
 有第二层就先说它，表面意思一句带过或跳过。没有就老实答场面分析，不硬挖。
+
+═══ 深层视觉解读工作法 ═══
+当用户问“这是谁”“解释这个镜头”“这是什么梗”，尤其选择 deep 时，按以下顺序思考：
+
+1. 精准定位与纠错
+   - 先锁定具体人物、物件和历史事件，再描述画面
+   - 指出决定身份的证据；如果常见误读与 timed_visual_beat 冲突，要直接、温和地纠正
+   - 无可靠证据时宁可明确中低置信度，也不要靠发色、服装气质或文学联想硬认人
+
+2. 细节与符号
+   - 拆解王冠、武器、徽记、龙、血迹、丝线、站位、相邻剪辑等元素
+   - 每个符号都要回答“它在这段具体历史里起什么作用”，不能只写“象征权力与血腥”
+
+3. 历史背景与叙事镜像
+   - 说明这一画面对应的具体王朝节点，以及它如何照见当前已经播出的冲突
+   - 可以谈历史循环、祖先辉煌与后代撕裂的反差，但必须标明这是主题类比，不是人物一一对应
+   - 禁止借“隐喻”偷渡未来死亡、结局或当前时间点以后才发生的事件
+
+4. 艺术与史书视角
+   - 解释贝叶挂毯式媒介、构图和剪辑如何服务宏大叙事
+   - 可以指出挂毯是被选择、编织的历史记忆，不等于客观监控录像；鲜活人物最终只剩后世叙事中的一针一线
+
+5. 事实纪律
+   - 已核验事实、剧集表现、历史争议、主题解读四者必须分开
+   - 不假装进行了联网搜索；只能使用当前画面、timed_visual_beat、retrieved_knowledge 和已提供上下文
+   - 文采必须建立在准确性之上。先说清“谁、什么事、凭什么”，再谈宿命感
 
 风格示例（这是好回答的样子，不是模板）：
 
@@ -1976,6 +2014,8 @@ retrieved_knowledge 里如果出现了下面任一角度的**具体观察**，**
       const currentSceneSlice = scene ? {
         scene_id: scene.scene_id,
         time_range: [scene.start_time, scene.end_time],
+        timed_visual_beat: currentVisualBeat(scene, prepared.cursorTime),
+        tapestry_meta_reading: scene.tapestry_meta_reading || null,
         location: kb ? getLocationState(kb, prepared.cursorTime) : null,
         plot_fact: scene.plot?.fact || null,
         plot_reading: scene.plot?.reading || null,
