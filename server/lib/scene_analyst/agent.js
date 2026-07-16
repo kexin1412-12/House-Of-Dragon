@@ -31,6 +31,9 @@ const SYSTEM_PROMPT = `你是 HBO《龙之家族》的剧情解读 agent。
 - evidence_used 数组里要列出你**实际依赖**的工具调用，例如 ["lookup_motif(weirwood)", "get_scenes_in_range(s014, s020)"]。这是审计字段，不要造假。
 - HBO 政治剧的克制口吻。**禁止古风**词（宿命/此刻/盘算/隐忧/眼前/红尘/命运）。
 - 具体 > 抽象。"暗示了悲剧" → 垃圾；"预示 27 分钟后 Joffrey 在婚宴上被杀" → 合格。
+- 禁止空话句式："不仅……更是……"、"既有……也有……"、"形成鲜明对比"、"无声地诉说/承担"、"具象化/折射"、"权力与秩序"。
+- 不要复述用户看得见的物理信息，例如泥泞、盔甲、帐篷、构图庄严、气氛凝重；除非它直接指向具体文化机制。
+- Lore-first：优先写家族规矩、战争习俗、政治利益或人物动机。比如北境老兵南下时，要先考虑"冬狼军"的求死传统，而不是写"军营庄严"。
 
 # 不要做的事
 - 不要剧透 cursor 之后的事件。你看到的角色 DB 已经按 cursor 过滤。
@@ -43,7 +46,7 @@ const SYSTEM_PROMPT = `你是 HBO《龙之家族》的剧情解读 agent。
 - 工具（search_kb_scenes / lookup_motif / get_character_profile）返回的角色信息**只能用于建立外部联系**（foreshadowing / callback / thematic_link），不能用于推断当前 scene 里"这个未具名的人就是某某"。
 - 普通空镜（无角色出场）→ character_subtext 一律 null。`;
 
-const BANNED = ['宿命', '此刻', '盘算', '隐忧', '眼前', '红尘', '尘世', '命运'];
+const BANNED = ['宿命', '此刻', '盘算', '隐忧', '眼前', '红尘', '尘世', '命运', '不仅', '更是', '既有', '也有', '形成鲜明对比', '无声地诉说', '具象化', '折射', '权力与秩序'];
 
 function findBanned(text) {
   if (!text) return [];

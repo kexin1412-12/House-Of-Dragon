@@ -492,6 +492,116 @@
       "spoiler_safe": true,
       "earliest_appearance": "S01E05",
       "_user_note": "migrated from SceneHotspots godswood_e05; ref.kind=lore"
+    },
+    {
+      "symbol_id": "embroidery",
+      "category": "editing",
+      "visual_cue": "片头用布面刺绣呈现人物、兵刃与龙",
+      "context_required": "用于本季刺绣片头；必须以当前画面可见的线迹与图案为证据",
+      "meaning_zh": "王朝史被压成可编排、可继承的家族图样，个人被更大的血脉叙事吞没。",
+      "viewer_takeaway": "这不是装饰，而是被缝进布里的王朝史。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "red_thread",
+      "category": "color_code",
+      "visual_cue": "红色绣线在人物与冲突图案之间延伸",
+      "context_required": "只在片头能同时看见红线、人物或战斗图案时使用",
+      "meaning_zh": "维系家族的血脉，也是把家族拖入流血的同一条线。",
+      "viewer_takeaway": "血脉连接他们，也让他们彼此流血。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "rhaena_sheepstealer_bond",
+      "category": "micro_signal",
+      "visual_cue": "雷妮亚与没有鞍具、缰绳的偷羊贼靠近，或她在战场上试图以口令约束它",
+      "context_required": "解读必须区分建立信任与完全控制，不把靠近直接等同于驯服",
+      "meaning_zh": "人与龙的纽带建立在反复接近与回应上；私人信任进入战场后仍会暴露控制边界。",
+      "viewer_takeaway": "能让巨龙靠近，不等于能让它在混战中分清敌我。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "aegons_crown",
+      "category": "prop",
+      "visual_cue": "被藏在行李中、随后亮出以证明伊耿身份的王冠",
+      "context_required": "必须在王冠已经出现在当前场景后触发，避免提前揭露身份",
+      "meaning_zh": "王冠从荣耀标志变成可携带、可交易、也会暴露主人的身份物证。",
+      "viewer_takeaway": "身份可以否认，王冠却会替主人作证。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "aemond_on_iron_throne",
+      "category": "prop",
+      "visual_cue": "伊蒙德坐在铁王座剑刃簇拥的画面中心",
+      "context_required": "只描述当前座位与构图，不宣称尚未在画面中确认的正式继承结果",
+      "meaning_zh": "正式继承尚未发生，权力位置已经先被身体占据。",
+      "viewer_takeaway": "谁坐在王座上，本身就是一句政治宣言。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "paired_wine_cups",
+      "category": "prop",
+      "visual_cue": "科利斯把酒倒入两只杯子，邀请亚林共同饮用",
+      "context_required": "第一处出现不得提前使用下一场才说出的酒名或道歉内容",
+      "meaning_zh": "成对酒杯把上下级关系暂时改写成一次迟到的私人邀约与修复仪式。",
+      "viewer_takeaway": "第二只杯子，是科利斯先于道歉递出的和解动作。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "velaryon_seahorse_sigil",
+      "category": "prop",
+      "visual_cue": "科利斯胸前清晰可见的金色瓦列利安海马徽记",
+      "context_required": "与科利斯谈及家名、名分或亲子亏欠的当下画面结合解读",
+      "meaning_zh": "公开佩戴的家徽，照出他曾从亲子关系中扣下的同一姓氏。",
+      "viewer_takeaway": "最醒目的家徽，反而照出那个没有被承认的家名。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "locked_door_reversal",
+      "category": "prop",
+      "visual_cue": "杰卡里斯要求洛伦特把门闩上锁，雷妮拉被挡在门内",
+      "context_required": "必须在上锁命令已经说出后触发，不把前一场普通门框画面单独过度解读",
+      "meaning_zh": "保护在这一刻变成禁闭，铁卫誓言被用来限制女王的行动权。",
+      "viewer_takeaway": "同一扇门既能守护君主，也能剥夺君主的行动权。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "soundings_and_needle_rocks",
+      "category": "prop",
+      "visual_cue": "测深绳、水深口令、退潮与尖石礁组成的连续航海决策",
+      "context_required": "结合船员实际测深与科利斯的舵令；不提前描述追兵结果",
+      "meaning_zh": "航海经验把看不见的水深和潮汐转译成战术路线，让地形成为武器。",
+      "viewer_takeaway": "海蛇的优势不是更快，而是知道哪里能走。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "sea_snake_flooded_cabin",
+      "category": "editing",
+      "visual_cue": "海水涌进狭窄船舱，压缩科利斯搏斗与移动的空间",
+      "context_required": "只描述当前困境，不据此断言人物结局",
+      "meaning_zh": "以“海蛇”闻名的人，反而被海水困在无法发挥航海经验的封闭空间。",
+      "viewer_takeaway": "最熟悉海的人，也可能被海夺走主动。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
+    },
+    {
+      "symbol_id": "dragonrider_shared_wound",
+      "category": "editing",
+      "visual_cue": "交叉剪辑呈现落海的骑手与龙在同一片水域遭受箭击",
+      "context_required": "仅在骑手和龙都已落海并遭攻击后触发，不越过本集画面判断生死",
+      "meaning_zh": "骑手与龙的绑定从共同力量转成共同脆弱性。",
+      "viewer_takeaway": "他们共享飞行，也共享坠落与伤口。",
+      "spoiler_safe": true,
+      "earliest_appearance": "S03E01"
     }
   ]
 }

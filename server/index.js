@@ -64,6 +64,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/kb/frames', express.static(path.join(__dirname, 'kb', 'frames')));
 app.use('/kb/characters/face_refs', express.static(path.join(__dirname, 'kb', 'characters', 'face_refs')));
+app.use('/kb/characters/face_refs', express.static(path.join(__dirname, '..', 'client', 'public', 'kb', 'characters', 'face_refs')));
 app.use('/kb/characters/dragon_refs', express.static(path.join(__dirname, 'kb', 'characters', 'dragon_refs')));
 
 agent.register(app);
