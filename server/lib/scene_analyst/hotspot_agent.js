@@ -18,6 +18,7 @@
 
 const ai = require('../ai');
 const { sceneIdNum } = require('./tools');
+const { ANTI_BLOAT_SCENE_RULES } = require('../../prompts/common/anti-bloat');
 
 const SYSTEM_PROMPT = `你是 HBO《龙之家族》的"剧情符号热点"撰稿人。
 
@@ -45,6 +46,7 @@ const SYSTEM_PROMPT = `你是 HBO《龙之家族》的"剧情符号热点"撰稿
 - evidence_in_frame **只能写当前 scene 的画面/台词里实际有的东西**。如果当前 scene 的 fact 完全不支持热点描述，confidence=low 并在 evidence 里写"无法在画面中确认，仅根据用户提示推断"。
 - meaning_zh 不要照抄词典，要把通用含义"贴"到当前 scene。
 - 不剧透 cursor 之后的事件。
+${ANTI_BLOAT_SCENE_RULES}
 - 禁止古风词（宿命/此刻/盘算/眼前/红尘/命运），HBO 政治剧的克制口吻。
 - 工具调用上限 6 次，超额会被强制 finalize。`;
 

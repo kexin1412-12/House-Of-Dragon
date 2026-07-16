@@ -7,6 +7,7 @@ const seasonLib = require('./lib/season');
 const ai = require('./lib/ai');
 const { retrieve: retrieveKnowledge } = require('./lib/retrieval');
 const { buildAnswerSpec } = require('./prompts/answer-spec');
+const { ANTI_BLOAT_RULES } = require('./prompts/common/anti-bloat');
 const { buildVisionSystemPrompt, buildVisionUserContent } = require('./prompts/vision');
 
 const KB_DIR = path.join(__dirname, 'kb');
