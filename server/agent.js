@@ -1792,7 +1792,7 @@ ${JSON.stringify(prepared.context, null, 2)}
     const systemWithSpec = baseSystem + buildAnswerSpec(depth);
 
     // deep 档要装得下三层多角度内容；oneline 卡到 60 强制简短；brief 默认。
-    const maxTokens = depth === 'deep' ? 900 : (depth === 'oneline' ? 60 : 280);
+    const maxTokens = depth === 'deep' ? 1400 : (depth === 'oneline' ? 60 : 280);
 
     try {
       let usage = null;

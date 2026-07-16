@@ -9,6 +9,7 @@
 - `vision/identity.js`：角色与任务边界
 - `vision/grounding.js`：防剧透、证据优先级、事实纪律
 - `vision/analysis.js`：对白与视觉解读流程
+- `vision/literary.js`：深挖档的论断、意象、反差与收束
 - `vision/style.js`：语言风格与禁止项
 - `answer-spec.js`：一句、简明、深挖三档输出契约
 
