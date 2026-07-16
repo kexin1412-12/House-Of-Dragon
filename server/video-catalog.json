@@ -14,10 +14,15 @@
     "episodeTitle": "盐与海，火与血",
     "subtitles": [
       {
+        "src": "/subtitles/house_of_dragon_s03e01.bilingual.vtt",
+        "srcLang": "zh-CN",
+        "label": "中英双语",
+        "default": true
+      },
+      {
         "src": "/subtitles/house_of_dragon_s03e01.en.vtt",
         "srcLang": "en",
-        "label": "English",
-        "default": true
+        "label": "English"
       },
       {
         "src": "/subtitles/house_of_dragon_s03e01.zh-CN.vtt",

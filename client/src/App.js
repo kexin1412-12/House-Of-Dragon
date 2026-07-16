@@ -2895,6 +2895,7 @@ const IconFeedback = () => (
 /* ─── Custom Tencent-style player controls ───────────────── */
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 const QUALITIES = ['蓝光 4K', '超清 1080P', '高清 720P', '标清 480P'];
+const SUBTITLE_SIZES = ['小', '标准', '大'];
 const AUDIOS = ['默认', '国语', '日语'];
 function fmtTime(s) {
   if (!s || !isFinite(s)) return '00:00';
@@ -2916,6 +2917,7 @@ function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, ha
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [quality, setQuality] = useState('标清 480P');
   const [subtitle, setSubtitle] = useState(defaultSubtitleLabel);
+  const [subtitleSize, setSubtitleSize] = useState('小');
   const [audioTrack, setAudioTrack] = useState('默认');
   const [dragPreview, setDragPreview] = useState(null); // {time, leftPct} while dragging
   // 进度条 chapter ticks —— 来自 KB 的章节锚点（act + branch_point）。
@@ -2944,6 +2946,16 @@ function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, ha
     video.addEventListener('loadedmetadata', applySubtitle);
     return () => video.removeEventListener('loadedmetadata', applySubtitle);
   }, [subtitle, videoId, videoRef]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.classList.remove('subtitle-size-small', 'subtitle-size-standard', 'subtitle-size-large');
+    const sizeClass = subtitleSize === '大'
+      ? 'subtitle-size-large'
+      : subtitleSize === '标准' ? 'subtitle-size-standard' : 'subtitle-size-small';
+    video.classList.add(sizeClass);
+  }, [subtitleSize, videoId, videoRef]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -3218,6 +3230,7 @@ function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, ha
                 <div className="tx-ctl-settings-panel">
                   <SettingsSection label="清晰度" options={QUALITIES} value={quality} onChange={setQuality} />
                   <SettingsSection label="字幕" options={subtitleOptions} value={subtitle} onChange={setSubtitle} />
+                  <SettingsSection label="字幕大小" options={SUBTITLE_SIZES} value={subtitleSize} onChange={setSubtitleSize} />
                   <SettingsSection label="音轨" options={AUDIOS} value={audioTrack} onChange={setAudioTrack} />
                 </div>
               )}
