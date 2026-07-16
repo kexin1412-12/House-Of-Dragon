@@ -2929,6 +2929,15 @@ function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, ha
   const draggingRef = useRef(false);
 
   const subtitleOptions = [...subtitleTracks.map(track => track.label), '关闭'];
+  const subtitleButtonLabel = subtitle === '中英双语'
+    ? '双语'
+    : subtitle === '简体中文' ? '中文' : subtitle;
+
+  const cycleSubtitle = () => {
+    const currentIndex = subtitleOptions.indexOf(subtitle);
+    const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % subtitleOptions.length : 0;
+    setSubtitle(subtitleOptions[nextIndex]);
+  };
 
   useEffect(() => {
     setSubtitle(defaultSubtitleLabel);
@@ -3172,7 +3181,14 @@ function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, ha
           <div className="tx-controls-middle" />
 
           <div className="tx-controls-right">
-            <button className="tx-ctl-btn tx-ctl-text" title="语言">语言</button>
+            <button
+              className="tx-ctl-btn tx-ctl-text"
+              title={`字幕：${subtitle}（点击切换）`}
+              aria-label={`字幕：${subtitle}，点击切换`}
+              onClick={cycleSubtitle}
+            >
+              {subtitleButtonLabel}
+            </button>
             <button className="tx-ctl-btn tx-ctl-text" title="画质">{qualityShort}</button>
             <div
               className="tx-ctl-speed"
