@@ -68,8 +68,8 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
   );
 }
 
-// 角标最长展示时长（视频秒）—— 同一场景只展示一次，满 6 秒自动隐藏。
-const BADGE_DURATION_S = 6;
+// 角标跟随场景切片展示，但同一场景最长只展示 10 个视频秒。
+const BADGE_DURATION_S = 10;
 
 export default function SymbolHotspots({ videoId, videoRef, onCta }) {
   const [symbolData, setSymbolData] = useState(null);
@@ -116,7 +116,7 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
 
           const hasSymbols = data.symbols && data.symbols.length > 0;
 
-          // 新场景"有符号" → 立刻切换，并重新计算 6 秒展示窗口
+          // 新场景"有符号" → 立刻切换，并重新计算 10 秒展示窗口
           if (hasSymbols) {
             lastSceneIdRef.current = data.scene_id;
             setSymbolData(data);
@@ -125,14 +125,7 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
             return;
           }
 
-          // 新场景"无符号" → 上一组未满 6 秒时继续显示，满 6 秒清除
-          if (symbolData && shownAt != null && (now - shownAt) < BADGE_DURATION_S) {
-            // 还没看到 6 秒：保持显示，但更新 scene_id 避免下次 tick 误判
-            lastSceneIdRef.current = data.scene_id;
-            return;
-          }
-
-          // 时间到了：清掉
+          // 场景切片结束且新场景无符号时，立即清除上一场景的热点
           lastSceneIdRef.current = data.scene_id;
           setSymbolData(null);
           setActive(null);
