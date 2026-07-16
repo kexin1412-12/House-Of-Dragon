@@ -367,6 +367,7 @@ function useViewport(graphSize, viewportRef) {
   const onWheel = useCallback((e) => {
     if (!viewportRef.current) return;
     e.preventDefault();
+    e.stopPropagation();
     const rect = viewportRef.current.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
@@ -377,6 +378,13 @@ function useViewport(graphSize, viewportRef) {
       return { scale: next, tx: mx - (mx - v.tx) * ratio, ty: my - (my - v.ty) * ratio };
     });
   }, [viewportRef]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return undefined;
+    viewport.addEventListener('wheel', onWheel, { passive: false });
+    return () => viewport.removeEventListener('wheel', onWheel);
+  }, [onWheel, viewportRef]);
 
   const onMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
@@ -893,7 +901,6 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
           <div
             className="rg-tree-viewport"
             ref={viewportRef}
-            onWheel={viewport.onWheel}
             onMouseDown={onViewportMouseDown}
             onMouseMove={viewport.onMouseMove}
             onMouseUp={viewport.onMouseUp}

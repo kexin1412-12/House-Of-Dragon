@@ -230,6 +230,7 @@
   overflow: hidden;
   cursor: grab;
   touch-action: none;          /* keep browser from intercepting pinch */
+  overscroll-behavior: contain;
   user-select: none;
   -webkit-user-select: none;
 }
