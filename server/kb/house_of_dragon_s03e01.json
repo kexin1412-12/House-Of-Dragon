@@ -3186,42 +3186,60 @@
     {
       "scene_id": "s025",
       "start_time": 1352,
-      "end_time": 1383,
+      "end_time": 1382.639,
       "keyframe": "frames/house_of_dragon_s03e01/scene-025.jpg",
+      "visual_beats": [
+        {
+          "beat_id": "rhaena_calms_sheepstealer",
+          "start_time": 1352,
+          "end_time": 1382.639,
+          "identified_people": [
+            "雷妮亚·坦格利安（Rhaena Targaryen）"
+          ],
+          "identified_elements": [
+            "雷妮亚以银灰色长辫、深色龙骑装束站在山地环境中",
+            "她面对并安抚野龙偷羊贼，字幕明确出现‘听话，偷羊贼’‘我们必须去龙石岛’‘回家吧’",
+            "这一段尚未切入红堡室内的阿莉森与海伦娜对话"
+          ],
+          "event": "雷妮亚试图安抚偷羊贼，并劝它跟随自己前往龙石岛。",
+          "verified_facts": "当前人物是雷妮亚·坦格利安，不是海伦娜·坦格利安。她正在野外面对偷羊贼；海伦娜与阿莉森的室内对话从约 1382.639 秒后才开始。",
+          "meaning": "这一刻的重点不是预言或绿党宫廷政治，而是雷妮亚试图把一条不受王室驯养体系约束的野龙带回家。她的请求既表现出建立联系的勇气，也暴露出人与龙之间始终存在的控制边界。",
+          "historical_ambiguity": "仅凭这一帧不应把雷妮亚误认成同为银发坦格利安女性的贝拉或海伦娜；身份应由人物外形、偷羊贼情境和同秒字幕共同确认。",
+          "identity_lock": "rhaena_targaryen",
+          "confidence": "high",
+          "source_refs": [
+            "S03E01 22:32-23:02 逐帧与字幕复核"
+          ]
+        }
+      ],
       "plot": {
-        "fact": "阿莉森皇后与海伦娜公主讨论伊耿逃走一事，海伦娜认为伊蒙德应该去追击，并指出伊蒙德现在也感受到了恐惧。",
-        "reading": "海伦娜的评论揭示了伊蒙德内心的恐惧，尽管他表面上表现得无所畏惧。",
-        "deep_reading": "海伦娜的观察显示出她对伊蒙德的了解，她指出伊蒙德在驯服瓦格哈尔后忘记了恐惧，但现在面对雷妮拉的龙群，他重新感受到了这种情绪。这一对话揭示了伊蒙德的脆弱面，也暗示了他在权力斗争中的不安。"
+        "fact": "雷妮亚·坦格利安在野外安抚偷羊贼，试图让它跟随自己前往龙石岛。",
+        "reading": "雷妮亚没有用命令压服野龙，而是以声音和接近建立联系；这突出她的勇气，也强调偷羊贼并非天然服从坦格利安血脉。",
+        "deep_reading": "这一段把驭龙从血统特权还原成一次危险的关系建立。雷妮亚面对的不是可直接继承的王室坐骑，而是一条保留强烈野性的龙；她说‘回家吧’，既是在邀请偷羊贼，也是在为自己争取一个能够主动选择的归属。"
       },
       "narrative": {
         "phase": "development",
         "importance": 0.7,
         "tension": 0.6,
-        "role": "character_exposition",
+        "role": "character_development",
         "should_hint": false
       },
       "shot": {
         "framing": "未从字幕判断",
         "camera": "未从字幕判断",
         "light": "未从字幕判断",
-        "intent": "揭示角色内心的恐惧和不安",
-        "emotion": "潜在的恐惧和不安",
-        "narrative_role": "character_exposition",
+        "intent": "通过人物与巨龙的体型和距离对比，表现雷妮亚建立联系时的勇气与风险",
+        "emotion": "紧张、克制、试探",
+        "narrative_role": "character_development",
         "importance": 0.7,
         "evidence_basis": "subtitle_inference"
       },
       "characters": [
         {
-          "id": "alicent_hightower",
-          "emotion": "未明确",
-          "motivation_shift": "未明确",
-          "dramatic_position": "支持角色"
-        },
-        {
-          "id": "helaena_targaryen",
-          "emotion": "未明确",
-          "motivation_shift": "未明确",
-          "dramatic_position": "观察者"
+          "id": "rhaena_targaryen",
+          "emotion": "紧张但坚定",
+          "motivation_shift": "从试探接近转为邀请偷羊贼前往龙石岛",
+          "dramatic_position": "行动中心"
         }
       ],
       "characters_on_screen": [],
@@ -3231,13 +3249,15 @@
         "setup_hint": null
       },
       "tags": [
-        "恐惧",
-        "角色内心"
+        "雷妮亚",
+        "偷羊贼",
+        "驯龙",
+        "龙石岛"
       ],
       "spoiler_level": 0,
       "scene_type": "story",
-      "location": "室内",
-      "boundary_reason": "地点和核心人物变化，从雷妮亚驯龙转到阿莉森和海伦娜的室内对话，叙事功能从行动转为对局势的分析。",
+      "location": "野外山地",
+      "boundary_reason": "延续雷妮亚与偷羊贼的野外段落；约 1382.639 秒才切入阿莉森和海伦娜的室内对话。",
       "subtitles": [
         {
           "start": 1351.775,
@@ -3253,44 +3273,39 @@
           "start": 1360.367,
           "end": 1361.493,
           "text": "回家吧"
-        },
-        {
-          "start": 1382.639,
-          "end": 1384.933,
-          "text": "你知道伊耿逃走了吗？"
         }
       ],
       "symbols": [],
       "interpretations": [
         {
           "type": "character",
-          "title": "海伦娜对伊蒙德的观察",
-          "analysis": "海伦娜指出伊蒙德的恐惧，显示她对弟弟的了解和关心，也揭示了伊蒙德内心的脆弱。",
-          "sidebar_hint": "注意海伦娜如何揭示伊蒙德的内心恐惧。",
-          "confidence": 0.8
+          "title": "雷妮亚与偷羊贼建立联系",
+          "analysis": "雷妮亚用克制的声音和接近代替强制命令，试图让一条保留野性的龙主动接受她。",
+          "sidebar_hint": "注意雷妮亚如何用邀请而非命令接近偷羊贼。",
+          "confidence": 0.95
         },
         {
           "type": "emotion",
-          "title": "伊蒙德的恐惧",
-          "analysis": "尽管伊蒙德表现得无所畏惧，但海伦娜的评论揭示了他内心的恐惧，尤其是在面对雷妮拉的龙群时。",
-          "sidebar_hint": "伊蒙德的恐惧在海伦娜的评论中显露无遗。",
-          "confidence": 0.7
+          "title": "龙的野性与控制边界",
+          "analysis": "偷羊贼并非王室驯养的坐骑；雷妮亚的尝试强调驭龙不是单纯的血统按钮，而是一种可能失败的关系建立。",
+          "sidebar_hint": "偷羊贼的反应决定这次联系能否成立。",
+          "confidence": 0.9
         }
       ],
       "directing": {
         "editing_pattern": "未明确",
-        "intent_long": "通过海伦娜的评论揭示伊蒙德内心的恐惧，增加角色的复杂性。",
+        "intent_long": "通过雷妮亚与野龙之间不对等的体型、距离和声音互动，表现她主动争取龙骑身份时的勇气与风险。",
         "expected_but_missing": []
       },
       "analysis_source": "gpt_subtitle_chunk_v1",
-      "location_id": "red-keep",
+      "location_id": "vale-of-arryn",
       "location_ids": [
-        "red-keep"
+        "vale-of-arryn"
       ],
       "location_match": {
         "confidence": "medium",
         "method": "character_and_plot_context",
-        "raw_label": "室内",
+        "raw_label": "野外山地",
         "source_classes": [
           "hbo_official_map"
         ]
@@ -3298,13 +3313,13 @@
     },
     {
       "scene_id": "s026",
-      "start_time": 1383,
+      "start_time": 1382.639,
       "end_time": 1433,
       "keyframe": "frames/house_of_dragon_s03e01/scene-026.jpg",
       "plot": {
-        "fact": "阿莉森皇后命令索伦爵士尽快将国王的指示送给欧尔蒙大人，要求他率军前来。",
-        "reading": "阿莉森的命令显示了她在危机时刻的决断力和对局势的掌控。",
-        "deep_reading": "阿莉森在危机时刻展现出她的领导能力，她迅速下达命令以确保军队的集结，显示出她在政治斗争中的果断和冷静。这一场景也强调了她在权力结构中的重要地位。"
+        "fact": "阿莉森与海伦娜谈到伊耿离开和伊蒙德缺席战场；海伦娜直言伊蒙德重新感受到了恐惧。",
+        "reading": "海伦娜没有顺着阿莉森对骑士安危的解释，而是直接指出伊蒙德畏惧雷妮拉的龙群。",
+        "deep_reading": "这段对话用海伦娜近乎平静的判断刺破绿党强硬外表。她把伊蒙德驾驭瓦格哈尔后的无畏描述为暂时遗忘，而非真正战胜恐惧，使阿莉森的政治担忧重新落回家族成员的脆弱。"
       },
       "narrative": {
         "phase": "development",

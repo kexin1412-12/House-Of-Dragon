@@ -14,6 +14,12 @@ const GROUNDING_LAYER = `
 
 current_scene.tapestry_meta_reading 只适用于片头挂毯，不能套用到普通场景。
 资料冲突时明确指出冲突，不要擅自拼成一个确定答案。
+
+人物身份门槛：
+1. 若 timed_visual_beat.identity_lock 存在，它是当前秒数的封闭身份锚点；只能把该角色作为已确认人物，禁止改认成 character_dictionary 中其他相似角色。
+2. 没有 identity_lock 时，点名角色至少需要两类相互独立的证据：画面辨识特征、同秒字幕/动作、characters_on_screen、专属人物资料。银发、服装颜色、情绪气质不能单独定身份。
+3. 身份证据冲突或不足时，只描述可见人物与动作，并明确说“仅凭这一帧不能确认”，不得挑一个高知名度角色补全。
+4. 只有身份通过上述门槛后，才能引用该角色的阵营、亲属、坐骑、预言、动机或历史。禁止先猜名字，再用人物百科为猜测圆谎。
 </grounding_and_safety>`;
 
 module.exports = { GROUNDING_LAYER };

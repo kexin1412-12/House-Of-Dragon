@@ -1764,6 +1764,14 @@ function register(app) {
         scene_id: scene.scene_id,
         time_range: [scene.start_time, scene.end_time],
         timed_visual_beat: currentVisualBeat(scene, prepared.cursorTime),
+        identity_policy: currentVisualBeat(scene, prepared.cursorTime)?.identity_lock ? {
+          mode: 'closed',
+          locked_character_id: currentVisualBeat(scene, prepared.cursorTime).identity_lock,
+          instruction: '当前秒数身份已经逐帧核验；不得改认成其他角色。',
+        } : {
+          mode: 'evidence_required',
+          instruction: '点名人物前至少需要两类独立证据；证据不足时不要猜。',
+        },
         tapestry_meta_reading: scene.tapestry_meta_reading || null,
         location: kb ? getLocationState(kb, prepared.cursorTime) : null,
         plot_fact: scene.plot?.fact || null,
