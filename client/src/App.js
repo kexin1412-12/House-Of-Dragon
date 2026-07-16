@@ -422,6 +422,7 @@ export default function App() {
       {/* Tencent Video Player Page */}
       {playing && (
         <TencentPlayer
+          key={playing.id}
           playing={playing}
           videos={videos}
           onClose={() => {

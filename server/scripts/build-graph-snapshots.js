@@ -18,7 +18,7 @@ const SHOW_ID = 'house-of-the-dragon';
 // the adult actor, etc.). lookupCharacter() deliberately returns
 // `current: null` when cursor is null — that's spoiler-safety for the live
 // per-episode flow, but the family-tree poster wants the canonical end view.
-const CURSOR = 'S01E10';
+const S01_CURSOR = 'S01E10';
 
 const SERVER_DIR = path.join(__dirname, '..');
 const CLIENT_PUBLIC = path.join(SERVER_DIR, '..', 'client', 'public');
@@ -45,7 +45,7 @@ const IMG_RE = /\.(jpg|jpeg|png|webp)$/i;
 //
 // The 7 dragons stay attached as `companion` on their riders — same model as
 // the previous radial graph — so they don't get a row in this map.
-const LAYOUT = {
+const S01_LAYOUT = {
   // Row 0 — eldest visible row (royalty + their elders, merged)
   rhea_royce:        { generation: 0, lineage_x: 0 },
   daemon_targaryen:  { generation: 0, lineage_x: 1 },
@@ -68,6 +68,46 @@ const LAYOUT = {
   laenor_velaryon:     { generation: 1, lineage_x: 8 },
   joffrey_lonmouth:    { generation: 1, lineage_x: 9 },
 };
+
+const S03E01_LAYOUT = {
+  alicent_hightower:   { generation: 0, lineage_x: 0 },
+  daemon_targaryen:    { generation: 0, lineage_x: 1 },
+  rhaenyra_targaryen:  { generation: 0, lineage_x: 2 },
+  corlys_velaryon:     { generation: 0, lineage_x: 3 },
+  criston_cole:        { generation: 0, lineage_x: 4 },
+  larys_strong:        { generation: 0, lineage_x: 5 },
+  alys_rivers:         { generation: 0, lineage_x: 6 },
+
+  aegon_targaryen_ii:  { generation: 1, lineage_x: 0 },
+  helaena_targaryen:   { generation: 1, lineage_x: 1 },
+  aemond_targaryen:    { generation: 1, lineage_x: 2 },
+  jacaerys_velaryon:   { generation: 1, lineage_x: 3 },
+  baela_targaryen:     { generation: 1, lineage_x: 4 },
+  rhaena_targaryen:    { generation: 1, lineage_x: 5 },
+  addam_of_hull:       { generation: 1, lineage_x: 6 },
+  alyn_of_hull:        { generation: 1, lineage_x: 7 },
+  ulf_white:           { generation: 1, lineage_x: 8 },
+  hugh_hammer:         { generation: 1, lineage_x: 9 },
+};
+
+const GRAPH_CONFIGS = [
+  {
+    videoId: 'house_of_dragon_05',
+    cursor: S01_CURSOR,
+    layout: S01_LAYOUT,
+    snapshotFile: SNAPSHOT_FILE,
+    subtitleZh: '',
+    subtitleEn: '',
+  },
+  {
+    videoId: 'house_of_dragon_s03e01',
+    cursor: 'S03E01',
+    layout: S03E01_LAYOUT,
+    snapshotFile: path.join(SNAPSHOT_DIR, '_family-tree-house_of_dragon_s03e01.json'),
+    subtitleZh: 'S03E01 · 盐与海，火与血',
+    subtitleEn: 'S03E01 · SALT AND SEA, FIRE AND BLOOD',
+  },
+];
 
 // Show-canon nicknames that appear as red epithet badges on the portrait.
 const EPITHETS = {
@@ -101,6 +141,14 @@ const NAME_EN = {
   joffrey_lonmouth:   'JOFFREY LONMOUTH',
   criston_cole:       'CRISTON COLE',
   mysaria:            'MYSARIA',
+  rhaena_targaryen:   'RHAENA TARGARYEN',
+  jacaerys_velaryon:  'JACAERYS VELARYON',
+  baela_targaryen:    'BAELA TARGARYEN',
+  addam_of_hull:      'ADDAM OF HULL',
+  alyn_of_hull:       'ALYN OF HULL',
+  ulf_white:          'ULF WHITE',
+  hugh_hammer:        'HUGH HAMMER',
+  alys_rivers:        'ALYS RIVERS',
 };
 
 // Show-canonical kin edges that the DB happens to be missing. Each entry is
@@ -147,7 +195,14 @@ function relationLabel(kind) {
 // `to` = child. The DB convention is source = child, target = elder
 // (e.g. "rhaenyra 父女 viserys" — Viserys is the father), so we flip when
 // the label starts with 父|母 and trust the original orientation otherwise.
-function orientParentChild(rel, relZh) {
+function orientParentChild(rel, relZh, layout) {
+  const sourceGen = layout[rel.source]?.generation;
+  const targetGen = layout[rel.target]?.generation;
+  if (sourceGen != null && targetGen != null && sourceGen !== targetGen) {
+    return sourceGen < targetGen
+      ? { parent: rel.source, child: rel.target }
+      : { parent: rel.target, child: rel.source };
+  }
   if (/^父|^母/.test(relZh)) {
     return { parent: rel.target, child: rel.source };
   }
@@ -188,7 +243,7 @@ function purgeStaleSnapshots() {
   if (!fs.existsSync(SNAPSHOT_DIR)) return 0;
   let removed = 0;
   for (const f of fs.readdirSync(SNAPSHOT_DIR)) {
-    if (f === '_family-tree.json') continue;
+    if (f.startsWith('_family-tree')) continue;
     if (f.startsWith('_scene-focus-')) continue;     // managed by buildSceneFocus
     if (f.startsWith('_char-events-')) continue;     // managed by buildCharEvents
     if (f.startsWith('_profiles-')) continue;        // owned by the profile pipeline (separate skill)
@@ -199,14 +254,14 @@ function purgeStaleSnapshots() {
   return removed;
 }
 
-function buildCompanion(db, charId) {
-  return charactersLib.findCompanionByTag(db, charId, CURSOR, 'dragon');
+function buildCompanion(db, charId, cursor) {
+  return charactersLib.findCompanionByTag(db, charId, cursor, 'dragon');
 }
 
-function buildCharacterEntry(db, charId) {
-  const layout = LAYOUT[charId];
+function buildCharacterEntry(db, charId, config) {
+  const layout = config.layout[charId];
   if (!layout) return null;     // skip dragons + anyone outside the curated set
-  const card = charactersLib.lookupCharacter(db, charId, CURSOR);
+  const card = charactersLib.lookupCharacter(db, charId, config.cursor);
   if (!card) return null;
   const version = card.current_actor?.version || null;
   const defaultPortrait = copyFaceFile(charId, version);
@@ -235,18 +290,18 @@ function buildCharacterEntry(db, charId) {
     alive: card.current?.alive !== false,
     generation: layout.generation,
     lineage_x: layout.lineage_x,
-    companion: buildCompanion(db, charId),
+    companion: buildCompanion(db, charId, config.cursor),
   };
 }
 
-function buildEdges(db, characterIds) {
+function buildEdges(db, characterIds, config) {
   const charSet = new Set(characterIds);
   const kin = [];
   const conflict = [];
 
   for (const rel of db.relationships || []) {
     if (!charSet.has(rel.source) || !charSet.has(rel.target)) continue;
-    const active = charactersLib.currentEntry(rel.timeline, CURSOR);
+    const active = charactersLib.currentEntry(rel.timeline, config.cursor);
     if (!active) continue;
     const relZh = active.relation_zh || active.relation_en || '';
     const kind = classifyKin(relZh, active.relation_kind);
@@ -254,7 +309,7 @@ function buildEdges(db, characterIds) {
     if (kind) {
       const edge = { kind, label: relationLabel(kind), relation_zh: relZh };
       if (kind === 'parent_child') {
-        const { parent, child } = orientParentChild(rel, relZh);
+        const { parent, child } = orientParentChild(rel, relZh, config.layout);
         edge.from = parent;
         edge.to = child;
       } else {
@@ -460,55 +515,56 @@ function buildCharEvents(videoId, db, eligibleIds, conflictEdges) {
 function main() {
   fs.mkdirSync(SNAPSHOT_DIR, { recursive: true });
   const db = charactersLib.loadCharacterDb(SHOW_ID);
-
-  const charIds = Object.keys(LAYOUT);
-  const characters = [];
-  for (const id of charIds) {
-    const entry = buildCharacterEntry(db, id);
-    if (entry) characters.push(entry);
-  }
-
-  const { kin_edges, conflict_edges } = buildEdges(db, characters.map(c => c.character_id));
-
-  const out = {
-    show_id: SHOW_ID,
-    cursor_used: CURSOR,
-    // Title only carries the show name now — the tree spans Targaryens,
-    // Velaryons, Hightowers, Strongs, Cole, Royce and Lonmouth, so calling
-    // the whole thing "坦格利安家族" was misleading.
-    title_zh: '《龙之家族》',
-    title_en: 'HOUSE OF THE DRAGON',
-    subtitle_zh: '',
-    subtitle_en: '',
-    characters,
-    kin_edges,
-    conflict_edges,
-  };
-
-  fs.writeFileSync(SNAPSHOT_FILE, JSON.stringify(out, null, 2));
-
-  // Build per-video scene-focus map for every KB we ship.
-  const eligible = characters.map(c => c.character_id);
-  const kbDir = path.join(SERVER_DIR, 'kb');
-  const videoIds = fs.readdirSync(kbDir)
-    .filter(f => f.endsWith('.json') && !f.includes('backup'))
-    .map(f => f.replace(/\.json$/, ''));
   let focusFiles = 0;
   let eventFiles = 0;
-  for (const vid of videoIds) {
-    const focus = buildSceneFocus(vid, eligible);
+  const treeSummaries = [];
+
+  for (const config of GRAPH_CONFIGS) {
+    const characters = [];
+    for (const id of Object.keys(config.layout)) {
+      const entry = buildCharacterEntry(db, id, config);
+      if (entry) characters.push(entry);
+    }
+
+    const { kin_edges, conflict_edges } = buildEdges(
+      db,
+      characters.map(c => c.character_id),
+      config,
+    );
+
+    const out = {
+      show_id: SHOW_ID,
+      video_id: config.videoId,
+      cursor_used: config.cursor,
+      title_zh: '《龙之家族》',
+      title_en: 'HOUSE OF THE DRAGON',
+      subtitle_zh: config.subtitleZh,
+      subtitle_en: config.subtitleEn,
+      characters,
+      kin_edges,
+      conflict_edges,
+    };
+    fs.writeFileSync(config.snapshotFile, JSON.stringify(out, null, 2));
+    treeSummaries.push(
+      `${config.videoId}: ${characters.length} characters, ${kin_edges.length} kin, ${conflict_edges.length} conflict`,
+    );
+
+    const eligible = characters.map(c => c.character_id);
+    const focus = buildSceneFocus(config.videoId, eligible);
     if (focus && focus.length > 0) {
-      fs.writeFileSync(path.join(SNAPSHOT_DIR, `_scene-focus-${vid}.json`), JSON.stringify(focus));
+      fs.writeFileSync(
+        path.join(SNAPSHOT_DIR, `_scene-focus-${config.videoId}.json`),
+        JSON.stringify(focus),
+      );
       focusFiles++;
     }
-    const events = buildCharEvents(vid, db, eligible, conflict_edges);
-    const hasEvents = events && (
-      Object.keys(events.deaths || {}).length > 0 ||
-      Object.keys(events.version_swaps || {}).length > 0 ||
-      Object.keys(events.edge_appears || {}).length > 0
-    );
-    if (hasEvents) {
-      fs.writeFileSync(path.join(SNAPSHOT_DIR, `_char-events-${vid}.json`), JSON.stringify(events));
+
+    const events = buildCharEvents(config.videoId, db, eligible, conflict_edges);
+    if (events) {
+      fs.writeFileSync(
+        path.join(SNAPSHOT_DIR, `_char-events-${config.videoId}.json`),
+        JSON.stringify(events),
+      );
       eventFiles++;
     }
   }
@@ -516,7 +572,7 @@ function main() {
   const purged = purgeStaleSnapshots();
   const dragonCount = copyAllDragons();
 
-  console.log(`✓ family tree: ${characters.length} characters, ${kin_edges.length} kin, ${conflict_edges.length} conflict → ${path.relative(process.cwd(), SNAPSHOT_FILE)}`);
+  for (const summary of treeSummaries) console.log(`✓ family tree ${summary}`);
   console.log(`✓ ${focusFiles} scene-focus map(s) → client/public/relationship-graph/_scene-focus-*.json`);
   console.log(`✓ ${eventFiles} char-events map(s) → client/public/relationship-graph/_char-events-*.json`);
   console.log(`✓ ${IMG_CACHE_BY_PATH.size} face portraits → client/public/kb/characters/face_refs/`);
