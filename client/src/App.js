@@ -35,6 +35,28 @@ function resolveVideoSrc(url) {
   return `${VIDEO_CDN}${url}`;
 }
 
+function resolveSubtitleSrc(url) {
+  if (!url) return '';
+  if (/^https?:\/\//i.test(url)) return url;
+  if (url.startsWith('/uploads/')) return `${VIDEO_CDN}${url}`;
+  return url;
+}
+
+function getVideoSubtitleTracks(video) {
+  if (Array.isArray(video?.subtitles) && video.subtitles.length > 0) {
+    return video.subtitles;
+  }
+  if (video?.subtitleUrl) {
+    return [{
+      src: video.subtitleUrl,
+      srcLang: 'zh-CN',
+      label: '简体中文',
+      default: true,
+    }];
+  }
+  return [];
+}
+
 function videoEpisodeTag(video) {
   return video?.episodeTag || episodeTag(video?.filename);
 }
@@ -539,6 +561,7 @@ function TencentPlayer({
   initialRightTab = null,
 }) {
   const [search, setSearch] = useState('');
+  const subtitleTracks = getVideoSubtitleTracks(playing);
 
   const videoRef = useRef(null);
   const [aiKb, setAiKb] = useState('');
@@ -1664,16 +1687,16 @@ function TencentPlayer({
                 if (v.paused) v.play(); else v.pause();
               }}
             >
-              {playing.subtitleUrl && (
+              {subtitleTracks.map(track => (
                 <track
-                  key={playing.subtitleUrl}
+                  key={`${track.srcLang}:${track.src}`}
                   kind="subtitles"
-                  src={resolveVideoSrc(playing.subtitleUrl)}
-                  srcLang="zh-CN"
-                  label="简体中文"
-                  default
+                  src={resolveSubtitleSrc(track.src)}
+                  srcLang={track.srcLang}
+                  label={track.label}
+                  default={Boolean(track.default)}
                 />
-              )}
+              ))}
             </video>
 
             {/* top-right toolbar: 人物识别 + 文化注释总开关（同一族 chrome，flex 排列） */}
@@ -1931,6 +1954,7 @@ function TencentPlayer({
             <PlayerControls
               videoRef={videoRef}
               videoId={aiKb}
+              subtitleTracks={subtitleTracks}
               season={playing.season || 1}
               hasNext={videos.some((video, index) => video.id === playing.id && index < videos.length - 1)}
               onNext={() => {
@@ -2871,7 +2895,6 @@ const IconFeedback = () => (
 /* ─── Custom Tencent-style player controls ───────────────── */
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 const QUALITIES = ['蓝光 4K', '超清 1080P', '高清 720P', '标清 480P'];
-const SUBTITLES = ['中文', '日语', '关闭'];
 const AUDIOS = ['默认', '国语', '日语'];
 function fmtTime(s) {
   if (!s || !isFinite(s)) return '00:00';
@@ -2880,7 +2903,8 @@ function fmtTime(s) {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
 }
 
-function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
+function PlayerControls({ videoRef, videoId, subtitleTracks = [], season = 1, hasNext, onNext }) {
+  const defaultSubtitleLabel = subtitleTracks.find(track => track.default)?.label || subtitleTracks[0]?.label || '关闭';
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -2891,7 +2915,7 @@ function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [quality, setQuality] = useState('标清 480P');
-  const [subtitle, setSubtitle] = useState('中文');
+  const [subtitle, setSubtitle] = useState(defaultSubtitleLabel);
   const [audioTrack, setAudioTrack] = useState('默认');
   const [dragPreview, setDragPreview] = useState(null); // {time, leftPct} while dragging
   // 进度条 chapter ticks —— 来自 KB 的章节锚点（act + branch_point）。
@@ -2901,6 +2925,25 @@ function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
 
   const progressRef = useRef(null);
   const draggingRef = useRef(false);
+
+  const subtitleOptions = [...subtitleTracks.map(track => track.label), '关闭'];
+
+  useEffect(() => {
+    setSubtitle(defaultSubtitleLabel);
+  }, [videoId, defaultSubtitleLabel]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+    const applySubtitle = () => {
+      Array.from(video.textTracks || []).forEach(track => {
+        track.mode = subtitle !== '关闭' && track.label === subtitle ? 'showing' : 'disabled';
+      });
+    };
+    applySubtitle();
+    video.addEventListener('loadedmetadata', applySubtitle);
+    return () => video.removeEventListener('loadedmetadata', applySubtitle);
+  }, [subtitle, videoId, videoRef]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -3174,7 +3217,7 @@ function PlayerControls({ videoRef, videoId, season = 1, hasNext, onNext }) {
               {settingsOpen && (
                 <div className="tx-ctl-settings-panel">
                   <SettingsSection label="清晰度" options={QUALITIES} value={quality} onChange={setQuality} />
-                  <SettingsSection label="字幕" options={SUBTITLES} value={subtitle} onChange={setSubtitle} />
+                  <SettingsSection label="字幕" options={subtitleOptions} value={subtitle} onChange={setSubtitle} />
                   <SettingsSection label="音轨" options={AUDIOS} value={audioTrack} onChange={setAudioTrack} />
                 </div>
               )}

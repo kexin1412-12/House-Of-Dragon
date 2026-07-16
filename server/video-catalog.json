@@ -12,6 +12,18 @@
     "episode": 1,
     "episodeTag": "S03E01",
     "episodeTitle": "盐与海，火与血",
-    "subtitleUrl": "/uploads/house_of_dragon_s03e01.vtt"
+    "subtitles": [
+      {
+        "src": "/subtitles/house_of_dragon_s03e01.en.vtt",
+        "srcLang": "en",
+        "label": "English",
+        "default": true
+      },
+      {
+        "src": "/subtitles/house_of_dragon_s03e01.zh-CN.vtt",
+        "srcLang": "zh-CN",
+        "label": "简体中文"
+      }
+    ]
   }
 }
