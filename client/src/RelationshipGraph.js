@@ -330,7 +330,7 @@ function ConflictEdge({ from, to, kind, relation, positions, future }) {
 // the time-driven focus pan reveal the rest.
 const HOME_SCALE = 0.9;
 
-function useViewport(graphSize, viewportRef) {
+function useViewport(graphSize, viewportRef, wheelSurfaceRef) {
   const [view, setView] = useState({ scale: HOME_SCALE, tx: 0, ty: 0 });
   const dragRef = useRef(null);
   const pinchRef = useRef(null);
@@ -366,6 +366,7 @@ function useViewport(graphSize, viewportRef) {
 
   const onWheel = useCallback((e) => {
     if (!viewportRef.current) return;
+    if (e.target instanceof Element && e.target.closest('.rg-profile')) return;
     e.preventDefault();
     e.stopPropagation();
     const rect = viewportRef.current.getBoundingClientRect();
@@ -380,11 +381,11 @@ function useViewport(graphSize, viewportRef) {
   }, [viewportRef]);
 
   useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return undefined;
-    viewport.addEventListener('wheel', onWheel, { passive: false });
-    return () => viewport.removeEventListener('wheel', onWheel);
-  }, [onWheel, viewportRef]);
+    const wheelSurface = wheelSurfaceRef.current;
+    if (!wheelSurface) return undefined;
+    wheelSurface.addEventListener('wheel', onWheel, { passive: false });
+    return () => wheelSurface.removeEventListener('wheel', onWheel);
+  }, [onWheel, wheelSurfaceRef]);
 
   const onMouseDown = useCallback((e) => {
     if (e.button !== 0) return;
@@ -504,6 +505,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
   const [activeEdges, setActiveEdges] = useState(() => new Set());
   const [profileId, setProfileId] = useState(null);
   const viewportRef = useRef(null);
+  const wheelSurfaceRef = useRef(null);
 
   // Load an episode-specific tree first. Older episodes without a dedicated
   // snapshot keep using the original family-tree fallback.
@@ -726,7 +728,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
   }, [charEvents, activeEdges]);
 
   const graphSize = layout ? { width: layout.width, height: layout.height } : { width: 0, height: 0 };
-  const viewport = useViewport(graphSize, viewportRef);
+  const viewport = useViewport(graphSize, viewportRef, wheelSurfaceRef);
 
   const focusPos = focused && layout ? layout.positions[focused] : null;
 
@@ -861,6 +863,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
       <div className={`rg-focus-overlay ${open ? 'open' : ''}`}>
         {!embedded && <div className="rg-scrim" onClick={closeOneLayer} />}
         <div
+          ref={wheelSurfaceRef}
           className="rg-tree-card"
           onClickCapture={(e) => {
             // 只有在 SVG viewport 空白处的点击才走"渐进剥离"

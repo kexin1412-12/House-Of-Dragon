@@ -235,7 +235,7 @@
         "display_name": "沃马克斯",
         "short_identity": "杰卡里斯的龙",
         "bond_relation": "龙骑士与坐骑",
-        "portrait_url": null
+        "portrait_url": "/kb/characters/dragon_refs/vermax.jpg"
       }
     },
     {
@@ -258,7 +258,7 @@
         "display_name": "月舞",
         "short_identity": "贝妮拉的龙",
         "bond_relation": "龙骑士与坐骑",
-        "portrait_url": null
+        "portrait_url": "/kb/characters/dragon_refs/moondancer.jpg"
       }
     },
     {
@@ -281,7 +281,7 @@
         "display_name": "偷羊贼",
         "short_identity": "野龙",
         "bond_relation": "驯服中的龙骑关系",
-        "portrait_url": null
+        "portrait_url": "/kb/characters/dragon_refs/sheepstealer.jpg"
       }
     },
     {
