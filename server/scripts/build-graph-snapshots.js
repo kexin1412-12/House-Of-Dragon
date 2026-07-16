@@ -24,7 +24,10 @@ const SERVER_DIR = path.join(__dirname, '..');
 const CLIENT_PUBLIC = path.join(SERVER_DIR, '..', 'client', 'public');
 const SNAPSHOT_DIR = path.join(CLIENT_PUBLIC, 'relationship-graph');
 const SNAPSHOT_FILE = path.join(SNAPSHOT_DIR, '_family-tree.json');
-const FACE_SRC = path.join(SERVER_DIR, 'kb', 'characters', 'face_refs');
+const FACE_SOURCES = [
+  path.join(SERVER_DIR, 'kb', 'characters', 'face_refs'),
+  path.join(CLIENT_PUBLIC, 'kb', 'characters', 'face_refs'),
+];
 const FACE_DST = path.join(CLIENT_PUBLIC, 'kb', 'characters', 'face_refs');
 const DRAGON_SRC = path.join(SERVER_DIR, 'kb', 'characters', 'dragon_refs');
 const DRAGON_DST = path.join(CLIENT_PUBLIC, 'kb', 'characters', 'dragon_refs');
@@ -212,10 +215,18 @@ function orientParentChild(rel, relZh, layout) {
 const IMG_CACHE_BY_PATH = new Set();
 function copyFaceFile(charId, version) {
   if (!charId || !version) return null;
-  const srcDir = path.join(FACE_SRC, charId, version);
-  if (!fs.existsSync(srcDir)) return null;
-  const files = fs.readdirSync(srcDir).filter(f => IMG_RE.test(f)).sort();
-  if (files.length === 0) return null;
+  let srcDir = null;
+  let files = [];
+  for (const root of FACE_SOURCES) {
+    const candidate = path.join(root, charId, version);
+    if (!fs.existsSync(candidate)) continue;
+    files = fs.readdirSync(candidate).filter(f => IMG_RE.test(f)).sort();
+    if (files.length > 0) {
+      srcDir = candidate;
+      break;
+    }
+  }
+  if (!srcDir || files.length === 0) return null;
   const first = files[0];
   const dstDir = path.join(FACE_DST, charId, version);
   fs.mkdirSync(dstDir, { recursive: true });

@@ -287,16 +287,21 @@ function pickPortraitUrl(characterId, actorVersion) {
   const key = `${characterId}/${actorVersion}`;
   if (_portraitCache.has(key)) return _portraitCache.get(key);
 
-  const dir = path.join(__dirname, '..', 'kb', 'characters', 'face_refs', characterId, actorVersion);
+  const dirs = [
+    path.join(__dirname, '..', 'kb', 'characters', 'face_refs', characterId, actorVersion),
+    path.join(__dirname, '..', '..', 'client', 'public', 'kb', 'characters', 'face_refs', characterId, actorVersion),
+  ];
   let url = null;
   try {
-    if (fs.existsSync(dir)) {
+    for (const dir of dirs) {
+      if (!fs.existsSync(dir)) continue;
       const files = fs.readdirSync(dir)
         .filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
         .sort();
       if (files.length > 0) {
         // URL 编码以保证空格 / 中文之类不破坏 URL
         url = `/kb/characters/face_refs/${encodeURIComponent(characterId)}/${encodeURIComponent(actorVersion)}/${encodeURIComponent(files[0])}`;
+        break;
       }
     }
   } catch { /* swallow — 缺图就让前端走文字 fallback */ }
