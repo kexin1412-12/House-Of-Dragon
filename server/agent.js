@@ -829,6 +829,29 @@ const SYSTEM_PROMPT = `
 只输出自然语言，不要 JSON，不要代码块，不要说"根据上下文"。
 `;
 
+const ANTI_BLOAT_RULES = `
+
+═══ 反废话硬规则 ═══
+目标不是写影评说明文，而是告诉用户一个“他自己看不出来、但懂剧的人会立刻抓住”的关键点。
+
+严禁使用这些空话句式：
+- “不仅……更是……”
+- “既有……也有……”
+- “与……形成鲜明对比”
+- “似乎在无声地诉说/承担”
+- “具象化/折射/象征着权力与秩序”
+- “这展现了动荡时期的……”
+
+视觉描述剥离：
+- 不要重复用户肉眼可见的东西，例如泥泞、盔甲、帐篷、构图庄严、气氛凝重。
+- 只有当视觉细节能指向一个具体文化/政治含义时才提，否则跳过。
+
+Lore-first：
+- 优先说世界观里的硬知识、家族规矩、角色动机或阵营算盘。
+- 例：看到罗德里克·达斯丁与北境军，不要写“军营庄严”，要指出“冬狼军”是一群南下求死、把口粮留给家人的北境老兵。
+- 每次回答必须有一个不可替换的具体名词或机制：冬狼军、月亮茶、绿党、瓦列利安海权、铁王座割伤等。没有具体机制，就短答，不要硬扩写。
+`;
+
 async function generateWithLLM(context, question) {
   if (!ai.isAvailable('chat')) return null;
 
@@ -842,7 +865,7 @@ ${JSON.stringify(context, null, 2)}
   try {
     const result = await ai.chat({
       task: 'chat',
-      system: SYSTEM_PROMPT,
+      system: SYSTEM_PROMPT + ANTI_BLOAT_RULES,
       messages: [{ role: 'user', content: userMessage }],
       maxTokens: 420,
       temperature: 0.4,
@@ -1799,10 +1822,10 @@ ${JSON.stringify(prepared.context, null, 2)}
     // 三档输出（一句 / 简明 / 深挖）+ 三层标注（事实 / 解读 / 推测）
     // depth 在前面 wantClipFrames 那段已经规整过 → 这里直接复用 requestedDepth
     const baseSystem = visualMode ? VISION_SYSTEM_PROMPT : SYSTEM_PROMPT;
-    const systemWithSpec = baseSystem + buildAnswerSpec(depth);
+    const systemWithSpec = baseSystem + ANTI_BLOAT_RULES + buildAnswerSpec(depth);
 
-    // deep 档要装得下三层多角度内容；oneline 卡到 60 强制简短；brief 默认。
-    const maxTokens = depth === 'deep' ? 2600 : (depth === 'oneline' ? 60 : 280);
+    // Keep default answers tight; users can explicitly ask for detail when needed.
+    const maxTokens = depth === 'deep' ? 420 : (depth === 'oneline' ? 60 : 150);
 
     let usage = null;
     let providerInfo = null;

@@ -13,6 +13,13 @@ const CATEGORY_ICON = {
   cta: '↗',
 };
 
+function compactText(text, max = 90) {
+  if (!text) return '';
+  const s = String(text).replace(/\s+/g, ' ').trim();
+  if (s.length <= max) return s;
+  return `${s.slice(0, max).replace(/[，。；、：,.!?;:]*$/, '')}…`;
+}
+
 function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
   const isRight = cx > 55;
   const isBottom = cy > 55;
@@ -40,23 +47,19 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
         <button className="sh-tooltip-close" onClick={onClose}>✕</button>
       </div>
       {sym.evidence_in_frame && (
-        <p className="sh-tooltip-evidence">{sym.evidence_in_frame}</p>
+        <p className="sh-tooltip-evidence">{compactText(sym.evidence_in_frame, 70)}</p>
       )}
       {sym.meaning_zh && (
-        <p className="sh-tooltip-meaning">{sym.meaning_zh}</p>
+        <p className="sh-tooltip-meaning">{compactText(sym.meaning_zh, 90)}</p>
       )}
       {sym.viewer_takeaway && (
-        <p className="sh-tooltip-takeaway">「{sym.viewer_takeaway}」</p>
+        <p className="sh-tooltip-takeaway">「{compactText(sym.viewer_takeaway, 70)}」</p>
       )}
       {sym.selection_basis && (
         <p className="sh-tooltip-basis"><strong>成立依据：</strong>{sym.selection_basis}</p>
       )}
       {sym.expressive_function && (
         <p className="sh-tooltip-function"><strong>表现作用：</strong>{sym.expressive_function}</p>
-      )}
-      {/* 优先用单符号自带的 deep_reading（agent 写入），回落到 scene 全局 deep_reading */}
-      {(sym.deep_reading || deepReading) && (
-        <p className="sh-tooltip-deep">{sym.deep_reading || deepReading}</p>
       )}
       {sym.cta && onCta && (
         <button
