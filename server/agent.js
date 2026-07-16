@@ -860,6 +860,14 @@ function generateTemplate(context, question) {
 
   if (!scene) return '这段暂时还看不出来，可能需要等画面信息更明确一点。';
 
+  if (scene.timed_visual_beat) {
+    const beat = scene.timed_visual_beat;
+    const people = Array.isArray(beat.identified_people)
+      ? beat.identified_people.join('、')
+      : '';
+    return [people, beat.event, beat.meaning].filter(Boolean).join('。');
+  }
+
   if (primary === 'shot' && scene.shot?.intent) {
     return `这个镜头主要在表达${scene.shot.emotion || '情绪变化'}。${scene.shot.intent}`;
   }
@@ -1796,16 +1804,19 @@ ${JSON.stringify(prepared.context, null, 2)}
     // deep 档要装得下三层多角度内容；oneline 卡到 60 强制简短；brief 默认。
     const maxTokens = depth === 'deep' ? 2600 : (depth === 'oneline' ? 60 : 280);
 
-    try {
-      let usage = null;
-      let providerInfo = null;
+    let usage = null;
+    let providerInfo = null;
+    let emittedText = false;
 
+    const runStream = async taskName => {
+      usage = null;
+      providerInfo = null;
       const stream = ai.chatStream({
-        task,
+        task: taskName,
         system: systemWithSpec,
         messages: [{ role: 'user', content: userContent }],
         maxTokens,
-        temperature: visualMode ? 0.7 : 0.4, // 视觉问答需要更自然的口语，温度高一点
+        temperature: visualMode ? 0.7 : 0.4,
         signal: controller.signal,
       });
 
@@ -1814,9 +1825,16 @@ ${JSON.stringify(prepared.context, null, 2)}
           providerInfo = { provider: chunk.provider, model: chunk.model };
           continue;
         }
-        if (chunk.type === 'text' && chunk.delta) send('text', { delta: chunk.delta });
+        if (chunk.type === 'text' && chunk.delta) {
+          emittedText = true;
+          send('text', { delta: chunk.delta });
+        }
         if (chunk.type === 'done') usage = chunk.usage;
       }
+    };
+
+    try {
+      await runStream(task);
 
       send('done', {
         source: 'llm',
@@ -1830,10 +1848,34 @@ ${JSON.stringify(prepared.context, null, 2)}
       if (controller.signal.aborted) return res.end();
 
       console.error('[agent] stream error:', err.message);
-      send('text', {
-        delta: generateTemplate(prepared.context, prepared.question)
-      });
-      send('done', { source: 'template' });
+      if (task === 'vision_chat_deep' && !emittedText && ai.isAvailable('vision_chat')) {
+        try {
+          console.warn('[agent] retrying deep visual request with vision_chat fallback');
+          await runStream('vision_chat');
+          send('done', {
+            source: 'llm',
+            provider: providerInfo?.provider || null,
+            model: providerInfo?.model || null,
+            usage,
+            fallback_from: 'vision_chat_deep',
+          });
+          return res.end();
+        } catch (fallbackErr) {
+          console.error('[agent] vision_chat fallback error:', fallbackErr.message);
+        }
+      }
+
+      if (!emittedText) {
+        send('text', { delta: generateTemplate(prepared.context, prepared.question) });
+        send('done', { source: 'template' });
+      } else {
+        send('done', {
+          source: 'llm_partial_error',
+          provider: providerInfo?.provider || null,
+          model: providerInfo?.model || null,
+          usage,
+        });
+      }
       res.end();
     }
   });

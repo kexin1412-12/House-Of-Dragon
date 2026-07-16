@@ -21,10 +21,11 @@ const TASK_CONFIG = {
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
   },
 
-  // 深挖视觉解读：只在用户选择 deep 时启用 Pro，换取更强的多模态推理和文学组织能力。
+  // 深挖视觉解读使用独立路由。默认保持 Flash 的生产可用性；
+  // 已开通 Pro 配额的环境可用 AI_VISION_DEEP_MODEL=gemini-2.5-pro 覆盖。
   vision_chat_deep: {
     provider: process.env.AI_VISION_DEEP_PROVIDER || 'gemini',
-    model: process.env.AI_VISION_DEEP_MODEL || 'gemini-2.5-pro',
+    model: process.env.AI_VISION_DEEP_MODEL || 'gemini-2.5-flash',
     fallback: 'openai',
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
   },
