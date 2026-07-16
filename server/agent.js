@@ -983,13 +983,70 @@ function dialogueTopicTerms(kb, t, extraTerms = []) {
 }
 
 // ─── 人物识别：face_service 优先 + 智能跳过 LLM ─────────────
-async function recognizeViaFaceService({ image, db, cursor }) {
+function collectSceneCharacterIds(scene) {
+  if (!scene) return [];
+  const ids = [];
+  for (const item of (scene.characters_on_screen || [])) {
+    const id = item?.character_id || item?.id;
+    if (id) ids.push(id);
+  }
+  for (const item of (scene.characters || [])) {
+    const id = item?.character_id || item?.id;
+    if (id) ids.push(id);
+  }
+  return [...new Set(ids)];
+}
+
+function buildRecognitionContext(kb, cursorTime, videoId) {
+  if (!kb) return null;
+  const scene = currentScene(kb, cursorTime);
+  if (!scene) return null;
+
+  const currentIds = collectSceneCharacterIds(scene);
+  const candidateSet = new Set(currentIds);
+
+  // 如果当前切片缺人物标注，就借前后短窗口兜底；有当前切片时不扩大，避免把候选池稀释回全库。
+  const NEAR_S = 45;
+  const nearbyScenes = currentIds.length
+    ? []
+    : (kb.scenes || []).filter(s =>
+        s.scene_id !== scene.scene_id &&
+        s.end_time >= cursorTime - NEAR_S &&
+        s.start_time <= cursorTime + NEAR_S
+      );
+  for (const s of nearbyScenes) {
+    for (const id of collectSceneCharacterIds(s)) candidateSet.add(id);
+  }
+
+  const candidate_character_ids = [...candidateSet];
+  const subtitle_window = videoId
+    ? srtWindow(videoId, cursorTime, 20, 0)
+        .slice(-5)
+        .map(c => ({ t: c.start, text: c.text }))
+    : [];
+  return {
+    scene_id: scene.scene_id,
+    time_range: [scene.start_time, scene.end_time],
+    scene_label: scene.label_zh || scene.label || null,
+    location: scene.location || scene.location_label || null,
+    plot_fact: scene.plot?.fact || scene.plot_fact || null,
+    plot_reading: scene.plot?.reading || null,
+    subtitle_window,
+    source: currentIds.length ? 'current_scene_slice' : 'nearby_scene_slices',
+    candidate_character_ids,
+  };
+}
+
+async function recognizeViaFaceService({ image, db, cursor, recognitionContext }) {
   const url = process.env.FACE_SERVICE_URL;
   if (!url) return null;
   const fr = await fetch(`${url}/recognize`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image }),
+    body: JSON.stringify({
+      image,
+      candidate_character_ids: recognitionContext?.candidate_character_ids || [],
+    }),
     // 服务起着 < 500ms；没起会立刻 ECONNREFUSED。3s 给冷启动留 buffer。
     signal: AbortSignal.timeout(3000),
   });
@@ -1021,12 +1078,19 @@ async function recognizeViaFaceService({ image, db, cursor }) {
   // —— 多张脸都对到同一个角色（双胞胎特写、镜像）算"全部识出"。
   const totalDetected = allFaces.length;
   const rawMatchedCount = raw.length;
-  return { matched, totalDetected, rawMatchedCount };
+  return {
+    matched,
+    totalDetected,
+    rawMatchedCount,
+    contextFilterApplied: !!fdata.context_filter_applied,
+    gallerySearchSize: fdata.gallery_search_size ?? null,
+  };
 }
 
-async function recognizeViaLLM({ image, db, cursor }) {
+async function recognizeViaLLM({ image, db, cursor, recognitionContext }) {
   if (!ai.isAvailable('vision')) return null;
 
+  const contextIds = new Set(recognitionContext?.candidate_character_ids || []);
   const knownChars = db ? (db.characters || []).map(c => ({
     character_id: c.character_id,
     display_name_zh: c.display_name_zh,
@@ -1074,8 +1138,15 @@ async function recognizeViaLLM({ image, db, cursor }) {
     },
   };
 
-  const userText = knownChars.length
-    ? `Known character database（识别到这些角色时，请把对应 character_id 填入返回结果；DB 之外的人物 character_id 留空）：\n${JSON.stringify(knownChars, null, 2)}\n\n识别下面这一帧画面里的人物：`
+  const contextualKnownChars = contextIds.size
+    ? knownChars.filter(c => contextIds.has(c.character_id))
+    : knownChars;
+  const contextNote = recognitionContext
+    ? `\n\n当前视频切片上下文：${JSON.stringify(recognitionContext, null, 2)}\n优先在 candidate_character_ids 里识别；只有画面特征非常确定时，才返回候选之外的角色。`
+    : '';
+
+  const userText = contextualKnownChars.length
+    ? `Known character database（优先候选；识别到这些角色时，请把对应 character_id 填入返回结果；DB 之外的人物 character_id 留空）：\n${JSON.stringify(contextualKnownChars, null, 2)}${contextNote}\n\n识别下面这一帧画面里的人物：`
     : '识别下面这一帧画面里 HBO《龙之家族》《权力的游戏》中的主要人物：';
 
   const { data } = await ai.generateStructured({
@@ -1252,13 +1323,14 @@ function register(app) {
     const cursor = kb ? charactersLib.cursorAtTime(kb, cursorTime) : null;
     // 没 KB 时也加载默认 show DB
     const db = kb ? getCharacterDb(kb.show_id) : getCharacterDb('house-of-the-dragon');
+    const recognitionContext = kb ? buildRecognitionContext(kb, cursorTime, videoId) : null;
 
     // face_service 先跑，识到 ≥1 张就跳过 LLM；没起 / 没检出脸时才调 LLM 兜底。
     // 见 recognizeViaFaceService 上方注释里的设计说明。
     const t0 = Date.now();
     let faceResult = null;
     try {
-      faceResult = await recognizeViaFaceService({ image, db, cursor });
+      faceResult = await recognizeViaFaceService({ image, db, cursor, recognitionContext });
     } catch (e) {
       console.warn('[recognize] face_service:', e?.message || e);
     }
@@ -1282,7 +1354,14 @@ function register(app) {
         cursor_used: cursor,
         has_kb: !!kb,
         llm_ready: ai.isAvailable('vision'),
-        sources: { insightface: faceChars.length, llm: 0, faces_detected: totalDetected },
+        recognition_context: recognitionContext,
+        sources: {
+          insightface: faceChars.length,
+          llm: 0,
+          faces_detected: totalDetected,
+          context_filter_applied: !!faceResult?.contextFilterApplied,
+          gallery_search_size: faceResult?.gallerySearchSize ?? null,
+        },
         skipped: rawMatchedCount === totalDetected
           ? 'llm_unneeded_face_service_full_match'
           : 'llm_unneeded_face_service_partial_match',
@@ -1295,7 +1374,7 @@ function register(app) {
     let llmChars = [];
     const tLlm0 = Date.now();
     try {
-      const llmPromise = recognizeViaLLM({ image, db, cursor });
+      const llmPromise = recognizeViaLLM({ image, db, cursor, recognitionContext });
       const result = await Promise.race([
         llmPromise,
         new Promise((_, reject) =>
@@ -1316,7 +1395,14 @@ function register(app) {
       cursor_used: cursor,
       has_kb: !!kb,
       llm_ready: ai.isAvailable('vision'),
-      sources: { insightface: faceChars.length, llm: llmChars.length, faces_detected: totalDetected },
+      recognition_context: recognitionContext,
+      sources: {
+        insightface: faceChars.length,
+        llm: llmChars.length,
+        faces_detected: totalDetected,
+        context_filter_applied: !!faceResult?.contextFilterApplied,
+        gallery_search_size: faceResult?.gallerySearchSize ?? null,
+      },
       elapsed_ms: Date.now() - t0,
     });
   });

@@ -120,6 +120,13 @@ def main():
         data_url = body.get('image', '')
         if not isinstance(data_url, str) or not data_url.startswith('data:image/'):
             return jsonify({'error': 'image data URL required', 'faces': []}), 400
+        candidate_ids = body.get('candidate_character_ids') or []
+        if not isinstance(candidate_ids, list):
+            candidate_ids = []
+        candidate_ids = {str(x) for x in candidate_ids if x}
+        search_flat = [g for g in flat if g['character_id'] in candidate_ids] if candidate_ids else flat
+        if candidate_ids and not search_flat:
+            search_flat = flat
 
         try:
             _, b64 = data_url.split(',', 1)
@@ -164,7 +171,7 @@ def main():
             q = q / (np.linalg.norm(q) + 1e-8)
 
             best_per_group = {}
-            for g in flat:
+            for g in search_flat:
                 sim = float(np.dot(q, g['emb']))
                 key = (g['character_id'], g['version_key'])
                 cur = best_per_group.get(key)
@@ -201,7 +208,12 @@ def main():
                 'candidates': top,
             })
 
-        return jsonify({'faces': out_faces})
+        return jsonify({
+            'faces': out_faces,
+            'context_filter_applied': bool(candidate_ids),
+            'candidate_count': len(candidate_ids),
+            'gallery_search_size': len(search_flat),
+        })
 
     print(f"\n✓ Face service listening on http://{args.host}:{args.port}  "
           f"(threshold={args.threshold}, margin={args.margin})")

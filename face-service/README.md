@@ -94,3 +94,12 @@ the first frame after idle takes a few seconds; everything afterwards is hot.
 When you rebuild `face_gallery.json` (via `server/scripts/build_face_gallery.py`),
 just commit and `fly deploy` again. The image rebuild only re-COPYs the JSON
 (weights are cached above the COPY layer).
+
+## Context-aware recognition
+
+`POST /recognize` accepts an optional `candidate_character_ids` array. When
+present, ArcFace searches only those character embeddings first. The Node app
+builds this list from the current scene slice (`characters_on_screen`,
+`characters`) and falls back to nearby slices only when the current slice has no
+character data. This keeps ambiguous faces from being compared against the whole
+show-wide gallery.
