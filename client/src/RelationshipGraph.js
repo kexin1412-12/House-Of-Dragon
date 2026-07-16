@@ -7,6 +7,7 @@ import './RelationshipGraph.css';
 // server/scripts/build-graph-snapshots.js.
 const SNAPSHOT_BASE = process.env.PUBLIC_URL || '';
 const FALLBACK_TREE_URL = `${SNAPSHOT_BASE}/relationship-graph/_family-tree.json`;
+const freshSnapshotUrl = (url) => `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}`;
 const treeUrlForVideo = (videoId) => {
   const normalized = (videoId || '').replace(/\.[^.]+$/, '');
   if (!normalized || normalized === 'house_of_dragon_05') return FALLBACK_TREE_URL;
@@ -504,10 +505,10 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     setTree(null);
     setError(null);
     const episodeTreeUrl = treeUrlForVideo(videoId);
-    axios.get(episodeTreeUrl, { timeout: 8000 })
+    axios.get(freshSnapshotUrl(episodeTreeUrl), { timeout: 8000 })
       .catch(err => {
         if (episodeTreeUrl === FALLBACK_TREE_URL) throw err;
-        return axios.get(FALLBACK_TREE_URL, { timeout: 8000 });
+        return axios.get(freshSnapshotUrl(FALLBACK_TREE_URL), { timeout: 8000 });
       })
       .then(r => { if (!cancelled) setTree(r.data); })
       .catch(err => { if (!cancelled) setError(err?.message || String(err)); });
@@ -520,7 +521,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     if (!videoId) { setProfileMap(null); return; }
     let cancelled = false;
     const url = `${SNAPSHOT_BASE}/relationship-graph/_profiles-${encodeURIComponent(videoId.replace(/\.[^.]+$/, ''))}.json`;
-    axios.get(url, { timeout: 5000 })
+    axios.get(freshSnapshotUrl(url), { timeout: 5000 })
       .then(r => { if (!cancelled) setProfileMap(r.data?.profiles || null); })
       .catch(() => { if (!cancelled) setProfileMap(null); });
     return () => { cancelled = true; };
@@ -531,7 +532,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     if (!videoId) { setFocusList(null); return; }
     let cancelled = false;
     const url = `${SNAPSHOT_BASE}/relationship-graph/_scene-focus-${encodeURIComponent(videoId.replace(/\.[^.]+$/, ''))}.json`;
-    axios.get(url, { timeout: 5000 })
+    axios.get(freshSnapshotUrl(url), { timeout: 5000 })
       .then(r => { if (!cancelled) setFocusList(r.data); })
       .catch(() => { if (!cancelled) setFocusList(null); });
     return () => { cancelled = true; };
@@ -543,7 +544,7 @@ export default function RelationshipGraph({ videoId, videoRef, embedded = false,
     if (!videoId) { setCharEvents(null); return; }
     let cancelled = false;
     const url = `${SNAPSHOT_BASE}/relationship-graph/_char-events-${encodeURIComponent(videoId.replace(/\.[^.]+$/, ''))}.json`;
-    axios.get(url, { timeout: 5000 })
+    axios.get(freshSnapshotUrl(url), { timeout: 5000 })
       .then(r => { if (!cancelled) setCharEvents(r.data || null); })
       .catch(() => { if (!cancelled) setCharEvents(null); });
     return () => { cancelled = true; };
