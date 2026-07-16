@@ -137,8 +137,10 @@
       "epithet": null,
       "house": "Rivers",
       "actor_version": "default",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/alys_rivers/default/fd_01_wbd_alys_rivers.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/alys_rivers/default/fd_01_wbd_alys_rivers.jpg"
+      },
       "alive": true,
       "generation": 0,
       "lineage_x": 6,
@@ -221,8 +223,10 @@
       "epithet": null,
       "house": "Velaryon/Targaryen",
       "actor_version": "adult",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/jacaerys_velaryon/adult/fd_01_wbd_jacaerys_velaryon.jpg",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/jacaerys_velaryon/adult/fd_01_wbd_jacaerys_velaryon.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 3,
@@ -242,8 +246,10 @@
       "epithet": null,
       "house": "Targaryen",
       "actor_version": "adult",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/baela_targaryen/adult/fd_01_wbd_baela_targaryen.jpg",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/baela_targaryen/adult/fd_01_wbd_baela_targaryen.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 4,
@@ -263,8 +269,10 @@
       "epithet": null,
       "house": "Targaryen",
       "actor_version": "adult",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/rhaena_targaryen/adult/fd_01_wbd_rhaena_targaryen.jpg",
+      "portraits_by_version": {
+        "adult": "/kb/characters/face_refs/rhaena_targaryen/adult/fd_01_wbd_rhaena_targaryen.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 5,
@@ -284,8 +292,10 @@
       "epithet": null,
       "house": "Hull/Velaryon",
       "actor_version": "default",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/addam_of_hull/default/fd_01_wbd_addam_of_hull.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/addam_of_hull/default/fd_01_wbd_addam_of_hull.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 6,
@@ -299,8 +309,10 @@
       "epithet": null,
       "house": "Hull/Velaryon",
       "actor_version": "default",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/alyn_of_hull/default/fd_01_wbd_alyn_of_hull.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/alyn_of_hull/default/fd_01_wbd_alyn_of_hull.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 7,
@@ -314,8 +326,10 @@
       "epithet": null,
       "house": "Dragonseed",
       "actor_version": "default",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/ulf_white/default/fd_01_wbd_ulf_white.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/ulf_white/default/fd_01_wbd_ulf_white.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 8,
@@ -329,8 +343,10 @@
       "epithet": null,
       "house": "Dragonseed",
       "actor_version": "default",
-      "portrait_url": null,
-      "portraits_by_version": {},
+      "portrait_url": "/kb/characters/face_refs/hugh_hammer/default/fd_01_wbd_hugh_hammer.jpg",
+      "portraits_by_version": {
+        "default": "/kb/characters/face_refs/hugh_hammer/default/fd_01_wbd_hugh_hammer.jpg"
+      },
       "alive": true,
       "generation": 1,
       "lineage_x": 9,
