@@ -68,15 +68,15 @@ function SymbolTooltip({ sym, deepReading, cx, cy, corner, onClose, onCta }) {
   );
 }
 
-// 角标最小停留时长（秒）—— 哪怕场景已经切走，也至少撑住这么久，避免一闪而过。
-const MIN_BADGE_DURATION_S = 6;
+// 角标最长展示时长（视频秒）—— 同一场景只展示一次，满 6 秒自动隐藏。
+const BADGE_DURATION_S = 6;
 
 export default function SymbolHotspots({ videoId, videoRef, onCta }) {
   const [symbolData, setSymbolData] = useState(null);
   // activeSymbol: { sym, mode: 'dot' | 'badge' }
   const [active, setActive] = useState(null);
   const lastSceneIdRef = useRef(null);
-  // 当前 symbolData 第一次显示时的 video.currentTime —— 用来算最小停留剩余时长
+  // 当前 symbolData 第一次显示时的 video.currentTime —— 用来限制最长展示时长
   const symbolShownAtRef = useRef(null);
   // 请求序号：seek 时常常多个 fetch 同时在飞，必须只信"最后一发"的回执，
   // 否则旧请求晚到会把 otto_dismissal 这种 8 分钟的 badge 钉到 50 分钟去。
@@ -98,15 +98,25 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
           if (mySeq !== reqSeqRef.current) return;
           if (!data.has_kb) {
             setSymbolData(null);
+            setActive(null);
             symbolShownAtRef.current = null;
             return;
           }
-          if (data.scene_id === lastSceneIdRef.current) return;
+          const now = v.currentTime;
+          const shownAt = symbolShownAtRef.current;
+
+          if (data.scene_id === lastSceneIdRef.current) {
+            if (symbolData && shownAt != null && (now - shownAt) >= BADGE_DURATION_S) {
+              setSymbolData(null);
+              setActive(null);
+              symbolShownAtRef.current = null;
+            }
+            return;
+          }
 
           const hasSymbols = data.symbols && data.symbols.length > 0;
-          const now = v.currentTime;
 
-          // 新场景"有符号" → 立刻切（新信号优先于旧信号的最小停留）
+          // 新场景"有符号" → 立刻切换，并重新计算 6 秒展示窗口
           if (hasSymbols) {
             lastSceneIdRef.current = data.scene_id;
             setSymbolData(data);
@@ -115,9 +125,8 @@ export default function SymbolHotspots({ videoId, videoRef, onCta }) {
             return;
           }
 
-          // 新场景"无符号" → 看上一组符号是否还在最小停留窗口内
-          const shownAt = symbolShownAtRef.current;
-          if (symbolData && shownAt != null && (now - shownAt) < MIN_BADGE_DURATION_S) {
+          // 新场景"无符号" → 上一组未满 6 秒时继续显示，满 6 秒清除
+          if (symbolData && shownAt != null && (now - shownAt) < BADGE_DURATION_S) {
             // 还没看到 6 秒：保持显示，但更新 scene_id 避免下次 tick 误判
             lastSceneIdRef.current = data.scene_id;
             return;
