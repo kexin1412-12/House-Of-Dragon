@@ -1801,8 +1801,8 @@ ${JSON.stringify(prepared.context, null, 2)}
     const baseSystem = visualMode ? VISION_SYSTEM_PROMPT : SYSTEM_PROMPT;
     const systemWithSpec = baseSystem + buildAnswerSpec(depth);
 
-    // deep 档要装得下三层多角度内容；oneline 卡到 60 强制简短；brief 默认。
-    const maxTokens = depth === 'deep' ? 2600 : (depth === 'oneline' ? 60 : 280);
+    // 两档都以信息密度为先：brief 足够讲清证据与意义，deep 限制篇幅避免重复注水。
+    const maxTokens = depth === 'deep' ? 1800 : (depth === 'oneline' ? 60 : 700);
 
     let usage = null;
     let providerInfo = null;
