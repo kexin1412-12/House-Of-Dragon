@@ -74,7 +74,7 @@ class GeminiProvider {
     return out;
   }
 
-  _buildConfig({ system, maxTokens, temperature, schema }) {
+  _buildConfig({ system, maxTokens, temperature, schema, model }) {
     const config = {};
     if (system) config.systemInstruction = system;
     if (typeof maxTokens === 'number') config.maxOutputTokens = maxTokens;
@@ -85,9 +85,17 @@ class GeminiProvider {
     }
     // gemini-2.5-* 默认会用 thinking tokens，会吃掉 maxOutputTokens 预算导致短回答被截断。
     // 默认设为 0 关闭 thinking；用 GEMINI_THINKING_BUDGET 环境变量可覆盖（pro 模型需要 ≥128）。
-    const budget = process.env.GEMINI_THINKING_BUDGET;
+    const isGemini25Pro = /^gemini-2\.5-pro(?:$|-)/.test(model || '');
+    const configuredBudget = isGemini25Pro
+      ? process.env.GEMINI_PRO_THINKING_BUDGET
+      : process.env.GEMINI_THINKING_BUDGET;
+    let thinkingBudget = configuredBudget != null
+      ? parseInt(configuredBudget, 10)
+      : (isGemini25Pro ? 1024 : 0);
+    if (!Number.isFinite(thinkingBudget)) thinkingBudget = isGemini25Pro ? 1024 : 0;
+    if (isGemini25Pro && thinkingBudget < 128) thinkingBudget = 128;
     config.thinkingConfig = {
-      thinkingBudget: budget != null ? parseInt(budget, 10) : 0,
+      thinkingBudget,
     };
     return config;
   }
@@ -99,7 +107,7 @@ class GeminiProvider {
     const stream = await client.models.generateContentStream({
       model,
       contents: this._convertContents(messages),
-      config: this._buildConfig({ system, maxTokens, temperature }),
+      config: this._buildConfig({ system, maxTokens, temperature, model }),
     });
 
     let usage = null;
@@ -128,7 +136,7 @@ class GeminiProvider {
     const resp = await client.models.generateContent({
       model,
       contents: this._convertContents(messages),
-      config: this._buildConfig({ system, maxTokens, temperature }),
+      config: this._buildConfig({ system, maxTokens, temperature, model }),
     });
     return {
       text: (resp.text || '').trim(),
@@ -148,7 +156,7 @@ class GeminiProvider {
     const resp = await client.models.generateContent({
       model,
       contents: this._convertContents(messages),
-      config: this._buildConfig({ system, temperature, schema, maxTokens }),
+      config: this._buildConfig({ system, temperature, schema, maxTokens, model }),
     });
     const text = resp.text || '';
     if (!text) return {};

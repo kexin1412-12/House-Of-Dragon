@@ -31,6 +31,39 @@
       },
       "visual_beats": [
         {
+          "beat_id": "daenys_dream_and_doom_of_valyria",
+          "start_time": 15,
+          "end_time": 19,
+          "identified_people": [
+            "中央女性通常被识别为‘梦行者’黛妮丝·坦格利安"
+          ],
+          "identified_elements": [
+            "中央女性以梦境或惊惧姿态面对右侧带血、喷吐火焰的巨龙意象",
+            "整组画面位于驯龙与血魔法之后、瓦雷利亚毁灭之前，按片头顺序指向黛妮丝预见末日",
+            "她手中或怀中的具体对象在刺绣中并不清晰，公开拆解有‘卷册’与‘被怀抱的人体’等不同读法",
+            "左侧人物常被联想到听从预言、带家族撤离的埃纳尔·坦格利安，但现有公开资料没有逐项确认其身份与手中物件"
+          ],
+          "event": "黛妮丝梦见瓦雷利亚自由堡垒将被末日浩劫摧毁。她的父亲埃纳尔相信预言，在末日前十二年带领坦格利安家族迁往龙石岛；坦格利安因此躲过毁灭，成为后来唯一延续下来的龙王家族。",
+          "verified_facts": "这一组片头画面讲述的是黛妮丝之梦与瓦雷利亚末日，而不是一场普通驯龙仪式。黛妮丝的预言促成埃纳尔举族迁往龙石岛，是坦格利安后来进入维斯特洛历史的起点。",
+          "meaning": "这是坦格利安王朝真正的‘基因原点’：家族并非从征服开始，而是从一次对毁灭的预见和逃亡开始。第一场梦让他们从火海中幸存，也让‘梦’从此成为家族理解自身使命的语言。片头把预言者、巨龙与流血并置，强调坦格利安最珍贵的天赋始终带着双刃性——他们能比别人更早看见灾难，却未必能正确解释梦，更未必能控制梦被权力使用后的后果。",
+          "thematic_mirrors": [
+            "黛妮丝的梦救下家族，后来坦格利安统治者也不断把梦与预言当作政治责任的一部分；两者构成‘预言既能救国，也能成为沉重负担’的历史反差。",
+            "不能把韦赛里斯迎娶阿莉森直接归因于预言；更准确的关联是，他把王朝使命与征服者之梦交给继承人，使继承选择同时背负家事、王权和末日叙事。",
+            "坦格利安是从瓦雷利亚灰烬中逃出的幸存者，片头随后却展示其后代把龙火转向血亲；逃离末日的家族，最终开始在内部复制末日。"
+          ],
+          "aesthetic_reading": "这幅画不按现实空间摆放人物，而像把梦的碎片同时缝在一块布上：惊惧的人、带血的火焰与巨龙彼此侵入。红线在这里既像预言书写下的警告，也像尚未发生却已渗进画面的灾难。片头由此把坦格利安历史的第一步定义为‘提前看见火’，并为后面所有关于梦、继承和龙火失控的故事定下宿命基调。",
+          "historical_ambiguity": "事件层面可高置信确认是黛妮丝之梦与瓦雷利亚末日；但不能把中央物件确定说成《征兆与预示》卷轴，也不能仅凭这一帧确认左侧必是持剑的埃纳尔。公开片头拆解对这些局部图像仍有不同解释，应把它们标为可能而非官方定论。",
+          "expressive_function": "用一场拯救家族的末日预言开启整条挂毯，让坦格利安的生存、王权与自我毁灭从第一针起就被同一团火连接。",
+          "confidence": "high_event_medium_details",
+          "source_refs": [
+            "S03E01 片头逐帧复核 00:15.0-00:19.0",
+            "The Cinemaholic Season 3 opening credits: Daenys' dream followed by the Doom of Valyria",
+            "Den of Geek Season 2 opening breakdown: likely Daenys the Dreamer, exact depicted action remains uncertain",
+            "Radio Times opening breakdown: Daenys interpretation and alternate readings of the adjacent blade/cradling imagery",
+            "用户提供的 Gemini 解读，保留事件主轴并纠正卷轴、埃纳尔持剑及预言因果的过度确定"
+          ]
+        },
+        {
           "beat_id": "maegor_dead_on_iron_throne",
           "start_time": 52,
           "end_time": 54,

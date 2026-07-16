@@ -21,6 +21,14 @@ const TASK_CONFIG = {
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
   },
 
+  // 深挖视觉解读：只在用户选择 deep 时启用 Pro，换取更强的多模态推理和文学组织能力。
+  vision_chat_deep: {
+    provider: process.env.AI_VISION_DEEP_PROVIDER || 'gemini',
+    model: process.env.AI_VISION_DEEP_MODEL || 'gemini-2.5-pro',
+    fallback: 'openai',
+    fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
+  },
+
   // 纯文本剧情问答（无画面，只读 KB）
   chat: {
     provider: process.env.AI_CHAT_PROVIDER || 'openai',

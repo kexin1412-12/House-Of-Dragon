@@ -1778,7 +1778,10 @@ ${JSON.stringify(prepared.context, null, 2)}
       }];
     }
 
-    const task = visualMode ? 'vision_chat' : 'chat';
+    const depth = requestedDepth;
+    const task = visualMode
+      ? (depth === 'deep' ? 'vision_chat_deep' : 'vision_chat')
+      : 'chat';
     if (!ai.isAvailable(task)) {
       send('text', { delta: generateTemplate(prepared.context, prepared.question) });
       send('done', { source: 'template' });
@@ -1787,12 +1790,11 @@ ${JSON.stringify(prepared.context, null, 2)}
 
     // 三档输出（一句 / 简明 / 深挖）+ 三层标注（事实 / 解读 / 推测）
     // depth 在前面 wantClipFrames 那段已经规整过 → 这里直接复用 requestedDepth
-    const depth = requestedDepth;
     const baseSystem = visualMode ? VISION_SYSTEM_PROMPT : SYSTEM_PROMPT;
     const systemWithSpec = baseSystem + buildAnswerSpec(depth);
 
     // deep 档要装得下三层多角度内容；oneline 卡到 60 强制简短；brief 默认。
-    const maxTokens = depth === 'deep' ? 1400 : (depth === 'oneline' ? 60 : 280);
+    const maxTokens = depth === 'deep' ? 2600 : (depth === 'oneline' ? 60 : 280);
 
     try {
       let usage = null;
