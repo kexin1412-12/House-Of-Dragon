@@ -1693,7 +1693,7 @@ function register(app) {
       // 视觉模式：服务端 ffmpeg 抽 N 帧 + 前端单帧 + KB 字典 + wiki lore + 历史对话 + 分析方法
       const db = kb ? getCharacterDb(kb.show_id) : null;
       const cursor = kb ? charactersLib.cursorAtTime(kb, prepared.cursorTime) : null;
-      const characterDictionary = db ? (db.characters || []).map(c => {
+      const allCharacterDictionary = db ? (db.characters || []).map(c => {
         const card = charactersLib.lookupCharacter(db, c.character_id, cursor);
         return {
           character_id: c.character_id,
@@ -1731,6 +1731,23 @@ function register(app) {
       for (const c of (scene?.characters || [])) {
         if (c.id) sceneCharIds.add(c.id);
       }
+
+      // 不把全剧角色表交给视觉模型。候选池仅覆盖当前场景和前后 45 秒，
+      // 既容忍切镜边界误差，也避免高知名度角色凭先验概率“抢答”。
+      const nearbyCharIds = new Set(sceneCharIds);
+      for (const nearbyScene of (kb?.scenes || [])) {
+        if (nearbyScene.end_time < prepared.cursorTime - 45) continue;
+        if (nearbyScene.start_time > prepared.cursorTime + 45) continue;
+        for (const item of (nearbyScene.characters_on_screen || [])) {
+          if (item.character_id) nearbyCharIds.add(item.character_id);
+        }
+        for (const item of (nearbyScene.characters || [])) {
+          if (item.id) nearbyCharIds.add(item.id);
+        }
+      }
+      const characterDictionary = allCharacterDictionary
+        .filter(character => nearbyCharIds.has(character.character_id))
+        .slice(0, 12);
       // 把 character_id 翻译成中文名 + 别名，给检索打分用
       const charNames = [];
       const charAliases = [];
@@ -1845,6 +1862,7 @@ function register(app) {
         current_scene: currentSceneSlice,
         on_screen_relations: onScreenRelations,
         previous_context: {
+          reliability: 'prior_agent_observations_are_unverified_and_must_not_be_used_as_identity_evidence',
           from_prior_agent_observations: previousFromAgent,
           from_kb_scenes_before_now: previousFromKb,
         },

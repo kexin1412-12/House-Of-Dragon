@@ -1146,17 +1146,19 @@ function TencentPlayer({
       wait();
     };
 
-    // 抓当前画面一起送给 LLM —— 让回答以图像为事实，KB 只作背景参考
+    // 抓当前画面一起送给 LLM。深挖档保留更多面部、纹样和道具细节；
+    // 简明档也高于旧版 640px，避免银发角色和暗场被过度压缩后混淆。
     let imageDataUrl = null;
     const v = videoRef.current;
     if (v && v.videoWidth) {
       try {
-        const W = 640;
+        const W = aiDepth === 'deep' ? 960 : 768;
+        const quality = aiDepth === 'deep' ? 0.82 : 0.74;
         const H = Math.max(1, Math.round(v.videoHeight / v.videoWidth * W));
         const canvas = document.createElement('canvas');
         canvas.width = W; canvas.height = H;
         canvas.getContext('2d').drawImage(v, 0, 0, W, H);
-        imageDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        imageDataUrl = canvas.toDataURL('image/jpeg', quality);
       } catch { /* canvas tainted or other capture failure */ }
     }
 
