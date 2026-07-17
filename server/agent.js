@@ -1729,6 +1729,8 @@ function register(app) {
           house: c.house,
           actor_name: c.actor_versions?.[0]?.actor_name || null,
           aliases: Array.isArray(c.aliases) ? c.aliases : [],
+          gender_zh: c.gender_zh || null,
+          pronoun_zh: c.pronoun_zh || null,
           current_title: card?.current?.title || null,
         };
       }) : [];
@@ -1801,6 +1803,8 @@ function register(app) {
           short_identity: character.short_identity,
           actor_name: character.actor_name,
           aliases: character.aliases,
+          gender_zh: character.gender_zh,
+          pronoun_zh: character.pronoun_zh,
         }));
       // 把 character_id 翻译成中文名 + 别名，给检索打分用
       const charNames = [];
