@@ -1724,9 +1724,11 @@ function register(app) {
         return {
           character_id: c.character_id,
           display_name: c.display_name_zh,
+          canonical_name: c.canonical_name,
           short_identity: c.short_identity_zh,
           house: c.house,
           actor_name: c.actor_versions?.[0]?.actor_name || null,
+          aliases: Array.isArray(c.aliases) ? c.aliases : [],
           current_title: card?.current?.title || null,
         };
       }) : [];
@@ -1772,6 +1774,19 @@ function register(app) {
           if (item.id) nearbyCharIds.add(item.id);
         }
       }
+      const subtitleWindow = (scene?.subtitles || [])
+        .filter(subtitle => subtitle.end >= prepared.cursorTime - 8 && subtitle.start <= prepared.cursorTime + 8)
+        .map(subtitle => ({ start: subtitle.start, end: subtitle.end, text: subtitle.text }));
+      const subtitleEvidenceText = subtitleWindow.map(subtitle => subtitle.text).join(' ').toLowerCase().replace(/\s+/g, '');
+      for (const character of allCharacterDictionary) {
+        const identityTerms = [character.display_name, character.canonical_name, character.character_id, ...(character.aliases || [])]
+          .filter(Boolean)
+          .map(term => String(term).toLowerCase().replace(/\s+/g, ''))
+          .filter(term => term.length >= 2);
+        if (identityTerms.some(term => subtitleEvidenceText.includes(term))) {
+          nearbyCharIds.add(character.character_id);
+        }
+      }
       const characterDictionary = allCharacterDictionary
         .filter(character => nearbyCharIds.has(character.character_id))
         .slice(0, 12);
@@ -1782,8 +1797,10 @@ function register(app) {
         .map(character => ({
           character_id: character.character_id,
           display_name: character.display_name,
+          canonical_name: character.canonical_name,
           short_identity: character.short_identity,
           actor_name: character.actor_name,
+          aliases: character.aliases,
         }));
       // 把 character_id 翻译成中文名 + 别名，给检索打分用
       const charNames = [];
@@ -1817,6 +1834,7 @@ function register(app) {
       const currentSceneSlice = scene ? {
         scene_id: scene.scene_id,
         time_range: [scene.start_time, scene.end_time],
+        subtitle_window: subtitleWindow,
         timed_visual_beat: currentVisualBeat(scene, prepared.cursorTime),
         identity_metadata_quality: {
           level: currentVisualBeat(scene, prepared.cursorTime)?.identity_lock

@@ -1364,6 +1364,11 @@
       "character_id": "sharako_lohar",
       "canonical_name": "Sharako Lohar",
       "display_name_zh": "沙拉科·洛哈尔",
+      "aliases": [
+        "洛哈",
+        "洛哈尔",
+        "Lohar"
+      ],
       "short_identity_zh": "三女儿王国舰队指挥者",
       "house": "Triarchy",
       "tags": [
