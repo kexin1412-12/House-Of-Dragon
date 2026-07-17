@@ -997,6 +997,14 @@ function collectSceneCharacterIds(scene) {
   return [...new Set(ids)];
 }
 
+function generateVisualFallback(context, question) {
+  const scene = context?.current_scene;
+  if (scene?.timed_visual_beat?.identity_lock) {
+    return generateTemplate(context, question);
+  }
+  return '视觉识别服务暂时不可用。场景摘要不能证明当前前景人物的身份，所以这里不猜；请稍后重试这个镜头。';
+}
+
 function explicitCharactersOnScreenAt(scene, cursorTime) {
   if (!scene || !Array.isArray(scene.characters_on_screen)) return [];
   return scene.characters_on_screen.filter(item => {
@@ -1705,6 +1713,12 @@ function register(app) {
       // 视觉模式：服务端 ffmpeg 抽 N 帧 + 前端单帧 + KB 字典 + wiki lore + 历史对话 + 分析方法
       const db = kb ? getCharacterDb(kb.show_id) : null;
       const cursor = kb ? charactersLib.cursorAtTime(kb, prepared.cursorTime) : null;
+      let seasonMeta = null;
+      if (kb?.show_id) {
+        try {
+          seasonMeta = seasonLib.loadSeason(kb.show_id, kb.season || 1);
+        } catch { /* season metadata is an optional recovery source */ }
+      }
       const allCharacterDictionary = db ? (db.characters || []).map(c => {
         const card = charactersLib.lookupCharacter(db, c.character_id, cursor);
         return {
@@ -1712,6 +1726,7 @@ function register(app) {
           display_name: c.display_name_zh,
           short_identity: c.short_identity_zh,
           house: c.house,
+          actor_name: c.actor_versions?.[0]?.actor_name || null,
           current_title: card?.current?.title || null,
         };
       }) : [];
@@ -1760,6 +1775,16 @@ function register(app) {
       const characterDictionary = allCharacterDictionary
         .filter(character => nearbyCharIds.has(character.character_id))
         .slice(0, 12);
+      const episodeCharacterIds = new Set(Object.keys(seasonMeta?.faction_membership || {}));
+      const identityRecoveryDictionary = allCharacterDictionary
+        .filter(character => episodeCharacterIds.has(character.character_id))
+        .filter(character => !nearbyCharIds.has(character.character_id))
+        .map(character => ({
+          character_id: character.character_id,
+          display_name: character.display_name,
+          short_identity: character.short_identity,
+          actor_name: character.actor_name,
+        }));
       // 把 character_id 翻译成中文名 + 别名，给检索打分用
       const charNames = [];
       const charAliases = [];
@@ -1793,6 +1818,13 @@ function register(app) {
         scene_id: scene.scene_id,
         time_range: [scene.start_time, scene.end_time],
         timed_visual_beat: currentVisualBeat(scene, prepared.cursorTime),
+        identity_metadata_quality: {
+          level: currentVisualBeat(scene, prepared.cursorTime)?.identity_lock
+            ? 'frame_verified'
+            : (explicitCharactersOnScreenAt(scene, prepared.cursorTime).length ? 'timed_annotation' : 'scene_summary_only'),
+          scene_character_lists_are_exhaustive: false,
+          instruction: 'scene_summary_only 表示人物名单可能漏人；必须以当前图像重新清点前景主体。',
+        },
         identity_policy: currentVisualBeat(scene, prepared.cursorTime)?.identity_lock ? {
           mode: 'closed',
           locked_character_id: currentVisualBeat(scene, prepared.cursorTime).identity_lock,
@@ -1850,7 +1882,6 @@ function register(app) {
       let episodeArc = null;
       if (kb?.show_id && cursor) {
         try {
-          const seasonMeta = seasonLib.loadSeason(kb.show_id, kb.season || 1);
           const epNum = parseInt(String(cursor).match(/^S\d{2}E(\d{2})$/)?.[1] || '0', 10);
           if (seasonMeta?.arcs && epNum) {
             const arc = seasonMeta.arcs.find(a => epNum >= a.ep_range[0] && epNum <= a.ep_range[1]);
@@ -1880,6 +1911,7 @@ function register(app) {
         },
         conversation,
         character_dictionary: characterDictionary,
+        identity_recovery_dictionary: identityRecoveryDictionary,
         mentioned_locations: prepared.context.tool_bundle?.location_matches || [],
         // 用打分检索后的相关知识替换无脑 slice(0,12)
         retrieved_knowledge: retrievedKnowledge,
@@ -1916,7 +1948,9 @@ ${JSON.stringify(prepared.context, null, 2)}
       ? (depth === 'deep' ? 'vision_chat_deep' : 'vision_chat')
       : 'chat';
     if (!ai.isAvailable(task)) {
-      send('text', { delta: generateTemplate(prepared.context, prepared.question) });
+      send('text', { delta: visualMode
+        ? generateVisualFallback(prepared.context, prepared.question)
+        : generateTemplate(prepared.context, prepared.question) });
       send('done', { source: 'template' });
       return res.end();
     }
@@ -1991,7 +2025,9 @@ ${JSON.stringify(prepared.context, null, 2)}
       }
 
       if (!emittedText) {
-        send('text', { delta: generateTemplate(prepared.context, prepared.question) });
+        send('text', { delta: visualMode
+          ? generateVisualFallback(prepared.context, prepared.question)
+          : generateTemplate(prepared.context, prepared.question) });
         send('done', { source: 'template' });
       } else {
         send('done', {
