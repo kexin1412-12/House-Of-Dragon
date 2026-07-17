@@ -87,9 +87,9 @@ class GeminiProvider {
     // 默认设为 0 关闭 thinking；用 GEMINI_THINKING_BUDGET 环境变量可覆盖（pro 模型需要 ≥128）。
     const isGemini31Pro = /^gemini-3\.1-pro(?:$|-)/.test(model || '');
     if (isGemini31Pro) {
-      const configuredLevel = String(process.env.GEMINI_PRO_THINKING_LEVEL || 'high').toLowerCase();
+      const configuredLevel = String(process.env.GEMINI_PRO_THINKING_LEVEL || 'low').toLowerCase();
       config.thinkingConfig = {
-        thinkingLevel: ['low', 'medium', 'high'].includes(configuredLevel) ? configuredLevel : 'high',
+        thinkingLevel: ['low', 'medium', 'high'].includes(configuredLevel) ? configuredLevel : 'low',
       };
       return config;
     }
