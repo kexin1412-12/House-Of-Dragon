@@ -25,7 +25,7 @@ const TASK_CONFIG = {
   // agent.js 保留失败后自动降级 vision_chat/Flash 的生产兜底。
   vision_chat_deep: {
     provider: process.env.AI_VISION_DEEP_PROVIDER || 'gemini',
-    model: process.env.AI_VISION_DEEP_MODEL || 'gemini-2.5-pro',
+    model: process.env.AI_VISION_DEEP_MODEL || 'gemini-3.1-pro-preview',
     fallback: 'openai',
     fallbackModel: process.env.OPENAI_MODEL || 'gpt-4o',
   },

@@ -85,6 +85,15 @@ class GeminiProvider {
     }
     // gemini-2.5-* 默认会用 thinking tokens，会吃掉 maxOutputTokens 预算导致短回答被截断。
     // 默认设为 0 关闭 thinking；用 GEMINI_THINKING_BUDGET 环境变量可覆盖（pro 模型需要 ≥128）。
+    const isGemini31Pro = /^gemini-3\.1-pro(?:$|-)/.test(model || '');
+    if (isGemini31Pro) {
+      const configuredLevel = String(process.env.GEMINI_PRO_THINKING_LEVEL || 'high').toLowerCase();
+      config.thinkingConfig = {
+        thinkingLevel: ['low', 'medium', 'high'].includes(configuredLevel) ? configuredLevel : 'high',
+      };
+      return config;
+    }
+
     const isGemini25Pro = /^gemini-2\.5-pro(?:$|-)/.test(model || '');
     const configuredBudget = isGemini25Pro
       ? process.env.GEMINI_PRO_THINKING_BUDGET
