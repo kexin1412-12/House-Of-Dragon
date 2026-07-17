@@ -7824,6 +7824,30 @@
       "start_time": 2938,
       "end_time": 2999,
       "keyframe": "frames/house_of_dragon_s03e01/scene-059.jpg",
+      "visual_beats": [
+        {
+          "beat_id": "lohar_follows_sea_snake_into_narrows",
+          "start_time": 2985,
+          "end_time": 2991.5,
+          "identified_people": [
+            "沙拉科·洛哈尔（Sharako Lohar）"
+          ],
+          "identified_elements": [
+            "洛哈尔额头带伤、身穿棕色皮甲，站在三女儿王国战船甲板中央",
+            "镜头在科利斯舰队驶入狭窄水道后切到洛哈尔，表明追击方也进入隘口",
+            "随后敌舰船员明确表示不了解这里的浅水与暗流，只能跟随海蛇的尾浪"
+          ],
+          "event": "沙拉科·洛哈尔亲自率领三女儿王国舰队追随科利斯进入龙石岛隘口。",
+          "verified_facts": "当前前景人物是沙拉科·洛哈尔，不是科利斯·瓦列利安。她位于追击方战船上；科利斯正在前方利用自己对潮汐、浅滩与尖石礁的熟悉诱敌深入。",
+          "meaning": "这个人物特写把抽象的追兵变成了洛哈尔的个人选择：她明知正在进入海蛇熟悉、自己陌生的水域，仍因追杀科利斯的执念继续压上。镜头因此不是单纯展示航线，而是在交代她如何主动走进科利斯布置的地形陷阱。",
+          "historical_ambiguity": "这一帧可确认洛哈尔及其追击行动；具体航道风险还需结合随后测深、暗流与浅滩对白解释，不能仅凭单帧断言战术结果。",
+          "identity_lock": "sharako_lohar",
+          "confidence": "high",
+          "source_refs": [
+            "S03E01 49:45-49:51 逐帧与字幕复核"
+          ]
+        }
+      ],
       "plot": {
         "fact": "敌方船只紧随其后进入隘口，科利斯·瓦列利安的船只面临被夹击的危险。",
         "reading": "敌方船只的紧随其后增加了紧张感，科利斯的船只面临被夹击的危险，显示出战局的紧迫性。",
@@ -7852,9 +7876,23 @@
           "emotion": "紧张",
           "motivation_shift": "未明确",
           "dramatic_position": "指挥官"
+        },
+        {
+          "id": "sharako_lohar",
+          "emotion": "执拗而自信",
+          "motivation_shift": "把舰队追击进一步押在追杀科利斯的个人执念上",
+          "dramatic_position": "追击方指挥官"
         }
       ],
-      "characters_on_screen": [],
+      "characters_on_screen": [
+        {
+          "character_id": "sharako_lohar",
+          "start_time": 2985,
+          "end_time": 2991.5,
+          "confidence": 1,
+          "source": "manual_frame_review"
+        }
+      ],
       "foreshadow": {
         "is_setup_for": [],
         "is_payoff_of": [],
