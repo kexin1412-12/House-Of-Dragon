@@ -997,6 +997,17 @@ function collectSceneCharacterIds(scene) {
   return [...new Set(ids)];
 }
 
+function explicitCharactersOnScreenAt(scene, cursorTime) {
+  if (!scene || !Array.isArray(scene.characters_on_screen)) return [];
+  return scene.characters_on_screen.filter(item => {
+    const start = Number(item?.start_time);
+    const end = Number(item?.end_time);
+    const afterStart = !Number.isFinite(start) || cursorTime >= start;
+    const beforeEnd = !Number.isFinite(end) || cursorTime <= end;
+    return afterStart && beforeEnd;
+  });
+}
+
 function buildRecognitionContext(kb, cursorTime, videoId) {
   if (!kb) return null;
   const scene = currentScene(kb, cursorTime);
@@ -1285,8 +1296,9 @@ function register(app) {
     const db = getCharacterDb(kb.show_id);
 
     // 优先用 scene.characters_on_screen (含 bbox)；否则退化成 scene.characters (无 bbox)
-    const onScreen = Array.isArray(scene.characters_on_screen) && scene.characters_on_screen.length
-      ? scene.characters_on_screen
+    const explicitOnScreen = explicitCharactersOnScreenAt(scene, cursorTime);
+    const onScreen = explicitOnScreen.length
+      ? explicitOnScreen
       : (scene.characters || []).map(c => ({ character_id: c.id }));
 
     const out = onScreen.map(item => {
