@@ -11,6 +11,12 @@
 ## Common（跨入口规则）
 
 - `common/anti-bloat.js`：反废话、Lore-first、视觉描述剥离、空话黑名单。
+- `common/companion-role.js`：资深剧友人设与“只解释当下”的目标。
+- `common/spoiler-boundary.js`：统一的当前 cursor 防剧透边界。
+- `common/evidence-priority.js`：身份识别与关系解读分离后的证据优先级。
+- `common/power-subtext.js`：试探、软威胁、信息差、第二层与按需解读角度。
+- `common/companion-style.js`：陪看语气、允许句式、禁用开头与不确定表达。
+- `common/companion-core.js`：组合以上公共层，供文字与视觉入口共同复用。
 
 所有实时问答、scene 解读、热点生成都应复用这里的规则，不要在各入口复制一份。
 
@@ -31,7 +37,7 @@
 
 `vision/user.js` 只组装当前图片、用户问题与运行时 JSON。运行时数据不会写进 System，也不携带固定分析规则。
 
-`agent.js` 负责准备本轮数据，并调用以上模块；普通文字问答仍保留基础 `SYSTEM_PROMPT`，但同样追加 `common/anti-bloat.js`。
+`agent.js` 负责准备本轮数据，并调用以上模块；普通文字问答由 `dialogue.js` 组合公共陪看层与文字入口运行规则，不再在 `agent.js` 内维护一份并行大 Prompt。
 
 ## Scene / Hotspot 生成
 

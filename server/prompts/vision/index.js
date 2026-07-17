@@ -4,9 +4,11 @@ const { ANALYSIS_LAYER } = require('./analysis');
 const { STYLE_LAYER } = require('./style');
 const { LITERARY_LAYER } = require('./literary');
 const { buildVisionUserContent } = require('./user');
+const { buildCompanionCorePrompt } = require('../common/companion-core');
 
 function buildVisionSystemPrompt() {
   return [
+    buildCompanionCorePrompt(),
     IDENTITY_LAYER,
     GROUNDING_LAYER,
     ANALYSIS_LAYER,
