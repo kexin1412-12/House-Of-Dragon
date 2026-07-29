@@ -1797,11 +1797,21 @@ function register(app) {
         if (entry.house) charAliases.push(entry.house);
         if (entry.short_identity_zh) charAliases.push(entry.short_identity_zh);
       }
-      const retrievedKnowledge = retrieveKnowledge({
+      const retrievedKnowledge = await retrieveKnowledge({
         query: prepared.question || '',
         characterNames: charNames,
         characterAliases: charAliases,
         k: 8,
+        cursor: {
+          show_id: kb.show_id,
+          video_id: kb.video_id,
+          season: kb.season,
+          episode: charactersLib.cursorAtTime(kb, prepared.cursorTime),
+          cursorTime: prepared.cursorTime,
+          allowedSpoilerLevel: 0,
+        },
+        currentScene: scene,
+        characterIds: (scene && scene.characters) || [],
       });
 
       const clipDescription = hasClip
