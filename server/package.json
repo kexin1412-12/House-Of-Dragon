@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test": "node --test",
     "start": "node index.js",
     "preprocess": "node scripts/preprocess.js",
     "scene-candidates": "node scripts/build_scene_candidates.js",
