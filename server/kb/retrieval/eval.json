@@ -1,0 +1,8 @@
+{
+  "showId": "house-of-the-dragon",
+  "k": 8,
+  "questions": [
+    { "id": "q_silence", "videoId": "house_of_dragon_s03e01", "cursorTime": 900, "query": "她为什么不说话？", "expected_ids": [], "must_not_recall_ids": [] },
+    { "id": "q_relation_now", "videoId": "house_of_dragon_s03e01", "cursorTime": 900, "query": "他和她现在是什么关系？", "expected_ids": [], "must_not_recall_ids": [] }
+  ]
+}
