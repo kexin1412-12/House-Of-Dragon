@@ -19,7 +19,8 @@ function defaultLoadChunks(showId) {
 
 function defaultEmbedClient() {
   if (!process.env.OPENAI_API_KEY || process.env.RETRIEVAL_DENSE === 'off') return null;
-  try { const OpenAI = require('openai'); return new OpenAI(); } catch { return null; }
+  // Route through the project's proxy-aware client (honors OPENAI_PROXY_URL).
+  try { const { createOpenAIClient } = require('../ai/openai-client'); return createOpenAIClient(); } catch { return null; }
 }
 
 async function retrieve(params = {}) {

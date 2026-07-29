@@ -8,8 +8,8 @@ async function main() {
   const [srcPath, showId] = process.argv.slice(2);
   if (!srcPath || !showId) { console.error('args: <recap.knowledge.json> <showId>'); process.exit(1); }
   if (!process.env.OPENAI_API_KEY) { console.error('OPENAI_API_KEY not set'); process.exit(1); }
-  const OpenAI = require('openai');
-  const client = new OpenAI();
+  const { createOpenAIClient } = require('../lib/ai/openai-client');
+  const client = createOpenAIClient();
   const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
   const kb = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'kb', `${showId}_scene_episodes.json`), 'utf8'));

@@ -41,8 +41,8 @@ async function main() {
 
   const { merged, added, updated, deleted } = syncIndex(existing, fresh);
 
-  const OpenAI = require('openai');
-  const client = new OpenAI();
+  const { createOpenAIClient } = require('../lib/ai/openai-client');
+  const client = createOpenAIClient();
   const embedFn = async (text) => (await client.embeddings.create({ model: EMBEDDING_MODEL, input: text })).data[0].embedding;
   await embedMissing(merged, { embedFn });
 
