@@ -107,4 +107,47 @@ function chunkCharacters(charDb, meta) {
   return out;
 }
 
-module.exports = { hashContent, episodeForScene, chunkScenes, makeChunk, sceneIdNum, epToNum, chunkCharacters };
+function genericChunk({ meta, id, knowledge_type, content, episode, character_ids, source_type, confidence }) {
+  return {
+    id, knowledge_type, content, retrieval_text: content,
+    show_id: meta.show_id, video_id: meta.video_id, season: meta.season,
+    episode, scene_id: null, start_time: null, end_time: null,
+    available_from_episode: episode, available_from_time: null,
+    character_ids: character_ids || [], location_ids: [], symbol_ids: [],
+    source_type, canonicality: source_type === 'wiki' ? 'lore' : 'recap',
+    confidence: confidence == null ? 0.6 : confidence, spoiler_level: 0,
+    embedding_model: null, schema_version: 1,
+    content_hash: hashContent(content), embedding: null,
+  };
+}
+
+function chunkLore(knowledgeJson, meta) {
+  const out = [];
+  for (const [i, kp] of ((knowledgeJson && knowledgeJson.knowledge_points) || []).entries()) {
+    const content = [kp.title, kp.summary, kp.safe_hint || kp.expanded_explanation].filter(Boolean).join(' — ');
+    if (!content) continue;
+    out.push(genericChunk({
+      meta, id: `${meta.show_id}:lore:${i}`, knowledge_type: 'lore_card', content,
+      episode: 'S01E01', character_ids: kp.related_characters || [], source_type: 'wiki',
+      confidence: typeof kp.confidence === 'number' ? kp.confidence : (kp.importance || 0.6),
+    }));
+  }
+  return out;
+}
+
+function chunkRecap(taggedPoints, meta) {
+  const out = [];
+  for (const [i, p] of (taggedPoints || []).entries()) {
+    if (!p.available_from_episode) continue; // untagged → excluded
+    const content = [p.title, p.summary || p.point, p.safe_hint || p.agent_answer].filter(Boolean).join(' — ');
+    if (!content) continue;
+    out.push(genericChunk({
+      meta, id: `${meta.show_id}:recap:${i}`, knowledge_type: 'external_knowledge', content,
+      episode: p.available_from_episode, character_ids: p.related_characters || p.related_character || [], source_type: 'recap',
+      confidence: typeof p.confidence === 'number' ? p.confidence : 0.55,
+    }));
+  }
+  return out;
+}
+
+module.exports = { hashContent, episodeForScene, chunkScenes, makeChunk, sceneIdNum, epToNum, chunkCharacters, chunkLore, chunkRecap };
