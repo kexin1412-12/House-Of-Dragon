@@ -1,8 +1,79 @@
 {
   "showId": "house-of-the-dragon",
   "k": 8,
+  "_note": "expected_ids / must_not_recall_ids are real chunk ids produced by the chunkers (deterministic, no embeddings). must_not_recall_ids are future-episode chunks the temporal filter must never surface at the given cursor. Grow toward 30-40 questions over time.",
   "questions": [
-    { "id": "q_silence", "videoId": "house_of_dragon_s03e01", "cursorTime": 900, "query": "她为什么不说话？", "expected_ids": [], "must_not_recall_ids": [] },
-    { "id": "q_relation_now", "videoId": "house_of_dragon_s03e01", "cursorTime": 900, "query": "他和她现在是什么关系？", "expected_ids": [], "must_not_recall_ids": [] }
+    {
+      "id": "q_alicent_rhaenyra_relation_s1e5",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "阿莉森特和雷妮拉现在还算朋友吗？她们的关系变成什么样了？",
+      "expected_ids": ["house-of-the-dragon:rel:2:1"],
+      "must_not_recall_ids": [
+        "house-of-the-dragon:rel:30:1",
+        "house-of-the-dragon:char:rhaenyra_targaryen:state:3",
+        "house-of-the-dragon:char:alicent_hightower:state:3",
+        "house-of-the-dragon:rel:23:1"
+      ]
+    },
+    {
+      "id": "q_rhaenyra_identity_s1e5",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "雷妮拉现在是什么身份？",
+      "expected_ids": ["house-of-the-dragon:char:rhaenyra_targaryen:state:2"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:rhaenyra_targaryen:state:3"]
+    },
+    {
+      "id": "q_alicent_side_s1e5",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "阿莉森特现在站在哪一边？",
+      "expected_ids": ["house-of-the-dragon:char:alicent_hightower:state:2"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:alicent_hightower:state:3"]
+    },
+    {
+      "id": "q_moon_tea_s1e5",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "月亮茶是怎么回事？",
+      "expected_ids": ["house-of-the-dragon:rel:41:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_valyria_dragons_lore",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "坦格利安家族的龙是从哪来的？瓦雷利亚是什么？",
+      "expected_ids": ["house-of-the-dragon:lore:4", "house-of-the-dragon:lore:3"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_tapestry_meaning_s3e1",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "开头这段挂毯片头到底在讲什么？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:tapestry:reading"],
+      "must_not_recall_ids": [
+        "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading",
+        "house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"
+      ]
+    },
+    {
+      "id": "q_maegor_death_s3e1",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "梅葛是怎么死在铁王座上的，这幅画什么意思？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"]
+    },
+    {
+      "id": "q_sheepstealer_s3e1",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 1400,
+      "query": "雷妮亚为什么要去驯服那条不受王室控制的野龙？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"]
+    }
   ]
 }
