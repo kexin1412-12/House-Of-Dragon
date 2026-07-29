@@ -68,4 +68,43 @@ function chunkScenes(kb) {
   return out;
 }
 
-module.exports = { hashContent, episodeForScene, chunkScenes, makeChunk, sceneIdNum, epToNum };
+function charChunk({ meta, id, knowledge_type, content, episode, character_ids, confidence }) {
+  return {
+    id, knowledge_type, content, retrieval_text: content,
+    show_id: meta.show_id, video_id: meta.video_id, season: meta.season,
+    episode, scene_id: null, start_time: null, end_time: null,
+    available_from_episode: episode, available_from_time: null,
+    character_ids, location_ids: [], symbol_ids: [],
+    source_type: 'character_kb', canonicality: 'episode_verified',
+    confidence: confidence == null ? 0.85 : confidence, spoiler_level: 0,
+    embedding_model: null, schema_version: 1,
+    content_hash: hashContent(content), embedding: null,
+  };
+}
+
+function chunkCharacters(charDb, meta) {
+  const out = [];
+  for (const ch of (charDb && charDb.characters) || []) {
+    const cid = ch.character_id;
+    for (const [i, st] of (ch.state_timeline || []).entries()) {
+      const content = [st.title_zh, st.political_role_zh, st.safe_summary_zh].filter(Boolean).join(' / ');
+      if (!content) continue;
+      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:state:${i}`, knowledge_type: 'character_state', content, episode: st.from || 'S01E01', character_ids: [cid] }));
+    }
+    for (const [i, mo] of (ch.motivations_timeline || []).entries()) {
+      const content = [mo.motivation_zh, mo.evidence_zh].filter(Boolean).join(' — ');
+      if (!content) continue;
+      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:motive:${i}`, knowledge_type: 'character_motivation', content, episode: mo.from || 'S01E01', character_ids: [cid] }));
+    }
+  }
+  for (const [i, rel] of ((charDb && charDb.relationships) || []).entries()) {
+    for (const [j, t] of (rel.timeline || []).entries()) {
+      const content = [t.relation_zh || t.relation_en, t.summary_zh, t.evidence_zh].filter(Boolean).join(' — ');
+      if (!content) continue;
+      out.push(charChunk({ meta, id: `${meta.show_id}:rel:${i}:${j}`, knowledge_type: 'character_relationship', content, episode: t.from || 'S01E01', character_ids: [rel.source, rel.target].filter(Boolean) }));
+    }
+  }
+  return out;
+}
+
+module.exports = { hashContent, episodeForScene, chunkScenes, makeChunk, sceneIdNum, epToNum, chunkCharacters };
