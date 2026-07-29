@@ -17,7 +17,7 @@ function isEligible(chunk, cursor) {
   if (!cursor) return isBaseline(chunk);
 
   if (chunk.show_id !== cursor.show_id) return false;
-  if (!cursor.crossVideo && chunk.video_id !== cursor.video_id) return false;
+  if (!cursor.crossVideo && chunk.video_id != null && chunk.video_id !== cursor.video_id) return false;
   if (typeof chunk.season === 'number' && chunk.season > cursor.season) return false;
   if ((chunk.spoiler_level || 0) > (cursor.allowedSpoilerLevel || 0)) return false;
 

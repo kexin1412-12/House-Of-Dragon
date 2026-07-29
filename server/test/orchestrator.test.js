@@ -20,6 +20,11 @@ test('lexical-only path (no embed client) never returns future chunk', async () 
   const ids = out.map(c => c.id);
   assert.ok(ids.includes('here'));
   assert.ok(!ids.includes('future'));
+  // Returned objects must carry id and content but NOT embedding
+  assert.ok(out.length > 0, 'expected at least one result');
+  assert.ok('id' in out[0], 'returned chunk must have id');
+  assert.ok('content' in out[0], 'returned chunk must have content');
+  assert.ok(!('embedding' in out[0]), 'returned chunk must NOT carry embedding');
 });
 
 test('hybrid path with fake embed client also excludes future chunk', async () => {

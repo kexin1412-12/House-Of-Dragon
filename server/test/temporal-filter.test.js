@@ -53,3 +53,29 @@ test('filterEligible returns only eligible', () => {
   ];
   assert.deepStrictEqual(filterEligible(chunks, cursor).map(c => c.id), ['a']);
 });
+
+test('show-level chunk (video_id: null) passes non-crossVideo cursor', () => {
+  // Character/lore/recap chunks are built with video_id: null (show-level).
+  // They must be eligible under a normal cursor that has a specific video_id.
+  const showLevelChunk = {
+    show_id: 'house-of-the-dragon',
+    video_id: null,        // show-level, not tied to any episode
+    season: 3,
+    spoiler_level: 0,
+    available_from_episode: 'S03E01',
+    // no available_from_time → baseline chunk
+  };
+  // Must pass even though cursor.crossVideo is falsy and cursor.video_id is 'v1'
+  assert.ok(isEligible(showLevelChunk, cursor), 'show-level chunk should be eligible under normal cursor');
+
+  // A chunk with a DIFFERENT non-null video_id must still be blocked when crossVideo is falsy
+  const otherVideoChunk = {
+    show_id: 'house-of-the-dragon',
+    video_id: 'v999',
+    season: 3,
+    spoiler_level: 0,
+    available_from_episode: 'S03E01',
+    available_from_time: 0,
+  };
+  assert.ok(!isEligible(otherVideoChunk, cursor), 'different non-null video_id should be blocked without crossVideo');
+});

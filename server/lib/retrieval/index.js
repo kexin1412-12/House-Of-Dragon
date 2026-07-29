@@ -62,7 +62,9 @@ async function retrieve(params = {}) {
     symbolIds: [], cursorTime: cursor && cursor.cursorTime, intent,
   };
   const reranked = rerank(rankedIds.map(id => byId.get(id)).filter(Boolean), cursorCtx);
-  return buildContext(reranked, { total: k });
+  const raw = buildContext(reranked, { total: k });
+  return raw.map(({ id, knowledge_type, content, scene_id, available_from_episode, source_type, confidence, character_ids }) =>
+    ({ id, knowledge_type, content, scene_id, available_from_episode, source_type, confidence, character_ids }));
 }
 
 function clearCache() { VECTOR_CACHE = null; QUERY_EMBED_CACHE = new Map(); }
