@@ -1,0 +1,637 @@
+[
+  {
+    "kid": "kp_002",
+    "type": "character",
+    "title": "继承权的争夺",
+    "summary": "老国王杰和李斯的继承人问题引发了权力斗争，影响后续角色关系。",
+    "evidence": [
+      "原本第四任国王杰和李斯有两个适合继承王位的儿子，但都相继死去，造成继承人必须重新选择。"
+    ],
+    "related_characters": [
+      "杰和李斯",
+      "伊梦",
+      "贝尔隆"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "继承权争夺的情节",
+    "use_in_agent": "用户询问继承权重要性或角色关系时",
+    "safe_hint": "继承权争夺引发的权力斗争",
+    "expanded_explanation": "继承权的争夺是权力斗争的核心，影响着角色的决策和关系。",
+    "possible_user_questions": [
+      "为什么继承权重要？",
+      "角色之间的关系如何影响剧情？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E08"
+  },
+  {
+    "kid": "kp_003",
+    "type": "shot_analysis",
+    "title": "开场无片头",
+    "summary": "影片一开始没有片头和片头曲，直接进入故事，增强了紧迫感。",
+    "evidence": [
+      "影片一开始二丫没有片头和片头曲。"
+    ],
+    "related_characters": [],
+    "related_symbols": [],
+    "related_scene_or_moment": "影片开场",
+    "use_in_agent": "用户询问开场方式的效果时",
+    "safe_hint": "无片头增强紧迫感",
+    "expanded_explanation": "没有片头让观众更快投入故事，感受到紧迫感和紧张气氛。",
+    "possible_user_questions": [
+      "为什么没有片头？",
+      "这种开场有什么效果？"
+    ],
+    "recommended_card_type": "shot",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_005",
+    "type": "character",
+    "title": "雷尼拉的动机",
+    "summary": "雷尼拉虽然是王位继承人，但对政权并不感兴趣，显示出她的个性与追求。",
+    "evidence": [
+      "雷尼拉18岁时想成为龙骑士，对政权没有太多兴趣。"
+    ],
+    "related_characters": [
+      "雷尼拉"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "雷尼拉的角色发展",
+    "use_in_agent": "用户询问雷尼拉的角色特征时",
+    "safe_hint": "雷尼拉追求自由而非权力。",
+    "expanded_explanation": "雷尼拉的追求反映了她对自由的渴望，展现了角色的复杂性。",
+    "possible_user_questions": [
+      "雷尼拉为什么不想当国王？",
+      "她的角色有什么特别之处？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_008",
+    "type": "character",
+    "title": "雷尼拉的动机与母亲的教导",
+    "summary": "雷尼拉渴望成为龙骑士，与母亲的传统角色期待形成对比，反映出她的叛逆与追求。",
+    "evidence": [
+      "雷尼拉希望上战场，而艾玛强调女人的职责是生儿子，暗示两者的冲突。"
+    ],
+    "related_characters": [
+      "雷尼拉",
+      "艾玛"
+    ],
+    "related_symbols": [
+      "产床",
+      "龙骑士"
+    ],
+    "related_scene_or_moment": "雷尼拉与母亲的对话",
+    "use_in_agent": "用户询问雷尼拉的角色冲突时",
+    "safe_hint": "雷尼拉渴望打破传统角色。",
+    "expanded_explanation": "雷尼拉想追求自己的梦想，挑战传统女性角色的限制。",
+    "possible_user_questions": [
+      "雷尼拉为什么不想当母亲？",
+      "她的目标是什么？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_009",
+    "type": "emotion",
+    "title": "艾玛的角色与情感冲突",
+    "summary": "艾玛的教导与她自身的经历形成对比，暗示她对传统角色的无奈与未来的悲剧。",
+    "evidence": [
+      "艾玛说产床是女人的战场，后续她会对此有深刻体会，暗示她的命运。"
+    ],
+    "related_characters": [
+      "艾玛"
+    ],
+    "related_symbols": [
+      "产床"
+    ],
+    "related_scene_or_moment": "艾玛的教导场景",
+    "use_in_agent": "用户询问艾玛的角色深意时",
+    "safe_hint": "艾玛的教导暗示未来悲剧。",
+    "expanded_explanation": "艾玛的教导反映了她的无奈，暗示未来可能的悲剧。",
+    "possible_user_questions": [
+      "艾玛的角色有什么深意？",
+      "她的教导会如何影响雷尼拉？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_010",
+    "type": "character",
+    "title": "戴蒙的权力渴望与性格分析",
+    "summary": "戴蒙坐在铁王座上，暗示他对权力的渴望，但国王韦赛里斯认为他会成为暴君，因此不可能选他为继承人。",
+    "evidence": [
+      "戴蒙因权力渴望和暴躁性格被认为不会带来和平，故不被选为继承人。"
+    ],
+    "related_characters": [
+      "戴蒙",
+      "韦赛里斯"
+    ],
+    "related_symbols": [
+      "铁王座"
+    ],
+    "related_scene_or_moment": "戴蒙坐在铁王座的场景",
+    "use_in_agent": "用户询问戴蒙的角色动机时",
+    "safe_hint": "戴蒙的性格影响继承权选择。",
+    "expanded_explanation": "国王认为戴蒙会成为暴君，因此不可能选他为继承人。",
+    "possible_user_questions": [
+      "戴蒙为什么不被选为继承人？",
+      "国王对戴蒙的看法是什么？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.9,
+    "confidence": 0.9,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_011",
+    "type": "emotion",
+    "title": "雷尼拉的内心矛盾",
+    "summary": "雷尼拉希望母亲生下男孩，以便她能获得更多自由，这反映了她对权力中心的渴望与无奈。",
+    "evidence": [
+      "雷尼拉希望母亲生出一个大胖弟弟，这样她就能更自由。"
+    ],
+    "related_characters": [
+      "雷尼拉"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "雷尼拉的内心独白",
+    "use_in_agent": "用户询问雷尼拉的内心冲突时",
+    "safe_hint": "雷尼拉渴望自由与权力的矛盾。",
+    "expanded_explanation": "她认为有弟弟后能获得更多自由，反映了她对权力的渴望。",
+    "possible_user_questions": [
+      "雷尼拉为什么想要弟弟？",
+      "她对权力的看法是什么？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_013",
+    "type": "foreshadow",
+    "title": "国王韦赛里斯的伤口象征",
+    "summary": "韦赛里斯的伤口流脓暗示了权力带来的痛苦和即将到来的冲突。",
+    "evidence": [
+      "伤口的恶化预示着权力的代价和家庭的腥风血雨。"
+    ],
+    "related_characters": [
+      "韦赛里斯"
+    ],
+    "related_symbols": [
+      "铁王座"
+    ],
+    "related_scene_or_moment": "国王受伤的特写",
+    "use_in_agent": "用户询问国王伤口的象征意义时",
+    "safe_hint": "伤口暗示权力的代价。",
+    "expanded_explanation": "伤口象征着权力带来的痛苦和即将到来的冲突。",
+    "possible_user_questions": [
+      "国王的伤口有什么象征意义？"
+    ],
+    "recommended_card_type": "foreshadow",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E08"
+  },
+  {
+    "kid": "kp_014",
+    "type": "emotion",
+    "title": "艾玛的生育恐惧",
+    "summary": "艾玛对生育的恐惧反映了她的悲伤和无奈，增强了情感的紧张感。",
+    "evidence": [
+      "艾玛担心这是她最后一次生孩子，表达了对生育痛苦的恐惧。"
+    ],
+    "related_characters": [
+      "艾玛",
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "艾玛的情感独白",
+    "use_in_agent": "用户询问艾玛的情感时",
+    "safe_hint": "艾玛的生育恐惧。",
+    "expanded_explanation": "艾玛经历了多次流产，对生育充满恐惧和无奈。",
+    "possible_user_questions": [
+      "艾玛为什么对生育感到恐惧？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_015",
+    "type": "character",
+    "title": "戴蒙的暴力行为",
+    "summary": "戴蒙的残忍惩戒行为显示了他对权力的挑战和对国王的蔑视。",
+    "evidence": [
+      "戴蒙在君临城的暴力惩戒明显是为了给国王制造难堪。"
+    ],
+    "related_characters": [
+      "戴蒙",
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "戴蒙的暴力行为场景",
+    "use_in_agent": "用户询问戴蒙的反叛行为时",
+    "safe_hint": "戴蒙的暴力挑战权威。",
+    "expanded_explanation": "戴蒙通过暴力行为挑战国王的权威，显示他的反叛态度。",
+    "possible_user_questions": [
+      "戴蒙为什么要这么做？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.75,
+    "confidence": 0.75,
+    "available_from_episode": "S01E05"
+  },
+  {
+    "kid": "kp_016",
+    "type": "character",
+    "title": "戴蒙的放荡不羁",
+    "summary": "戴蒙当众羞辱妻子，展现其不羁个性和权力欲。",
+    "evidence": [
+      "戴蒙直接当众羞辱自己的妻子，显示其放荡不羁。"
+    ],
+    "related_characters": [
+      "戴蒙"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "戴蒙羞辱妻子的场景",
+    "use_in_agent": "用户询问戴蒙的性格特征时",
+    "safe_hint": "戴蒙的个性揭示了权力斗争。",
+    "expanded_explanation": "戴蒙的行为反映了他对权力的渴望和对他人感情的漠视。",
+    "possible_user_questions": [
+      "戴蒙为什么羞辱妻子？",
+      "这反映了什么性格特征？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.9,
+    "confidence": 0.9,
+    "available_from_episode": "S01E05"
+  },
+  {
+    "kid": "kp_018",
+    "type": "emotion",
+    "title": "韦赛里斯的软弱",
+    "summary": "韦赛里斯在权力面前的软弱表现出他内心的挣扎。",
+    "evidence": [
+      "韦赛里斯在众人面前自我安慰，显示其对权力的无能为力。"
+    ],
+    "related_characters": [
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "韦赛里斯的情感独白",
+    "use_in_agent": "用户询问韦赛里斯的内心冲突时",
+    "safe_hint": "韦赛里斯的软弱揭示了权力的脆弱性。",
+    "expanded_explanation": "韦赛里斯的软弱反映了他在权力斗争中的无奈与挣扎。",
+    "possible_user_questions": [
+      "韦赛里斯为什么软弱？",
+      "这对他有什么影响？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_019",
+    "type": "shot_analysis | emotion | directing",
+    "title": "交叉剪辑的暴力与生命",
+    "summary": "通过比武与剖腹的交叉剪辑，展现了暴力与新生命之间的矛盾，暗示了权力斗争的残酷性。",
+    "evidence": [
+      "艾玛被剖腹与比武的场景并行剪辑，象征着生命与死亡的交织。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "艾玛"
+    ],
+    "related_symbols": [
+      "婴儿",
+      "比武"
+    ],
+    "related_scene_or_moment": "交叉剪辑的场景",
+    "use_in_agent": "用户询问剪辑手法的深意时",
+    "safe_hint": "暴力与生命的交织暗示权力斗争。",
+    "expanded_explanation": "这种剪辑方式强调了生死之间的紧张关系，反映了权力斗争的残酷。",
+    "possible_user_questions": [
+      "这段剪辑有什么深意？",
+      "为什么选择这种剪辑方式？"
+    ],
+    "recommended_card_type": "shot",
+    "importance": 0.9,
+    "confidence": 0.9,
+    "available_from_episode": "S01E05"
+  },
+  {
+    "kid": "kp_020",
+    "type": "character | emotion",
+    "title": "韦赛里斯的艰难选择",
+    "summary": "韦赛里斯在生死抉择中选择保全孩子，反映了他对权力和家庭的复杂情感。",
+    "evidence": [
+      "韦赛里斯选择保小孩，导致艾玛遭受剖腹之苦，显示出他对权力的执着。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "艾玛"
+    ],
+    "related_symbols": [
+      "权力",
+      "生命"
+    ],
+    "related_scene_or_moment": "韦赛里斯的选择场景",
+    "use_in_agent": "用户询问韦赛里斯的选择时",
+    "safe_hint": "韦赛里斯的选择揭示了权力与家庭的矛盾。",
+    "expanded_explanation": "韦赛里斯的选择反映了他对权力的渴望与对家庭的责任感。",
+    "possible_user_questions": [
+      "韦赛里斯为什么选择保孩子？",
+      "这个选择有什么影响？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E08"
+  },
+  {
+    "kid": "kp_022",
+    "type": "emotion",
+    "title": "雷尼拉的丧母之痛",
+    "summary": "雷尼拉在丧礼上的表现揭示了她对母亲的深切怀念和对家庭的失落感。",
+    "evidence": [
+      "雷尼拉毫不遮掩自己的丧母之痛，提到弟弟的短暂生命。"
+    ],
+    "related_characters": [
+      "雷尼拉"
+    ],
+    "related_symbols": [
+      "丧礼"
+    ],
+    "related_scene_or_moment": "雷尼拉的丧礼场景",
+    "use_in_agent": "用户询问雷尼拉的情感时",
+    "safe_hint": "雷尼拉的痛苦揭示角色深度。",
+    "expanded_explanation": "雷尼拉的痛苦源于失去母亲，反映了她对家庭的依赖和责任感。",
+    "possible_user_questions": [
+      "雷尼拉为什么这么伤心？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_023",
+    "type": "character",
+    "title": "韦赛里斯的内心冲突",
+    "summary": "韦赛里斯在面对家族的悲剧与权力斗争时，表现出明显的矛盾情绪。",
+    "evidence": [
+      "韦赛里斯对奥托的提议感到不满，暗示他对弟弟戴蒙的保护欲。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "戴蒙"
+    ],
+    "related_symbols": [
+      "权力斗争"
+    ],
+    "related_scene_or_moment": "韦赛里斯与奥托的对话",
+    "use_in_agent": "用户询问韦赛里斯的内心冲突时",
+    "safe_hint": "韦赛里斯的矛盾情感推动剧情。",
+    "expanded_explanation": "韦赛里斯的反对反映了他对家族的忠诚和对权力斗争的恐惧。",
+    "possible_user_questions": [
+      "韦赛里斯为什么反对奥托的提议？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E08"
+  },
+  {
+    "kid": "kp_025",
+    "type": "emotion",
+    "title": "韦赛里斯的逃避",
+    "summary": "韦赛里斯在选择中表现出逃避态度，显示出他内心的矛盾和无力感。",
+    "evidence": [
+      "韦赛里斯不愿在女人和兄弟之间做选择，反映了他的内心挣扎。"
+    ],
+    "related_characters": [
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "韦赛里斯的选择场景",
+    "use_in_agent": "用户询问韦赛里斯的逃避时",
+    "safe_hint": "韦赛里斯的内心挣扎。",
+    "expanded_explanation": "韦赛里斯的逃避反映了他内心的矛盾和无力感，影响了权力的平衡。",
+    "possible_user_questions": [
+      "韦赛里斯为什么不做选择？",
+      "他的逃避有什么意义？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_026",
+    "type": "directing",
+    "title": "奥托的操控",
+    "summary": "奥托通过安排艾莉森安慰韦赛里斯，展现了他在权力游戏中的操控能力。",
+    "evidence": [
+      "奥托让艾莉森去安慰刚失去妻儿的韦赛里斯，显示出他对局势的掌控。"
+    ],
+    "related_characters": [
+      "奥托",
+      "艾莉森",
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "奥托安排艾莉森的场景",
+    "use_in_agent": "用户询问奥托的操控手法时",
+    "safe_hint": "奥托的权力操控手法。",
+    "expanded_explanation": "奥托的安排显示了他在权力游戏中的深思熟虑，影响了韦赛里斯的决策。",
+    "possible_user_questions": [
+      "奥托为什么让艾莉森去安慰韦赛里斯？",
+      "这有什么策略意义？"
+    ],
+    "recommended_card_type": "directing",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E02"
+  },
+  {
+    "kid": "kp_027",
+    "type": "character",
+    "title": "韦赛里斯的软弱与戴蒙的直言",
+    "summary": "戴蒙直言揭露韦赛里斯的软弱，反映出权力斗争中的真实动机与内心挣扎。",
+    "evidence": [
+      "戴蒙质问韦赛里斯，指出他被利用，强调只有自己能保护他。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "戴蒙"
+    ],
+    "related_symbols": [
+      "铁王座"
+    ],
+    "related_scene_or_moment": "戴蒙与韦赛里斯的对话",
+    "use_in_agent": "用户询问戴蒙对韦赛里斯的看法时",
+    "safe_hint": "权力斗争中的真实动机。",
+    "expanded_explanation": "戴蒙的直言揭示了韦赛里斯的脆弱，反映出权力的复杂性。",
+    "possible_user_questions": [
+      "为什么戴蒙要这样说？",
+      "韦赛里斯的反应说明了什么？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.9,
+    "confidence": 0.9,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_028",
+    "type": "shot_analysis",
+    "title": "铁王座的象征意义",
+    "summary": "韦赛里斯被铁王座割伤，暗示权力的代价与不适。",
+    "evidence": [
+      "韦赛里斯在戴蒙离开时不小心被铁王座割伤，象征权力的痛苦。"
+    ],
+    "related_characters": [
+      "韦赛里斯"
+    ],
+    "related_symbols": [
+      "铁王座"
+    ],
+    "related_scene_or_moment": "韦赛里斯受伤的场景",
+    "use_in_agent": "用户询问铁王座的象征意义时",
+    "safe_hint": "权力的代价与痛苦。",
+    "expanded_explanation": "铁王座不仅是权力的象征，也代表了其带来的痛苦与牺牲。",
+    "possible_user_questions": [
+      "铁王座有什么特别的意义？",
+      "为什么韦赛里斯会受伤？"
+    ],
+    "recommended_card_type": "shot",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_029",
+    "type": "lore",
+    "title": "铁王座的象征意义",
+    "summary": "铁王座不仅象征权力，也暗示其危险性，反映出权力争夺的残酷。",
+    "evidence": [
+      "铁王座是王国中最危险的座位，人人为争夺不惜一切代价。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "雷尼拉"
+    ],
+    "related_symbols": [
+      "铁王座"
+    ],
+    "related_scene_or_moment": "铁王座的介绍",
+    "use_in_agent": "用户询问铁王座的双重性时",
+    "safe_hint": "铁王座象征权力与危险。",
+    "expanded_explanation": "铁王座象征着权力的诱惑与争斗，反映了角色间的复杂关系。",
+    "possible_user_questions": [
+      "铁王座有什么特别的意义？",
+      "为什么权力会如此危险？"
+    ],
+    "recommended_card_type": "lore",
+    "importance": 0.9,
+    "confidence": 0.9,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_030",
+    "type": "foreshadow",
+    "title": "龙的象征与家族命运",
+    "summary": "韦赛里斯通过龙的头骨暗示坦格利安家族的脆弱，预示未来的危机。",
+    "evidence": [
+      "坦格利家族控制龙的假象，没了龙大家都是普通人，暗示旧瓦雷利亚的覆灭。"
+    ],
+    "related_characters": [
+      "韦赛里斯",
+      "雷尼拉"
+    ],
+    "related_symbols": [
+      "巨龙的头骨"
+    ],
+    "related_scene_or_moment": "韦赛里斯与龙的对话",
+    "use_in_agent": "用户询问龙的象征意义时",
+    "safe_hint": "龙象征家族的脆弱与危机。",
+    "expanded_explanation": "龙象征着权力的来源，失去龙意味着家族的衰落。",
+    "possible_user_questions": [
+      "龙在故事中有什么重要性？",
+      "为什么韦赛里斯要提到龙？"
+    ],
+    "recommended_card_type": "foreshadow",
+    "importance": 0.85,
+    "confidence": 0.85,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_031",
+    "type": "character",
+    "title": "雷尼拉的成长与觉醒",
+    "summary": "雷尼拉在与韦赛里斯的对话中意识到自己的继承人身份，标志着她的成长。",
+    "evidence": [
+      "雷尼拉意识到自己将成为继承人，韦赛里斯提到需要传承的语言。"
+    ],
+    "related_characters": [
+      "雷尼拉"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "雷尼拉的觉醒场景",
+    "use_in_agent": "用户询问雷尼拉的成长时",
+    "safe_hint": "雷尼拉意识到自己的继承责任。",
+    "expanded_explanation": "雷尼拉的觉醒标志着她将承担更大的责任，影响未来的决策。",
+    "possible_user_questions": [
+      "雷尼拉为什么会意识到自己的身份？",
+      "她的成长有什么重要性？"
+    ],
+    "recommended_card_type": "character",
+    "importance": 0.8,
+    "confidence": 0.8,
+    "available_from_episode": "S01E01"
+  },
+  {
+    "kid": "kp_032",
+    "type": "emotion",
+    "title": "紧张感的营造",
+    "summary": "平行剪辑在继承仪式与韦赛里斯的对话中增强了紧张感，暗示权力的争夺。",
+    "evidence": [
+      "在讨论权力与责任时，继承人仪式同时进行，形成对比。"
+    ],
+    "related_characters": [
+      "雷尼拉",
+      "韦赛里斯"
+    ],
+    "related_symbols": [],
+    "related_scene_or_moment": "平行剪辑的场景",
+    "use_in_agent": "用户询问剪辑手法的效果时",
+    "safe_hint": "平行剪辑增强了紧张感。",
+    "expanded_explanation": "平行剪辑通过对比不同场景，增强了故事的紧迫感与紧张氛围。",
+    "possible_user_questions": [
+      "平行剪辑有什么作用？",
+      "如何理解权力的紧迫感？"
+    ],
+    "recommended_card_type": "emotion",
+    "importance": 0.75,
+    "confidence": 0.75,
+    "available_from_episode": "S01E08"
+  }
+]
