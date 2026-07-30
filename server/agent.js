@@ -6,6 +6,7 @@ const locationsLib = require('./lib/locations');
 const seasonLib = require('./lib/season');
 const ai = require('./lib/ai');
 const { retrieve: retrieveKnowledge } = require('./lib/retrieval');
+const kbPaths = require('./lib/kb-paths');
 const { buildAnswerSpec } = require('./prompts/answer-spec');
 const { buildDialogueSystemPrompt } = require('./prompts/dialogue');
 const { buildVisionSystemPrompt, buildVisionUserContent } = require('./prompts/vision');
@@ -174,14 +175,14 @@ function isTaskReady(task) {
 function loadKB(videoId) {
   if (!videoId || videoId.includes('..') || videoId.includes('/') || videoId.includes('\\')) return null;
 
-  const file = path.join(KB_DIR, `${videoId}.json`);
+  const file = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(file)) return null;
 
   try {
     const kb = JSON.parse(fs.readFileSync(file, 'utf8'));
     if (!Array.isArray(kb.scenes)) return null;
 
-    const sceneSymbolsFile = path.join(KB_DIR, 'scene_symbols', `${videoId}.json`);
+    const sceneSymbolsFile = kbPaths.sceneSymbols(videoId);
     if (fs.existsSync(sceneSymbolsFile)) {
       const overlay = JSON.parse(fs.readFileSync(sceneSymbolsFile, 'utf8'));
       const symbolAnalysis = overlay.symbol_analysis || {};
@@ -3273,7 +3274,7 @@ ${stanceListStr}
       if (!videoId || !scene_id || !hotspot?.symbol_id) {
         return res.status(400).json({ ok: false, error: 'videoId, scene_id, hotspot.symbol_id required' });
       }
-      const kbPath = path.join(KB_DIR, `${videoId}.json`);
+      const kbPath = kbPaths.sceneKb(videoId);
       if (!fs.existsSync(kbPath)) return res.status(404).json({ ok: false, error: 'KB not found' });
       const kb = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
       const scene = (kb.scenes || []).find(s => s.scene_id === scene_id);
@@ -3315,9 +3316,7 @@ ${stanceListStr}
   });
 
   app.get('/api/agent/kb', (req, res) => {
-    const videos = fs.existsSync(KB_DIR)
-      ? fs.readdirSync(KB_DIR).filter(f => f.endsWith('.json')).map(f => f.replace(/\.json$/, ''))
-      : [];
+    const videos = kbPaths.eachVideoFile('scene.json').map(({ videoId }) => videoId);
 
     res.json({
       videos,
@@ -3348,7 +3347,7 @@ ${stanceListStr}
     }
 
     // 读 stance trigger 配置
-    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    const stancePath = kbPaths.stanceKb(videoId);
     let stanceCfg;
     try {
       stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8'));
@@ -3497,7 +3496,7 @@ ${convergence ? `【这条路上的张力暗流（最后那 1-2 个问句要踩�
       return res.end();
     }
 
-    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    const stancePath = kbPaths.stanceKb(videoId);
     let stanceCfg;
     try { stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); }
     catch (_) {
@@ -3621,7 +3620,7 @@ ${convergence ? `【这条路的张力暗流】${convergence}` : ''}
   app.get('/api/agent/stance/speculate/eligibility', (req, res) => {
     const videoId = req.query.videoId;
     if (!videoId) return res.status(400).json({ error: 'videoId required' });
-    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    const stancePath = kbPaths.stanceKb(videoId);
     let cfg;
     try { cfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); }
     catch { return res.json({ video_id: videoId, eligibility: {} }); }
@@ -3670,7 +3669,7 @@ ${convergence ? `【这条路的张力暗流】${convergence}` : ''}
 
     // 读 stance 配置 → 给每条 choice 补 prompt_lines / convergence_hint / 其他选项的 inner_voice
     // 让 LLM 看到"你当时面对的张力是什么"，而不是只看到一行 label。
-    const stancePath = path.join(__dirname, 'kb', 'stance', `${videoId}.json`);
+    const stancePath = kbPaths.stanceKb(videoId);
     let stanceCfg = null;
     try { stanceCfg = JSON.parse(fs.readFileSync(stancePath, 'utf8')); } catch {}
     const triggerById = {};

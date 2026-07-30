@@ -3,6 +3,7 @@
 // Full rebuild if no existing index; otherwise incremental sync by id+content_hash.
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 const { chunkScenes, chunkCharacters, chunkLore, chunkRecap } = require('../lib/retrieval/chunkers');
 const { syncIndex, embedMissing } = require('../lib/retrieval/index-builder');
 const { EMBEDDING_MODEL } = require('../lib/retrieval/vector-store');
@@ -16,7 +17,7 @@ async function main() {
   const fresh = [];
 
   for (const vid of videoIds) {
-    const kb = readJson(path.join(SERVER, 'kb', `${vid}.json`));
+    const kb = readJson(kbPaths.sceneKb(vid));
     fresh.push(...chunkScenes(kb));
   }
   const charPath = path.join(SERVER, 'kb', 'characters', `${showId}.json`);

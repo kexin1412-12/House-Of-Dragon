@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
 const agent = require('./agent');
+const kbPaths = require('./lib/kb-paths');
 
 // ─── faststart helpers ─────────────────────────────────────────────
 // HTML5 <video> 需要 mp4 的 moov 原子在文件开头才能流式播放。很多上传工具
@@ -191,19 +192,20 @@ app.delete('/api/videos/:filename', (req, res) => {
 let _riffsCache = null;
 function loadRiffs() {
   if (_riffsCache) return _riffsCache;
-  const dir = path.join(__dirname, 'kb', 'dialogue_riffs');
   const all = [];
-  if (fs.existsSync(dir)) {
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.json')) continue;
-      try {
-        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-        for (const r of (j.riffs || [])) all.push(r);
-      } catch (e) {
-        console.warn(`[riffs] skip bad file ${f}:`, e.message);
-      }
+  const readInto = (p, label) => {
+    try {
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      for (const r of (j.riffs || [])) all.push(r);
+    } catch (e) { console.warn(`[riffs] skip bad file ${label}:`, e.message); }
+  };
+  const showDir = kbPaths.showDialogueRiffsDir();
+  if (fs.existsSync(showDir)) {
+    for (const f of fs.readdirSync(showDir)) {
+      if (f.endsWith('.json')) readInto(path.join(showDir, f), f);
     }
   }
+  for (const { path: p } of kbPaths.eachVideoFile('dialogue_riffs.json')) readInto(p, p);
   _riffsCache = all;
   return all;
 }
@@ -270,18 +272,12 @@ app.get('/api/lore', (req, res) => {
 let _storylineCache = null;
 function loadStoryline() {
   if (_storylineCache) return _storylineCache;
-  const dir = path.join(__dirname, 'kb', 'storyline');
   const byVideo = {};
-  if (fs.existsSync(dir)) {
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.json')) continue;
-      try {
-        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-        if (j.video_id) byVideo[j.video_id] = j;
-      } catch (e) {
-        console.warn(`[storyline] skip bad file ${f}:`, e.message);
-      }
-    }
+  for (const { path: p } of kbPaths.eachVideoFile('storyline.json')) {
+    try {
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      if (j.video_id) byVideo[j.video_id] = j;
+    } catch (e) { console.warn(`[storyline] skip bad file ${p}:`, e.message); }
   }
   _storylineCache = byVideo;
   return byVideo;
@@ -302,18 +298,12 @@ app.get('/api/storyline', (req, res) => {
 let _stanceTriggersCache = null;
 function loadStanceTriggers() {
   if (_stanceTriggersCache) return _stanceTriggersCache;
-  const dir = path.join(__dirname, 'kb', 'stance');
   const byVideo = {};
-  if (fs.existsSync(dir)) {
-    for (const f of fs.readdirSync(dir)) {
-      if (!f.endsWith('.json')) continue;
-      try {
-        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-        if (j.video_id) byVideo[j.video_id] = j;
-      } catch (e) {
-        console.warn(`[stance] skip bad triggers file ${f}:`, e.message);
-      }
-    }
+  for (const { path: p } of kbPaths.eachVideoFile('stance.json')) {
+    try {
+      const j = JSON.parse(fs.readFileSync(p, 'utf8'));
+      if (j.video_id) byVideo[j.video_id] = j;
+    } catch (e) { console.warn(`[stance] skip bad triggers file ${p}:`, e.message); }
   }
   _stanceTriggersCache = byVideo;
   return byVideo;

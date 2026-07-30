@@ -15,6 +15,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../kb-paths');
 
 const SERVER_DIR = path.join(__dirname, '..', '..');
 
@@ -54,7 +55,7 @@ class ToolBox {
   }
 
   static fromVideo({ videoId, episodeCursor = 'S01E05' }) {
-    const kbPath = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+    const kbPath = kbPaths.sceneKb(videoId);
     const kb = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
 
     const showId = kb.show_id || 'house-of-the-dragon';

@@ -3,6 +3,7 @@
 // Runs the current retrieve() over kb/retrieval/eval.json and prints recall + leak gate.
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 const { evaluate } = require('../lib/retrieval/eval');
 const { retrieve } = require('../lib/retrieval');
 const { cursorAtTime } = require('../lib/characters');
@@ -22,7 +23,7 @@ async function main() {
   };
 
   const retrieveFn = async (q) => {
-    const kb = JSON.parse(fs.readFileSync(path.join(SERVER, 'kb', `${q.videoId}.json`), 'utf8'));
+    const kb = JSON.parse(fs.readFileSync(kbPaths.sceneKb(q.videoId), 'utf8'));
     const cursor = {
       show_id: kb.show_id, video_id: q.videoId, season: kb.season,
       episode: cursorAtTime(kb, q.cursorTime), cursorTime: q.cursorTime, allowedSpoilerLevel: 0,
