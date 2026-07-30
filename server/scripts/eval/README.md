@@ -1,11 +1,11 @@
 # 项目评测集（eval suite）
 
-一条命令跑完三个维度的评测，产出一份自包含的 HTML 报告。
+一条命令跑完两个维度的评测，产出一份自包含的 HTML 报告。
 
 ```bash
-node scripts/eval/run_eval.js              # 跑全部三维，回答质量命中缓存则复用
+node scripts/eval/run_eval.js              # 跑全部维度，回答质量命中缓存则复用
 node scripts/eval/run_eval.js --refresh    # 重新生成 + 重新评分（忽略回答缓存）
-node scripts/eval/run_eval.js --skip-llm   # 只跑确定性维度（①③），不调模型
+node scripts/eval/run_eval.js --skip-llm   # 只跑确定性维度（①），不调模型
 node scripts/eval/run_eval.js --out foo.html
 ```
 
@@ -13,7 +13,7 @@ node scripts/eval/run_eval.js --out foo.html
 - `server/eval-report.html` —— 浏览器直接打开的可视化报告
 - `server/eval-report.json` —— 原始指标（便于 CI / diff）
 
-## 三个维度
+## 维度
 
 ### ① 检索召回 recall@k（确定性）
 在真实的「时序防剧透过滤 + 混合（向量 × 关键词）」检索链路上，衡量应被召回的知识块是否进入 Top-k。
@@ -32,23 +32,7 @@ node scripts/eval/run_eval.js --out foo.html
 - 评分维度（各 1–5）：忠实度（有无编造）、有用性（是否切题具体）、无剧透（有无引入超前信息）。
 - 结果缓存到 `.cache/answers.json`，按输入哈希去重；重跑默认复用，`--refresh` 才重打。无 API key 时该维度整体 skipped。
 
-### ③a 人脸识别 · 真实剧集截图（走真正的 ArcFace 服务）
-把本集检测到的 53 张人脸截图（`datasets/face_frames/*.jpg`，已随仓库提交）送进真正的 `face_service.py` 识别，测"用剧里清晰截图识别"到底行不行。
-
-- 指标：真实帧识别率、拒识率、平均 Top1 相似度、**候选身份坍缩**（多少张不同的脸挤到同几个身份上）。外加一张人工核实的清晰韦赛里斯正脸作为标注探针。
-- 结论（当前库）：只认出 4/53（7.5%），53 张不同的脸里 44 张 Top-1 都坍缩到 rhaenys@~0.8；清晰的韦赛里斯正脸里韦赛里斯根本不在 Top-3——**现网人脸库在真实画面上基本失效**，根因是库内特征向量不可分（每人参考帧太少 + 疑似对齐/归一化问题）。
-- 需要人脸服务在跑（本机用 conda env）：
-  ```bash
-  conda create -n hotd-face python=3.11 -y
-  conda run -n hotd-face pip install -r face-service/requirements.txt   # 或见该文件的固定版本
-  conda run -n hotd-face python server/scripts/face_service.py          # 起在 127.0.0.1:5001
-  ```
-  服务没起时该维度自动 skipped（不影响①②③b）。
-
-### ③b 人脸识别 · 角色库闭集分离度（确定性 leave-one-out）
-对角色库中每条 ArcFace 特征做留一验证，复刻线上匹配决策（阈值 0.45 → Top1−Top2 间隔 0.05），不需要服务。衡量**库本身的可分性**，是③a 结论的离线佐证（top1 32%、拒识 52%）。
-
-- 说明：本集 KB 的 `characters_on_screen` 自动标注不可靠（同一张脸标成两个人、片头帧标成角色），不能当逐帧 ground truth，所以③a 用"识别率 + 候选坍缩 + 单张标注探针"这类不依赖逐帧标注的指标来量化。
+> 人脸识别维度（原③a/③b）已随 ArcFace 人脸库一并下线——线上人物识别改走 Gemini vision（见 `agent.js` 的 `/api/agent/characters/recognize`）。
 
 ## 目录
 
@@ -61,7 +45,6 @@ scripts/eval/
   lib/
     retrieval_eval.js    # ① 召回 + 预热查询向量缓存
     answer_eval.js       # ② 生成 + 裁判 + 缓存
-    face_eval.js         # ③ LOO 匹配
     report.js            # HTML 渲染
   .cache/                # 查询向量 / 回答评分缓存（可安全删除后重算）
 ```

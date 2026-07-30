@@ -962,7 +962,7 @@ function dialogueTopicTerms(kb, t, extraTerms = []) {
   return terms;
 }
 
-// ─── 人物识别：face_service 优先 + 智能跳过 LLM ─────────────
+// ─── 人物识别：Gemini vision（按场景切片缩小候选池）─────────────
 function collectSceneCharacterIds(scene) {
   if (!scene) return [];
   const ids = [];
@@ -1033,56 +1033,6 @@ function buildRecognitionContext(kb, cursorTime, videoId) {
     subtitle_window,
     source: currentIds.length ? 'current_scene_slice' : 'nearby_scene_slices',
     candidate_character_ids,
-  };
-}
-
-async function recognizeViaFaceService({ image, db, cursor, recognitionContext }) {
-  const url = process.env.FACE_SERVICE_URL;
-  if (!url) return null;
-  const fr = await fetch(`${url}/recognize`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      image,
-      candidate_character_ids: recognitionContext?.candidate_character_ids || [],
-    }),
-    // 服务起着 < 500ms；没起会立刻 ECONNREFUSED。3s 给冷启动留 buffer。
-    signal: AbortSignal.timeout(3000),
-  });
-  if (!fr.ok) throw new Error(`face_service HTTP ${fr.status}`);
-  const fdata = await fr.json();
-  const allFaces = fdata.faces || [];
-  const raw = allFaces
-    .filter(f => f.match && f.match.character_id)
-    .map(f => {
-      const card = charactersLib.lookupCharacter(db, f.match.character_id, cursor);
-      return {
-        character_id: f.match.character_id,
-        display_name: card?.display_name || f.match.character_id,
-        short_identity: card?.short_identity || card?.current?.title || null,
-        confidence: f.match.similarity,
-        spoiler_safety: cursor ? 'cursor_filtered' : 'baseline_only',
-        bbox: f.bbox,
-        source: 'insightface',
-      };
-    });
-  // 同一 character_id 取 similarity 最高（RetinaFace 群像偶尔重复检出）
-  const byChar = new Map();
-  for (const c of raw) {
-    const cur = byChar.get(c.character_id);
-    if (!cur || c.confidence > cur.confidence) byChar.set(c.character_id, c);
-  }
-  const matched = Array.from(byChar.values());
-  // 跳过 LLM 的判定要的是「总检出脸数 vs 匹配脸数」，不是去重后的角色数
-  // —— 多张脸都对到同一个角色（双胞胎特写、镜像）算"全部识出"。
-  const totalDetected = allFaces.length;
-  const rawMatchedCount = raw.length;
-  return {
-    matched,
-    totalDetected,
-    rawMatchedCount,
-    contextFilterApplied: !!fdata.context_filter_applied,
-    gallerySearchSize: fdata.gallery_search_size ?? null,
   };
 }
 
@@ -1219,22 +1169,6 @@ async function recognizeViaLLM({ image, db, cursor, recognitionContext }) {
   return dedup;
 }
 
-// 合并两路结果：face_service 优先（余弦相似度比 LLM 自报 confidence 可信），
-// LLM 仅补 face_service 漏掉的人物（开集客串 / 半遮挡 / 未入库）。
-function mergeRecognitions(faceChars, llmChars) {
-  const merged = faceChars.slice();
-  for (const lc of llmChars) {
-    const dupIdx = merged.findIndex(x =>
-      (lc.character_id && x.character_id === lc.character_id) ||
-      (x.display_name && lc.display_name && x.display_name === lc.display_name) ||
-      bboxOverlapHigh(x.bbox, lc.bbox)
-    );
-    if (dupIdx === -1) merged.push(lc);
-    // 否则 face_service 版本胜出，不替换
-  }
-  return merged;
-}
-
 function register(app) {
   app.get('/api/agent/locations', (req, res) => {
     const showId = String(req.query.showId || 'house-of-the-dragon');
@@ -1325,54 +1259,9 @@ function register(app) {
     const db = kb ? getCharacterDb(kb.show_id) : getCharacterDb('house-of-the-dragon');
     const recognitionContext = kb ? buildRecognitionContext(kb, cursorTime, videoId) : null;
 
-    // face_service 先跑，识到 ≥1 张就跳过 LLM；没起 / 没检出脸时才调 LLM 兜底。
-    // 见 recognizeViaFaceService 上方注释里的设计说明。
+    // Gemini vision 识别。8s 硬超时：之前 LLM 卡住会让前端等满 axios 30s 才看到失败。
     const t0 = Date.now();
-    let faceResult = null;
-    try {
-      faceResult = await recognizeViaFaceService({ image, db, cursor, recognitionContext });
-    } catch (e) {
-      console.warn('[recognize] face_service:', e?.message || e);
-    }
-    const tFace = Date.now() - t0;
-
-    const faceChars = faceResult?.matched || [];
-    const totalDetected = faceResult?.totalDetected ?? 0;
-    const rawMatchedCount = faceResult?.rawMatchedCount ?? 0;
-
-    // 跳 LLM 的条件：face_service 起着 + 至少识到一张脸。
-    // 之前要求"检出全部都匹配上"，但半匹配场景（一张主角 + 一个开集背景人物）
-    // 也要等 ~2-5s 的 LLM 才能返回，体感很差。放宽到「识到 ≥1」：偶尔漏掉
-    // 开集 / 客串人物，但常见路径从 ~3s 降到 ~200ms。要补开集人物的话由用户
-    // 二次点击触发。
-    const fastReturn = faceResult !== null && rawMatchedCount >= 1;
-
-    if (fastReturn) {
-      console.log(`[recognize] fast: face=${tFace}ms matched=${rawMatchedCount}/${totalDetected}`);
-      return res.json({
-        characters: faceChars,
-        cursor_used: cursor,
-        has_kb: !!kb,
-        llm_ready: ai.isAvailable('vision'),
-        recognition_context: recognitionContext,
-        sources: {
-          insightface: faceChars.length,
-          llm: 0,
-          faces_detected: totalDetected,
-          context_filter_applied: !!faceResult?.contextFilterApplied,
-          gallery_search_size: faceResult?.gallerySearchSize ?? null,
-        },
-        skipped: rawMatchedCount === totalDetected
-          ? 'llm_unneeded_face_service_full_match'
-          : 'llm_unneeded_face_service_partial_match',
-        elapsed_ms: Date.now() - t0,
-      });
-    }
-
-    // 否则 LLM 兜底（face_service 没起 / 没检出脸 / 一张都没匹配上）。
-    // 8s 硬超时：之前 LLM 卡住会让前端等满 axios 30s 才看到失败。
     let llmChars = [];
-    const tLlm0 = Date.now();
     try {
       const llmPromise = recognizeViaLLM({ image, db, cursor, recognitionContext });
       const result = await Promise.race([
@@ -1385,23 +1274,17 @@ function register(app) {
     } catch (e) {
       console.error('[recognize] llm:', e?.message || e);
     }
-    const tLlm = Date.now() - tLlm0;
+    const tLlm = Date.now() - t0;
 
-    const characters = mergeRecognitions(faceChars, llmChars);
-
-    console.log(`[recognize] slow: face=${tFace}ms llm=${tLlm}ms detected=${totalDetected} face_matched=${faceChars.length} llm_added=${llmChars.length}`);
+    console.log(`[recognize] llm=${tLlm}ms matched=${llmChars.length}`);
     res.json({
-      characters,
+      characters: llmChars,
       cursor_used: cursor,
       has_kb: !!kb,
       llm_ready: ai.isAvailable('vision'),
       recognition_context: recognitionContext,
       sources: {
-        insightface: faceChars.length,
         llm: llmChars.length,
-        faces_detected: totalDetected,
-        context_filter_applied: !!faceResult?.contextFilterApplied,
-        gallery_search_size: faceResult?.gallerySearchSize ?? null,
       },
       elapsed_ms: Date.now() - t0,
     });

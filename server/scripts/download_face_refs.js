@@ -280,8 +280,7 @@ async function main() {
       total += await processVersion(t.char_id, ver);
     }
   }
-  console.log(`\n✓ 完成。共保存 ${total} 张参考图。`);
-  console.log(`下一步：cd server && python scripts/build_face_gallery.py`);
+  console.log(`\n✓ 完成。共保存 ${total} 张肖像到 face_refs/（用于关系图 / 家谱节点头像）。`);
 }
 
 main().catch(err => {
