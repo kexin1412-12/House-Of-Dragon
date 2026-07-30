@@ -1,6 +1,10 @@
+// Caps are anti-flood only (stop the top-k from being 8-of-a-kind); they must not starve
+// the answer. The old 1-caps meant a question whose answer is e.g. a character_state got a
+// single state slot, which the on-screen character's state could occupy instead of the
+// queried one. Relaxed so up to 2-3 of the most relevant type survive.
 const DEFAULT_QUOTAS = {
-  scene_reading: 2, character_state: 1, character_relationship: 1,
-  character_motivation: 1, lore_card: 1, external_knowledge: 2,
+  scene_reading: 3, character_state: 2, character_relationship: 2,
+  character_motivation: 2, lore_card: 2, external_knowledge: 2,
 };
 
 function buildContext(rankedChunks, { quotas = DEFAULT_QUOTAS, total = 8 } = {}) {

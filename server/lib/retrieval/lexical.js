@@ -26,14 +26,19 @@ function rankLexical(chunks, { query = '', nameKeys = [] } = {}) {
     const blobNorm = blob.replace(/[\s·\-]+/g, '');
     const charNorms = (c.character_ids || []).map(normalizeName);
     let score = 0;
-    for (const nk of keys) {
-      if (charNorms.some(cn => cn.includes(nk) || nk.includes(cn))) score += 5;
-      else if (blobNorm.includes(nk)) score += 2;
-    }
+    // The actual query is the PRIMARY signal. A well-matched query (many bigram hits)
+    // should outrank a chunk that merely mentions an on-screen character.
     if (qBigrams.length) {
       let hits = 0;
       for (const bg of qBigrams) if (blob.includes(bg)) hits++;
-      score += Math.min(hits * 0.3, 3);
+      score += Math.min(hits * 0.4, 8);
+    }
+    // On-screen character seeding is a modest bonus (disambiguates pronoun/"她"-style
+    // queries), NOT a dominant term — before, an on-screen char match (+5) buried the
+    // whole query (capped +3), so every question at a cursor returned the same chunks.
+    for (const nk of keys) {
+      if (charNorms.some(cn => cn.includes(nk) || nk.includes(cn))) score += 1.5;
+      else if (blobNorm.includes(nk)) score += 0.5;
     }
     return { id: c.id, score };
   });
