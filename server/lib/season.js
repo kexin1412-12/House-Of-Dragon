@@ -16,7 +16,6 @@ const charactersLib = require('./characters');
 const kbPaths = require('./kb-paths');
 
 const SEASONS_DIR = kbPaths.seasonsDir();
-const KB_DIR = path.join(__dirname, '..', 'kb');
 
 const _seasonCache = new Map();
 function loadSeason(showId, season) {

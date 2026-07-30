@@ -16,7 +16,7 @@ async function main() {
   const charDbCache = {};
   const loadCharDb = (showId) => {
     if (!(showId in charDbCache)) {
-      const p = path.join(SERVER, 'kb', 'characters', `${showId}.json`);
+      const p = kbPaths.charactersDb(showId);
       charDbCache[showId] = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')) : { characters: [] };
     }
     return charDbCache[showId];

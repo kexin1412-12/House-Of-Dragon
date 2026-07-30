@@ -223,7 +223,7 @@ app.get('/api/riffs', (req, res) => {
 let _loreCache = null;
 function loadLore() {
   if (_loreCache) return _loreCache;
-  const dir = path.join(__dirname, 'kb', 'lore_cards');
+  const dir = kbPaths.loreCardsDir();
   const all = [];
   if (fs.existsSync(dir)) {
     for (const f of fs.readdirSync(dir)) {
