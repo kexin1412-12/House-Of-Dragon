@@ -17,6 +17,7 @@ const path = require('path');
 const retrievalEval = require('./lib/retrieval_eval');
 const answerEval = require('./lib/answer_eval');
 const faceEval = require('./lib/face_eval');
+const faceFramesEval = require('./lib/face_frames_eval');
 const report = require('./lib/report');
 
 function arg(name, def) {
@@ -51,12 +52,17 @@ async function main() {
     else console.log(`   overall=${answer.avg_overall.toFixed(2)}/5  忠实=${answer.avg_faithfulness.toFixed(2)}  有用=${answer.avg_helpfulness.toFixed(2)}  无剧透=${answer.avg_no_spoiler.toFixed(2)}`);
   }
 
-  console.log('▶ ③ 人脸识别 leave-one-out …');
+  console.log('▶ ③ 人脸识别 leave-one-out（库内分离度）…');
   const face = faceEval.run();
   console.log(`   top1=${(face.top1_accuracy * 100).toFixed(1)}%  误识=${(face.false_accept_rate * 100).toFixed(1)}%  拒识=${(face.reject_rate * 100).toFixed(1)}%`);
 
+  console.log('▶ ③ 人脸识别 真实剧集截图（走 ArcFace 服务）…');
+  const faceFrames = await faceFramesEval.run();
+  if (faceFrames.skipped) console.log(`   跳过：${faceFrames.reason}`);
+  else console.log(`   真实帧识别率=${(faceFrames.identified_rate * 100).toFixed(1)}% (${faceFrames.identified}/${faceFrames.total_frames})  top1候选坍缩到 ${faceFrames.distinct_top1_identities} 个身份`);
+
   const results = {
-    retrieval, answer, face,
+    retrieval, answer, face, faceFrames,
     meta: {
       show: retrievalSet.showId,
       generatedAt: new Date().toLocaleString('zh-CN', { hour12: false }),

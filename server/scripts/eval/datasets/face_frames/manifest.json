@@ -1,0 +1,222 @@
+{
+ "_note": "Real in-show face crops from house_of_dragon_05 (S1E5), extracted from detected face bboxes across the episode. Fed to the live ArcFace service to measure real-frame recognition. hero_viserys.jpg is a human-verified clear frontal Viserys close-up used as a labeled probe.",
+ "hero": {
+  "file": "hero_viserys.jpg",
+  "t": 2114,
+  "verified_character_id": "viserys_targaryen"
+ },
+ "frames": [
+  {
+   "file": "00.jpg",
+   "t": 125.5
+  },
+  {
+   "file": "01.jpg",
+   "t": 304.9
+  },
+  {
+   "file": "02.jpg",
+   "t": 347.4
+  },
+  {
+   "file": "03.jpg",
+   "t": 445.9
+  },
+  {
+   "file": "04.jpg",
+   "t": 476.8
+  },
+  {
+   "file": "05.jpg",
+   "t": 557.9
+  },
+  {
+   "file": "06.jpg",
+   "t": 611.9
+  },
+  {
+   "file": "07.jpg",
+   "t": 733.7
+  },
+  {
+   "file": "08.jpg",
+   "t": 737.4
+  },
+  {
+   "file": "09.jpg",
+   "t": 844.9
+  },
+  {
+   "file": "10.jpg",
+   "t": 893.1
+  },
+  {
+   "file": "11.jpg",
+   "t": 932.4
+  },
+  {
+   "file": "12.jpg",
+   "t": 1066.5
+  },
+  {
+   "file": "13.jpg",
+   "t": 1155.5
+  },
+  {
+   "file": "14.jpg",
+   "t": 1228.4
+  },
+  {
+   "file": "15.jpg",
+   "t": 1297.3
+  },
+  {
+   "file": "16.jpg",
+   "t": 1345.6
+  },
+  {
+   "file": "17.jpg",
+   "t": 1363.6
+  },
+  {
+   "file": "18.jpg",
+   "t": 1423.9
+  },
+  {
+   "file": "19.jpg",
+   "t": 1492.9
+  },
+  {
+   "file": "20.jpg",
+   "t": 1547
+  },
+  {
+   "file": "21.jpg",
+   "t": 1639.2
+  },
+  {
+   "file": "22.jpg",
+   "t": 1712.9
+  },
+  {
+   "file": "23.jpg",
+   "t": 1741.8
+  },
+  {
+   "file": "24.jpg",
+   "t": 1835.7
+  },
+  {
+   "file": "25.jpg",
+   "t": 1871.2
+  },
+  {
+   "file": "26.jpg",
+   "t": 2050.7
+  },
+  {
+   "file": "27.jpg",
+   "t": 2156.5
+  },
+  {
+   "file": "28.jpg",
+   "t": 2204.1
+  },
+  {
+   "file": "29.jpg",
+   "t": 2292.4
+  },
+  {
+   "file": "30.jpg",
+   "t": 2317.2
+  },
+  {
+   "file": "31.jpg",
+   "t": 2404.1
+  },
+  {
+   "file": "32.jpg",
+   "t": 2425.7
+  },
+  {
+   "file": "33.jpg",
+   "t": 2506.7
+  },
+  {
+   "file": "34.jpg",
+   "t": 2575.9
+  },
+  {
+   "file": "35.jpg",
+   "t": 2580.8
+  },
+  {
+   "file": "36.jpg",
+   "t": 2673.1
+  },
+  {
+   "file": "37.jpg",
+   "t": 2696.3
+  },
+  {
+   "file": "38.jpg",
+   "t": 2782.5
+  },
+  {
+   "file": "39.jpg",
+   "t": 2837.6
+  },
+  {
+   "file": "40.jpg",
+   "t": 2839.2
+  },
+  {
+   "file": "41.jpg",
+   "t": 2906.1
+  },
+  {
+   "file": "42.jpg",
+   "t": 2954.1
+  },
+  {
+   "file": "43.jpg",
+   "t": 2996.9
+  },
+  {
+   "file": "44.jpg",
+   "t": 3075.8
+  },
+  {
+   "file": "45.jpg",
+   "t": 3121.8
+  },
+  {
+   "file": "46.jpg",
+   "t": 3173.7
+  },
+  {
+   "file": "47.jpg",
+   "t": 3195
+  },
+  {
+   "file": "48.jpg",
+   "t": 3255.9
+  },
+  {
+   "file": "49.jpg",
+   "t": 3330.9
+  },
+  {
+   "file": "50.jpg",
+   "t": 3345.9
+  },
+  {
+   "file": "51.jpg",
+   "t": 3444.4
+  },
+  {
+   "file": "52.jpg",
+   "t": 3487.7
+  }
+ ]
+}
