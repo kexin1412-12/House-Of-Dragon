@@ -791,10 +791,10 @@
     "skipped": false,
     "n": 12,
     "judged": 12,
-    "avg_faithfulness": 3.75,
-    "avg_helpfulness": 4.333333333333333,
-    "avg_no_spoiler": 4.25,
-    "avg_overall": 4.111111111111111,
+    "avg_faithfulness": 4.916666666666667,
+    "avg_helpfulness": 4.916666666666667,
+    "avg_no_spoiler": 4.833333333333333,
+    "avg_overall": 4.888888888888889,
     "per_question": [
       {
         "id": "a_rhaenyra_criston_relation",
@@ -808,10 +808,10 @@
       {
         "id": "a_wedding_tension",
         "judgment": {
-          "faithfulness": 3,
-          "helpfulness": 4,
-          "no_spoiler": 3,
-          "rationale": "回答中关于莱昂诺·斯壮的部分忠实于CONTEXT，但关于阿莉森特和戴蒙的内容没有在当前CONTEXT中直接提及，可能超出当前场景的信息。回答总体上有助于理解婚宴的紧张气氛，但包含了一些超出当前场景的推测和信息。"
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
         }
       },
       {
@@ -844,19 +844,19 @@
       {
         "id": "a_moon_tea",
         "judgment": {
-          "faithfulness": 4,
+          "faithfulness": 5,
           "helpfulness": 5,
           "no_spoiler": 5,
-          "rationale": "回答中关于月亮茶的解释与CONTEXT中的信息基本一致，但未明确提到CONTEXT中具体的父女关系破裂细节。无明显问题。"
+          "rationale": "无明显问题"
         }
       },
       {
         "id": "a_rhaenyra_refuse_elope",
         "judgment": {
-          "faithfulness": 3,
-          "helpfulness": 4,
+          "faithfulness": 5,
+          "helpfulness": 5,
           "no_spoiler": 5,
-          "rationale": "回答中提到雷妮拉的身份和责任与CONTEXT中的信息部分吻合，但具体提到的私奔影响和内心矛盾没有直接证据支持。回答总体切题且无剧透。"
+          "rationale": "无明显问题"
         }
       },
       {
@@ -871,19 +871,19 @@
       {
         "id": "a_criston_beats_man",
         "judgment": {
-          "faithfulness": 1,
-          "helpfulness": 2,
-          "no_spoiler": 1,
-          "rationale": "回答中关于克里斯顿·科尔的行为和动机的描述在CONTEXT中没有依据，完全是编造的。CONTEXT中没有提到克里斯顿·科尔，也没有关于他在婚宴上行为的任何信息。回答虽然试图解释事件的背景和动机，但由于缺乏CONTEXT支持，忠实度极低。"
+          "faithfulness": 4,
+          "helpfulness": 5,
+          "no_spoiler": 3,
+          "rationale": "回答中提到的克里斯顿对雷妮拉的复杂感情和婚宴上的紧张气氛是合理的背景推测，但具体事件未在CONTEXT中提及，可能涉及未来剧情。"
         }
       },
       {
         "id": "a_targaryen_dragons_origin",
         "judgment": {
-          "faithfulness": 1,
-          "helpfulness": 3,
-          "no_spoiler": 2,
-          "rationale": "回答中关于坦格利安家族龙的起源和历史的信息在CONTEXT中没有依据，属于编造内容。回答提供了一些背景知识，但与当前场景无关，且包含超出当前进度的剧情信息。"
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
         }
       },
       {
@@ -898,10 +898,10 @@
       {
         "id": "a_sheepstealer_s3e1",
         "judgment": {
-          "faithfulness": 3,
+          "faithfulness": 5,
           "helpfulness": 4,
           "no_spoiler": 5,
-          "rationale": "回答中关于驯服野龙的动机部分与CONTEXT中提到的龙作为权力象征的内容一致，但没有直接证据支持海伦娜的预言性言论揭示家族动态的说法。"
+          "rationale": "无明显问题"
         }
       }
     ]
@@ -1103,7 +1103,7 @@
   },
   "meta": {
     "show": "house-of-the-dragon",
-    "generatedAt": "2026/7/30 03:24:45",
+    "generatedAt": "2026/7/30 03:41:20",
     "retrievalMode": "混合（向量 × 关键词）+ 时序过滤"
   }
 }

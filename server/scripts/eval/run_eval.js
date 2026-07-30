@@ -28,6 +28,7 @@ function arg(name, def) {
 
 async function main() {
   const refresh = process.argv.includes('--refresh');
+  const rejudge = process.argv.includes('--rejudge');
   const skipLlm = process.argv.includes('--skip-llm');
   const outPath = arg('--out', path.join(__dirname, '..', '..', 'eval-report.html'));
 
@@ -44,8 +45,8 @@ async function main() {
     answer = { skipped: true, reason: '--skip-llm 已启用', per_question: [] };
     console.log('▶ ② 回答质量 … 跳过 (--skip-llm)');
   } else {
-    console.log(`▶ ② 回答质量 (LLM 生成 + 裁判${refresh ? '，忽略缓存' : '，命中缓存则复用'}) …`);
-    answer = await answerEval.run(answerSet, { refresh });
+    console.log(`▶ ② 回答质量 (LLM 生成 + 裁判${refresh ? '，忽略缓存' : rejudge ? '，复用回答仅重评分' : '，命中缓存则复用'}) …`);
+    answer = await answerEval.run(answerSet, { refresh, rejudge });
     if (answer.skipped) console.log(`   跳过：${answer.reason}`);
     else console.log(`   overall=${answer.avg_overall.toFixed(2)}/5  忠实=${answer.avg_faithfulness.toFixed(2)}  有用=${answer.avg_helpfulness.toFixed(2)}  无剧透=${answer.avg_no_spoiler.toFixed(2)}`);
   }

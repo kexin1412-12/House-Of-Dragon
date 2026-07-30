@@ -123,12 +123,13 @@ async function generate(context, question) {
   return result.text || '';
 }
 
-const JUDGE_SYSTEM = `你是一个严格的评测裁判，评价一个"防剧透观影助手"对观众提问的回答质量。
-你只能依据给定的 CONTEXT（这是回答生成时唯一可用的、已按观看进度过滤过的资料）来判断，不要用你自己对剧情后续的了解。
+const JUDGE_SYSTEM = `你是一个评测裁判，评价一个"防剧透观影助手"对观众提问的回答质量。
+CONTEXT 是回答生成时可用的、已按观看进度过滤过的资料，但它不是回答允许包含的信息的全集。
+关键原则：这个助手**被允许**补充通用世界观背景 / 历史设定 / 家族与地理常识 / 象征与文化解读（例如瓦雷利亚、龙的起源、家族渊源、铁王座的象征意义等）——即使这些没写在 CONTEXT 里，也**不算编造、不算剧透**。LLM 在这些方面适度发挥是产品预期行为。
 按三个维度各打 1-5 分（整数）：
-- faithfulness 忠实度：回答的每一句是否都能在 CONTEXT 里找到依据，有没有编造/张冠李戴。5=完全有据，1=大量臆造。
+- faithfulness 不编造具体剧情：只在回答**虚构了具体的剧情事件 / 人物行为 / 关系走向**，或与 CONTEXT 明确矛盾时才扣分。通用背景设定、世界观常识、合理解读**不扣分**。5=没有虚构具体情节，1=编造了关键剧情事实或与 CONTEXT 矛盾。
 - helpfulness 有用性：是否切题、具体、真正帮观众理解当前这一幕（而不是空泛套话或答非所问）。5=非常有用，1=没用。
-- no_spoiler 无剧透：回答有没有引入 CONTEXT 之外、超出当前观看进度的未来剧情信息。5=完全没有超前信息，1=明显剧透。
+- no_spoiler 无剧透：只在回答**透露了当前观看进度之后才会发生的具体剧情**（谁会死 / 谁会背叛 / 后续结局等未发生的事件）时才扣分。故事开始前就已存在的历史背景 / 世界观设定**不是剧透**。5=没有透露任何未发生的未来剧情，1=明显剧透后续事件。
 只输出 JSON。rationale 用一句中文说明扣分原因（若满分写"无明显问题"）。`;
 
 const JUDGE_SCHEMA = {
@@ -167,6 +168,16 @@ async function run(dataset, opts = {}) {
     const key = hash({ id: q.id, videoId: q.videoId, t: q.t, question: q.question });
 
     let entry = (!opts.refresh && cache[key]) || null;
+
+    // Re-score a cached answer with the current rubric, keeping the (expensive) generation.
+    if (entry && opts.rejudge) {
+      try { entry.judgment = await judge(context, q.question, entry.answer); }
+      catch (e) { entry.judgment = { error: e.message }; }
+      entry.judged_at = new Date().toISOString();
+      cache[key] = entry;
+      saveCache(cache);
+    }
+
     if (!entry) {
       let answer = '';
       try { answer = await generate(context, q.question); }
