@@ -4,7 +4,7 @@ const { chunkCharacters } = require('../lib/retrieval/chunkers');
 
 const charDb = {
   characters: [{
-    character_id: 'alicent_hightower', display_name_zh: '阿莉选特·海塔尔',
+    character_id: 'alicent_hightower', display_name_zh: '阿莉森特·海塔尔',
     state_timeline: [{ from: 'S01E05', title_zh: '王后', safe_summary_zh: '以沉默表达不满' }],
     motivations_timeline: [{ from: 'S01E05', motivation_zh: '保住儿子的继承主张', evidence_zh: '御前会议' }],
   }],
@@ -28,4 +28,10 @@ test('emits state, motivation, relationship chunks with episode key', () => {
   assert.ok(state.content.includes('沉默'));
   const rel = byType('character_relationship')[0];
   assert.deepStrictEqual(rel.character_ids.sort(), ['alicent_hightower', 'rhaenyra']);
+});
+
+test('retrieval_text is name-enriched while content stays clean (spec §4)', () => {
+  const state = chunkCharacters(charDb, meta).find(c => c.knowledge_type === 'character_state');
+  assert.ok(state.retrieval_text.includes('阿莉森特'), 'name injected into retrieval_text');
+  assert.ok(!state.content.includes('阿莉森特'), 'content stays clean, no name');
 });

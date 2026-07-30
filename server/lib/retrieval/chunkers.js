@@ -31,7 +31,8 @@ function makeChunk({ kb, id, knowledge_type, content, retrieval_text, scene_id, 
     source_type: 'scene_kb', canonicality: 'episode_verified',
     confidence: 0.9, spoiler_level: 0,
     embedding_model: null, schema_version: 1,
-    content_hash: hashContent(content), embedding: null,
+    // Hash the embedded text (retrieval_text), so re-embed triggers when it changes.
+    content_hash: hashContent(retrieval_text || content), embedding: null,
   };
 }
 
@@ -68,9 +69,9 @@ function chunkScenes(kb) {
   return out;
 }
 
-function charChunk({ meta, id, knowledge_type, content, episode, character_ids, confidence }) {
+function charChunk({ meta, id, knowledge_type, content, episode, character_ids, confidence, retrieval_text }) {
   return {
-    id, knowledge_type, content, retrieval_text: content,
+    id, knowledge_type, content, retrieval_text: retrieval_text || content,
     show_id: meta.show_id, video_id: meta.video_id, season: meta.season,
     episode, scene_id: null, start_time: null, end_time: null,
     available_from_episode: episode, available_from_time: null,
@@ -78,30 +79,41 @@ function charChunk({ meta, id, knowledge_type, content, episode, character_ids, 
     source_type: 'character_kb', canonicality: 'episode_verified',
     confidence: confidence == null ? 0.85 : confidence, spoiler_level: 0,
     embedding_model: null, schema_version: 1,
-    content_hash: hashContent(content), embedding: null,
+    content_hash: hashContent(retrieval_text || content), embedding: null,
   };
+}
+
+// 名称词：给某个角色 id 拼出中文名/别名/家族/身份，注入 retrieval_text 以便
+// 按人名提问（"阿莉森特和雷妮拉的关系"）能命中——content 保持干净不动（spec §4）。
+function nameTermsFor(charDb, id) {
+  const ch = ((charDb && charDb.characters) || []).find(c => c.character_id === id);
+  if (!ch) return '';
+  return [ch.display_name_zh, ch.canonical_name, ...(ch.aliases || []), ch.short_identity_zh, ch.house]
+    .filter(Boolean).join(' ');
 }
 
 function chunkCharacters(charDb, meta) {
   const out = [];
   for (const ch of (charDb && charDb.characters) || []) {
     const cid = ch.character_id;
+    const names = nameTermsFor(charDb, cid);
     for (const [i, st] of (ch.state_timeline || []).entries()) {
       const content = [st.title_zh, st.political_role_zh, st.safe_summary_zh].filter(Boolean).join(' / ');
       if (!content) continue;
-      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:state:${i}`, knowledge_type: 'character_state', content, episode: st.from || 'S01E01', character_ids: [cid] }));
+      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:state:${i}`, knowledge_type: 'character_state', content, retrieval_text: `${content} ${names}`.trim(), episode: st.from || 'S01E01', character_ids: [cid] }));
     }
     for (const [i, mo] of (ch.motivations_timeline || []).entries()) {
       const content = [mo.motivation_zh, mo.evidence_zh].filter(Boolean).join(' — ');
       if (!content) continue;
-      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:motive:${i}`, knowledge_type: 'character_motivation', content, episode: mo.from || 'S01E01', character_ids: [cid] }));
+      out.push(charChunk({ meta, id: `${meta.show_id}:char:${cid}:motive:${i}`, knowledge_type: 'character_motivation', content, retrieval_text: `${content} ${names}`.trim(), episode: mo.from || 'S01E01', character_ids: [cid] }));
     }
   }
   for (const [i, rel] of ((charDb && charDb.relationships) || []).entries()) {
+    const relNames = [nameTermsFor(charDb, rel.source), nameTermsFor(charDb, rel.target)].filter(Boolean).join(' ');
     for (const [j, t] of (rel.timeline || []).entries()) {
       const content = [t.relation_zh || t.relation_en, t.summary_zh, t.evidence_zh].filter(Boolean).join(' — ');
       if (!content) continue;
-      out.push(charChunk({ meta, id: `${meta.show_id}:rel:${i}:${j}`, knowledge_type: 'character_relationship', content, episode: t.from || 'S01E01', character_ids: [rel.source, rel.target].filter(Boolean) }));
+      out.push(charChunk({ meta, id: `${meta.show_id}:rel:${i}:${j}`, knowledge_type: 'character_relationship', content, retrieval_text: `${content} ${relNames}`.trim(), episode: t.from || 'S01E01', character_ids: [rel.source, rel.target].filter(Boolean) }));
     }
   }
   return out;

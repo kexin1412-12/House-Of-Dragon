@@ -29,7 +29,7 @@ test('chunkScenes emits reading chunks with schema fields', () => {
   assert.deepStrictEqual(beat.character_ids, ['rhaenyra']);
   assert.strictEqual(beat.schema_version, 1);
   assert.ok(beat.content.includes('沉默'));
-  assert.strictEqual(beat.content_hash, hashContent(beat.content));
+  assert.strictEqual(beat.content_hash, hashContent(beat.retrieval_text));
   // tapestry reading uses the scene start_time
   const tap = chunks.find(c => c.id.includes('tapestry'));
   assert.strictEqual(tap.available_from_time, 812.4);
