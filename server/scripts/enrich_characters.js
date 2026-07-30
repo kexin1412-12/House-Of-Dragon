@@ -3,7 +3,8 @@
  * 用 Gemini 校对/完善角色字典 (kb/characters/<show>.json)。
  *
  * 输入：
- *   - 一个已经跑完 preprocess + track-characters 的视频 KB（kb/<video_id>.json）
+ *   - 一个已经跑完 preprocess、且 KB 里已有 characters_on_screen 标注的视频 KB
+ *     （kb/<video_id>.json）
  *   - 该视频对应的剧集 (e.g. S01E05)
  *
  * 流程：
@@ -307,7 +308,6 @@ async function main() {
   if (!fs.existsSync(kbPath)) {
     console.error(`✗ KB not found: ${kbPath}`);
     console.error(`先跑：npm run preprocess -- uploads/${opts.videoId}.mp4`);
-    console.error(`     PYTHON=<conda> npm run track-characters -- uploads/${opts.videoId}.mp4`);
     process.exit(1);
   }
 
@@ -337,7 +337,7 @@ async function main() {
 
   const byChar = collectAppearances(kb, framesDir);
   if (byChar.size === 0) {
-    console.error(`✗ no characters_on_screen records in ${kbPath} — did track-characters run?`);
+    console.error(`✗ no characters_on_screen records in ${kbPath} — KB 里没有人物出镜标注`);
     process.exit(1);
   }
   console.log(`[init] ${byChar.size} characters appear in this episode`);

@@ -14,7 +14,6 @@
     "enrich": "node scripts/enrich_with_insights.js",
     "fetch-wiki": "node scripts/fetch_wiki_lore.js",
     "character-card": "node scripts/character_card.js",
-    "track-characters": "node scripts/track_characters.js",
     "enrich-characters": "node scripts/enrich_characters.js",
     "bind-keyframes": "node scripts/bind_scene_keyframes.js",
     "backfill-scene-characters": "node scripts/backfill_scene_characters_from_text.js",
