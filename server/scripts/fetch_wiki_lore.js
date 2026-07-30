@@ -20,6 +20,7 @@
 require('dotenv').config({ override: true });
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const FETCH_DELAY_MS = 400; // 对 Fandom 礼貌一点
@@ -234,7 +235,7 @@ async function main() {
 
   let entities = [...opts.entities];
   if (opts.fromKb) {
-    const kbPath = path.join(__dirname, '..', 'kb', `${opts.fromKb}.json`);
+    const kbPath = kbPaths.sceneKb(opts.fromKb);
     if (!fs.existsSync(kbPath)) {
       console.error(`Error: kb not found: ${kbPath}`);
       process.exit(1);

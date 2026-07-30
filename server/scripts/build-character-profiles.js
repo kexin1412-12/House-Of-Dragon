@@ -33,13 +33,14 @@ const fs = require('fs');
 const path = require('path');
 const charactersLib = require('../lib/characters');
 const ai = require('../lib/ai');
+const kbPaths = require('../lib/kb-paths');
 
 const SHOW_ID = 'house-of-the-dragon';
 const VIDEO_ID = 'house_of_dragon_05';
 const CURSOR = 'S01E10';
 
 const SERVER_DIR = path.join(__dirname, '..');
-const KB_PATH = path.join(SERVER_DIR, 'kb', `${VIDEO_ID}.json`);
+const KB_PATH = kbPaths.sceneKb(VIDEO_ID);
 const WIKI_PATH = path.join(SERVER_DIR, 'references', 'wiki-gameofthrones.knowledge.json');
 
 const CLIENT_PUBLIC = path.join(SERVER_DIR, '..', 'client', 'public');
