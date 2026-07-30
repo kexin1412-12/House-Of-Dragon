@@ -60,3 +60,7 @@ Thumbs.db
 *.tmp
 
 .vercel
+
+# regenerable script output / local backups
+server/kb/.backups/
+server/kb/characters/_suggestions/

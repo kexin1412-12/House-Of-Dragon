@@ -17,9 +17,6 @@
     "track-characters": "node scripts/track_characters.js",
     "enrich-characters": "node scripts/enrich_characters.js",
     "bind-keyframes": "node scripts/bind_scene_keyframes.js",
-    "extend-s3-characters": "node scripts/extend_house_dragon_s3_characters.js",
-    "extend-s3-reference-characters": "node scripts/extend_house_dragon_s3_reference_characters.js",
-    "extend-s3-roleplay": "node scripts/extend_house_dragon_s3_roleplay.js",
     "backfill-scene-characters": "node scripts/backfill_scene_characters_from_text.js",
     "import-hbo-locations": "node scripts/import_hbo_official_locations.js",
     "bind-scene-locations": "node scripts/bind_scene_locations.js"
