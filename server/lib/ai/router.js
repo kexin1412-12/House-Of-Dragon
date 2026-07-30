@@ -5,10 +5,19 @@
 // 没 fallback 就直接报错，让调用方知道哪个 key 缺了。
 
 const TASK_CONFIG = {
-  // 画面/视频帧理解（人脸识别、镜头分析、多模态问答的视觉部分）
+  // 画面/视频帧理解（镜头分析、多模态问答的视觉部分）
   vision: {
     provider: process.env.AI_VISION_PROVIDER || 'gemini',
     model: process.env.AI_VISION_MODEL || 'gemini-2.5-flash',
+    fallback: 'openai',
+    fallbackModel: process.env.OPENAI_VISION_MODEL || 'gpt-4o',
+  },
+
+  // 人脸识别（帧 → 在场角色）。ArcFace 闭集服务已下线（库内向量不可分，真实帧识别率仅 7.5%），
+  // 全量走 Gemini Pro 多模态识别；用 Pro 而非 Flash：身份判定要的是准确率，不是延迟。
+  face_recognition: {
+    provider: process.env.AI_FACE_PROVIDER || 'gemini',
+    model: process.env.AI_FACE_MODEL || 'gemini-3.1-pro-preview',
     fallback: 'openai',
     fallbackModel: process.env.OPENAI_VISION_MODEL || 'gpt-4o',
   },

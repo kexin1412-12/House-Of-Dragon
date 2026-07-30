@@ -1,5 +1,5 @@
 {
- "_note": "Real in-show face crops from house_of_dragon_05 (S1E5), extracted from detected face bboxes across the episode. Fed to the live ArcFace service to measure real-frame recognition. hero_viserys.jpg is a human-verified clear frontal Viserys close-up used as a labeled probe.",
+ "_note": "Real in-show face crops from house_of_dragon_05 (S1E5). Fed to the production Gemini Pro recognition path (lib/face-recognition.js). verified_character_id = identity confirmed by human visual comparison against official reference portraits (kb/characters/face_refs); frames without it are unverified and count only toward identify-rate. hero is a verified clear frontal Viserys close-up probe.",
  "hero": {
   "file": "hero_viserys.jpg",
   "t": 2114,
@@ -12,19 +12,23 @@
   },
   {
    "file": "01.jpg",
-   "t": 304.9
+   "t": 304.9,
+   "verified_character_id": "viserys_targaryen"
   },
   {
    "file": "02.jpg",
-   "t": 347.4
+   "t": 347.4,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "03.jpg",
-   "t": 445.9
+   "t": 445.9,
+   "verified_character_id": "otto_hightower"
   },
   {
    "file": "04.jpg",
-   "t": 476.8
+   "t": 476.8,
+   "verified_character_id": "otto_hightower"
   },
   {
    "file": "05.jpg",
@@ -32,7 +36,8 @@
   },
   {
    "file": "06.jpg",
-   "t": 611.9
+   "t": 611.9,
+   "verified_character_id": "larys_strong"
   },
   {
    "file": "07.jpg",
@@ -44,11 +49,13 @@
   },
   {
    "file": "09.jpg",
-   "t": 844.9
+   "t": 844.9,
+   "verified_character_id": "viserys_targaryen"
   },
   {
    "file": "10.jpg",
-   "t": 893.1
+   "t": 893.1,
+   "verified_character_id": "viserys_targaryen"
   },
   {
    "file": "11.jpg",
@@ -56,27 +63,33 @@
   },
   {
    "file": "12.jpg",
-   "t": 1066.5
+   "t": 1066.5,
+   "verified_character_id": "lyonel_strong"
   },
   {
    "file": "13.jpg",
-   "t": 1155.5
+   "t": 1155.5,
+   "verified_character_id": "corlys_velaryon"
   },
   {
    "file": "14.jpg",
-   "t": 1228.4
+   "t": 1228.4,
+   "verified_character_id": "corlys_velaryon"
   },
   {
    "file": "15.jpg",
-   "t": 1297.3
+   "t": 1297.3,
+   "verified_character_id": "laenor_velaryon"
   },
   {
    "file": "16.jpg",
-   "t": 1345.6
+   "t": 1345.6,
+   "verified_character_id": "laenor_velaryon"
   },
   {
    "file": "17.jpg",
-   "t": 1363.6
+   "t": 1363.6,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "18.jpg",
@@ -88,7 +101,8 @@
   },
   {
    "file": "20.jpg",
-   "t": 1547
+   "t": 1547,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "21.jpg",
@@ -96,7 +110,8 @@
   },
   {
    "file": "22.jpg",
-   "t": 1712.9
+   "t": 1712.9,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "23.jpg",
@@ -104,19 +119,23 @@
   },
   {
    "file": "24.jpg",
-   "t": 1835.7
+   "t": 1835.7,
+   "verified_character_id": "alicent_hightower"
   },
   {
    "file": "25.jpg",
-   "t": 1871.2
+   "t": 1871.2,
+   "verified_character_id": "alicent_hightower"
   },
   {
    "file": "26.jpg",
-   "t": 2050.7
+   "t": 2050.7,
+   "verified_character_id": "viserys_targaryen"
   },
   {
    "file": "27.jpg",
-   "t": 2156.5
+   "t": 2156.5,
+   "verified_character_id": "viserys_targaryen"
   },
   {
    "file": "28.jpg",
@@ -132,7 +151,8 @@
   },
   {
    "file": "31.jpg",
-   "t": 2404.1
+   "t": 2404.1,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "32.jpg",
@@ -144,15 +164,18 @@
   },
   {
    "file": "34.jpg",
-   "t": 2575.9
+   "t": 2575.9,
+   "verified_character_id": "alicent_hightower"
   },
   {
    "file": "35.jpg",
-   "t": 2580.8
+   "t": 2580.8,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "36.jpg",
-   "t": 2673.1
+   "t": 2673.1,
+   "verified_character_id": "alicent_hightower"
   },
   {
    "file": "37.jpg",
@@ -168,7 +191,8 @@
   },
   {
    "file": "40.jpg",
-   "t": 2839.2
+   "t": 2839.2,
+   "verified_character_id": "daemon_targaryen"
   },
   {
    "file": "41.jpg",
@@ -176,47 +200,58 @@
   },
   {
    "file": "42.jpg",
-   "t": 2954.1
+   "t": 2954.1,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "43.jpg",
-   "t": 2996.9
+   "t": 2996.9,
+   "verified_character_id": "laena_velaryon"
   },
   {
    "file": "44.jpg",
-   "t": 3075.8
+   "t": 3075.8,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "45.jpg",
-   "t": 3121.8
+   "t": 3121.8,
+   "verified_character_id": "joffrey_lonmouth"
   },
   {
    "file": "46.jpg",
-   "t": 3173.7
+   "t": 3173.7,
+   "verified_character_id": "harwin_strong"
   },
   {
    "file": "47.jpg",
-   "t": 3195
+   "t": 3195,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "48.jpg",
-   "t": 3255.9
+   "t": 3255.9,
+   "verified_character_id": "rhaenyra_targaryen"
   },
   {
    "file": "49.jpg",
-   "t": 3330.9
+   "t": 3330.9,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "50.jpg",
-   "t": 3345.9
+   "t": 3345.9,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "51.jpg",
-   "t": 3444.4
+   "t": 3444.4,
+   "verified_character_id": "criston_cole"
   },
   {
    "file": "52.jpg",
-   "t": 3487.7
+   "t": 3487.7,
+   "verified_character_id": "criston_cole"
   }
  ]
 }

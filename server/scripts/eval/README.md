@@ -32,23 +32,13 @@ node scripts/eval/run_eval.js --out foo.html
 - 评分维度（各 1–5）：忠实度（有无编造）、有用性（是否切题具体）、无剧透（有无引入超前信息）。
 - 结果缓存到 `.cache/answers.json`，按输入哈希去重；重跑默认复用，`--refresh` 才重打。无 API key 时该维度整体 skipped。
 
-### ③a 人脸识别 · 真实剧集截图（走真正的 ArcFace 服务）
-把本集检测到的 53 张人脸截图（`datasets/face_frames/*.jpg`，已随仓库提交）送进真正的 `face_service.py` 识别，测"用剧里清晰截图识别"到底行不行。
+### ③ 人脸识别 · 真实剧集截图（Gemini Pro 生产链路）
+旧的 ArcFace 闭集服务已整体下线（库内向量不可分，真实帧识别率仅 7.5%，评测细节见 git 历史）。人脸识别全量切到 **Gemini Pro 多模态**（`server/lib/face-recognition.js`，router task `face_recognition`，默认 `gemini-3.1-pro-preview`）——评测跑的就是生产同一份代码。
 
-- 指标：真实帧识别率、拒识率、平均 Top1 相似度、**候选身份坍缩**（多少张不同的脸挤到同几个身份上）。外加一张人工核实的清晰韦赛里斯正脸作为标注探针。
-- 结论（当前库）：只认出 4/53（7.5%），53 张不同的脸里 44 张 Top-1 都坍缩到 rhaenys@~0.8；清晰的韦赛里斯正脸里韦赛里斯根本不在 Top-3——**现网人脸库在真实画面上基本失效**，根因是库内特征向量不可分（每人参考帧太少 + 疑似对齐/归一化问题）。
-- 需要人脸服务在跑（本机用 conda env）：
-  ```bash
-  conda create -n hotd-face python=3.11 -y
-  conda run -n hotd-face pip install -r face-service/requirements.txt   # 或见该文件的固定版本
-  conda run -n hotd-face python server/scripts/face_service.py          # 起在 127.0.0.1:5001
-  ```
-  服务没起时该维度自动 skipped（不影响①②③b）。
-
-### ③b 人脸识别 · 角色库闭集分离度（确定性 leave-one-out）
-对角色库中每条 ArcFace 特征做留一验证，复刻线上匹配决策（阈值 0.45 → Top1−Top2 间隔 0.05），不需要服务。衡量**库本身的可分性**，是③a 结论的离线佐证（top1 32%、拒识 52%）。
-
-- 说明：本集 KB 的 `characters_on_screen` 自动标注不可靠（同一张脸标成两个人、片头帧标成角色），不能当逐帧 ground truth，所以③a 用"识别率 + 候选坍缩 + 单张标注探针"这类不依赖逐帧标注的指标来量化。
+- 输入：本集 53 张真实人脸截图（`datasets/face_frames/*.jpg`，已随仓库提交）+ 一张人工核实的清晰韦赛里斯正脸探针。
+- 指标：识别率、拒识率（识别 prompt 要求低置信不猜，拒识是设计行为）、**已核实子集准确率**（manifest 里带 `verified_character_id` 的帧，身份经人工比对官方肖像确认）、探针正误。
+- LLM 调用缓存到 `.cache/face_llm.json`（按 文件哈希+模型 去重），重跑读缓存，`--refresh` 才重打；无 key 时该维度 skipped。
+- 说明：KB 的 `characters_on_screen` 自动标注不可靠（同一张脸标成两个人、片头帧标成角色），不能当逐帧 ground truth——所以准确率只在人工核实过的子集上计算，未核实帧只计入识别率。
 
 ## 目录
 

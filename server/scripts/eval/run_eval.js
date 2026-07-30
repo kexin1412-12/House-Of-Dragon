@@ -16,7 +16,6 @@ const path = require('path');
 
 const retrievalEval = require('./lib/retrieval_eval');
 const answerEval = require('./lib/answer_eval');
-const faceEval = require('./lib/face_eval');
 const faceFramesEval = require('./lib/face_frames_eval');
 const report = require('./lib/report');
 
@@ -52,17 +51,13 @@ async function main() {
     else console.log(`   overall=${answer.avg_overall.toFixed(2)}/5  忠实=${answer.avg_faithfulness.toFixed(2)}  有用=${answer.avg_helpfulness.toFixed(2)}  无剧透=${answer.avg_no_spoiler.toFixed(2)}`);
   }
 
-  console.log('▶ ③ 人脸识别 leave-one-out（库内分离度）…');
-  const face = faceEval.run();
-  console.log(`   top1=${(face.top1_accuracy * 100).toFixed(1)}%  误识=${(face.false_accept_rate * 100).toFixed(1)}%  拒识=${(face.reject_rate * 100).toFixed(1)}%`);
-
-  console.log('▶ ③ 人脸识别 真实剧集截图（走 ArcFace 服务）…');
-  const faceFrames = await faceFramesEval.run();
+  console.log('▶ ③ 人脸识别 真实剧集截图（Gemini Pro 生产链路）…');
+  const faceFrames = await faceFramesEval.run({ refresh });
   if (faceFrames.skipped) console.log(`   跳过：${faceFrames.reason}`);
-  else console.log(`   真实帧识别率=${(faceFrames.identified_rate * 100).toFixed(1)}% (${faceFrames.identified}/${faceFrames.total_frames})  top1候选坍缩到 ${faceFrames.distinct_top1_identities} 个身份`);
+  else console.log(`   识别率=${(faceFrames.identified_rate * 100).toFixed(1)}% (${faceFrames.identified}/${faceFrames.total_frames})  已核实子集准确率=${faceFrames.verified.accuracy_when_identified == null ? 'n/a' : (faceFrames.verified.accuracy_when_identified * 100).toFixed(1) + '%'} (${faceFrames.verified.correct}/${faceFrames.verified.identified})  hero=${faceFrames.hero ? (faceFrames.hero.correct ? '✓' : '✗ ' + (faceFrames.hero.predicted || '拒识')) : '-'}`);
 
   const results = {
-    retrieval, answer, face, faceFrames,
+    retrieval, answer, faceFrames,
     meta: {
       show: retrievalSet.showId,
       generatedAt: new Date().toLocaleString('zh-CN', { hour12: false }),
@@ -79,7 +74,8 @@ async function main() {
     ...results,
     answer: results.answer.skipped ? results.answer
       : { ...results.answer, per_question: results.answer.per_question.map(q => ({ id: q.id, judgment: q.judgment })) },
-    face: { ...results.face, samples: undefined },
+    faceFrames: results.faceFrames.skipped ? results.faceFrames
+      : { ...results.faceFrames, samples: undefined, hero: results.faceFrames.hero ? { ...results.faceFrames.hero, thumb: undefined } : null },
   };
   fs.writeFileSync(jsonPath, JSON.stringify(slim, null, 2), 'utf8');
 

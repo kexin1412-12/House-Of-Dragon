@@ -1,103 +1,113 @@
-// Dimension ③ (real frames): does the ArcFace face service actually recognize faces from
-// real episode footage? We take face crops detected across S1E5, POST each to the live
-// service's /recognize (same call the production app makes), and measure how many get a
-// confident identity vs get rejected — plus whether the raw similarities are discriminative
-// at all. A human-verified clear Viserys close-up (hero) is included as a labeled probe.
+// Dimension ③: face recognition on real in-show frames via the PRODUCTION path —
+// lib/face-recognition.js (Gemini Pro multimodal), the same code /api/agent/characters/recognize
+// runs. The ArcFace closed-set service was retired (degenerate gallery, 7.5% identify rate).
 //
-// This needs the service running (start scripts/face_service.py). Crops are committed under
-// datasets/face_frames/, so the eval re-runs without the source video. If the service is
-// down the dimension reports skipped with start instructions.
+// Inputs: 53 face crops from S1E5 committed under datasets/face_frames/ + a human-verified
+// clear Viserys close-up (hero probe). Metrics:
+//   - identification rate (how often the model commits to an identity at conf ≥ 0.7)
+//   - accuracy on the subset with human-verified labels in the manifest
+//   - hero probe correctness
+// LLM calls are cached to .cache/face_llm.json (keyed by file + model); --refresh re-runs.
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+
+const SERVER = path.join(__dirname, '..', '..', '..');
+const faceRec = require(path.join(SERVER, 'lib', 'face-recognition'));
+const kbPaths = require(path.join(SERVER, 'lib', 'kb-paths'));
+const { cursorAtTime } = require(path.join(SERVER, 'lib', 'characters'));
 
 const FRAMES_DIR = path.join(__dirname, '..', 'datasets', 'face_frames');
 const MANIFEST = path.join(FRAMES_DIR, 'manifest.json');
+const CACHE_FILE = path.join(__dirname, '..', '.cache', 'face_llm.json');
 
-async function serviceUp(url) {
-  try { const r = await fetch(url + '/health', { signal: AbortSignal.timeout(4000) }); return r.ok ? await r.json() : null; }
-  catch { return null; }
-}
+function loadCache() { try { return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')); } catch { return {}; } }
+function saveCache(c) { fs.mkdirSync(path.dirname(CACHE_FILE), { recursive: true }); fs.writeFileSync(CACHE_FILE, JSON.stringify(c, null, 1)); }
+
 function dataUrlOf(file) {
   return 'data:image/jpeg;base64,' + fs.readFileSync(path.join(FRAMES_DIR, file)).toString('base64');
 }
-async function recognize(url, dataUrl) {
-  const r = await fetch(url + '/recognize', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ image: dataUrl }), signal: AbortSignal.timeout(20000),
-  });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const j = await r.json();
-  return (j.faces || []).sort((a, b) =>
-    ((b.bbox[2] - b.bbox[0]) * (b.bbox[3] - b.bbox[1])) - ((a.bbox[2] - a.bbox[0]) * (a.bbox[3] - a.bbox[1])))[0] || null;
+
+async function recognizeOne({ file, t, kb, db, cache, refresh }) {
+  const model = process.env.AI_FACE_MODEL || 'gemini-3.1-pro-preview';
+  const key = model + ':' + file + ':' + crypto.createHash('sha1')
+    .update(fs.readFileSync(path.join(FRAMES_DIR, file))).digest('hex').slice(0, 10);
+  if (!refresh && cache[key]) return cache[key];
+
+  const cursor = kb ? cursorAtTime(kb, t) : null;
+  let result;
+  try {
+    const chars = await faceRec.recognizeFaces({ image: dataUrlOf(file), db, cursor, recognitionContext: null });
+    // Crop contains one face → the model's highest-confidence character is the subject.
+    const top = (chars || []).slice().sort((a, b) => b.confidence - a.confidence)[0] || null;
+    result = {
+      predicted: top ? top.character_id : null,
+      display_name: top ? top.display_name : null,
+      confidence: top ? +Number(top.confidence).toFixed(3) : null,
+      n_returned: (chars || []).length,
+    };
+  } catch (e) {
+    result = { error: String(e.message || e).slice(0, 120), predicted: null, n_returned: 0 };
+  }
+  cache[key] = result;
+  saveCache(cache);
+  return result;
 }
 
-async function run() {
-  const url = process.env.FACE_SERVICE_URL || 'http://127.0.0.1:5001';
+async function run(opts = {}) {
   if (!fs.existsSync(MANIFEST)) return { skipped: true, reason: 'no frame set (datasets/face_frames/manifest.json missing)' };
-  const health = await serviceUp(url);
-  if (!health) return { skipped: true, reason: `ArcFace service not reachable at ${url}. Start it: conda run -n hotd-face python server/scripts/face_service.py` };
+  if (!faceRec.isAvailable()) return { skipped: true, reason: 'face_recognition task unavailable (no Gemini/OpenAI key)' };
 
   const man = JSON.parse(fs.readFileSync(MANIFEST, 'utf8'));
+  const kb = JSON.parse(fs.readFileSync(kbPaths.sceneKb('house_of_dragon_05'), 'utf8'));
+  const dbPath = kbPaths.charactersDb(kb.show_id);
+  const db = fs.existsSync(dbPath) ? JSON.parse(fs.readFileSync(dbPath, 'utf8')) : { characters: [] };
+  const cache = loadCache();
+
   const rows = [];
   for (const fr of man.frames) {
-    try {
-      const f = await recognize(url, dataUrlOf(fr.file));
-      rows.push({
-        file: fr.file, t: fr.t,
-        status: f ? f.status : 'no_face',
-        matched: f && f.status === 'matched' ? f.match.character_id : null,
-        top1: f && f.candidates && f.candidates[0] ? { id: f.candidates[0].character_id, sim: +f.candidates[0].similarity.toFixed(3) } : null,
-        top2: f && f.candidates && f.candidates[1] ? { id: f.candidates[1].character_id, sim: +f.candidates[1].similarity.toFixed(3) } : null,
-      });
-    } catch { rows.push({ file: fr.file, t: fr.t, status: 'error', top1: null }); }
+    const r = await recognizeOne({ file: fr.file, t: fr.t, kb, db, cache, refresh: opts.refresh });
+    rows.push({ file: fr.file, t: fr.t, verified: fr.verified_character_id || null, ...r });
   }
 
-  // Hero probe: a human-verified clear frontal Viserys close-up.
+  // Hero probe (human-verified clear close-up).
   let hero = null;
   if (man.hero) {
-    try {
-      const f = await recognize(url, dataUrlOf(man.hero.file));
-      hero = {
-        file: man.hero.file, truth: man.hero.verified_character_id, thumb: dataUrlOf(man.hero.file),
-        status: f ? f.status : 'no_face',
-        matched: f && f.status === 'matched' ? f.match.character_id : null,
-        candidates: f ? (f.candidates || []).map(c => ({ id: c.character_id, sim: +c.similarity.toFixed(3) })) : [],
-        truth_in_top3: f ? (f.candidates || []).slice(0, 3).some(c => c.character_id === man.hero.verified_character_id) : false,
-      };
-    } catch { hero = { error: true, file: man.hero.file }; }
+    const r = await recognizeOne({ file: man.hero.file, t: man.hero.t, kb, db, cache, refresh: opts.refresh });
+    hero = {
+      file: man.hero.file, truth: man.hero.verified_character_id, thumb: dataUrlOf(man.hero.file),
+      ...r,
+      correct: r.predicted === man.hero.verified_character_id,
+    };
   }
 
   const n = rows.length || 1;
-  const identified = rows.filter(r => r.status === 'matched').length;
-  const ambiguous = rows.filter(r => r.status === 'ambiguous').length;
-  const below = rows.filter(r => r.status === 'below_threshold').length;
-  const noface = rows.filter(r => r.status === 'no_face' || r.status === 'error').length;
-  const sims = rows.filter(r => r.top1).map(r => r.top1.sim);
-  const avgSim = sims.length ? sims.reduce((a, b) => a + b, 0) / sims.length : 0;
+  const identified = rows.filter(r => r.predicted).length;
+  const verifiedRows = rows.filter(r => r.verified);
+  const verifiedIdentified = verifiedRows.filter(r => r.predicted);
+  const verifiedCorrect = verifiedRows.filter(r => r.predicted && r.predicted === r.verified).length;
+  const verifiedWrong = verifiedIdentified.length - verifiedCorrect;
 
-  // Degeneracy: which identity does the top candidate collapse onto?
-  const collapse = {};
-  for (const r of rows) if (r.top1) collapse[r.top1.id] = (collapse[r.top1.id] || 0) + 1;
-  const collapseList = Object.entries(collapse).map(([id, count]) => ({ id, count })).sort((a, b) => b.count - a.count);
-
-  // A handful of sample thumbnails spread across the set for the report.
   const step = Math.max(1, Math.floor(rows.length / 6));
-  const samples = rows.filter((_, i) => i % step === 0).slice(0, 6).map(r => ({
-    ...r, thumb: dataUrlOf(r.file),
-  }));
+  const samples = rows.filter((_, i) => i % step === 0).slice(0, 6).map(r => ({ ...r, thumb: dataUrlOf(r.file) }));
 
   return {
     skipped: false,
-    service: { url, gallery_size: health.gallery_size, threshold: health.threshold },
+    engine: 'gemini-pro (lib/face-recognition.js, production path)',
+    model: process.env.AI_FACE_MODEL || 'gemini-3.1-pro-preview',
     total_frames: rows.length,
-    identified, ambiguous, below_threshold: below, no_face: noface,
+    identified,
     identified_rate: identified / n,
-    reject_rate: (ambiguous + below + noface) / n,
-    avg_top1_sim: avgSim,
-    sims_above_threshold: sims.filter(s => s >= health.threshold).length,
-    distinct_top1_identities: collapseList.length,
-    collapse: collapseList,
+    abstain_rate: (n - identified) / n,
+    verified: {
+      n: verifiedRows.length,
+      identified: verifiedIdentified.length,
+      correct: verifiedCorrect,
+      wrong: verifiedWrong,
+      accuracy_when_identified: verifiedIdentified.length ? verifiedCorrect / verifiedIdentified.length : null,
+    },
     hero,
+    rows,
     samples,
   };
 }

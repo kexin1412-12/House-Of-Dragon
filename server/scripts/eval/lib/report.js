@@ -27,7 +27,7 @@ function bar(value, color) {
 }
 
 function summaryCards(r) {
-  const ret = r.retrieval, ans = r.answer, face = r.face;
+  const ret = r.retrieval, ans = r.answer;
   const cards = [];
 
   cards.push(`
@@ -58,20 +58,21 @@ function summaryCards(r) {
 
   const ff = r.faceFrames;
   if (ff && !ff.skipped) {
+    const acc = ff.verified.accuracy_when_identified;
     cards.push(`
       <div class="card zone-face">
-        <div class="card-tag">③ 人脸识别（真实截图）</div>
+        <div class="card-tag">③ 人脸识别（Gemini Pro）</div>
         <div class="card-metric" style="color:${rateColor(ff.identified_rate, 0.6, 0.35)}">${pct(ff.identified_rate)}</div>
         <div class="card-sub">真实剧集帧识别率 · ${ff.identified}/${ff.total_frames} 张</div>
-        <div class="card-note">候选坍缩到 ${ff.distinct_top1_identities} 个身份 · 库内 LOO Top-1 ${pct(face.top1_accuracy)}</div>
+        <div class="card-note">${acc == null ? '已核实子集待标注' : `已核实子集准确率 ${pct(acc)}（${ff.verified.correct}/${ff.verified.identified}）`} · hero ${ff.hero ? (ff.hero.correct ? '✓' : '✗') : '—'}</div>
       </div>`);
   } else {
     cards.push(`
       <div class="card zone-face">
         <div class="card-tag">③ 人脸识别</div>
-        <div class="card-metric" style="color:${rateColor(face.top1_accuracy, 0.6, 0.35)}">${pct(face.top1_accuracy)}</div>
-        <div class="card-sub">库内闭集 Top-1 · ${face.total_embeddings} 样本 / ${face.characters} 人</div>
-        <div class="card-note">误识 ${pct(face.false_accept_rate)} · 拒识 ${pct(face.reject_rate)}</div>
+        <div class="card-metric muted">—</div>
+        <div class="card-sub">已跳过</div>
+        <div class="card-note">${esc(ff && ff.reason || '未运行')}</div>
       </div>`);
   }
 
@@ -166,107 +167,52 @@ function answerSection(ans) {
     </section>`;
 }
 
-function faceSection(face) {
-  const charRows = face.per_character.map(c => `
-    <tr>
-      <td class="mono">${esc(c.character_id)}</td>
-      <td>${esc(c.actor || '')}</td>
-      <td class="num">${c.n}</td>
-      <td class="num" style="color:${rateColor(c.accuracy, 0.6, 0.35)}">${pct(c.accuracy)}</td>
-      <td class="num">${c.correct}</td>
-      <td class="num">${c.wrong ? `<span class="bad-text">${c.wrong}</span>` : 0}</td>
-      <td class="num">${c.rejected}</td>
-    </tr>`).join('');
-
-  const conf = face.confusion.length
-    ? face.confusion.map(c => `<li><span class="mono">${esc(c.pair)}</span> <span class="dim">×${c.count}</span></li>`).join('')
-    : '<li class="dim">无误识</li>';
-
-  return `
-    <section class="zone-face">
-      <h2><span class="dot"></span>③b 人脸识别 · 角色库闭集分离度（离线 LOO）</h2>
-      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 ${face.threshold} + Top1−Top2 间隔 ${face.margin}）。衡量的是<b>角色库本身的可分性</b>与阈值松紧，而非终端使用准确率。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
-      <div class="panel note" style="border-left:3px solid var(--face)">
-        这是离线代理指标（衡量库本身可不可分）；"用剧里清晰截图直接识别"的真实测试见上面 <b>③a</b>——已用真正的 ArcFace 服务跑过，结论是真实画面上基本失效。另外本集 KB 的 <code>characters_on_screen</code> 自动标注不可靠（同一张脸标成两个人、片头帧标成角色），不能当逐帧 ground truth，所以③a 用"识别率 + 候选坍缩"这类无需逐帧标注的指标来量化。
-      </div>
-      <div class="facegrid">
-        <div class="fstat"><div class="fnum" style="color:${rateColor(face.top1_accuracy, 0.6, 0.35)}">${pct(face.top1_accuracy)}</div><div class="flab">Top-1 准确率</div></div>
-        <div class="fstat"><div class="fnum" style="color:${rateColor(1 - face.false_accept_rate, 0.85, 0.7)}">${pct(face.false_accept_rate)}</div><div class="flab">误识率（认错人）</div></div>
-        <div class="fstat"><div class="fnum">${pct(face.reject_rate)}</div><div class="flab">拒识率（不下判断）</div></div>
-        <div class="fstat"><div class="fnum" style="color:${rateColor(face.accuracy_when_matched, 0.85, 0.7)}">${pct(face.accuracy_when_matched)}</div><div class="flab">下判断时的准确率</div></div>
-      </div>
-      <div class="panel note">
-        注：本库共 ${face.total_embeddings} 条特征 / ${face.characters} 人，部分角色仅 1-2 条参考。留一验证下，单条参考的角色在被留出时缺少同人对照，天然偏向拒识/误识——这本身也反映"参考太少时线上识别不稳"的真实风险。
-      </div>
-      <div class="twocol">
-        <details open>
-          <summary>按角色分解（准确率升序）</summary>
-          <div class="tablewrap"><table>
-            <thead><tr><th>角色</th><th>演员</th><th>样本</th><th>准确率</th><th>对</th><th>错</th><th>拒识</th></tr></thead>
-            <tbody>${charRows}</tbody>
-          </table></div>
-        </details>
-        <details open>
-          <summary>混淆对（谁被认成谁）</summary>
-          <ul class="conf">${conf}</ul>
-        </details>
-      </div>
-    </section>`;
-}
-
 function faceFramesSection(ff) {
   if (!ff || ff.skipped) {
     return `
       <section class="zone-face">
-        <h2><span class="dot"></span>③a 人脸识别 · 真实剧集截图</h2>
-        <p class="lead">把剧里检测到的人脸截图送进真正的 ArcFace 服务识别。本次未运行：${esc(ff && ff.reason || '人脸服务未启动')}。启动 <code>scripts/face_service.py</code> 后重跑即可。</p>
+        <h2><span class="dot"></span>③ 人脸识别 · 真实剧集截图（Gemini Pro）</h2>
+        <p class="lead">用生产同款 Gemini Pro 多模态识别识别剧里的人脸截图。本次未运行：${esc(ff && ff.reason || '模型不可用')}。</p>
       </section>`;
   }
   const hero = ff.hero;
-  const heroBlock = hero && !hero.error ? `
+  const heroBlock = hero ? `
     <div class="hero">
       <img class="hero-img" src="${hero.thumb}" alt="verified frame"/>
       <div class="hero-body">
-        <div class="hero-title">人工核实：这是一张清晰正脸的<b>韦赛里斯</b>特写</div>
-        <div class="hero-verdict">服务判定：<span class="bad-text">${esc(hero.status === 'matched' ? ('认成 ' + hero.matched) : '拒识（ambiguous）')}</span></div>
-        <div class="hero-cands">Top 候选：${hero.candidates.map(c => `<span class="mono">${esc(c.id)}@${c.sim}</span>`).join('　')}</div>
-        <div class="hero-note">真人（韦赛里斯）${hero.truth_in_top3 ? '在' : '<b class="bad-text">根本不在</b>'} Top-3 候选里——而韦赛里斯的官方肖像送进去能 0.998 命中自己。说明库里的特征向量不可分。</div>
+        <div class="hero-title">人工核实：这是一张清晰正脸的<b>韦赛里斯</b>特写（同一张图曾让旧 ArcFace 库连 Top-3 都排不进）</div>
+        <div class="hero-verdict">Gemini Pro 判定：<span class="${hero.correct ? 'ok-text' : 'bad-text'}">${hero.predicted ? esc(hero.display_name || hero.predicted) + (hero.confidence != null ? ' @' + hero.confidence : '') : '拒识'} ${hero.correct ? '✓ 正确' : '✗'}</span></div>
       </div>
     </div>` : '';
 
-  const collapseTop = ff.collapse.slice(0, 4).map(c =>
-    `<span class="mono">${esc(c.id)}</span> <span class="dim">×${c.count}</span>`).join('　');
-
+  const v = ff.verified;
   const sampleThumbs = ff.samples.map(s => `
     <div class="fsample">
       <img src="${s.thumb}" alt="crop"/>
       <div class="fsample-cap">
-        <span class="${s.status === 'matched' ? 'ok-text' : 'dim'}">${esc(s.status)}</span>
-        ${s.top1 ? `<br><span class="mono">${esc(s.top1.id)}@${s.top1.sim}</span>` : ''}
+        ${s.predicted ? `<span class="mono">${esc(s.display_name || s.predicted)}</span>${s.confidence != null ? '<br>@' + s.confidence : ''}` : '<span class="dim">拒识</span>'}
+        ${s.verified ? `<br><span class="${s.predicted === s.verified ? 'ok-text' : 'bad-text'}">核实: ${s.predicted === s.verified ? '✓' : '✗ 实为 ' + esc(s.verified)}</span>` : ''}
       </div>
     </div>`).join('');
 
   return `
     <section class="zone-face">
-      <h2><span class="dot"></span>③a 人脸识别 · 真实剧集截图（走 ArcFace 服务）</h2>
-      <p class="lead">这才是"用剧里清晰截图识别"的直接测试：把本集检测到的 ${ff.total_frames} 张人脸截图送进真正的 ArcFace 服务。<b>结论：现网人脸库在真实画面上基本失效</b>——只认出 ${ff.identified}/${ff.total_frames} 张（${pct(ff.identified_rate)}），其余因候选过于接近被判"模糊"拒识。</p>
+      <h2><span class="dot"></span>③ 人脸识别 · 真实剧集截图（Gemini Pro 生产链路）</h2>
+      <p class="lead">旧的 ArcFace 闭集服务已下线（库内向量不可分，真实帧识别率仅 7.5%，见 git 历史），人脸识别全量切到 <b>Gemini Pro 多模态</b>。本评测把同一批 ${ff.total_frames} 张真实剧集人脸截图送进生产同款识别代码（模型 ${esc(ff.model)}），量化新路径表现。</p>
       <div class="facegrid">
-        <div class="fstat"><div class="fnum" style="color:${rateColor(ff.identified_rate, 0.6, 0.35)}">${pct(ff.identified_rate)}</div><div class="flab">真实帧识别率 (${ff.identified}/${ff.total_frames})</div></div>
-        <div class="fstat"><div class="fnum">${pct(ff.reject_rate)}</div><div class="flab">拒识率（不敢下判断）</div></div>
-        <div class="fstat"><div class="fnum">${f2(ff.avg_top1_sim)}</div><div class="flab">平均 Top1 相似度</div></div>
-        <div class="fstat"><div class="fnum" style="color:var(--bad)">${ff.distinct_top1_identities}</div><div class="flab">${ff.total_frames} 张脸只坍缩到几个身份</div></div>
-      </div>
-      <div class="panel note" style="border-left:3px solid var(--bad)">
-        <b>特征向量坍缩</b>：${ff.total_frames} 张明明是不同人的脸，Top-1 候选却几乎都落在 ${collapseTop} 上（相似度都 ~0.8）。健康的人脸库里，不同人之间余弦相似度应该在 0.2–0.35，这里却普遍 ~0.8——库里的向量几乎没有区分度。唯一挡住"全体误认"的是 Top1−Top2 间隔阈值，它把绝大多数都判成"模糊"拒掉了。这与库里每人参考帧过少、以及 embedding_count 与实际存量不符是同一个根因。
+        <div class="fstat"><div class="fnum" style="color:${rateColor(ff.identified_rate, 0.6, 0.35)}">${pct(ff.identified_rate)}</div><div class="flab">识别率 (${ff.identified}/${ff.total_frames})</div></div>
+        <div class="fstat"><div class="fnum">${pct(ff.abstain_rate)}</div><div class="flab">拒识率（低置信不猜）</div></div>
+        <div class="fstat"><div class="fnum" style="color:${v.accuracy_when_identified == null ? 'var(--muted)' : rateColor(v.accuracy_when_identified, 0.85, 0.6)}">${v.accuracy_when_identified == null ? '—' : pct(v.accuracy_when_identified)}</div><div class="flab">已核实子集准确率 (${v.correct}/${v.identified}，共核实 ${v.n} 张)</div></div>
+        <div class="fstat"><div class="fnum" style="color:${ff.hero ? (ff.hero.correct ? 'var(--ok)' : 'var(--bad)') : 'var(--muted)'}">${ff.hero ? (ff.hero.correct ? '✓' : '✗') : '—'}</div><div class="flab">韦赛里斯探针（人工核实帧）</div></div>
       </div>
       ${heroBlock}
-      <details open><summary>抽样截图 + 服务判定</summary><div class="fsamples">${sampleThumbs}</div></details>
-      <p class="lead" style="margin-top:14px">修复方向：重建人脸库——每个角色补足更多、更清晰、正脸的参考特征，并复核 build_face_gallery 的对齐与归一化。重建后本评测可一键复跑验证。</p>
+      <details open><summary>抽样截图 + 模型判定</summary><div class="fsamples">${sampleThumbs}</div></details>
+      <p class="lead" style="margin-top:14px">「已核实子集」指截图身份经人工比对官方肖像确认过的帧（manifest 里的 verified_character_id）；未核实帧只计入识别率，不计入准确率。拒识是设计行为：识别 prompt 要求低置信不返回，宁可不认也不乱认。</p>
     </section>`;
 }
 
 function render(results) {
-  const { retrieval, answer, face, faceFrames, meta } = results;
+  const { retrieval, answer, faceFrames, meta } = results;
   return `<!doctype html>
 <html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>项目评测报告 · ${esc(meta.show || '')}</title>
@@ -356,7 +302,6 @@ function render(results) {
   ${retrievalSection(retrieval)}
   ${answerSection(answer)}
   ${faceFramesSection(faceFrames)}
-  ${faceSection(face)}
   <footer style="color:var(--muted);font-size:11.5px;text-align:center;margin-top:10px">
     评测集与脚本位于 scripts/eval · 重跑：<span class="mono">node scripts/eval/run_eval.js</span>
   </footer>
