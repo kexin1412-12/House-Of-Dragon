@@ -789,15 +789,15 @@
   },
   "answer": {
     "skipped": false,
-    "n": 12,
-    "judged": 12,
-    "avg_faithfulness": 4.916666666666667,
-    "avg_helpfulness": 4.916666666666667,
-    "avg_no_spoiler": 4.833333333333333,
-    "avg_overall": 4.888888888888889,
+    "n": 15,
+    "judged": 15,
+    "avg_faithfulness": 5,
+    "avg_helpfulness": 4.933333333333334,
+    "avg_no_spoiler": 5,
+    "avg_overall": 4.977777777777778,
     "per_question": [
       {
-        "id": "a_rhaenyra_criston_relation",
+        "id": "scene_s80_hand_badge",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -806,7 +806,7 @@
         }
       },
       {
-        "id": "a_wedding_tension",
+        "id": "scene_s132_godswood",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -815,7 +815,7 @@
         }
       },
       {
-        "id": "a_alicent_godswood",
+        "id": "scene_s189_rhea_eulogy",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -824,7 +824,7 @@
         }
       },
       {
-        "id": "a_daemon_rhea",
+        "id": "scene_s238_rhaenys",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -833,7 +833,7 @@
         }
       },
       {
-        "id": "a_corlys_rhaenys_attitude",
+        "id": "scene_s273_criston",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -842,7 +842,7 @@
         }
       },
       {
-        "id": "a_moon_tea",
+        "id": "scene_s320_rhaenyra_criston",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -851,7 +851,7 @@
         }
       },
       {
-        "id": "a_rhaenyra_refuse_elope",
+        "id": "scene_s353_viserys_sick",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -860,7 +860,7 @@
         }
       },
       {
-        "id": "a_alicent_green_dress",
+        "id": "scene_s409_viserys_weary",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -869,16 +869,7 @@
         }
       },
       {
-        "id": "a_criston_beats_man",
-        "judgment": {
-          "faithfulness": 4,
-          "helpfulness": 5,
-          "no_spoiler": 3,
-          "rationale": "回答中提到的克里斯顿对雷妮拉的复杂感情和婚宴上的紧张气氛是合理的背景推测，但具体事件未在CONTEXT中提及，可能涉及未来剧情。"
-        }
-      },
-      {
-        "id": "a_targaryen_dragons_origin",
+        "id": "scene_s490_laena_daemon_dance",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -887,7 +878,7 @@
         }
       },
       {
-        "id": "a_tapestry_prologue_s3e1",
+        "id": "scene_s553_wedding_hall",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 5,
@@ -896,10 +887,46 @@
         }
       },
       {
-        "id": "a_sheepstealer_s3e1",
+        "id": "scene_s661_criston_kills",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "scene_s3e1_prologue",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "scene_s3e1_sheepstealer",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "quick_who_is_this_s320",
         "judgment": {
           "faithfulness": 5,
           "helpfulness": 4,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "quick_meme_s661",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
           "no_spoiler": 5,
           "rationale": "无明显问题"
         }
@@ -1103,7 +1130,7 @@
   },
   "meta": {
     "show": "house-of-the-dragon",
-    "generatedAt": "2026/7/30 03:41:20",
+    "generatedAt": "2026/7/30 04:01:27",
     "retrievalMode": "混合（向量 × 关键词）+ 时序过滤"
   }
 }

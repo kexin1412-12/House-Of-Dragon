@@ -71,7 +71,7 @@
 <body><div class="wrap">
   <header>
     <h1>项目评测报告</h1>
-    <div class="sub">house-of-the-dragon · 生成于 2026/7/30 03:41:20 · 检索链路 混合（向量 × 关键词）+ 时序过滤</div>
+    <div class="sub">house-of-the-dragon · 生成于 2026/7/30 04:01:27 · 检索链路 混合（向量 × 关键词）+ 时序过滤</div>
   </header>
   <div class="cards">
     <div class="card zone-ret">
@@ -82,8 +82,8 @@
     </div>
       <div class="card zone-ans">
         <div class="card-tag">② 回答质量</div>
-        <div class="card-metric" style="color:var(--ok)">4.89<span class="of5">/5</span></div>
-        <div class="card-sub">12/12 题 · 忠实 4.92 · 有用 4.92 · 无剧透 4.83</div>
+        <div class="card-metric" style="color:var(--ok)">4.98<span class="of5">/5</span></div>
+        <div class="card-sub">15/15 题 · 忠实 5.00 · 有用 4.93 · 无剧透 5.00</div>
         <div class="card-note">LLM 生成 + LLM 裁判</div>
       </div>
     <div class="card zone-face">
@@ -410,161 +410,227 @@
     </section>
   
     <section class="zone-ans">
-      <h2><span class="dot"></span>② 回答质量（LLM 生成 + LLM 裁判）</h2>
-      <p class="lead">在真实主动问答链路上生成回答，再由裁判模型仅依据"生成时可见的、已按进度过滤的上下文"打分。忠实度=有无编造，有用性=是否切题具体，无剧透=有无引入超前信息。</p>
+      <h2><span class="dot"></span>② 回答质量（最常用快捷提问「解释这个镜头」）</h2>
+      <p class="lead">主打观众最常点的快捷提问，在全集多个场景点各问一次，测日常主路径。在真实主动问答链路上生成回答，再由裁判模型仅依据"生成时可见的、已按进度过滤的上下文"打分。忠实度=有无虚构具体剧情（通用背景不算），有用性=是否切题具体，无剧透=有无透露未来事件。</p>
       <div class="panel">
-        <div class="panel-head">平均得分（12/12 题成功评分）</div>
+        <div class="panel-head">平均得分（15/15 题成功评分）</div>
         <div class="ttable">
           
     <div class="trow">
       <div class="tname">忠实度</div>
-      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:98.33333333333334%;background:var(--ok)"></div></div></div>
-      <div class="tval" style="color:var(--ok)">4.92<span class="of5">/5</span></div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:100%;background:var(--ok)"></div></div></div>
+      <div class="tval" style="color:var(--ok)">5.00<span class="of5">/5</span></div>
     </div>
           
     <div class="trow">
       <div class="tname">有用性</div>
-      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:98.33333333333334%;background:var(--ok)"></div></div></div>
-      <div class="tval" style="color:var(--ok)">4.92<span class="of5">/5</span></div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:98.66666666666667%;background:var(--ok)"></div></div></div>
+      <div class="tval" style="color:var(--ok)">4.93<span class="of5">/5</span></div>
     </div>
           
     <div class="trow">
       <div class="tname">无剧透</div>
-      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:96.66666666666666%;background:var(--ok)"></div></div></div>
-      <div class="tval" style="color:var(--ok)">4.83<span class="of5">/5</span></div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:100%;background:var(--ok)"></div></div></div>
+      <div class="tval" style="color:var(--ok)">5.00<span class="of5">/5</span></div>
     </div>
         </div>
       </div>
       <details open><summary>逐题回答与评分</summary><div class="qalist">
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">雷妮拉和这个铁卫骑士现在是什么关系？</div>
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
-        <div class="qa-meta">S01E05 · t=1800s · scene s320</div>
-        <div class="qa-answer">雷妮拉公主和克里斯顿·科尔骑士之间的关系，已经超越了普通的职责关系。当前的场景中，他们在私下交谈，氛围亲密且私密，这暗示两人之间可能存在某种情感联系。雷妮拉可能在寻求情感支持，或者有其他密谋，而克里斯顿骑士的复杂表情也显示出他对这段关系的某种纠结或困惑。虽然具体的关系状态并不明确，但显然他们之间的互动已经不再是单纯的主仆关系。</div>
-        <div class="qa-rationale">裁判：无明显问题</div>
-      </div>
-      <div class="qa">
-        <div class="qa-head">
-          <div class="qa-q">这场婚宴气氛怎么这么紧张，到底发生了什么？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
-        </div>
-        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
-        <div class="qa-answer">在这场婚宴上，气氛紧张是因为多重政治和个人关系的交织。首先，莱昂诺·斯壮在御前会议中表现出顺从和谨慎，他低头的姿态暗示了对国王韦赛里斯一世的无奈接受。这种压抑的情绪可能反映了他在政治压力下的内心挣扎。
+        <div class="qa-meta">S01E05 · t=319s · scene s80</div>
+        <div class="qa-answer">这个镜头中，我们看到一位男性朝臣的礼服上别着金色掌形徽章，这代表着“国王之手”的身份。这个徽章通常是由国王正式任命后才会公开佩戴的，但现在却出现在一位并非奥托·海塔尔的人身上。这暗示着在公开仪式之前，已经有了私下的任命。这种做法在权力游戏中非常微妙，表面上看似正常，但实际上透露出朝堂内部权力的悄然变动和礼制的某种崩塌。
 
-同时，王后阿莉森特在婚宴上穿着海塔尔祖母绿，独自迟到，这是一种公开的仪式性告别，表明她与国王韦赛里斯的对立。她此前一直依附于韦赛里斯和雷妮拉的“国王—继承人”轴线，但现在她选择了公开决裂。这种公开的姿态无疑加剧了婚宴的紧张气氛。
+通过这个镜头，剧集用道具特写来强调权位本身，而不是佩戴者的个人特征，显示出权力在背后悄然转移的紧张感。这个徽章的出现意味着某种未拍出来的权力交接已经发生，观众需要意识到这种变化可能会对后续剧情产生影响。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=601s · scene s132</div>
+        <div class="qa-answer">这个镜头中，阿莉森特王后身着红金两色礼服，独自在神木林中行走，神情若有所思。她的服装颜色和样式值得注意，因为这可能是她在宫廷中立场变化的一个标志。红金两色可能象征着她的家族背景和她在宫廷中的地位。
 
-此外，戴蒙·坦格利安的放荡不羁个性和权力欲也在场上显现，他曾当众羞辱妻子，揭示了权力斗争中的真实动机和内心挣扎。这些因素共同作用，使得婚宴的气氛异常紧张。</div>
-        <div class="qa-rationale">裁判：无明显问题</div>
-      </div>
-      <div class="qa">
-        <div class="qa-head">
-          <div class="qa-q">阿莉森特一个人在神木林里，她在想什么？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
-        </div>
-        <div class="qa-meta">S01E05 · t=600s · scene s132</div>
-        <div class="qa-answer">阿莉森特在神木林中独自思考，可能是在反思她在宫廷中的处境和未来的走向。她身着红金两色礼服，这种颜色选择可能是有意的，象征着她与海塔尔家族的联系和她在权力斗争中的立场。神木林是旧神的地盘，通常被视为一个寻求指引和内心平静的地方，这暗示她可能在寻求某种精神上的慰藉或指引。
+阿莉森特在旧神之地独自一人，显示出她在宫廷中的孤立感，以及她对自身处境的深思。她可能正在寻求某种精神上的指引或慰藉，尤其是在她与雷妮拉的关系变得疏远的情况下。
 
-同时，她的父亲奥托·海塔尔曾是国王的首相，但被革职，这对她来说是一个重大的政治打击。她可能在思考如何重新把海塔尔家族推回到权力的中心，以及如何为父亲的政治反弹做准备。她的独处也显示出她在宫廷中的孤立感，这可能促使她更加坚定地站在海塔尔家族一边。</div>
+这个镜头不仅展示了阿莉森特的内心状态，也通过环境的象征意义，暗示了她在权力斗争中的位置和未来可能的行动方向。阿莉森特的独行和思考，可能预示着她将采取更为独立和坚定的立场。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">戴蒙旁边这个骑装女人是谁，他们什么关系？</div>
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
-        <div class="qa-meta">S01E05 · t=120s · scene s22</div>
-        <div class="qa-answer">戴蒙旁边的骑装女人是雷娅夫人。她是戴蒙的妻子，但两人之间的关系并不和睦。戴蒙之前曾当众羞辱过她，展现了他放荡不羁的个性和对权力的渴望。雷娅夫人对戴蒙的出现似乎并不意外，表情平静，这可能暗示她对两人之间的紧张关系已经习以为常。</div>
-        <div class="qa-rationale">裁判：无明显问题</div>
-      </div>
-      <div class="qa">
-        <div class="qa-head">
-          <div class="qa-q">科利斯和蕾妮丝这对夫妇，对这门婚事是什么态度？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
-        </div>
-        <div class="qa-meta">S01E05 · t=2400s · scene s410</div>
-        <div class="qa-answer">科利斯·瓦列利安和蕾妮丝·坦格利安夫妇对这门婚事的态度可能是复杂的。科利斯神情严肃，可能在考虑这场婚事对瓦列利安家族的战略意义和利益。他作为家族的领袖，自然会关注婚姻带来的政治和经济影响。而蕾妮丝面带微笑，可能暗示她对这场婚事持有更开放或乐观的态度，或者她在扮演一个更为和善的角色，以缓和现场的气氛。
+        <div class="qa-meta">S01E05 · t=903s · scene s189</div>
+        <div class="qa-answer">在这个镜头中，韦赛里斯国王正在雷娅夫人的葬礼上发表悼词。他提到雷娅夫人是戴蒙的好妻子，这句话表面上是在维护王室的体面，表示对逝者的尊重。但实际上，这话里也有一种微妙的指责，因为众所周知，戴蒙和雷娅的婚姻并不幸福，戴蒙的行为常常被视为不羁和不负责任。
 
-两人作为瓦列利安家族的代表出席宴会，象征着家族的地位与影响力。他们的态度可能反映了家族内部对这场婚事的不同看法：科利斯更注重实际利益，而蕾妮丝可能更关注个人关系或家族的长远声誉。</div>
-        <div class="qa-rationale">裁判：无明显问题</div>
-      </div>
-      <div class="qa">
-        <div class="qa-head">
-          <div class="qa-q">月亮茶是怎么回事？为什么大家提到它气氛就变了？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
-        </div>
-        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
-        <div class="qa-answer">月亮茶在《冰与火之歌》的世界里是一种避孕药，通常用于防止意外怀孕。在这个故事背景中，月亮茶的出现往往意味着怀疑、信任危机或者不光彩的事情。
+科利斯·瓦列利安站在韦赛里斯身后，表情严肃。科利斯是雷娅的亲戚，他的态度显示出对王室事务的关注，以及对韦赛里斯言辞的审视。这个场合是一个政治场合，韦赛里斯的每一句话都可能被解读为对戴蒙的立场和态度。
 
-在你提到的场景中，月亮茶的出现意味着国王韦赛里斯对女儿雷妮拉的不信任。他选择送月亮茶而不是直接对话，等于在用行动表达对她行为的怀疑。这种情况下，月亮茶不仅仅是药物，更是一种政治信号，表明父女之间的信任已经破裂。提到月亮茶，大家自然会意识到背后的不信任和权力斗争，所以气氛会变得紧张和微妙。</div>
+此外，蕾妮丝·坦格利安和奥托·海塔尔也在场。蕾妮丝与韦赛里斯之间的关系冷淡，奥托与韦赛里斯之间则已经决裂。这样的背景下，韦赛里斯的悼词不仅仅是对逝者的缅怀，更是一个微妙的政治表态，试图在复杂的家族关系和政治局势中维持平衡。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">雷妮拉为什么不肯和克里斯顿私奔？</div>
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
-        <div class="qa-meta">S01E05 · t=1800s · scene s320</div>
-        <div class="qa-answer">雷妮拉不愿和克里斯顿私奔的原因涉及她的身份和责任。虽然她对自由的渴望很强烈，但她同时也是铁王座的继承人，这意味着她肩负着巨大的家族责任和政治义务。私奔不仅会让她失去继承权，还会对她的家族和整个王国造成巨大的影响。
+        <div class="qa-meta">S01E05 · t=1206s · scene s238</div>
+        <div class="qa-answer">在这个镜头中，蕾妮丝·坦格利安静静地站在人群一侧，注视着场上的一切。她没有台词，但她的存在本身就是一种无声的记录。这个镜头的意图是将她设定为本集的“视觉记账员”，意味着她在观察并记住发生的一切。
 
-此外，雷妮拉的内心可能也在经历矛盾：一方面，她渴望自由和个人幸福，另一方面，她又无法完全摆脱对权力和责任的意识。这种矛盾使她无法轻易放弃自己的身份去追求个人的感情生活。克里斯顿可能对她有深厚的感情，但雷妮拉的决定更多地受到政治和家族责任的驱动。</div>
+蕾妮丝的注视带有一种冷淡的审视，尤其是对韦赛里斯一世·坦格利安。两人是表亲，但关系冷淡，之前在潮头岛的迎接仪式上，蕾妮丝通过礼节表达了对韦赛里斯的不满。她的注视不仅仅是旁观，而是对当前局势和家族关系的一种评估。
+
+从权力的角度看，蕾妮丝的存在提醒我们，这场婚事的背后有更深层次的家族权力斗争。虽然婚事可能看似和谐，但海蛇家族和蕾妮丝并不真正承认韦赛里斯这一支的优越性。她的注视是对这些权力动态的无声见证。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">阿莉森特为什么偏偏穿一身绿色迟到入场？</div>
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
-        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
-        <div class="qa-answer">阿莉森特穿一身绿色并迟到入场，是一个非常有力的政治声明。在《龙之家族》的世界里，绿色是海塔尔家族的颜色，而她选择在雷妮拉的婚宴上身穿这身颜色，等于公开宣示她与国王韦赛里斯的立场分歧。她用这种方式当众告别了此前依附于国王和雷妮拉的轴线，表明她不再完全支持他们的立场。这种公开的仪式化行为，意味着她在政治上开始独立，并可能准备支持其他的政治势力。这是宫廷里非常明显的一个割席动作，显示出她的决心和立场转变。</div>
+        <div class="qa-meta">S01E05 · t=1500s · scene s273</div>
+        <div class="qa-answer">在这个镜头中，雷尼拉公主和科尔爵士之间的眼神交流非常紧张且私密。科尔爵士的眼神中流露出复杂的情绪，这可能与雷尼拉的婚约以及两人之间未明的关系有关。他似乎在寻求雷尼拉的回应或确认，但又有所克制。这种情感纠葛为他们之间的关系增添了张力，也暗示了科尔爵士内心的挣扎或不甘。
+
+这个镜头的设计意图是突出两人之间的情感交流，虽然没有直接的对话，但通过眼神传达出深刻的情感和潜在的冲突。这种无声的交流在宫廷环境中显得尤为重要，因为公开表露情感可能会带来政治上的后果。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">克里斯顿刚才为什么在婚宴上当众把人打死？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">无剧透 3</span></div>
-        </div>
-        <div class="qa-meta">S01E05 · t=2900s · scene s541</div>
-        <div class="qa-answer">在婚宴上，克里斯顿·科尔当众打死了人，这行为背后有几层原因。首先，克里斯顿对雷妮拉有复杂的感情，他曾是她的护卫，两人有过亲密关系，但雷妮拉选择了政治婚姻，这让克里斯顿感到被背叛和羞辱。其次，婚宴上气氛紧张，各种政治和个人冲突交织，克里斯顿可能在情绪失控的情况下，因某种挑衅或误解而失去理智。最后，克里斯顿的行为也可能是对自己地位和情感的绝望反应，借此发泄内心的愤怒和挫败。这个事件在权力斗争的背景下，进一步加剧了局势的复杂性。</div>
-        <div class="qa-rationale">裁判：回答中提到的克里斯顿对雷妮拉的复杂感情和婚宴上的紧张气氛是合理的背景推测，但具体事件未在CONTEXT中提及，可能涉及未来剧情。</div>
-      </div>
-      <div class="qa">
-        <div class="qa-head">
-          <div class="qa-q">坦格利安家族的龙到底是从哪来的？</div>
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
-        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
-        <div class="qa-answer">坦格利安家族的龙起源于瓦雷利亚自由堡垒，这是一个古老而强大的文明，以驯养和使用龙而闻名。坦格利安家族在瓦雷利亚毁灭前不久迁居到了龙石岛，并带走了他们的龙。瓦雷利亚的龙使坦格利安家族在后来征服维斯特洛大陆时获得了巨大的军事优势，从而建立了他们的王朝。龙在坦格利安家族中不仅是力量的象征，也与他们的家族命运紧密相连。</div>
+        <div class="qa-meta">S01E05 · t=1802s · scene s320</div>
+        <div class="qa-answer">在这个镜头中，雷妮拉公主与御林铁卫克里斯顿·科尔骑士私下交谈。雷妮拉身着蓝色长裙，而克里斯顿穿着盔甲。这种私密的会面暗示两人之间的关系超越了正常的职责，可能涉及情感支持或某种密谋。
+
+雷妮拉作为公主，处于权力的焦点，她的每一个选择都可能影响到王国的未来。与克里斯顿的交谈，尤其是在如此私密的环境下，可能意味着她在寻求某种情感上的支持，或者是策划某种计划。克里斯顿的复杂表情则显示出他对这段关系的矛盾心态，可能夹杂着忠诚、情感和责任的冲突。
+
+这个场景通过强调两人的面部表情和肢体语言，展现了他们之间的亲密关系，同时也为后续剧情的发展埋下了伏笔。两人的互动不仅仅是个人情感的表达，还可能对权力结构产生影响。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">开头这段挂毯片头到底在讲什么？</div>
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2114s · scene s353</div>
+        <div class="qa-answer">在这个镜头中，韦赛里斯国王躺在床上，显得非常疲惫，正在与莱昂诺·斯壮进行私下谈话。韦赛里斯的状态和神情透露出他身体的衰弱以及作为国王所承受的巨大压力。此时，他可能在思考当前的政治局势，或者在寻求首相的建议。
+
+韦赛里斯是七大王国的国王，肩负着维系王朝和平的重任。现在他的身体状况不佳，这对他的统治和王国的稳定都是一个威胁。莱昂诺·斯壮作为首相，与国王的这次私密谈话可能涉及到权力交接的准备或对当前局势的忧虑。
+
+这个镜头通过展现国王的虚弱和内心挣扎，暗示了王国未来的不确定性和潜在的权力斗争。对于观众来说，注意韦赛里斯的病态和疲惫神情，以及他与首相的对话，是理解后续剧情发展的关键。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2396s · scene s409</div>
+        <div class="qa-answer">在这个镜头中，韦赛里斯国王站在宴会桌前，显得非常疲惫，眼神低垂。这种状态不仅仅是身体上的疲惫，更可能反映了他对当前局势的无力感和心理负担。宴会桌上摆满了食物和装饰品，但国王的神情却与宴会的热闹气氛形成鲜明对比，暗示着宴会背后潜藏的紧张和不安。
+
+同时，戴蒙·坦格利安也在场，两人之间的关系被描述为“兄弟不认”。这意味着戴蒙虽然在场，但并没有得到正式的承认，这种礼制上的羞辱进一步加重了韦赛里斯的心理负担。
+
+这个镜头不仅展现了国王的疲态和脆弱，也暗示了他统治的脆弱性。铁王座的空置进一步象征着他权力的岌岌可危。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2701s · scene s490</div>
+        <div class="qa-answer">在这一幕中，莱娜·瓦列利安和戴蒙·坦格利安在宴会厅中共舞，成为全场的焦点。这不仅展示了他们之间可能的亲密关系，也象征着瓦列利安家族与坦格利安家族的联结。两大家族的联姻和互动可能对未来的政治格局产生重要影响。
+
+同时，奥托·海塔尔在场，神情严肃，似乎在观察局势。他的存在和表情提示观众注意宴会中潜在的政治角力和权力博弈。奥托是一个精明的政治家，他的观察可能意味着他正在评估这场联姻对权力平衡的影响。
+
+此外，科利斯·瓦列利安和蕾妮丝·坦格利安坐在主桌上，作为瓦列利安家族的代表，他们的态度和反应也值得关注。蕾妮丝曾经是王位的有力竞争者，虽然被大议会以性别理由排除，但她的存在仍然是权力游戏中的一部分。
+
+总之，这个镜头不仅仅是舞会的场景，更是权力关系的展示和未来可能变化的暗示。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2996s · scene s553</div>
+        <div class="qa-answer">在这个镜头中，莱娜·瓦列利安和戴蒙·坦格利安王子在宴会厅中近距离交谈。莱娜面带微笑，这可能暗示她对戴蒙持开放或积极的态度。两人之间的互动显示出某种亲密或潜在的联盟，这在政治联姻的背景下很值得关注。
+
+戴蒙以其放荡不羁和权力欲望著称，而莱娜作为瓦列利安家族的一员，可能在寻求一种政治上的结盟。她的微笑可能不仅仅是友好的表现，也可能是在传递一种政治上的信号，表明她对戴蒙的态度是开放的，甚至可能是支持的。
+
+在这样的背景下，他们的亲密距离和莱娜的表情被特别强调，可能是在为后续的政治或家族关系发展埋下伏笔。总体而言，这一幕显示了两人之间可能存在的政治合作或个人亲密关系。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=3312s · scene s661</div>
+        <div class="qa-answer">这个镜头发生在婚宴现场，克里斯顿·科尔失控地攻击乔弗里·朗茅斯，导致地面、衣物和铠甲上都沾满了鲜血。周围的宾客虽然围成一个圈，但没有人立刻上前阻止。这种场面在王室婚礼上非常不寻常，意味着现场的礼法和秩序被彻底碾压。
+
+御林铁卫的职责是保护王族和维持秩序，而克里斯顿在这样的场合公然杀人，等于双重违反了他的职责。而且，周围宾客的沉默和不作为更可怕，象征着全场默认了这种暴力行为，仿佛规则在这一刻失效了。
+
+这场暴力事件不仅仅是个人情绪的失控，也象征着整个王室和贵族阶层的体面和规则同时崩溃。镜头选择在仪式的中心而非边缘发生暴力，强化了这种失控的冲击力。这个事件也标志着克里斯顿·科尔的黑化完成，他的行为将对未来的权力斗争产生深远影响。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">解释这个镜头</div>
           <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
         <div class="qa-meta">S03E01 · t=70s · scene s002</div>
-        <div class="qa-answer">这段挂毯片头用刺绣的方式抽象地展示了家族的血脉和历史事件。红色线条象征着血液和冲突，强调家族历史中的暴力和权力斗争。龙和战斗的图案则预示着即将展开的家族斗争。
+        <div class="qa-answer">这个镜头是《龙之家族》的片头序列，用刺绣的方式展示了家族的血脉和历史事件。红色线条象征着血液和冲突，龙和战斗的图案则强调了家族历史中的暴力和权力斗争。这里的刺绣不仅仅是装饰，它通过视觉元素传达了家族内部的权力斗争和即将展开的冲突。
 
-片头通过这些元素不仅仅是在讲述历史，而是在预示家族内部的权力争夺和即将发生的冲突。红色线条贯穿始终，象征着家族成员之间的血债和复仇链条。挂毯上的图案提醒观众，权力斗争对家庭和个人的影响是深远而直接的。</div>
+这种设计意图让观众意识到，家族的历史不仅仅是荣耀与传承，还有背后的阴谋与争斗。红色线条特别值得注意，它们象征着即将展开的家族斗争，预示着未来的血腥冲突。这个片头为整部剧集奠定了基调：即使在最体面的家族历史中，暴力和权力斗争始终潜伏其中。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div>
       <div class="qa">
         <div class="qa-head">
-          <div class="qa-q">这个女孩为什么要冒险去驯服一条野龙？</div>
-          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+          <div class="qa-q">解释这个镜头</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
         </div>
         <div class="qa-meta">S03E01 · t=1400s · scene s026</div>
-        <div class="qa-answer">这段剧情里，海伦娜和阿莉森谈论伊蒙德的恐惧，实际上是在揭示坦格利安家族内部对龙的复杂情感和权力斗争。虽然海伦娜没有直接参与驯龙，但她的预言性言论常常揭示出深层次的家族动态。
+        <div class="qa-answer">在这个镜头中，阿莉森和她的女儿海拉娜正在谈论伊耿和伊蒙德的情况。阿莉森提到骑士的安危，但海拉娜没有顺着她的话，而是直接指出伊蒙德重新感受到了恐惧，尤其是对雷妮拉的龙群的畏惧。
 
-至于驯服野龙的动机，龙在坦格利安家族中不仅是权力的象征，也是他们血统合法性的证明。驯服一条野龙意味着对权力的掌控和家族地位的巩固。在当前的权力斗争背景下，拥有更多的龙可以显著提升一个家族或个人的政治影响力和军事力量。因此，冒险去驯服一条野龙不仅是为了获得实际的战斗力，也是一种象征性的胜利，显示出驯龙者的勇气和能力。</div>
+这个对话有两层意思。表面上，阿莉森似乎在关心骑士的安全，但海拉娜的回应揭示了更深的恐惧和不安。她提到伊蒙德的恐惧，实际上是在暗示雷妮拉的龙群给他们带来的威胁。这不仅是关于个人的恐惧，也是对权力斗争中龙的力量的担忧。
+
+阿莉森在这里展现了她的领导能力和决断力，她试图通过对话来缓和局势，但海拉娜的直言不讳打破了这种尝试，揭示了潜在的紧张和不安。这个场景显示了母女之间的微妙关系，以及在权力斗争中，恐惧和不安是如何影响决策的。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">这个角色是谁</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=1802s · scene s320</div>
+        <div class="qa-answer">在当前场景中，雷妮拉公主和克里斯顿·科尔骑士正在室内交谈。虽然场景中列出的人物是奥托·海塔尔，但根据情节描述，实际出现在画面中的角色是雷妮拉和克里斯顿。奥托·海塔尔并不在这个具体的对话场景中。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">这是什么梗</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=3312s · scene s661</div>
+        <div class="qa-answer">这段是《龙之家族》里一个非常重要的场景。克里斯顿·科尔在婚宴上失控，暴力打死了乔弗里·朗茅斯。这不仅仅是一个单纯的暴力事件，而是对整个婚礼秩序的严重破坏。
+
+御林铁卫的职责是保护王族和维护秩序，但克里斯顿在婚礼上公然杀人，等于彻底违反了他的天职。而更令人不安的是，周围的宾客没有立刻上前阻止，仿佛默认了这种暴力的发生。这种集体沉默让人感到规则的失效和权力的动摇。
+
+这场景的反讽在于，婚礼本应是一个庆祝、团结的时刻，但却变成了暴力和混乱的象征。它不仅仅是乔弗里一人的血，更是这一晚所有体面和秩序同时失效的标志。这也标志着克里斯顿·科尔角色的转变，他的行为预示着未来更大的动荡和权力斗争。</div>
         <div class="qa-rationale">裁判：无明显问题</div>
       </div></div></details>
     </section>
   
     <section class="zone-face">
-      <h2><span class="dot"></span>③ 人脸识别（闭集 leave-one-out）</h2>
-      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 0.45 + Top1−Top2 间隔 0.05）。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
+      <h2><span class="dot"></span>③ 人脸识别（角色库闭集分离度）</h2>
+      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 0.45 + Top1−Top2 间隔 0.05）。衡量的是<b>角色库本身的可分性</b>与阈值松紧，而非终端使用准确率。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
+      <div class="panel note" style="border-left:3px solid var(--face)">
+        关于"用剧里清晰截图直接识别"的评测：需要 ArcFace 模型在本机可跑（当前未装 deepface/未起人脸服务），且需要可靠的"这一帧是谁"标注。实测本集 KB 里 <code>characters_on_screen</code> 的自动标注不可靠——同一张脸会被同时标成两个人、片头字幕被标成角色、抽查的帧身份多处对不上，因此不能直接当作 ground truth。要跑真·截图识别，需先启动人脸服务并人工校准一小批清晰帧的身份标签。
+      </div>
       <div class="facegrid">
         <div class="fstat"><div class="fnum" style="color:var(--bad)">32.1%</div><div class="flab">Top-1 准确率</div></div>
         <div class="fstat"><div class="fnum" style="color:var(--warn)">16.1%</div><div class="flab">误识率（认错人）</div></div>

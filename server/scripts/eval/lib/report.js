@@ -141,8 +141,8 @@ function answerSection(ans) {
 
   return `
     <section class="zone-ans">
-      <h2><span class="dot"></span>② 回答质量（LLM 生成 + LLM 裁判）</h2>
-      <p class="lead">在真实主动问答链路上生成回答，再由裁判模型仅依据"生成时可见的、已按进度过滤的上下文"打分。忠实度=有无编造，有用性=是否切题具体，无剧透=有无引入超前信息。</p>
+      <h2><span class="dot"></span>② 回答质量（最常用快捷提问「解释这个镜头」）</h2>
+      <p class="lead">主打观众最常点的快捷提问，在全集多个场景点各问一次，测日常主路径。在真实主动问答链路上生成回答，再由裁判模型仅依据"生成时可见的、已按进度过滤的上下文"打分。忠实度=有无虚构具体剧情（通用背景不算），有用性=是否切题具体，无剧透=有无透露未来事件。</p>
       <div class="panel">
         <div class="panel-head">平均得分（${ans.judged}/${ans.n} 题成功评分）</div>
         <div class="ttable">
@@ -173,8 +173,11 @@ function faceSection(face) {
 
   return `
     <section class="zone-face">
-      <h2><span class="dot"></span>③ 人脸识别（闭集 leave-one-out）</h2>
-      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 ${face.threshold} + Top1−Top2 间隔 ${face.margin}）。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
+      <h2><span class="dot"></span>③ 人脸识别（角色库闭集分离度）</h2>
+      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 ${face.threshold} + Top1−Top2 间隔 ${face.margin}）。衡量的是<b>角色库本身的可分性</b>与阈值松紧，而非终端使用准确率。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
+      <div class="panel note" style="border-left:3px solid var(--face)">
+        关于"用剧里清晰截图直接识别"的评测：需要 ArcFace 模型在本机可跑（当前未装 deepface/未起人脸服务），且需要可靠的"这一帧是谁"标注。实测本集 KB 里 <code>characters_on_screen</code> 的自动标注不可靠——同一张脸会被同时标成两个人、片头字幕被标成角色、抽查的帧身份多处对不上，因此不能直接当作 ground truth。要跑真·截图识别，需先启动人脸服务并人工校准一小批清晰帧的身份标签。
+      </div>
       <div class="facegrid">
         <div class="fstat"><div class="fnum" style="color:${rateColor(face.top1_accuracy, 0.6, 0.35)}">${pct(face.top1_accuracy)}</div><div class="flab">Top-1 准确率</div></div>
         <div class="fstat"><div class="fnum" style="color:${rateColor(1 - face.false_accept_rate, 0.85, 0.7)}">${pct(face.false_accept_rate)}</div><div class="flab">误识率（认错人）</div></div>
