@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const charactersLib = require('./characters');
+const kbPaths = require('./kb-paths');
 
 const SEASONS_DIR = path.join(__dirname, '..', 'kb', 'episodes');
 const KB_DIR = path.join(__dirname, '..', 'kb');
@@ -40,7 +41,7 @@ const _kbCache = new Map();
 function loadKBSafe(videoId) {
   if (!videoId) return null;
   if (_kbCache.has(videoId)) return _kbCache.get(videoId);
-  const p = path.join(KB_DIR, `${videoId}.json`);
+  const p = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(p)) { _kbCache.set(videoId, null); return null; }
   try {
     const kb = JSON.parse(fs.readFileSync(p, 'utf8'));
