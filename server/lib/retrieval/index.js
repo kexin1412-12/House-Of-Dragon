@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const kbPaths = require('../kb-paths');
 const { filterEligible } = require('./temporal-filter');
 const { rankLexical } = require('./lexical');
 const { rankDense, embedQuery } = require('./vector-store');
@@ -12,7 +13,7 @@ let QUERY_EMBED_CACHE = new Map();
 
 function defaultLoadChunks(showId) {
   if (VECTOR_CACHE) return VECTOR_CACHE;
-  const fp = path.join(__dirname, '..', '..', 'kb', 'retrieval', `${showId || 'house-of-the-dragon'}.vectors.json`);
+  const fp = kbPaths.vectors(showId || 'house-of-the-dragon');
   VECTOR_CACHE = fs.existsSync(fp) ? JSON.parse(fs.readFileSync(fp, 'utf8')) : [];
   return VECTOR_CACHE;
 }

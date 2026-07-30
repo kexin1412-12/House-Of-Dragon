@@ -12,9 +12,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('./kb-paths');
 
 function loadCharacterDb(showId) {
-  const p = path.join(__dirname, '..', 'kb', 'characters', `${showId}.json`);
+  const p = kbPaths.charactersDb(showId);
   if (!fs.existsSync(p)) throw new Error(`Character DB not found: ${p}`);
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
@@ -27,7 +28,7 @@ const _roleplayCache = new Map();
 function loadRoleplayProfiles(showId) {
   if (!showId) return null;
   if (_roleplayCache.has(showId)) return _roleplayCache.get(showId);
-  const p = path.join(__dirname, '..', 'kb', 'characters', `${showId}.roleplay.json`);
+  const p = kbPaths.roleplayDb(showId);
   if (!fs.existsSync(p)) {
     _roleplayCache.set(showId, null);
     return null;
@@ -188,7 +189,7 @@ const _dragonPortraitCache = new Map();
 function pickDragonPortraitUrl(dragonId) {
   if (!dragonId) return null;
   if (_dragonPortraitCache.has(dragonId)) return _dragonPortraitCache.get(dragonId);
-  const dir = path.join(__dirname, '..', 'kb', 'characters', 'dragon_refs');
+  const dir = kbPaths.dragonRefsDir();
   let url = null;
   try {
     if (fs.existsSync(dir)) {
@@ -288,7 +289,7 @@ function pickPortraitUrl(characterId, actorVersion) {
   if (_portraitCache.has(key)) return _portraitCache.get(key);
 
   const dirs = [
-    path.join(__dirname, '..', 'kb', 'characters', 'face_refs', characterId, actorVersion),
+    kbPaths.faceRefsDir(characterId, actorVersion),
     path.join(__dirname, '..', '..', 'client', 'public', 'kb', 'characters', 'face_refs', characterId, actorVersion),
   ];
   let url = null;

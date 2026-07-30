@@ -20,7 +20,7 @@ async function main() {
     const kb = readJson(kbPaths.sceneKb(vid));
     fresh.push(...chunkScenes(kb));
   }
-  const charPath = path.join(SERVER, 'kb', 'characters', `${showId}.json`);
+  const charPath = kbPaths.charactersDb(showId);
   if (fs.existsSync(charPath)) {
     fresh.push(...chunkCharacters(readJson(charPath), { show_id: showId, video_id: null, season: 1 }));
   }
@@ -30,14 +30,14 @@ async function main() {
       fresh.push(...chunkLore(readJson(path.join(refsDir, f)), { show_id: showId, video_id: null, season: 1 }));
     }
   }
-  const taggedRecap = path.join(SERVER, 'kb', 'retrieval', `${showId}.recap-tagged.json`);
+  const taggedRecap = kbPaths.vectors(showId).replace('.vectors.json', '.recap-tagged.json');
   if (fs.existsSync(taggedRecap)) {
     fresh.push(...chunkRecap(readJson(taggedRecap), { show_id: showId, video_id: null, season: 1 }));
   }
 
-  const outDir = path.join(SERVER, 'kb', 'retrieval');
+  const outDir = path.dirname(kbPaths.vectors(showId));
   fs.mkdirSync(outDir, { recursive: true });
-  const outPath = path.join(outDir, `${showId}.vectors.json`);
+  const outPath = kbPaths.vectors(showId);
   const existing = fs.existsSync(outPath) ? readJson(outPath) : [];
 
   const { merged, added, updated, deleted } = syncIndex(existing, fresh);

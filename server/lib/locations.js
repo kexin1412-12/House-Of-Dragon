@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('./kb-paths');
 
 const cache = new Map();
 
@@ -7,7 +8,7 @@ function loadLocationDb(showId) {
   if (!showId) return null;
   if (!/^[a-zA-Z0-9_-]+$/.test(showId)) return null;
   if (cache.has(showId)) return cache.get(showId);
-  const file = path.join(__dirname, '..', 'kb', 'locations', `${showId}.json`);
+  const file = kbPaths.locations(showId);
   if (!fs.existsSync(file)) {
     cache.set(showId, null);
     return null;

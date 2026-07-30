@@ -59,10 +59,10 @@ class ToolBox {
     const kb = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
 
     const showId = kb.show_id || 'house-of-the-dragon';
-    const charDbPath = path.join(SERVER_DIR, 'kb', 'characters', `${showId}.json`);
+    const charDbPath = kbPaths.charactersDb(showId);
     const charDb = fs.existsSync(charDbPath) ? JSON.parse(fs.readFileSync(charDbPath, 'utf8')) : null;
 
-    const symPath = path.join(SERVER_DIR, 'kb', 'symbols', `${showId}.json`);
+    const symPath = kbPaths.symbolsDict(showId);
     const symbolDict = fs.existsSync(symPath) ? JSON.parse(fs.readFileSync(symPath, 'utf8')) : { symbols: [] };
 
     const srtPath = path.join(SERVER_DIR, 'uploads', `${videoId}.srt`);
