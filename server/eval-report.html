@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>项目评测报告 · house-of-the-dragon</title>
+<style>
+  :root{
+    --bg:#f7f5f2; --surface:#ffffff; --ink:#26221d; --muted:#8a8177; --line:#e7e2da;
+    --ret:#5b7a99; --ret-soft:#eef2f6;
+    --ans:#7c6aa8; --ans-soft:#f1eef7;
+    --face:#c08a3e; --face-soft:#f6efe3;
+    --ok:#3f9142; --warn:#c9962f; --bad:#c0503f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 22px 80px}
+  header h1{font-size:24px;margin:0 0 4px}
+  header .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:34px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;border-top:3px solid var(--line)}
+  .zone-ret .card, .card.zone-ret{border-top-color:var(--ret)}
+  .zone-ans .card, .card.zone-ans{border-top-color:var(--ans)}
+  .zone-face .card, .card.zone-face{border-top-color:var(--face)}
+  .card-tag{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+  .card-metric{font-size:34px;font-weight:700;margin:6px 0 2px;line-height:1}
+  .card-metric .of5{font-size:16px;color:var(--muted);font-weight:600}
+  .card-metric.muted{color:var(--muted)}
+  .card-sub{font-size:12.5px;color:var(--muted)}
+  .card-note{font-size:12px;margin-top:8px;color:var(--ink)}
+  section{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:22px}
+  section h2{font-size:18px;margin:0 0 6px;display:flex;align-items:center;gap:9px}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .zone-ret h2 .dot{background:var(--ret)} .zone-ans h2 .dot{background:var(--ans)} .zone-face h2 .dot{background:var(--face)}
+  .lead{color:#5c554c;font-size:13.5px;margin:0 0 16px}
+  .lead code,.lead b{background:var(--ret-soft);padding:1px 6px;border-radius:5px;font-size:12.5px}
+  .zone-ans .lead code,.zone-ans .lead b{background:var(--ans-soft)} .zone-face .lead code,.zone-face .lead b{background:var(--face-soft)}
+  .panel{background:#fbfaf8;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .panel-head{font-size:12.5px;color:var(--muted);margin-bottom:10px;font-weight:600}
+  .panel.note{font-size:12.5px;color:#6b6459;line-height:1.55}
+  .ttable{display:flex;flex-direction:column;gap:9px}
+  .trow{display:grid;grid-template-columns:180px 1fr 64px;align-items:center;gap:12px}
+  .tname{font-size:13px} .tname .dim{color:var(--muted);font-size:11px}
+  .tval{font-size:13px;font-weight:600;text-align:right}
+  .tval .of5{font-size:10px;color:var(--muted)}
+  .bar{height:8px;background:#ece7df;border-radius:6px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px}
+  details{margin-top:8px} summary{cursor:pointer;font-size:13.5px;font-weight:600;color:#4a443c;padding:6px 0}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;white-space:nowrap}
+  td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.q{max-width:280px} td.mono,.mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11px}
+  .small{font-size:10.5px} .dim{color:var(--muted)}
+  .ok-text{color:var(--ok)} .bad-text{color:var(--bad);font-weight:600}
+  .qalist{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+  .qa{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfaf8}
+  .qa-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .qa-q{font-weight:600;font-size:14px}
+  .qa-scores{display:flex;gap:6px;flex-wrap:wrap}
+  .jbadge{font-size:11px;border:1px solid var(--line);border-radius:20px;padding:2px 9px;white-space:nowrap}
+  .qa-meta{color:var(--muted);font-size:11px;margin:4px 0 9px}
+  .qa-answer{font-size:13.5px;color:#33302b;white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:11px 13px}
+  .qa-rationale{font-size:12px;color:#6b6459;margin-top:8px;padding-left:10px;border-left:3px solid var(--ans)}
+  .facegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .fstat{background:#fbfaf8;border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}
+  .fnum{font-size:24px;font-weight:700}
+  .flab{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .twocol{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+  ul.conf{list-style:none;padding:0;margin:8px 0 0;font-size:12.5px;display:flex;flex-direction:column;gap:5px}
+  @media(max-width:760px){.cards,.facegrid{grid-template-columns:1fr 1fr}.twocol{grid-template-columns:1fr}.trow{grid-template-columns:130px 1fr 56px}}
+</style></head>
+<body><div class="wrap">
+  <header>
+    <h1>项目评测报告</h1>
+    <div class="sub">house-of-the-dragon · 生成于 2026/7/30 03:24:45 · 检索链路 混合（向量 × 关键词）+ 时序过滤</div>
+  </header>
+  <div class="cards">
+    <div class="card zone-ret">
+      <div class="card-tag">① 检索召回</div>
+      <div class="card-metric" style="color:var(--bad)">31.7%</div>
+      <div class="card-sub">recall@8 · 30 题 · MRR 0.19</div>
+      <div class="card-note">✓ 无越界泄漏</div>
+    </div>
+      <div class="card zone-ans">
+        <div class="card-tag">② 回答质量</div>
+        <div class="card-metric" style="color:var(--ok)">4.11<span class="of5">/5</span></div>
+        <div class="card-sub">12/12 题 · 忠实 3.75 · 有用 4.33 · 无剧透 4.25</div>
+        <div class="card-note">LLM 生成 + LLM 裁判</div>
+      </div>
+    <div class="card zone-face">
+      <div class="card-tag">③ 人脸识别</div>
+      <div class="card-metric" style="color:var(--bad)">32.1%</div>
+      <div class="card-sub">闭集 Top-1 · 56 样本 / 15 人</div>
+      <div class="card-note">误识 16.1% · 拒识 51.8%</div>
+    </div></div>
+  
+    <section class="zone-ret">
+      <h2><span class="dot"></span>① 检索召回 recall@8</h2>
+      <p class="lead">在时序防剧透过滤 + 混合（向量 × 关键词）检索链路上，衡量应当被召回的知识块是否进入 Top-8。<code>越界泄漏</code>指检索到了超出当前观看进度的未来知识块——硬约束，应始终为 0。</p>
+      <div class="panel">
+        <div class="panel-head">按知识类型分组的召回率</div>
+        <div class="ttable">
+      <div class="trow">
+        <div class="tname">character_state <span class="dim">×6</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:16.666666666666664%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">16.7%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">external_knowledge <span class="dim">×2</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:25%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">25.0%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">character_relationship <span class="dim">×7</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:28.57142857142857%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">28.6%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">character_motivation <span class="dim">×3</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:33.33333333333333%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">33.3%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">lore_card <span class="dim">×3</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:33.33333333333333%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">33.3%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">scene_reading <span class="dim">×9</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:44.44444444444444%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">44.4%</div>
+      </div></div>
+      </div>
+      <details open>
+        <summary>逐题明细（30 题）</summary>
+        <div class="tablewrap"><table>
+          <thead><tr><th>题目</th><th>类型</th><th>问题</th><th>recall</th><th>RR</th><th>泄漏</th><th>未命中</th></tr></thead>
+          <tbody>
+    <tr>
+      <td class="mono">q_rhaenyra_identity_s1e5</td>
+      <td>character_state</td>
+      <td class="q">雷妮拉现在是什么身份？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:rhaenyra_targaryen:state:2</td>
+    </tr>
+    <tr>
+      <td class="mono">q_alicent_side_s1e5</td>
+      <td>character_state</td>
+      <td class="q">阿莉森特现在站在哪一边？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:alicent_hightower:state:2</td>
+    </tr>
+    <tr>
+      <td class="mono">q_viserys_role_s1e5</td>
+      <td>character_state</td>
+      <td class="q">国王韦赛里斯是个怎样的国王，他在王朝里扮演什么角色？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.50</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_criston_cole_state_s1e5</td>
+      <td>character_state</td>
+      <td class="q">克里斯顿·科尔这个御林铁卫在婚宴上出了什么事？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:criston_cole:state:1</td>
+    </tr>
+    <tr>
+      <td class="mono">q_otto_dismissed_s1e5</td>
+      <td>character_state</td>
+      <td class="q">御前首相奥托·海塔尔怎么被国王革职了？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:otto_hightower:state:1</td>
+    </tr>
+    <tr>
+      <td class="mono">q_laenor_state_s1e5</td>
+      <td>character_state</td>
+      <td class="q">莱诺·瓦列利安现在和谁成婚了？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:laenor_velaryon:state:1</td>
+    </tr>
+    <tr>
+      <td class="mono">q_alicent_rhaenyra_relation_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">阿莉森特和雷妮拉现在还算朋友吗？她们的关系变成什么样了？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:2:1</td>
+    </tr>
+    <tr>
+      <td class="mono">q_moon_tea_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">月亮茶是怎么回事？国王为什么派人送月亮茶去龙石岛？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_daemon_dance_whisper_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">戴蒙在婚宴舞池里贴着雷妮拉耳边说话，这段暧昧是什么意思？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:44:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_criston_kills_joffrey_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">克里斯顿在婚礼上当众打死的那个人是谁？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:46:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_daemon_rhea_murder_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">戴蒙的妻子瑞亚·罗伊斯是怎么死的？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:48:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_rhaenyra_laenor_arrangement_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">雷妮拉和莱诺在海滩上达成了什么样的婚姻协议？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:42:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_viserys_otto_split_s1e5</td>
+      <td>character_relationship</td>
+      <td class="q">韦赛里斯和奥托这对多年君臣为什么突然决裂？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_rhaenyra_motive_marriage_s1e5</td>
+      <td>character_motivation</td>
+      <td class="q">雷妮拉为什么用一种很清醒、不带浪漫幻想的态度进入这场政治婚姻？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.25</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_alicent_green_motive_s1e5</td>
+      <td>character_motivation</td>
+      <td class="q">阿莉森特在婚宴上穿那身祖母绿到底想表达什么动机？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:alicent_hightower:motive:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_criston_turn_motive_s1e5</td>
+      <td>character_motivation</td>
+      <td class="q">克里斯顿的忠诚为什么从对雷妮拉的私人感情转成了怨恨？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:criston_cole:motive:0</td>
+    </tr>
+    <tr>
+      <td class="mono">q_valyria_dragons_lore</td>
+      <td>lore_card</td>
+      <td class="q">坦格利安家族的龙是从哪来的？瓦雷利亚是什么？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:lore:4<br>house-of-the-dragon:lore:3</td>
+    </tr>
+    <tr>
+      <td class="mono">q_targaryen_sigil_lore</td>
+      <td>lore_card</td>
+      <td class="q">坦格利安家族的家徽和族语是什么？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.33</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_valyria_customs_lore</td>
+      <td>lore_card</td>
+      <td class="q">瓦雷利亚有哪些在别处被禁止的习俗，比如近亲结婚？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:lore:5</td>
+    </tr>
+    <tr>
+      <td class="mono">q_iron_throne_symbol_s1e5</td>
+      <td>external_knowledge</td>
+      <td class="q">铁王座在剧里象征着什么，为什么总是割伤坐上去的人？</td>
+      <td class="num" style="color:var(--warn)">50.0%</td>
+      <td class="num">0.33</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:recap:19</td>
+    </tr>
+    <tr>
+      <td class="mono">q_daemon_violence_s1e5</td>
+      <td>external_knowledge</td>
+      <td class="q">戴蒙那些残忍又不羁的举动说明了他怎样的性格？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:recap:10<br>house-of-the-dragon:recap:9</td>
+    </tr>
+    <tr>
+      <td class="mono">q_tapestry_meaning_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">开头这段挂毯片头到底在讲什么？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:tapestry:reading</td>
+    </tr>
+    <tr>
+      <td class="mono">q_maegor_death_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">梅葛是怎么死在铁王座上的，这幅画什么意思？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading</td>
+    </tr>
+    <tr>
+      <td class="mono">q_daenys_dream_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">片头里那个关于瓦雷利亚末日的梦是什么意思，为什么对坦格利安这么重要？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading</td>
+    </tr>
+    <tr>
+      <td class="mono">q_great_council_101_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">101年的那场大议会为什么是后面继承危机的制度伏笔？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:great_council_of_101:reading</td>
+    </tr>
+    <tr>
+      <td class="mono">q_vhagar_kills_arrax_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">瓦格哈尔咬死阿拉克斯那一幕，为什么是全面战争的临界点？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.50</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_divided_claims_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">伊耿和雷妮拉各自的继承权合法性有什么区别？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.50</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_sheepstealer_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">雷妮亚为什么要去驯服那条不受王室控制的野龙？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.25</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr>
+    <tr>
+      <td class="mono">q_jaehaerys_restoration_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">杰赫里斯和亚莉珊并肩那幅画，跟前一幅梅葛之死是什么剪辑关系？</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading</td>
+    </tr>
+    <tr>
+      <td class="mono">q_jaehaerys_funeral_s3e1</td>
+      <td>scene_reading</td>
+      <td class="q">小杰赫里斯王子的葬礼那幅画，把复仇引向了什么地方？</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
+      <td class="num">✓</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
+    </tr></tbody>
+        </table></div>
+      </details>
+    </section>
+  
+    <section class="zone-ans">
+      <h2><span class="dot"></span>② 回答质量（LLM 生成 + LLM 裁判）</h2>
+      <p class="lead">在真实主动问答链路上生成回答，再由裁判模型仅依据"生成时可见的、已按进度过滤的上下文"打分。忠实度=有无编造，有用性=是否切题具体，无剧透=有无引入超前信息。</p>
+      <div class="panel">
+        <div class="panel-head">平均得分（12/12 题成功评分）</div>
+        <div class="ttable">
+          
+    <div class="trow">
+      <div class="tname">忠实度</div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:75%;background:var(--warn)"></div></div></div>
+      <div class="tval" style="color:var(--warn)">3.75<span class="of5">/5</span></div>
+    </div>
+          
+    <div class="trow">
+      <div class="tname">有用性</div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:86.66666666666666%;background:var(--ok)"></div></div></div>
+      <div class="tval" style="color:var(--ok)">4.33<span class="of5">/5</span></div>
+    </div>
+          
+    <div class="trow">
+      <div class="tname">无剧透</div>
+      <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:85%;background:var(--ok)"></div></div></div>
+      <div class="tval" style="color:var(--ok)">4.25<span class="of5">/5</span></div>
+    </div>
+        </div>
+      </div>
+      <details open><summary>逐题回答与评分</summary><div class="qalist">
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">雷妮拉和这个铁卫骑士现在是什么关系？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=1800s · scene s320</div>
+        <div class="qa-answer">雷妮拉公主和克里斯顿·科尔骑士之间的关系，已经超越了普通的职责关系。当前的场景中，他们在私下交谈，氛围亲密且私密，这暗示两人之间可能存在某种情感联系。雷妮拉可能在寻求情感支持，或者有其他密谋，而克里斯顿骑士的复杂表情也显示出他对这段关系的某种纠结或困惑。虽然具体的关系状态并不明确，但显然他们之间的互动已经不再是单纯的主仆关系。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">这场婚宴气氛怎么这么紧张，到底发生了什么？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">忠实 3</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 4</span><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">无剧透 3</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
+        <div class="qa-answer">在这场婚宴上，气氛紧张是因为多重政治和个人关系的交织。首先，莱昂诺·斯壮在御前会议中表现出顺从和谨慎，他低头的姿态暗示了对国王韦赛里斯一世的无奈接受。这种压抑的情绪可能反映了他在政治压力下的内心挣扎。
+
+同时，王后阿莉森特在婚宴上穿着海塔尔祖母绿，独自迟到，这是一种公开的仪式性告别，表明她与国王韦赛里斯的对立。她此前一直依附于韦赛里斯和雷妮拉的“国王—继承人”轴线，但现在她选择了公开决裂。这种公开的姿态无疑加剧了婚宴的紧张气氛。
+
+此外，戴蒙·坦格利安的放荡不羁个性和权力欲也在场上显现，他曾当众羞辱妻子，揭示了权力斗争中的真实动机和内心挣扎。这些因素共同作用，使得婚宴的气氛异常紧张。</div>
+        <div class="qa-rationale">裁判：回答中关于莱昂诺·斯壮的部分忠实于CONTEXT，但关于阿莉森特和戴蒙的内容没有在当前CONTEXT中直接提及，可能超出当前场景的信息。回答总体上有助于理解婚宴的紧张气氛，但包含了一些超出当前场景的推测和信息。</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">阿莉森特一个人在神木林里，她在想什么？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=600s · scene s132</div>
+        <div class="qa-answer">阿莉森特在神木林中独自思考，可能是在反思她在宫廷中的处境和未来的走向。她身着红金两色礼服，这种颜色选择可能是有意的，象征着她与海塔尔家族的联系和她在权力斗争中的立场。神木林是旧神的地盘，通常被视为一个寻求指引和内心平静的地方，这暗示她可能在寻求某种精神上的慰藉或指引。
+
+同时，她的父亲奥托·海塔尔曾是国王的首相，但被革职，这对她来说是一个重大的政治打击。她可能在思考如何重新把海塔尔家族推回到权力的中心，以及如何为父亲的政治反弹做准备。她的独处也显示出她在宫廷中的孤立感，这可能促使她更加坚定地站在海塔尔家族一边。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">戴蒙旁边这个骑装女人是谁，他们什么关系？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=120s · scene s22</div>
+        <div class="qa-answer">戴蒙旁边的骑装女人是雷娅夫人。她是戴蒙的妻子，但两人之间的关系并不和睦。戴蒙之前曾当众羞辱过她，展现了他放荡不羁的个性和对权力的渴望。雷娅夫人对戴蒙的出现似乎并不意外，表情平静，这可能暗示她对两人之间的紧张关系已经习以为常。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">科利斯和蕾妮丝这对夫妇，对这门婚事是什么态度？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2400s · scene s410</div>
+        <div class="qa-answer">科利斯·瓦列利安和蕾妮丝·坦格利安夫妇对这门婚事的态度可能是复杂的。科利斯神情严肃，可能在考虑这场婚事对瓦列利安家族的战略意义和利益。他作为家族的领袖，自然会关注婚姻带来的政治和经济影响。而蕾妮丝面带微笑，可能暗示她对这场婚事持有更开放或乐观的态度，或者她在扮演一个更为和善的角色，以缓和现场的气氛。
+
+两人作为瓦列利安家族的代表出席宴会，象征着家族的地位与影响力。他们的态度可能反映了家族内部对这场婚事的不同看法：科利斯更注重实际利益，而蕾妮丝可能更关注个人关系或家族的长远声誉。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">月亮茶是怎么回事？为什么大家提到它气氛就变了？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
+        <div class="qa-answer">月亮茶在《冰与火之歌》的世界里是一种避孕药，通常用于防止意外怀孕。在这个故事背景中，月亮茶的出现往往意味着怀疑、信任危机或者不光彩的事情。
+
+在你提到的场景中，月亮茶的出现意味着国王韦赛里斯对女儿雷妮拉的不信任。他选择送月亮茶而不是直接对话，等于在用行动表达对她行为的怀疑。这种情况下，月亮茶不仅仅是药物，更是一种政治信号，表明父女之间的信任已经破裂。提到月亮茶，大家自然会意识到背后的不信任和权力斗争，所以气氛会变得紧张和微妙。</div>
+        <div class="qa-rationale">裁判：回答中关于月亮茶的解释与CONTEXT中的信息基本一致，但未明确提到CONTEXT中具体的父女关系破裂细节。无明显问题。</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">雷妮拉为什么不肯和克里斯顿私奔？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">忠实 3</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=1800s · scene s320</div>
+        <div class="qa-answer">雷妮拉不愿和克里斯顿私奔的原因涉及她的身份和责任。虽然她对自由的渴望很强烈，但她同时也是铁王座的继承人，这意味着她肩负着巨大的家族责任和政治义务。私奔不仅会让她失去继承权，还会对她的家族和整个王国造成巨大的影响。
+
+此外，雷妮拉的内心可能也在经历矛盾：一方面，她渴望自由和个人幸福，另一方面，她又无法完全摆脱对权力和责任的意识。这种矛盾使她无法轻易放弃自己的身份去追求个人的感情生活。克里斯顿可能对她有深厚的感情，但雷妮拉的决定更多地受到政治和家族责任的驱动。</div>
+        <div class="qa-rationale">裁判：回答中提到雷妮拉的身份和责任与CONTEXT中的信息部分吻合，但具体提到的私奔影响和内心矛盾没有直接证据支持。回答总体切题且无剧透。</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">阿莉森特为什么偏偏穿一身绿色迟到入场？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
+        <div class="qa-answer">阿莉森特穿一身绿色并迟到入场，是一个非常有力的政治声明。在《龙之家族》的世界里，绿色是海塔尔家族的颜色，而她选择在雷妮拉的婚宴上身穿这身颜色，等于公开宣示她与国王韦赛里斯的立场分歧。她用这种方式当众告别了此前依附于国王和雷妮拉的轴线，表明她不再完全支持他们的立场。这种公开的仪式化行为，意味着她在政治上开始独立，并可能准备支持其他的政治势力。这是宫廷里非常明显的一个割席动作，显示出她的决心和立场转变。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">克里斯顿刚才为什么在婚宴上当众把人打死？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--bad);color:var(--bad)">忠实 1</span><span class="jbadge" style="border-color:var(--bad);color:var(--bad)">有用 2</span><span class="jbadge" style="border-color:var(--bad);color:var(--bad)">无剧透 1</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2900s · scene s541</div>
+        <div class="qa-answer">在婚宴上，克里斯顿·科尔当众打死了人，这行为背后有几层原因。首先，克里斯顿对雷妮拉有复杂的感情，他曾是她的护卫，两人有过亲密关系，但雷妮拉选择了政治婚姻，这让克里斯顿感到被背叛和羞辱。其次，婚宴上气氛紧张，各种政治和个人冲突交织，克里斯顿可能在情绪失控的情况下，因某种挑衅或误解而失去理智。最后，克里斯顿的行为也可能是对自己地位和情感的绝望反应，借此发泄内心的愤怒和挫败。这个事件在权力斗争的背景下，进一步加剧了局势的复杂性。</div>
+        <div class="qa-rationale">裁判：回答中关于克里斯顿·科尔的行为和动机的描述在CONTEXT中没有依据，完全是编造的。CONTEXT中没有提到克里斯顿·科尔，也没有关于他在婚宴上行为的任何信息。回答虽然试图解释事件的背景和动机，但由于缺乏CONTEXT支持，忠实度极低。</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">坦格利安家族的龙到底是从哪来的？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--bad);color:var(--bad)">忠实 1</span><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">有用 3</span><span class="jbadge" style="border-color:var(--bad);color:var(--bad)">无剧透 2</span></div>
+        </div>
+        <div class="qa-meta">S01E05 · t=2135s · scene s356</div>
+        <div class="qa-answer">坦格利安家族的龙起源于瓦雷利亚自由堡垒，这是一个古老而强大的文明，以驯养和使用龙而闻名。坦格利安家族在瓦雷利亚毁灭前不久迁居到了龙石岛，并带走了他们的龙。瓦雷利亚的龙使坦格利安家族在后来征服维斯特洛大陆时获得了巨大的军事优势，从而建立了他们的王朝。龙在坦格利安家族中不仅是力量的象征，也与他们的家族命运紧密相连。</div>
+        <div class="qa-rationale">裁判：回答中关于坦格利安家族龙的起源和历史的信息在CONTEXT中没有依据，属于编造内容。回答提供了一些背景知识，但与当前场景无关，且包含超出当前进度的剧情信息。</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">开头这段挂毯片头到底在讲什么？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">忠实 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 5</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S03E01 · t=70s · scene s002</div>
+        <div class="qa-answer">这段挂毯片头用刺绣的方式抽象地展示了家族的血脉和历史事件。红色线条象征着血液和冲突，强调家族历史中的暴力和权力斗争。龙和战斗的图案则预示着即将展开的家族斗争。
+
+片头通过这些元素不仅仅是在讲述历史，而是在预示家族内部的权力争夺和即将发生的冲突。红色线条贯穿始终，象征着家族成员之间的血债和复仇链条。挂毯上的图案提醒观众，权力斗争对家庭和个人的影响是深远而直接的。</div>
+        <div class="qa-rationale">裁判：无明显问题</div>
+      </div>
+      <div class="qa">
+        <div class="qa-head">
+          <div class="qa-q">这个女孩为什么要冒险去驯服一条野龙？</div>
+          <div class="qa-scores"><span class="jbadge" style="border-color:var(--warn);color:var(--warn)">忠实 3</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">有用 4</span><span class="jbadge" style="border-color:var(--ok);color:var(--ok)">无剧透 5</span></div>
+        </div>
+        <div class="qa-meta">S03E01 · t=1400s · scene s026</div>
+        <div class="qa-answer">这段剧情里，海伦娜和阿莉森谈论伊蒙德的恐惧，实际上是在揭示坦格利安家族内部对龙的复杂情感和权力斗争。虽然海伦娜没有直接参与驯龙，但她的预言性言论常常揭示出深层次的家族动态。
+
+至于驯服野龙的动机，龙在坦格利安家族中不仅是权力的象征，也是他们血统合法性的证明。驯服一条野龙意味着对权力的掌控和家族地位的巩固。在当前的权力斗争背景下，拥有更多的龙可以显著提升一个家族或个人的政治影响力和军事力量。因此，冒险去驯服一条野龙不仅是为了获得实际的战斗力，也是一种象征性的胜利，显示出驯龙者的勇气和能力。</div>
+        <div class="qa-rationale">裁判：回答中关于驯服野龙的动机部分与CONTEXT中提到的龙作为权力象征的内容一致，但没有直接证据支持海伦娜的预言性言论揭示家族动态的说法。</div>
+      </div></div></details>
+    </section>
+  
+    <section class="zone-face">
+      <h2><span class="dot"></span>③ 人脸识别（闭集 leave-one-out）</h2>
+      <p class="lead">对角色库中每条 ArcFace 特征做留一验证，完全复刻线上匹配决策（阈值 0.45 + Top1−Top2 间隔 0.05）。<b>误识率</b>（认成别人）比拒识更危险，是重点看的指标。</p>
+      <div class="facegrid">
+        <div class="fstat"><div class="fnum" style="color:var(--bad)">32.1%</div><div class="flab">Top-1 准确率</div></div>
+        <div class="fstat"><div class="fnum" style="color:var(--warn)">16.1%</div><div class="flab">误识率（认错人）</div></div>
+        <div class="fstat"><div class="fnum">51.8%</div><div class="flab">拒识率（不下判断）</div></div>
+        <div class="fstat"><div class="fnum" style="color:var(--bad)">66.7%</div><div class="flab">下判断时的准确率</div></div>
+      </div>
+      <div class="panel note">
+        注：本库共 56 条特征 / 15 人，部分角色仅 1-2 条参考。留一验证下，单条参考的角色在被留出时缺少同人对照，天然偏向拒识/误识——这本身也反映"参考太少时线上识别不稳"的真实风险。
+      </div>
+      <div class="twocol">
+        <details open>
+          <summary>按角色分解（准确率升序）</summary>
+          <div class="tablewrap"><table>
+            <thead><tr><th>角色</th><th>演员</th><th>样本</th><th>准确率</th><th>对</th><th>错</th><th>拒识</th></tr></thead>
+            <tbody>
+    <tr>
+      <td class="mono">viserys_targaryen</td>
+      <td>Paddy Considine</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num"><span class="bad-text">2</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">daemon_targaryen</td>
+      <td>Matt Smith</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">3</td>
+    </tr>
+    <tr>
+      <td class="mono">rhaenys_targaryen</td>
+      <td>Eve Best</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num"><span class="bad-text">1</span></td>
+      <td class="num">2</td>
+    </tr>
+    <tr>
+      <td class="mono">criston_cole</td>
+      <td>Fabien Frankel</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">3</td>
+    </tr>
+    <tr>
+      <td class="mono">lyonel_strong</td>
+      <td>Gavin Spokes</td>
+      <td class="num">2</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num"><span class="bad-text">1</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">aemond_targaryen</td>
+      <td>Ewan Mitchell</td>
+      <td class="num">4</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">4</td>
+    </tr>
+    <tr>
+      <td class="mono">helaena_targaryen</td>
+      <td>Phia Saban</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">0.0%</td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">3</td>
+    </tr>
+    <tr>
+      <td class="mono">otto_hightower</td>
+      <td>Rhys Ifans</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">33.3%</td>
+      <td class="num">1</td>
+      <td class="num"><span class="bad-text">1</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">larys_strong</td>
+      <td>Matthew Needham</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">33.3%</td>
+      <td class="num">1</td>
+      <td class="num"><span class="bad-text">1</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">mysaria</td>
+      <td>Sonoya Mizuno</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--bad)">33.3%</td>
+      <td class="num">1</td>
+      <td class="num">0</td>
+      <td class="num">2</td>
+    </tr>
+    <tr>
+      <td class="mono">aegon_targaryen_ii</td>
+      <td>Tom Glynn-Carney</td>
+      <td class="num">5</td>
+      <td class="num" style="color:var(--warn)">40.0%</td>
+      <td class="num">2</td>
+      <td class="num"><span class="bad-text">2</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">rhaenyra_targaryen</td>
+      <td>Milly Alcock</td>
+      <td class="num">7</td>
+      <td class="num" style="color:var(--warn)">57.1%</td>
+      <td class="num">4</td>
+      <td class="num">0</td>
+      <td class="num">3</td>
+    </tr>
+    <tr>
+      <td class="mono">harwin_strong</td>
+      <td>Ryan Corr</td>
+      <td class="num">5</td>
+      <td class="num" style="color:var(--ok)">60.0%</td>
+      <td class="num">3</td>
+      <td class="num"><span class="bad-text">1</span></td>
+      <td class="num">1</td>
+    </tr>
+    <tr>
+      <td class="mono">alicent_hightower</td>
+      <td>Emily Carey</td>
+      <td class="num">6</td>
+      <td class="num" style="color:var(--ok)">66.7%</td>
+      <td class="num">4</td>
+      <td class="num">0</td>
+      <td class="num">2</td>
+    </tr>
+    <tr>
+      <td class="mono">corlys_velaryon</td>
+      <td>Steve Toussaint</td>
+      <td class="num">3</td>
+      <td class="num" style="color:var(--ok)">66.7%</td>
+      <td class="num">2</td>
+      <td class="num">0</td>
+      <td class="num">1</td>
+    </tr></tbody>
+          </table></div>
+        </details>
+        <details open>
+          <summary>混淆对（谁被认成谁）</summary>
+          <ul class="conf"><li><span class="mono">viserys_targaryen → daemon_targaryen</span> <span class="dim">×1</span></li><li><span class="mono">viserys_targaryen → otto_hightower</span> <span class="dim">×1</span></li><li><span class="mono">otto_hightower → rhaenys_targaryen</span> <span class="dim">×1</span></li><li><span class="mono">rhaenys_targaryen → otto_hightower</span> <span class="dim">×1</span></li><li><span class="mono">harwin_strong → larys_strong</span> <span class="dim">×1</span></li><li><span class="mono">larys_strong → harwin_strong</span> <span class="dim">×1</span></li><li><span class="mono">lyonel_strong → otto_hightower</span> <span class="dim">×1</span></li><li><span class="mono">aegon_targaryen_ii → rhaenys_targaryen</span> <span class="dim">×1</span></li><li><span class="mono">aegon_targaryen_ii → daemon_targaryen</span> <span class="dim">×1</span></li></ul>
+        </details>
+      </div>
+    </section>
+  <footer style="color:var(--muted);font-size:11.5px;text-align:center;margin-top:10px">
+    评测集与脚本位于 scripts/eval · 重跑：<span class="mono">node scripts/eval/run_eval.js</span>
+  </footer>
+</div></body></html>

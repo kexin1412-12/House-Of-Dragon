@@ -1,0 +1,77 @@
+{
+  "_note": "LLM answer-quality eval set. Each item is a viewer question asked at cursor time t. The harness reconstructs the production active-Q&A context (spoiler-safe retrieve() knowledge + the current cursor-filtered scene slice), generates an answer with the real dialogue system prompt + model, then an LLM judge scores faithfulness / helpfulness / no-spoiler against that same context. Answers and judgments are cached; re-runs read the cache unless --refresh.",
+  "questions": [
+    {
+      "id": "a_rhaenyra_criston_relation",
+      "videoId": "house_of_dragon_05",
+      "t": 1800,
+      "question": "雷妮拉和这个铁卫骑士现在是什么关系？"
+    },
+    {
+      "id": "a_wedding_tension",
+      "videoId": "house_of_dragon_05",
+      "t": 2135,
+      "question": "这场婚宴气氛怎么这么紧张，到底发生了什么？"
+    },
+    {
+      "id": "a_alicent_godswood",
+      "videoId": "house_of_dragon_05",
+      "t": 600,
+      "question": "阿莉森特一个人在神木林里，她在想什么？"
+    },
+    {
+      "id": "a_daemon_rhea",
+      "videoId": "house_of_dragon_05",
+      "t": 120,
+      "question": "戴蒙旁边这个骑装女人是谁，他们什么关系？"
+    },
+    {
+      "id": "a_corlys_rhaenys_attitude",
+      "videoId": "house_of_dragon_05",
+      "t": 2400,
+      "question": "科利斯和蕾妮丝这对夫妇，对这门婚事是什么态度？"
+    },
+    {
+      "id": "a_moon_tea",
+      "videoId": "house_of_dragon_05",
+      "t": 2135,
+      "question": "月亮茶是怎么回事？为什么大家提到它气氛就变了？"
+    },
+    {
+      "id": "a_rhaenyra_refuse_elope",
+      "videoId": "house_of_dragon_05",
+      "t": 1800,
+      "question": "雷妮拉为什么不肯和克里斯顿私奔？"
+    },
+    {
+      "id": "a_alicent_green_dress",
+      "videoId": "house_of_dragon_05",
+      "t": 2135,
+      "question": "阿莉森特为什么偏偏穿一身绿色迟到入场？"
+    },
+    {
+      "id": "a_criston_beats_man",
+      "videoId": "house_of_dragon_05",
+      "t": 2900,
+      "question": "克里斯顿刚才为什么在婚宴上当众把人打死？"
+    },
+    {
+      "id": "a_targaryen_dragons_origin",
+      "videoId": "house_of_dragon_05",
+      "t": 2135,
+      "question": "坦格利安家族的龙到底是从哪来的？"
+    },
+    {
+      "id": "a_tapestry_prologue_s3e1",
+      "videoId": "house_of_dragon_s03e01",
+      "t": 70,
+      "question": "开头这段挂毯片头到底在讲什么？"
+    },
+    {
+      "id": "a_sheepstealer_s3e1",
+      "videoId": "house_of_dragon_s03e01",
+      "t": 1400,
+      "question": "这个女孩为什么要冒险去驯服一条野龙？"
+    }
+  ]
+}

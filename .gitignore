@@ -64,3 +64,6 @@ Thumbs.db
 # regenerable script output / local backups
 server/kb/.backups/
 server/kb/characters/_suggestions/
+
+# eval working cache (regenerable: query embeddings + LLM answer/judgment cache)
+server/scripts/eval/.cache/

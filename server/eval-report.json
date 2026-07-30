@@ -1,0 +1,1109 @@
+{
+  "retrieval": {
+    "k": 8,
+    "n": 30,
+    "dense_active": true,
+    "recall_at_k": 0.31666666666666665,
+    "mrr": 0.1888888888888889,
+    "leaks": 0,
+    "per_type_recall": {
+      "character_state": {
+        "recall": 0.16666666666666666,
+        "n": 6
+      },
+      "character_relationship": {
+        "recall": 0.2857142857142857,
+        "n": 7
+      },
+      "character_motivation": {
+        "recall": 0.3333333333333333,
+        "n": 3
+      },
+      "lore_card": {
+        "recall": 0.3333333333333333,
+        "n": 3
+      },
+      "external_knowledge": {
+        "recall": 0.25,
+        "n": 2
+      },
+      "scene_reading": {
+        "recall": 0.4444444444444444,
+        "n": 9
+      }
+    },
+    "per_question": [
+      {
+        "id": "q_rhaenyra_identity_s1e5",
+        "knowledge_type": "character_state",
+        "query": "雷妮拉现在是什么身份？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:2",
+          "house-of-the-dragon:recap:3"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2"
+        ]
+      },
+      {
+        "id": "q_alicent_side_s1e5",
+        "knowledge_type": "character_state",
+        "query": "阿莉森特现在站在哪一边？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:alicent_hightower:state:2"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:lyonel_strong:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:16",
+          "house-of-the-dragon:recap:17"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:alicent_hightower:state:2"
+        ]
+      },
+      {
+        "id": "q_viserys_role_s1e5",
+        "knowledge_type": "character_state",
+        "query": "国王韦赛里斯是个怎样的国王，他在王朝里扮演什么角色？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 1,
+        "reciprocal_rank": 0.5,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:viserys_targaryen:state:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:0:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:alicent_hightower:motive:0"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:char:viserys_targaryen:state:0"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_criston_cole_state_s1e5",
+        "knowledge_type": "character_state",
+        "query": "克里斯顿·科尔这个御林铁卫在婚宴上出了什么事？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:criston_cole:state:1"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:criston_cole:motive:0",
+          "house-of-the-dragon:recap:19"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:criston_cole:state:1"
+        ]
+      },
+      {
+        "id": "q_otto_dismissed_s1e5",
+        "knowledge_type": "character_state",
+        "query": "御前首相奥托·海塔尔怎么被国王革职了？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:otto_hightower:state:1"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:40:0",
+          "house-of-the-dragon:char:lyonel_strong:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:17"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:otto_hightower:state:1"
+        ]
+      },
+      {
+        "id": "q_laenor_state_s1e5",
+        "knowledge_type": "character_state",
+        "query": "莱诺·瓦列利安现在和谁成婚了？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:laenor_velaryon:state:1"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:1",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
+          "house-of-the-dragon:lore:5"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:laenor_velaryon:state:1"
+        ]
+      },
+      {
+        "id": "q_alicent_rhaenyra_relation_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "阿莉森特和雷妮拉现在还算朋友吗？她们的关系变成什么样了？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:2:1"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:17",
+          "house-of-the-dragon:recap:4"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:rel:2:1"
+        ]
+      },
+      {
+        "id": "q_moon_tea_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "月亮茶是怎么回事？国王为什么派人送月亮茶去龙石岛？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 1,
+        "reciprocal_rank": 1,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:41:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:41:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:20",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:lore:2"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:rel:41:0"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_daemon_dance_whisper_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "戴蒙在婚宴舞池里贴着雷妮拉耳边说话，这段暧昧是什么意思？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:44:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:rel:44:0"
+        ]
+      },
+      {
+        "id": "q_criston_kills_joffrey_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "克里斯顿在婚礼上当众打死的那个人是谁？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:46:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:criston_cole:motive:0",
+          "house-of-the-dragon:recap:19"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:rel:46:0"
+        ]
+      },
+      {
+        "id": "q_daemon_rhea_murder_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "戴蒙的妻子瑞亚·罗伊斯是怎么死的？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:48:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:rel:48:0"
+        ]
+      },
+      {
+        "id": "q_rhaenyra_laenor_arrangement_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "雷妮拉和莱诺在海滩上达成了什么样的婚姻协议？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:42:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:recap:6",
+          "house-of-the-dragon:recap:3",
+          "house-of-the-dragon:lore:5"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:rel:42:0"
+        ]
+      },
+      {
+        "id": "q_viserys_otto_split_s1e5",
+        "knowledge_type": "character_relationship",
+        "query": "韦赛里斯和奥托这对多年君臣为什么突然决裂？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 1,
+        "reciprocal_rank": 1,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:rel:40:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:40:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:alicent_hightower:motive:0"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:rel:40:0"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_rhaenyra_motive_marriage_s1e5",
+        "knowledge_type": "character_motivation",
+        "query": "雷妮拉为什么用一种很清醒、不带浪漫幻想的态度进入这场政治婚姻？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 1,
+        "reciprocal_rank": 0.25,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:10",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
+          "house-of-the-dragon:recap:2"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_alicent_green_motive_s1e5",
+        "knowledge_type": "character_motivation",
+        "query": "阿莉森特在婚宴上穿那身祖母绿到底想表达什么动机？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:alicent_hightower:motive:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
+          "house-of-the-dragon:recap:14"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:alicent_hightower:motive:0"
+        ]
+      },
+      {
+        "id": "q_criston_turn_motive_s1e5",
+        "knowledge_type": "character_motivation",
+        "query": "克里斯顿的忠诚为什么从对雷妮拉的私人感情转成了怨恨？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:char:criston_cole:motive:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:6"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:char:criston_cole:motive:0"
+        ]
+      },
+      {
+        "id": "q_valyria_dragons_lore",
+        "knowledge_type": "lore_card",
+        "query": "坦格利安家族的龙是从哪来的？瓦雷利亚是什么？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:lore:4",
+          "house-of-the-dragon:lore:3"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:0:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:lore:6",
+          "house-of-the-dragon:recap:21",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
+          "house-of-the-dragon:recap:3"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:lore:4",
+          "house-of-the-dragon:lore:3"
+        ]
+      },
+      {
+        "id": "q_targaryen_sigil_lore",
+        "knowledge_type": "lore_card",
+        "query": "坦格利安家族的家徽和族语是什么？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 1,
+        "reciprocal_rank": 0.3333333333333333,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:lore:0"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:rel:8:1",
+          "house-of-the-dragon:lore:0",
+          "house-of-the-dragon:recap:21",
+          "house-of-the-dragon:char:alicent_hightower:motive:0",
+          "house-of-the-dragon:recap:19"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:lore:0"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_valyria_customs_lore",
+        "knowledge_type": "lore_card",
+        "query": "瓦雷利亚有哪些在别处被禁止的习俗，比如近亲结婚？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:lore:5"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:lore:6",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:recap:2",
+          "house-of-the-dragon:recap:3"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:lore:5"
+        ]
+      },
+      {
+        "id": "q_iron_throne_symbol_s1e5",
+        "knowledge_type": "external_knowledge",
+        "query": "铁王座在剧里象征着什么，为什么总是割伤坐上去的人？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0.5,
+        "reciprocal_rank": 0.3333333333333333,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:recap:19",
+          "house-of-the-dragon:recap:20"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:41:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:20",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [
+          "house-of-the-dragon:recap:20"
+        ],
+        "miss_ids": [
+          "house-of-the-dragon:recap:19"
+        ]
+      },
+      {
+        "id": "q_daemon_violence_s1e5",
+        "knowledge_type": "external_knowledge",
+        "query": "戴蒙那些残忍又不羁的举动说明了他怎样的性格？",
+        "videoId": "house_of_dragon_05",
+        "cursorTime": 2135,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house-of-the-dragon:recap:10",
+          "house-of-the-dragon:recap:9"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:45:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house-of-the-dragon:recap:10",
+          "house-of-the-dragon:recap:9"
+        ]
+      },
+      {
+        "id": "q_tapestry_meaning_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "开头这段挂毯片头到底在讲什么？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:tapestry:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:rel:43:0",
+          "house-of-the-dragon:char:roderick_dustin:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house_of_dragon_s03e01:scene:s002:tapestry:reading"
+        ]
+      },
+      {
+        "id": "q_maegor_death_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "梅葛是怎么死在铁王座上的，这幅画什么意思？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:20",
+          "house-of-the-dragon:rel:19:2",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"
+        ]
+      },
+      {
+        "id": "q_daenys_dream_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "片头里那个关于瓦雷利亚末日的梦是什么意思，为什么对坦格利安这么重要？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading",
+          "house-of-the-dragon:lore:6",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:recap:21",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
+          "house-of-the-dragon:recap:7"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading"
+        ]
+      },
+      {
+        "id": "q_great_council_101_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "101年的那场大议会为什么是后面继承危机的制度伏笔？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:recap:20",
+          "house-of-the-dragon:rel:8:0",
+          "house-of-the-dragon:char:viserys_targaryen:state:1",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading"
+        ]
+      },
+      {
+        "id": "q_vhagar_kills_arrax_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "瓦格哈尔咬死阿拉克斯那一幕，为什么是全面战争的临界点？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 1,
+        "reciprocal_rank": 0.5,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:lore:6",
+          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:aemond_targaryen:state:1",
+          "house-of-the-dragon:rel:37:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+        ],
+        "hit_ids": [
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_divided_claims_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "伊耿和雷妮拉各自的继承权合法性有什么区别？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 1,
+        "reciprocal_rank": 0.5,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:rel:30:1",
+          "house-of-the-dragon:recap:0",
+          "house-of-the-dragon:char:laenor_velaryon:state:1",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1"
+        ],
+        "hit_ids": [
+          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_sheepstealer_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "雷妮亚为什么要去驯服那条不受王室控制的野龙？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 1400,
+        "recall": 1,
+        "reciprocal_rank": 0.25,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"
+        ],
+        "returned_ids": [
+          "house-of-the-dragon:rel:3:2",
+          "house-of-the-dragon:char:alicent_hightower:motive:0",
+          "house-of-the-dragon:char:helaena_targaryen:state:1",
+          "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading",
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:lore:4"
+        ],
+        "hit_ids": [
+          "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"
+        ],
+        "miss_ids": []
+      },
+      {
+        "id": "q_jaehaerys_restoration_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "杰赫里斯和亚莉珊并肩那幅画，跟前一幅梅葛之死是什么剪辑关系？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 0,
+        "reciprocal_rank": 0,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:rel:47:0",
+          "house-of-the-dragon:char:larys_strong:state:1",
+          "house-of-the-dragon:char:alicent_hightower:motive:0",
+          "house-of-the-dragon:recap:14"
+        ],
+        "hit_ids": [],
+        "miss_ids": [
+          "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading"
+        ]
+      },
+      {
+        "id": "q_jaehaerys_funeral_s3e1",
+        "knowledge_type": "scene_reading",
+        "query": "小杰赫里斯王子的葬礼那幅画，把复仇引向了什么地方？",
+        "videoId": "house_of_dragon_s03e01",
+        "cursorTime": 70,
+        "recall": 1,
+        "reciprocal_rank": 1,
+        "leak": 0,
+        "expected_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading"
+        ],
+        "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
+          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house-of-the-dragon:char:criston_cole:state:1",
+          "house-of-the-dragon:char:alicent_hightower:motive:0",
+          "house-of-the-dragon:rel:19:2",
+          "house-of-the-dragon:recap:0",
+          "house-of-the-dragon:recap:7"
+        ],
+        "hit_ids": [
+          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading"
+        ],
+        "miss_ids": []
+      }
+    ]
+  },
+  "answer": {
+    "skipped": false,
+    "n": 12,
+    "judged": 12,
+    "avg_faithfulness": 3.75,
+    "avg_helpfulness": 4.333333333333333,
+    "avg_no_spoiler": 4.25,
+    "avg_overall": 4.111111111111111,
+    "per_question": [
+      {
+        "id": "a_rhaenyra_criston_relation",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_wedding_tension",
+        "judgment": {
+          "faithfulness": 3,
+          "helpfulness": 4,
+          "no_spoiler": 3,
+          "rationale": "回答中关于莱昂诺·斯壮的部分忠实于CONTEXT，但关于阿莉森特和戴蒙的内容没有在当前CONTEXT中直接提及，可能超出当前场景的信息。回答总体上有助于理解婚宴的紧张气氛，但包含了一些超出当前场景的推测和信息。"
+        }
+      },
+      {
+        "id": "a_alicent_godswood",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_daemon_rhea",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_corlys_rhaenys_attitude",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_moon_tea",
+        "judgment": {
+          "faithfulness": 4,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "回答中关于月亮茶的解释与CONTEXT中的信息基本一致，但未明确提到CONTEXT中具体的父女关系破裂细节。无明显问题。"
+        }
+      },
+      {
+        "id": "a_rhaenyra_refuse_elope",
+        "judgment": {
+          "faithfulness": 3,
+          "helpfulness": 4,
+          "no_spoiler": 5,
+          "rationale": "回答中提到雷妮拉的身份和责任与CONTEXT中的信息部分吻合，但具体提到的私奔影响和内心矛盾没有直接证据支持。回答总体切题且无剧透。"
+        }
+      },
+      {
+        "id": "a_alicent_green_dress",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_criston_beats_man",
+        "judgment": {
+          "faithfulness": 1,
+          "helpfulness": 2,
+          "no_spoiler": 1,
+          "rationale": "回答中关于克里斯顿·科尔的行为和动机的描述在CONTEXT中没有依据，完全是编造的。CONTEXT中没有提到克里斯顿·科尔，也没有关于他在婚宴上行为的任何信息。回答虽然试图解释事件的背景和动机，但由于缺乏CONTEXT支持，忠实度极低。"
+        }
+      },
+      {
+        "id": "a_targaryen_dragons_origin",
+        "judgment": {
+          "faithfulness": 1,
+          "helpfulness": 3,
+          "no_spoiler": 2,
+          "rationale": "回答中关于坦格利安家族龙的起源和历史的信息在CONTEXT中没有依据，属于编造内容。回答提供了一些背景知识，但与当前场景无关，且包含超出当前进度的剧情信息。"
+        }
+      },
+      {
+        "id": "a_tapestry_prologue_s3e1",
+        "judgment": {
+          "faithfulness": 5,
+          "helpfulness": 5,
+          "no_spoiler": 5,
+          "rationale": "无明显问题"
+        }
+      },
+      {
+        "id": "a_sheepstealer_s3e1",
+        "judgment": {
+          "faithfulness": 3,
+          "helpfulness": 4,
+          "no_spoiler": 5,
+          "rationale": "回答中关于驯服野龙的动机部分与CONTEXT中提到的龙作为权力象征的内容一致，但没有直接证据支持海伦娜的预言性言论揭示家族动态的说法。"
+        }
+      }
+    ]
+  },
+  "face": {
+    "meta": {
+      "show": "house-of-the-dragon",
+      "model": "deepface ArcFace (detector=retinaface)",
+      "dim": 512
+    },
+    "threshold": 0.45,
+    "margin": 0.05,
+    "total_embeddings": 56,
+    "characters": 15,
+    "top1_accuracy": 0.32142857142857145,
+    "false_accept_rate": 0.16071428571428573,
+    "reject_rate": 0.5178571428571429,
+    "accuracy_when_matched": 0.6666666666666666,
+    "counts": {
+      "correct": 18,
+      "wrong": 9,
+      "rejected": 29
+    },
+    "per_character": [
+      {
+        "character_id": "viserys_targaryen",
+        "actor": "Paddy Considine",
+        "n": 3,
+        "correct": 0,
+        "wrong": 2,
+        "rejected": 1,
+        "accuracy": 0
+      },
+      {
+        "character_id": "daemon_targaryen",
+        "actor": "Matt Smith",
+        "n": 3,
+        "correct": 0,
+        "wrong": 0,
+        "rejected": 3,
+        "accuracy": 0
+      },
+      {
+        "character_id": "rhaenys_targaryen",
+        "actor": "Eve Best",
+        "n": 3,
+        "correct": 0,
+        "wrong": 1,
+        "rejected": 2,
+        "accuracy": 0
+      },
+      {
+        "character_id": "criston_cole",
+        "actor": "Fabien Frankel",
+        "n": 3,
+        "correct": 0,
+        "wrong": 0,
+        "rejected": 3,
+        "accuracy": 0
+      },
+      {
+        "character_id": "lyonel_strong",
+        "actor": "Gavin Spokes",
+        "n": 2,
+        "correct": 0,
+        "wrong": 1,
+        "rejected": 1,
+        "accuracy": 0
+      },
+      {
+        "character_id": "aemond_targaryen",
+        "actor": "Ewan Mitchell",
+        "n": 4,
+        "correct": 0,
+        "wrong": 0,
+        "rejected": 4,
+        "accuracy": 0
+      },
+      {
+        "character_id": "helaena_targaryen",
+        "actor": "Phia Saban",
+        "n": 3,
+        "correct": 0,
+        "wrong": 0,
+        "rejected": 3,
+        "accuracy": 0
+      },
+      {
+        "character_id": "otto_hightower",
+        "actor": "Rhys Ifans",
+        "n": 3,
+        "correct": 1,
+        "wrong": 1,
+        "rejected": 1,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "character_id": "larys_strong",
+        "actor": "Matthew Needham",
+        "n": 3,
+        "correct": 1,
+        "wrong": 1,
+        "rejected": 1,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "character_id": "mysaria",
+        "actor": "Sonoya Mizuno",
+        "n": 3,
+        "correct": 1,
+        "wrong": 0,
+        "rejected": 2,
+        "accuracy": 0.3333333333333333
+      },
+      {
+        "character_id": "aegon_targaryen_ii",
+        "actor": "Tom Glynn-Carney",
+        "n": 5,
+        "correct": 2,
+        "wrong": 2,
+        "rejected": 1,
+        "accuracy": 0.4
+      },
+      {
+        "character_id": "rhaenyra_targaryen",
+        "actor": "Milly Alcock",
+        "n": 7,
+        "correct": 4,
+        "wrong": 0,
+        "rejected": 3,
+        "accuracy": 0.5714285714285714
+      },
+      {
+        "character_id": "harwin_strong",
+        "actor": "Ryan Corr",
+        "n": 5,
+        "correct": 3,
+        "wrong": 1,
+        "rejected": 1,
+        "accuracy": 0.6
+      },
+      {
+        "character_id": "alicent_hightower",
+        "actor": "Emily Carey",
+        "n": 6,
+        "correct": 4,
+        "wrong": 0,
+        "rejected": 2,
+        "accuracy": 0.6666666666666666
+      },
+      {
+        "character_id": "corlys_velaryon",
+        "actor": "Steve Toussaint",
+        "n": 3,
+        "correct": 2,
+        "wrong": 0,
+        "rejected": 1,
+        "accuracy": 0.6666666666666666
+      }
+    ],
+    "confusion": [
+      {
+        "pair": "viserys_targaryen → daemon_targaryen",
+        "count": 1
+      },
+      {
+        "pair": "viserys_targaryen → otto_hightower",
+        "count": 1
+      },
+      {
+        "pair": "otto_hightower → rhaenys_targaryen",
+        "count": 1
+      },
+      {
+        "pair": "rhaenys_targaryen → otto_hightower",
+        "count": 1
+      },
+      {
+        "pair": "harwin_strong → larys_strong",
+        "count": 1
+      },
+      {
+        "pair": "larys_strong → harwin_strong",
+        "count": 1
+      },
+      {
+        "pair": "lyonel_strong → otto_hightower",
+        "count": 1
+      },
+      {
+        "pair": "aegon_targaryen_ii → rhaenys_targaryen",
+        "count": 1
+      },
+      {
+        "pair": "aegon_targaryen_ii → daemon_targaryen",
+        "count": 1
+      }
+    ]
+  },
+  "meta": {
+    "show": "house-of-the-dragon",
+    "generatedAt": "2026/7/30 03:24:45",
+    "retrievalMode": "混合（向量 × 关键词）+ 时序过滤"
+  }
+}

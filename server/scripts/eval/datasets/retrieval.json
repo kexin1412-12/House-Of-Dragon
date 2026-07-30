@@ -1,0 +1,283 @@
+{
+  "showId": "house-of-the-dragon",
+  "k": 8,
+  "_note": "Retrieval recall@k eval set. expected_ids / must_not_recall_ids are real chunk ids from the built vectors index. must_not_recall_ids are future-episode chunks the temporal filter must never surface at the given cursor. knowledge_type is used only for per-type grouping in the report; it is not passed to retrieve().",
+  "questions": [
+    {
+      "id": "q_rhaenyra_identity_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "雷妮拉现在是什么身份？",
+      "expected_ids": ["house-of-the-dragon:char:rhaenyra_targaryen:state:2"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:rhaenyra_targaryen:state:3"]
+    },
+    {
+      "id": "q_alicent_side_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "阿莉森特现在站在哪一边？",
+      "expected_ids": ["house-of-the-dragon:char:alicent_hightower:state:2"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:alicent_hightower:state:3"]
+    },
+    {
+      "id": "q_viserys_role_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "国王韦赛里斯是个怎样的国王，他在王朝里扮演什么角色？",
+      "expected_ids": ["house-of-the-dragon:char:viserys_targaryen:state:0"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:viserys_targaryen:state:1"]
+    },
+    {
+      "id": "q_criston_cole_state_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "克里斯顿·科尔这个御林铁卫在婚宴上出了什么事？",
+      "expected_ids": ["house-of-the-dragon:char:criston_cole:state:1"],
+      "must_not_recall_ids": ["house-of-the-dragon:char:criston_cole:state:2"]
+    },
+    {
+      "id": "q_otto_dismissed_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "御前首相奥托·海塔尔怎么被国王革职了？",
+      "expected_ids": ["house-of-the-dragon:char:otto_hightower:state:1"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_laenor_state_s1e5",
+      "knowledge_type": "character_state",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "莱诺·瓦列利安现在和谁成婚了？",
+      "expected_ids": ["house-of-the-dragon:char:laenor_velaryon:state:1"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_alicent_rhaenyra_relation_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "阿莉森特和雷妮拉现在还算朋友吗？她们的关系变成什么样了？",
+      "expected_ids": ["house-of-the-dragon:rel:2:1"],
+      "must_not_recall_ids": [
+        "house-of-the-dragon:char:rhaenyra_targaryen:state:3",
+        "house-of-the-dragon:char:alicent_hightower:state:3"
+      ]
+    },
+    {
+      "id": "q_moon_tea_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "月亮茶是怎么回事？国王为什么派人送月亮茶去龙石岛？",
+      "expected_ids": ["house-of-the-dragon:rel:41:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_daemon_dance_whisper_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "戴蒙在婚宴舞池里贴着雷妮拉耳边说话，这段暧昧是什么意思？",
+      "expected_ids": ["house-of-the-dragon:rel:44:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_criston_kills_joffrey_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "克里斯顿在婚礼上当众打死的那个人是谁？",
+      "expected_ids": ["house-of-the-dragon:rel:46:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_daemon_rhea_murder_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "戴蒙的妻子瑞亚·罗伊斯是怎么死的？",
+      "expected_ids": ["house-of-the-dragon:rel:48:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_rhaenyra_laenor_arrangement_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "雷妮拉和莱诺在海滩上达成了什么样的婚姻协议？",
+      "expected_ids": ["house-of-the-dragon:rel:42:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_viserys_otto_split_s1e5",
+      "knowledge_type": "character_relationship",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "韦赛里斯和奥托这对多年君臣为什么突然决裂？",
+      "expected_ids": ["house-of-the-dragon:rel:40:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_rhaenyra_motive_marriage_s1e5",
+      "knowledge_type": "character_motivation",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "雷妮拉为什么用一种很清醒、不带浪漫幻想的态度进入这场政治婚姻？",
+      "expected_ids": ["house-of-the-dragon:char:rhaenyra_targaryen:motive:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_alicent_green_motive_s1e5",
+      "knowledge_type": "character_motivation",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "阿莉森特在婚宴上穿那身祖母绿到底想表达什么动机？",
+      "expected_ids": ["house-of-the-dragon:char:alicent_hightower:motive:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_criston_turn_motive_s1e5",
+      "knowledge_type": "character_motivation",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "克里斯顿的忠诚为什么从对雷妮拉的私人感情转成了怨恨？",
+      "expected_ids": ["house-of-the-dragon:char:criston_cole:motive:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_valyria_dragons_lore",
+      "knowledge_type": "lore_card",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "坦格利安家族的龙是从哪来的？瓦雷利亚是什么？",
+      "expected_ids": ["house-of-the-dragon:lore:4", "house-of-the-dragon:lore:3"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_targaryen_sigil_lore",
+      "knowledge_type": "lore_card",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "坦格利安家族的家徽和族语是什么？",
+      "expected_ids": ["house-of-the-dragon:lore:0"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_valyria_customs_lore",
+      "knowledge_type": "lore_card",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "瓦雷利亚有哪些在别处被禁止的习俗，比如近亲结婚？",
+      "expected_ids": ["house-of-the-dragon:lore:5"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_iron_throne_symbol_s1e5",
+      "knowledge_type": "external_knowledge",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "铁王座在剧里象征着什么，为什么总是割伤坐上去的人？",
+      "expected_ids": ["house-of-the-dragon:recap:19", "house-of-the-dragon:recap:20"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_daemon_violence_s1e5",
+      "knowledge_type": "external_knowledge",
+      "videoId": "house_of_dragon_05",
+      "cursorTime": 2135,
+      "query": "戴蒙那些残忍又不羁的举动说明了他怎样的性格？",
+      "expected_ids": ["house-of-the-dragon:recap:10", "house-of-the-dragon:recap:9"],
+      "must_not_recall_ids": []
+    },
+    {
+      "id": "q_tapestry_meaning_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "开头这段挂毯片头到底在讲什么？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:tapestry:reading"],
+      "must_not_recall_ids": [
+        "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading",
+        "house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"
+      ]
+    },
+    {
+      "id": "q_maegor_death_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "梅葛是怎么死在铁王座上的，这幅画什么意思？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"]
+    },
+    {
+      "id": "q_daenys_dream_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "片头里那个关于瓦雷利亚末日的梦是什么意思，为什么对坦格利安这么重要？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"]
+    },
+    {
+      "id": "q_great_council_101_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "101年的那场大议会为什么是后面继承危机的制度伏笔？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:great_council_of_101:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"]
+    },
+    {
+      "id": "q_vhagar_kills_arrax_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "瓦格哈尔咬死阿拉克斯那一幕，为什么是全面战争的临界点？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"]
+    },
+    {
+      "id": "q_divided_claims_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "伊耿和雷妮拉各自的继承权合法性有什么区别？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"]
+    },
+    {
+      "id": "q_sheepstealer_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 1400,
+      "query": "雷妮亚为什么要去驯服那条不受王室控制的野龙？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"]
+    },
+    {
+      "id": "q_jaehaerys_restoration_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "杰赫里斯和亚莉珊并肩那幅画，跟前一幅梅葛之死是什么剪辑关系？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading"]
+    },
+    {
+      "id": "q_jaehaerys_funeral_s3e1",
+      "knowledge_type": "scene_reading",
+      "videoId": "house_of_dragon_s03e01",
+      "cursorTime": 70,
+      "query": "小杰赫里斯王子的葬礼那幅画，把复仇引向了什么地方？",
+      "expected_ids": ["house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading"],
+      "must_not_recall_ids": ["house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading"]
+    }
+  ]
+}
