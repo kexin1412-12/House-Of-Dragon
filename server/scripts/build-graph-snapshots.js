@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const charactersLib = require('../lib/characters');
+const kbPaths = require('../lib/kb-paths');
 
 const SHOW_ID = 'house-of-the-dragon';
 // End-of-S1 cursor. The demo video is a full-season recap so we want the
@@ -436,7 +437,7 @@ function buildEdges(db, characterIds, config) {
 // on-screen character at each second of the demo video. Lets the front-end
 // auto-center the family tree on whoever is being shown right now.
 function buildSceneFocus(videoId, eligibleIds) {
-  const kbFile = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  const kbFile = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(kbFile)) return null;
   const kb = JSON.parse(fs.readFileSync(kbFile, 'utf8'));
   const eligible = new Set(eligibleIds);
@@ -488,7 +489,7 @@ const VIDEO_VERSION_SWAPS = {
 // portraits at the time-jump, and hide future-only conflict edges before
 // their triggering scene plays.
 function buildCharEvents(videoId, db, eligibleIds, conflictEdges) {
-  const kbFile = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  const kbFile = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(kbFile)) return null;
   const kb = JSON.parse(fs.readFileSync(kbFile, 'utf8'));
   const sceneById = new Map();

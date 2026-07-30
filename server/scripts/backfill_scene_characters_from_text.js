@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 
 const SERVER_DIR = path.join(__dirname, '..');
 
@@ -100,7 +101,7 @@ function main() {
   if (opts.help) return printHelp();
   if (!opts.videoId) throw new Error('Usage: node scripts/backfill_scene_characters_from_text.js <video_id>');
 
-  const kbPath = path.join(SERVER_DIR, 'kb', `${opts.videoId}.json`);
+  const kbPath = kbPaths.sceneKb(opts.videoId);
   if (!fs.existsSync(kbPath)) throw new Error(`KB not found: ${kbPath}`);
   const kb = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
   const changes = [];

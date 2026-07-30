@@ -7,6 +7,7 @@ const { spawnSync } = require('child_process');
 
 const { buildSceneSlicingUserPrompt } = require('../lib/ai/prompts/sceneSlicing');
 const { formatClockLabel, formatPromptSubtitles, parseSrt } = require('../lib/srt');
+const kbPaths = require('../lib/kb-paths');
 
 const SERVER_DIR = path.resolve(__dirname, '..');
 const DEFAULTS = {
@@ -446,7 +447,7 @@ async function main() {
   const videoId = opts.videoId;
   const episode = opts.episode || inferEpisode(videoId);
   const srtPath = resolveServerPath(opts.srtPath || path.join('uploads', `${videoId}.srt`));
-  const kbPath = resolveServerPath(opts.kbPath || path.join('kb', `${videoId}.json`));
+  const kbPath = resolveServerPath(opts.kbPath || kbPaths.sceneKb(videoId));
   const outputPath = resolveServerPath(opts.outputPath || path.join('kb', '_drafts', `${videoId}.scene-candidates.json`));
   const videoPath = opts.videoPath ? resolveServerPath(opts.videoPath) : findVideo(videoId);
 

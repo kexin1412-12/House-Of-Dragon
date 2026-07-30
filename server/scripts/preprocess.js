@@ -21,6 +21,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -173,7 +174,8 @@ async function main() {
     scenes,
   };
 
-  const kbPath = path.join(serverDir, 'kb', `${videoId}.json`);
+  const kbPath = kbPaths.sceneKb(videoId);
+  fs.mkdirSync(kbPaths.videoDir(videoId), { recursive: true });
   fs.writeFileSync(kbPath, JSON.stringify(kb, null, 2));
 
   console.log(`\n✓ Done.`);

@@ -18,6 +18,7 @@
 require('dotenv').config({ override: true });
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
@@ -174,7 +175,7 @@ async function main() {
   }
 
   const serverDir = path.join(__dirname, '..');
-  const kbPath = path.join(serverDir, 'kb', `${opts.videoId}.json`);
+  const kbPath = kbPaths.sceneKb(opts.videoId);
   if (!fs.existsSync(kbPath)) {
     console.error(`Error: KB not found: ${kbPath}`);
     console.error(`Run preprocess + annotate first.`);

@@ -26,6 +26,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env'), 
 const fs = require('fs');
 const path = require('path');
 const ai = require('../lib/ai');
+const kbPaths = require('../lib/kb-paths');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -302,7 +303,7 @@ async function main() {
   }
 
   const serverDir = path.join(__dirname, '..');
-  const kbPath = path.join(serverDir, 'kb', `${opts.videoId}.json`);
+  const kbPath = kbPaths.sceneKb(opts.videoId);
   if (!fs.existsSync(kbPath)) {
     console.error(`✗ KB not found: ${kbPath}`);
     console.error(`先跑：npm run preprocess -- uploads/${opts.videoId}.mp4`);

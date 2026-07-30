@@ -26,6 +26,7 @@ require('dotenv').config({ override: true });
 const fs = require('fs');
 const path = require('path');
 const ai = require('../lib/ai');
+const kbPaths = require('../lib/kb-paths');
 
 const SERVER_DIR = path.join(__dirname, '..');
 
@@ -102,7 +103,7 @@ function imageToDataUrl(imgPath) {
 
 // ─── KB / 角色 DB 工具 ─────────────────────────────────────────
 function loadKB(videoId) {
-  const kbPath = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  const kbPath = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(kbPath)) {
     throw new Error(`KB 文件不存在: ${kbPath}\n先跑: node scripts/preprocess.js <video_path>`);
   }

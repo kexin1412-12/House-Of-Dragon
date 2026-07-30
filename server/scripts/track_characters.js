@@ -17,6 +17,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const kbPaths = require('../lib/kb-paths');
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -78,7 +79,7 @@ async function main() {
   const serverDir = path.join(__dirname, '..');
   const videoBasename = path.basename(opts.videoPath, path.extname(opts.videoPath));
   const videoId = sanitizeId(opts.videoId || videoBasename);
-  const kbPath = path.join(serverDir, 'kb', `${videoId}.json`);
+  const kbPath = kbPaths.sceneKb(videoId);
 
   if (!fs.existsSync(kbPath)) {
     console.error(`Error: KB not found at ${kbPath}`);

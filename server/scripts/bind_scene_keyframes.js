@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const kbPaths = require('../lib/kb-paths');
 
 const SERVER_DIR = path.join(__dirname, '..');
 
@@ -106,7 +107,7 @@ async function main() {
   if (opts.help) return printHelp();
   if (!opts.videoId) throw new Error('Usage: node scripts/bind_scene_keyframes.js <video_id> [options]');
 
-  const kbPath = path.join(SERVER_DIR, 'kb', `${opts.videoId}.json`);
+  const kbPath = kbPaths.sceneKb(opts.videoId);
   if (!fs.existsSync(kbPath)) throw new Error(`KB not found: ${kbPath}`);
 
   const videoPath = resolveFromServer(opts.videoPath) || defaultVideoPath(opts.videoId);

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const locationsLib = require('../lib/locations');
+const kbPaths = require('../lib/kb-paths');
 
 const SERVER_DIR = path.join(__dirname, '..');
 
@@ -44,7 +45,7 @@ function main() {
   const videoId = process.argv[2] || 'house_of_dragon_s03e01';
   if (!/^[a-zA-Z0-9_-]+$/.test(videoId)) throw new Error(`Invalid video id: ${videoId}`);
 
-  const kbPath = path.join(SERVER_DIR, 'kb', `${videoId}.json`);
+  const kbPath = kbPaths.sceneKb(videoId);
   if (!fs.existsSync(kbPath)) throw new Error(`KB not found: ${kbPath}`);
   const kb = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
   const db = locationsLib.loadLocationDb(kb.show_id || 'house-of-the-dragon');
