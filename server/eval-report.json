@@ -3,16 +3,16 @@
     "k": 8,
     "n": 30,
     "dense_active": true,
-    "recall_at_k": 0.31666666666666665,
-    "mrr": 0.1888888888888889,
+    "recall_at_k": 0.6,
+    "mrr": 0.42777777777777776,
     "leaks": 0,
     "per_type_recall": {
       "character_state": {
-        "recall": 0.16666666666666666,
+        "recall": 0.3333333333333333,
         "n": 6
       },
       "character_relationship": {
-        "recall": 0.2857142857142857,
+        "recall": 0.42857142857142855,
         "n": 7
       },
       "character_motivation": {
@@ -20,15 +20,15 @@
         "n": 3
       },
       "lore_card": {
-        "recall": 0.3333333333333333,
+        "recall": 0.8333333333333334,
         "n": 3
       },
       "external_knowledge": {
-        "recall": 0.25,
+        "recall": 0.75,
         "n": 2
       },
       "scene_reading": {
-        "recall": 0.4444444444444444,
+        "recall": 0.8888888888888888,
         "n": 9
       }
     },
@@ -39,23 +39,23 @@
         "query": "雷妮拉现在是什么身份？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 0.3333333333333333,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:char:rhaenyra_targaryen:state:2"
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
           "house-of-the-dragon:recap:2",
-          "house-of-the-dragon:recap:3"
+          "house-of-the-dragon:recap:22"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house-of-the-dragon:char:rhaenyra_targaryen:state:2"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_alicent_side_s1e5",
@@ -72,9 +72,9 @@
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
           "house-of-the-dragon:char:lyonel_strong:state:0",
+          "house-of-the-dragon:recap:17",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
-          "house-of-the-dragon:recap:16",
-          "house-of-the-dragon:recap:17"
+          "house-of-the-dragon:recap:16"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -97,7 +97,7 @@
           "house-of-the-dragon:rel:0:0",
           "house-of-the-dragon:char:viserys_targaryen:state:0",
           "house-of-the-dragon:recap:5",
-          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:recap:16",
           "house-of-the-dragon:char:alicent_hightower:motive:0"
         ],
         "hit_ids": [
@@ -119,10 +119,10 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenys_targaryen:state:0",
           "house-of-the-dragon:char:criston_cole:motive:0",
-          "house-of-the-dragon:recap:19"
+          "house-of-the-dragon:recap:19",
+          "house-of-the-dragon:recap:16"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -144,9 +144,9 @@
         "returned_ids": [
           "house-of-the-dragon:rel:40:0",
           "house-of-the-dragon:char:lyonel_strong:state:0",
-          "house-of-the-dragon:recap:5",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
-          "house-of-the-dragon:recap:17"
+          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:9"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -167,7 +167,7 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:1",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
           "house-of-the-dragon:lore:5"
         ],
@@ -190,8 +190,8 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:char:larys_strong:state:0",
           "house-of-the-dragon:recap:17",
           "house-of-the-dragon:recap:4"
         ],
@@ -214,11 +214,11 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:41:0",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:20",
-          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:daemon_targaryen:state:1",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
-          "house-of-the-dragon:lore:2"
+          "house-of-the-dragon:lore:2",
+          "house-of-the-dragon:recap:20",
+          "house-of-the-dragon:recap:19"
         ],
         "hit_ids": [
           "house-of-the-dragon:rel:41:0"
@@ -239,10 +239,10 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
           "house-of-the-dragon:recap:18",
           "house-of-the-dragon:recap:5",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -263,10 +263,10 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:harwin_strong:state:0",
           "house-of-the-dragon:char:criston_cole:motive:0",
-          "house-of-the-dragon:recap:19"
+          "house-of-the-dragon:recap:19",
+          "house-of-the-dragon:recap:16"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -279,23 +279,23 @@
         "query": "戴蒙的妻子瑞亚·罗伊斯是怎么死的？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:rel:48:0"
         ],
         "returned_ids": [
-          "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:rel:48:0",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
           "house-of-the-dragon:recap:5",
           "house-of-the-dragon:recap:18",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+          "house-of-the-dragon:char:rhaenys_targaryen:state:0"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house-of-the-dragon:rel:48:0"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_rhaenyra_laenor_arrangement_s1e5",
@@ -311,11 +311,11 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
           "house-of-the-dragon:recap:6",
-          "house-of-the-dragon:recap:3",
-          "house-of-the-dragon:lore:5"
+          "house-of-the-dragon:lore:5",
+          "house-of-the-dragon:recap:3"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -336,9 +336,9 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:40:0",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:18",
-          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:recap:16",
+          "house-of-the-dragon:recap:11",
+          "house-of-the-dragon:char:aegon_targaryen_ii:state:0",
           "house-of-the-dragon:char:alicent_hightower:motive:0"
         ],
         "hit_ids": [
@@ -353,17 +353,17 @@
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
         "recall": 1,
-        "reciprocal_rank": 0.25,
+        "reciprocal_rank": 0.5,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:10",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
-          "house-of-the-dragon:recap:2"
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
+          "house-of-the-dragon:recap:2",
+          "house-of-the-dragon:recap:6"
         ],
         "hit_ids": [
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
@@ -384,10 +384,10 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:18",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
-          "house-of-the-dragon:recap:14"
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
+          "house-of-the-dragon:recap:14",
+          "house-of-the-dragon:recap:3"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -408,9 +408,9 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:recap:18",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:4",
           "house-of-the-dragon:recap:6"
         ],
         "hit_ids": [],
@@ -424,8 +424,8 @@
         "query": "坦格利安家族的龙是从哪来的？瓦雷利亚是什么？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 0.5,
+        "reciprocal_rank": 0.25,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:lore:4",
@@ -433,15 +433,16 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:0:0",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:lore:6",
           "house-of-the-dragon:recap:21",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
+          "house-of-the-dragon:lore:4",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
           "house-of-the-dragon:recap:3"
         ],
-        "hit_ids": [],
+        "hit_ids": [
+          "house-of-the-dragon:lore:4"
+        ],
         "miss_ids": [
-          "house-of-the-dragon:lore:4",
           "house-of-the-dragon:lore:3"
         ]
       },
@@ -452,7 +453,7 @@
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
         "recall": 1,
-        "reciprocal_rank": 0.3333333333333333,
+        "reciprocal_rank": 0.25,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:lore:0"
@@ -460,8 +461,8 @@
         "returned_ids": [
           "house-of-the-dragon:char:viserys_targaryen:state:0",
           "house-of-the-dragon:rel:8:1",
-          "house-of-the-dragon:lore:0",
           "house-of-the-dragon:recap:21",
+          "house-of-the-dragon:lore:0",
           "house-of-the-dragon:char:alicent_hightower:motive:0",
           "house-of-the-dragon:recap:19"
         ],
@@ -476,24 +477,24 @@
         "query": "瓦雷利亚有哪些在别处被禁止的习俗，比如近亲结婚？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 0.25,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:lore:5"
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:3:2",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
-          "house-of-the-dragon:lore:6",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:lore:5",
           "house-of-the-dragon:recap:2",
           "house-of-the-dragon:recap:3"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house-of-the-dragon:lore:5"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_iron_throne_symbol_s1e5",
@@ -501,8 +502,8 @@
         "query": "铁王座在剧里象征着什么，为什么总是割伤坐上去的人？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0.5,
-        "reciprocal_rank": 0.3333333333333333,
+        "recall": 1,
+        "reciprocal_rank": 0.5,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:recap:19",
@@ -510,17 +511,16 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:41:0",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:19",
           "house-of-the-dragon:recap:20",
-          "house-of-the-dragon:recap:5",
+          "house-of-the-dragon:char:rhaenyra_targaryen:state:1",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
         ],
         "hit_ids": [
+          "house-of-the-dragon:recap:19",
           "house-of-the-dragon:recap:20"
         ],
-        "miss_ids": [
-          "house-of-the-dragon:recap:19"
-        ]
+        "miss_ids": []
       },
       {
         "id": "q_daemon_violence_s1e5",
@@ -528,8 +528,8 @@
         "query": "戴蒙那些残忍又不羁的举动说明了他怎样的性格？",
         "videoId": "house_of_dragon_05",
         "cursorTime": 2135,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 0.5,
+        "reciprocal_rank": 0.5,
         "leak": 0,
         "expected_ids": [
           "house-of-the-dragon:recap:10",
@@ -537,15 +537,16 @@
         ],
         "returned_ids": [
           "house-of-the-dragon:rel:45:0",
-          "house-of-the-dragon:char:viserys_targaryen:state:0",
+          "house-of-the-dragon:recap:9",
           "house-of-the-dragon:recap:5",
-          "house-of-the-dragon:recap:18",
+          "house-of-the-dragon:char:daemon_targaryen:state:1",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
         ],
-        "hit_ids": [],
-        "miss_ids": [
-          "house-of-the-dragon:recap:10",
+        "hit_ids": [
           "house-of-the-dragon:recap:9"
+        ],
+        "miss_ids": [
+          "house-of-the-dragon:recap:10"
         ]
       },
       {
@@ -554,25 +555,25 @@
         "query": "开头这段挂毯片头到底在讲什么？",
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 0.5,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:tapestry:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading",
+          "house_of_dragon_s03e01:scene:s002:tapestry:reading",
+          "house-of-the-dragon:recap:1",
           "house-of-the-dragon:recap:12",
-          "house-of-the-dragon:recap:18",
           "house-of-the-dragon:rel:43:0",
           "house-of-the-dragon:char:roderick_dustin:state:0",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:tapestry:reading"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_maegor_death_s3e1",
@@ -580,25 +581,25 @@
         "query": "梅葛是怎么死在铁王座上的，这幅画什么意思？",
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
+          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading",
           "house-of-the-dragon:recap:5",
-          "house-of-the-dragon:recap:20",
           "house-of-the-dragon:rel:19:2",
+          "house-of-the-dragon:recap:19",
           "house-of-the-dragon:char:rhaenyra_targaryen:state:0",
           "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_daenys_dream_s3e1",
@@ -606,26 +607,26 @@
         "query": "片头里那个关于瓦雷利亚末日的梦是什么意思，为什么对坦格利安这么重要？",
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
-          "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading",
+          "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading",
           "house-of-the-dragon:lore:6",
           "house-of-the-dragon:char:rhaenyra_targaryen:state:2",
           "house-of-the-dragon:rel:3:2",
+          "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading",
           "house-of-the-dragon:recap:21",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0",
-          "house-of-the-dragon:recap:7"
+          "house-of-the-dragon:recap:22",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:0"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_great_council_101_s3e1",
@@ -633,25 +634,25 @@
         "query": "101年的那场大议会为什么是后面继承危机的制度伏笔？",
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
-        "recall": 0,
-        "reciprocal_rank": 0,
+        "recall": 1,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
-          "house-of-the-dragon:recap:12",
-          "house-of-the-dragon:recap:20",
+          "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading",
+          "house_of_dragon_s03e01:scene:s002:tapestry:reading",
           "house-of-the-dragon:rel:8:0",
           "house-of-the-dragon:char:viserys_targaryen:state:1",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1"
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:recap:0",
+          "house-of-the-dragon:recap:23"
         ],
-        "hit_ids": [],
-        "miss_ids": [
+        "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading"
-        ]
+        ],
+        "miss_ids": []
       },
       {
         "id": "q_vhagar_kills_arrax_s3e1",
@@ -660,20 +661,20 @@
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
         "recall": 1,
-        "reciprocal_rank": 0.5,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
           "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
-          "house-of-the-dragon:recap:12",
-          "house-of-the-dragon:lore:6",
-          "house-of-the-dragon:recap:18",
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
           "house-of-the-dragon:char:aemond_targaryen:state:1",
           "house-of-the-dragon:rel:37:0",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2"
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:lore:4",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:2",
+          "house-of-the-dragon:recap:1"
         ],
         "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading"
@@ -687,19 +688,19 @@
         "videoId": "house_of_dragon_s03e01",
         "cursorTime": 70,
         "recall": 1,
-        "reciprocal_rank": 0.5,
+        "reciprocal_rank": 1,
         "leak": 0,
         "expected_ids": [
           "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading"
         ],
         "returned_ids": [
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
           "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading",
-          "house-of-the-dragon:recap:5",
           "house-of-the-dragon:rel:30:1",
           "house-of-the-dragon:recap:0",
           "house-of-the-dragon:char:laenor_velaryon:state:1",
-          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1"
+          "house_of_dragon_s03e01:scene:s002:great_council_of_101:reading",
+          "house-of-the-dragon:char:rhaenyra_targaryen:motive:1",
+          "house-of-the-dragon:recap:22"
         ],
         "hit_ids": [
           "house_of_dragon_s03e01:scene:s002:aegon_and_rhaenyra_divided_claims:reading"
@@ -723,9 +724,9 @@
           "house-of-the-dragon:char:alicent_hightower:motive:0",
           "house-of-the-dragon:char:helaena_targaryen:state:1",
           "house_of_dragon_s03e01:scene:s025:rhaena_calms_sheepstealer:reading",
+          "house-of-the-dragon:recap:3",
+          "house-of-the-dragon:recap:2",
           "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
-          "house-of-the-dragon:recap:5",
-          "house-of-the-dragon:recap:12",
           "house-of-the-dragon:lore:4"
         ],
         "hit_ids": [
@@ -746,13 +747,13 @@
           "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading"
         ],
         "returned_ids": [
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
           "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
-          "house-of-the-dragon:recap:12",
           "house-of-the-dragon:rel:47:0",
+          "house-of-the-dragon:recap:23",
           "house-of-the-dragon:char:larys_strong:state:1",
-          "house-of-the-dragon:char:alicent_hightower:motive:0",
-          "house-of-the-dragon:recap:14"
+          "house-of-the-dragon:recap:12",
+          "house-of-the-dragon:char:alicent_hightower:motive:0"
         ],
         "hit_ids": [],
         "miss_ids": [
@@ -773,7 +774,7 @@
         ],
         "returned_ids": [
           "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading",
-          "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading",
+          "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading",
           "house-of-the-dragon:char:criston_cole:state:1",
           "house-of-the-dragon:char:alicent_hightower:motive:0",
           "house-of-the-dragon:rel:19:2",
@@ -1439,7 +1440,7 @@
   },
   "meta": {
     "show": "house-of-the-dragon",
-    "generatedAt": "2026/7/30 05:32:46",
+    "generatedAt": "2026/7/30 06:08:00",
     "retrievalMode": "混合（向量 × 关键词）+ 时序过滤"
   }
 }

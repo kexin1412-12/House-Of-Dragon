@@ -4,23 +4,27 @@ const { rerank } = require('../lib/retrieval/rerank');
 
 const ctx = { sceneId: 's024', characterIds: ['rhaenyra'], locationIds: ['dragonstone'], symbolIds: [], cursorTime: 900, intent: 'character' };
 
-test('current-scene chunk beats an off-scene one', () => {
+test('query relevance dominates: a much more relevant chunk beats an on-scene one', () => {
+  // 'relevant' is first in input (top query relevance) but off-scene; 'onscene' is far
+  // down but matches scene + character. Query relevance must still win.
   const chunks = [
-    { id: 'off', scene_id: 's002', character_ids: [], knowledge_type: 'scene_reading', confidence: 0.9 },
-    { id: 'here', scene_id: 's024', character_ids: [], knowledge_type: 'scene_reading', confidence: 0.5 },
+    { id: 'relevant', scene_id: 's002', character_ids: [], knowledge_type: 'character_relationship' },
+    { id: 'x', scene_id: 's002', character_ids: [] },
+    { id: 'y', scene_id: 's002', character_ids: [] },
+    { id: 'onscene', scene_id: 's024', character_ids: ['rhaenyra'], knowledge_type: 'character_motivation' },
   ];
-  assert.strictEqual(rerank(chunks, ctx)[0].id, 'here');
+  assert.strictEqual(rerank(chunks, ctx)[0].id, 'relevant');
 });
 
-test('character intent lifts character_motivation for the current character', () => {
+test('context breaks a near-tie: on-scene+on-character chunk lifts past its immediate neighbor', () => {
   const chunks = [
-    { id: 'reading', scene_id: 's002', character_ids: ['rhaenyra'], knowledge_type: 'scene_reading', confidence: 0.9 },
-    { id: 'motive', scene_id: 's002', character_ids: ['rhaenyra'], knowledge_type: 'character_motivation', confidence: 0.6 },
+    { id: 'neighbor', scene_id: 's002', character_ids: [], knowledge_type: 'lore_card' },
+    { id: 'contextual', scene_id: 's024', character_ids: ['rhaenyra'], knowledge_type: 'character_motivation' },
   ];
-  assert.strictEqual(rerank(chunks, ctx)[0].id, 'motive');
+  assert.strictEqual(rerank(chunks, ctx)[0].id, 'contextual');
 });
 
-test('stable when ctx is empty (no throw)', () => {
-  const chunks = [{ id: 'a', knowledge_type: 'lore_card' }];
-  assert.deepStrictEqual(rerank(chunks, {}).map(c => c.id), ['a']);
+test('stable when ctx is empty (preserves query order)', () => {
+  const chunks = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+  assert.deepStrictEqual(rerank(chunks, {}).map(c => c.id), ['a', 'b', 'c']);
 });

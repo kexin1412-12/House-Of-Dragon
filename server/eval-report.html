@@ -81,13 +81,13 @@
 <body><div class="wrap">
   <header>
     <h1>项目评测报告</h1>
-    <div class="sub">house-of-the-dragon · 生成于 2026/7/30 05:32:46 · 检索链路 混合（向量 × 关键词）+ 时序过滤</div>
+    <div class="sub">house-of-the-dragon · 生成于 2026/7/30 06:08:00 · 检索链路 混合（向量 × 关键词）+ 时序过滤</div>
   </header>
   <div class="cards">
     <div class="card zone-ret">
       <div class="card-tag">① 检索召回</div>
-      <div class="card-metric" style="color:var(--bad)">31.7%</div>
-      <div class="card-sub">recall@8 · 30 题 · MRR 0.19</div>
+      <div class="card-metric" style="color:var(--warn)">60.0%</div>
+      <div class="card-sub">recall@8 · 30 题 · MRR 0.43</div>
       <div class="card-note">✓ 无越界泄漏</div>
     </div>
       <div class="card zone-ans">
@@ -111,18 +111,8 @@
         <div class="ttable">
       <div class="trow">
         <div class="tname">character_state <span class="dim">×6</span></div>
-        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:16.666666666666664%;background:var(--bad)"></div></div></div>
-        <div class="tval" style="color:var(--bad)">16.7%</div>
-      </div>
-      <div class="trow">
-        <div class="tname">external_knowledge <span class="dim">×2</span></div>
-        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:25%;background:var(--bad)"></div></div></div>
-        <div class="tval" style="color:var(--bad)">25.0%</div>
-      </div>
-      <div class="trow">
-        <div class="tname">character_relationship <span class="dim">×7</span></div>
-        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:28.57142857142857%;background:var(--bad)"></div></div></div>
-        <div class="tval" style="color:var(--bad)">28.6%</div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:33.33333333333333%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">33.3%</div>
       </div>
       <div class="trow">
         <div class="tname">character_motivation <span class="dim">×3</span></div>
@@ -130,14 +120,24 @@
         <div class="tval" style="color:var(--bad)">33.3%</div>
       </div>
       <div class="trow">
+        <div class="tname">character_relationship <span class="dim">×7</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:42.857142857142854%;background:var(--bad)"></div></div></div>
+        <div class="tval" style="color:var(--bad)">42.9%</div>
+      </div>
+      <div class="trow">
+        <div class="tname">external_knowledge <span class="dim">×2</span></div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:75%;background:var(--ok)"></div></div></div>
+        <div class="tval" style="color:var(--ok)">75.0%</div>
+      </div>
+      <div class="trow">
         <div class="tname">lore_card <span class="dim">×3</span></div>
-        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:33.33333333333333%;background:var(--bad)"></div></div></div>
-        <div class="tval" style="color:var(--bad)">33.3%</div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:83.33333333333334%;background:var(--ok)"></div></div></div>
+        <div class="tval" style="color:var(--ok)">83.3%</div>
       </div>
       <div class="trow">
         <div class="tname">scene_reading <span class="dim">×9</span></div>
-        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:44.44444444444444%;background:var(--bad)"></div></div></div>
-        <div class="tval" style="color:var(--bad)">44.4%</div>
+        <div class="tbarwrap"><div class="bar"><div class="bar-fill" style="width:88.88888888888889%;background:var(--ok)"></div></div></div>
+        <div class="tval" style="color:var(--ok)">88.9%</div>
       </div></div>
       </div>
       <details open>
@@ -149,10 +149,10 @@
       <td class="mono">q_rhaenyra_identity_s1e5</td>
       <td>character_state</td>
       <td class="q">雷妮拉现在是什么身份？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.33</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:char:rhaenyra_targaryen:state:2</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_alicent_side_s1e5</td>
@@ -239,10 +239,10 @@
       <td class="mono">q_daemon_rhea_murder_s1e5</td>
       <td>character_relationship</td>
       <td class="q">戴蒙的妻子瑞亚·罗伊斯是怎么死的？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:rel:48:0</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_rhaenyra_laenor_arrangement_s1e5</td>
@@ -267,7 +267,7 @@
       <td>character_motivation</td>
       <td class="q">雷妮拉为什么用一种很清醒、不带浪漫幻想的态度进入这场政治婚姻？</td>
       <td class="num" style="color:var(--ok)">100.0%</td>
-      <td class="num">0.25</td>
+      <td class="num">0.50</td>
       <td class="num">✓</td>
       <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
@@ -293,17 +293,17 @@
       <td class="mono">q_valyria_dragons_lore</td>
       <td>lore_card</td>
       <td class="q">坦格利安家族的龙是从哪来的？瓦雷利亚是什么？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--warn)">50.0%</td>
+      <td class="num">0.25</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:lore:4<br>house-of-the-dragon:lore:3</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:lore:3</td>
     </tr>
     <tr>
       <td class="mono">q_targaryen_sigil_lore</td>
       <td>lore_card</td>
       <td class="q">坦格利安家族的家徽和族语是什么？</td>
       <td class="num" style="color:var(--ok)">100.0%</td>
-      <td class="num">0.33</td>
+      <td class="num">0.25</td>
       <td class="num">✓</td>
       <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
@@ -311,71 +311,71 @@
       <td class="mono">q_valyria_customs_lore</td>
       <td>lore_card</td>
       <td class="q">瓦雷利亚有哪些在别处被禁止的习俗，比如近亲结婚？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.25</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:lore:5</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_iron_throne_symbol_s1e5</td>
       <td>external_knowledge</td>
       <td class="q">铁王座在剧里象征着什么，为什么总是割伤坐上去的人？</td>
-      <td class="num" style="color:var(--warn)">50.0%</td>
-      <td class="num">0.33</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.50</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:recap:19</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_daemon_violence_s1e5</td>
       <td>external_knowledge</td>
       <td class="q">戴蒙那些残忍又不羁的举动说明了他怎样的性格？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--warn)">50.0%</td>
+      <td class="num">0.50</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:recap:10<br>house-of-the-dragon:recap:9</td>
+      <td class="mono small"><span class="dim">missed:</span> house-of-the-dragon:recap:10</td>
     </tr>
     <tr>
       <td class="mono">q_tapestry_meaning_s3e1</td>
       <td>scene_reading</td>
       <td class="q">开头这段挂毯片头到底在讲什么？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">0.50</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:tapestry:reading</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_maegor_death_s3e1</td>
       <td>scene_reading</td>
       <td class="q">梅葛是怎么死在铁王座上的，这幅画什么意思？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_daenys_dream_s3e1</td>
       <td>scene_reading</td>
       <td class="q">片头里那个关于瓦雷利亚末日的梦是什么意思，为什么对坦格利安这么重要？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_great_council_101_s3e1</td>
       <td>scene_reading</td>
       <td class="q">101年的那场大议会为什么是后面继承危机的制度伏笔？</td>
-      <td class="num" style="color:var(--bad)">0.0%</td>
-      <td class="num">0.00</td>
+      <td class="num" style="color:var(--ok)">100.0%</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
-      <td class="mono small"><span class="dim">missed:</span> house_of_dragon_s03e01:scene:s002:great_council_of_101:reading</td>
+      <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
     <tr>
       <td class="mono">q_vhagar_kills_arrax_s3e1</td>
       <td>scene_reading</td>
       <td class="q">瓦格哈尔咬死阿拉克斯那一幕，为什么是全面战争的临界点？</td>
       <td class="num" style="color:var(--ok)">100.0%</td>
-      <td class="num">0.50</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
       <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
@@ -384,7 +384,7 @@
       <td>scene_reading</td>
       <td class="q">伊耿和雷妮拉各自的继承权合法性有什么区别？</td>
       <td class="num" style="color:var(--ok)">100.0%</td>
-      <td class="num">0.50</td>
+      <td class="num">1.00</td>
       <td class="num">✓</td>
       <td class="mono small"><span class="ok-text">all hit</span></td>
     </tr>
