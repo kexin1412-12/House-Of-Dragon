@@ -1,0 +1,1375 @@
+{
+ "tool": "hotd-eval-annotation",
+ "version": 1,
+ "source": "llm-prelabel",
+ "exportedAt": "2026-07-31T11:52:41.725Z",
+ "builtAt": "2026/7/31 07:20:53",
+ "retrieval": [
+  {
+   "id": "r001",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2084,
+   "knowledge_type": "character_state",
+   "query": "阿莉森特·海塔尔现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:char:alicent_hightower:state:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 2,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:rel:23:1": 0,
+    "house-of-the-dragon:recap:17": 0,
+    "house-of-the-dragon:recap:5": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r002",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 2,
+    "house-of-the-dragon:rel:1:0": 0,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:1": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 1,
+    "house-of-the-dragon:recap:2": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 1
+   },
+   "done": true
+  },
+  {
+   "id": "r003",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2474,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 2,
+    "house-of-the-dragon:rel:20:0": 0,
+    "house-of-the-dragon:char:otto_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:recap:4": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r004",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2701,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 2,
+    "house-of-the-dragon:rel:40:0": 1,
+    "house-of-the-dragon:char:otto_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0,
+    "house-of-the-dragon:recap:4": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r005",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:rel:3:0": 0,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:recap:5": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r006",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 903,
+   "knowledge_type": "character_state",
+   "query": "韦赛里斯一世·坦格利安现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:rel:40:0": 1,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 1,
+    "house-of-the-dragon:rel:8:0": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 1,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:recap:11": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r007",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3733,
+   "knowledge_type": "character_state",
+   "query": "贝妮拉·坦格利安现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:rel:50:0": 1,
+    "house-of-the-dragon:char:baela_targaryen:state:0": 2,
+    "house-of-the-dragon:rel:52:0": 0,
+    "house-of-the-dragon:char:rhaena_targaryen:state:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:recap:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r008",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 2,
+    "house-of-the-dragon:rel:1:0": 0,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:1": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 1,
+    "house-of-the-dragon:recap:2": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 1
+   },
+   "done": true
+  },
+  {
+   "id": "r009",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 2,
+    "house-of-the-dragon:rel:1:0": 0,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:1": 1,
+    "house-of-the-dragon:recap:2": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r010",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和阿莉森特·海塔尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 2,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 1,
+    "house-of-the-dragon:rel:2:1": 1,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:recap:17": 0,
+    "house-of-the-dragon:recap:5": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r011",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2474,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和克里斯顿·科尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:20:1": 2,
+    "house-of-the-dragon:rel:20:0": 1,
+    "house-of-the-dragon:char:criston_cole:state:0": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:recap:17": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r012",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 837,
+   "knowledge_type": "character_relationship",
+   "query": "戴蒙·坦格利安和科利斯·瓦列利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 2,
+    "house-of-the-dragon:rel:11:0": 2,
+    "house-of-the-dragon:char:daemon_targaryen:state:0": 0,
+    "house-of-the-dragon:char:laenor_velaryon:state:1": 0,
+    "house-of-the-dragon:recap:18": 0,
+    "house-of-the-dragon:recap:5": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r013",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1497,
+   "knowledge_type": "character_relationship",
+   "query": "科利斯·瓦列利安和亚林·胡尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:55:0": 2,
+    "house-of-the-dragon:char:alyn_of_hull:state:0": 1,
+    "house-of-the-dragon:rel:54:0": 0,
+    "house-of-the-dragon:char:addam_of_hull:state:0": 0,
+    "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r014",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2084,
+   "knowledge_type": "character_relationship",
+   "query": "阿莉森特·海塔尔和艾蒙德·坦格利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:23:1": 2,
+    "house-of-the-dragon:rel:2:1": 1,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:char:aemond_targaryen:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:recap:17": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r015",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1574,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和克里斯顿·科尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:19:2": 2,
+    "house-of-the-dragon:char:criston_cole:state:0": 1,
+    "house-of-the-dragon:rel:19:1": 2,
+    "house-of-the-dragon:char:criston_cole:motive:0": 1,
+    "house-of-the-dragon:char:joffrey_lonmouth:state:1": 0,
+    "house-of-the-dragon:recap:22": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r016",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和蕾妮丝·坦格利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:9:0": 2,
+    "house-of-the-dragon:rel:2:1": 1,
+    "house-of-the-dragon:char:rhaenys_targaryen:state:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:recap:21": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r017",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3370,
+   "knowledge_type": "character_relationship",
+   "query": "海拉娜·坦格利安和奥托·海塔尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:rel:2:1": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:recap:17": 0,
+    "house-of-the-dragon:recap:21": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r018",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和伊耿二世·坦格利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:char:aegon_targaryen_ii:state:0": 0,
+    "house-of-the-dragon:rel:2:1": 2,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:recap:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r019",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2701,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和蕾妮丝·坦格利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenys_targaryen:state:0": 0,
+    "house-of-the-dragon:rel:7:0": 0,
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:recap:17": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r020",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和杰卡里斯·瓦列利安现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 0,
+    "house-of-the-dragon:rel:49:0": 2,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:laenor_velaryon:state:1": 0,
+    "house-of-the-dragon:recap:22": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0,
+    "house-of-the-dragon:recap:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r021",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 617,
+   "knowledge_type": "character_relationship",
+   "query": "阿莉森特·海塔尔和克里斯顿·科尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:20:1": 2,
+    "house-of-the-dragon:rel:20:0": 2,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 1,
+    "house-of-the-dragon:recap:17": 0,
+    "house-of-the-dragon:recap:5": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r022",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3158,
+   "knowledge_type": "character_relationship",
+   "query": "海拉娜·坦格利安和奥托·海塔尔现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:rel:2:1": 0,
+    "house-of-the-dragon:char:otto_hightower:state:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:recap:17": 0,
+    "house-of-the-dragon:recap:21": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r023",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 271,
+   "knowledge_type": "character_relationship",
+   "query": "艾蒙德·坦格利安和拉里斯·斯壮现在是什么关系？",
+   "labels": {
+    "house-of-the-dragon:char:aemond_targaryen:state:0": 0,
+    "house-of-the-dragon:char:larys_strong:state:1": 0,
+    "house-of-the-dragon:rel:29:0": 0,
+    "house-of-the-dragon:rel:31:0": 0,
+    "house-of-the-dragon:recap:21": 0,
+    "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house-of-the-dragon:recap:18": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r024",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1802,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 0,
+    "house-of-the-dragon:rel:20:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:recap:4": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r025",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1574,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:19:2": 1,
+    "house-of-the-dragon:rel:44:0": 2,
+    "house-of-the-dragon:recap:14": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 1,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 2,
+    "house-of-the-dragon:char:criston_cole:state:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r026",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2257,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，亚莉·河文在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:char:alys_rivers:state:0": 2,
+    "house-of-the-dragon:rel:60:0": 1,
+    "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house-of-the-dragon:rel:19:2": 0,
+    "house-of-the-dragon:recap:4": 0,
+    "house-of-the-dragon:char:helaena_targaryen:state:1": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r027",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2025,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，莱昂诺·斯壮在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:char:larys_strong:state:0": 1,
+    "house-of-the-dragon:rel:14:0": 0,
+    "house-of-the-dragon:char:lyonel_strong:state:0": 0,
+    "house-of-the-dragon:rel:13:0": 0,
+    "house-of-the-dragon:recap:16": 0,
+    "house-of-the-dragon:recap:18": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r028",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 903,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，韦赛里斯一世·坦格利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:8:1": 0,
+    "house-of-the-dragon:rel:3:2": 0,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 1,
+    "house-of-the-dragon:recap:21": 1,
+    "house-of-the-dragon:char:aegon_targaryen_ii:state:0": 0,
+    "house-of-the-dragon:recap:16": 2,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r029",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3158,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，海拉娜·坦格利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:8:1": 0,
+    "house-of-the-dragon:rel:43:0": 0,
+    "house-of-the-dragon:char:rhea_royce:state:1": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:recap:4": 0,
+    "house-of-the-dragon:recap:14": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r030",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3035,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，科利斯·瓦列利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:char:corlys_velaryon:state:1": 2,
+    "house-of-the-dragon:char:alyn_of_hull:state:0": 1,
+    "house-of-the-dragon:rel:55:0": 1,
+    "house-of-the-dragon:rel:36:0": 0,
+    "house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading": 1,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house-of-the-dragon:recap:23": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r031",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:19:2": 0,
+    "house-of-the-dragon:rel:44:0": 2,
+    "house-of-the-dragon:recap:6": 0,
+    "house-of-the-dragon:recap:3": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r032",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1265,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，乌尔夫·怀特在做什么、想表达什么？",
+   "labels": {
+    "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house-of-the-dragon:rel:19:2": 0,
+    "house-of-the-dragon:rel:20:1": 0,
+    "house-of-the-dragon:char:hugh_hammer:state:0": 1,
+    "house-of-the-dragon:char:ulf_white:state:0": 2,
+    "house-of-the-dragon:recap:23": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r033",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2253,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:19:2": 0,
+    "house-of-the-dragon:rel:44:0": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 2,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 1,
+    "house-of-the-dragon:recap:16": 0,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r034",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 75,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕在做什么、想表达什么？",
+   "labels": {
+    "house_of_dragon_s03e01:scene:s002:prince_jaehaerys_funeral:reading": 2,
+    "house_of_dragon_s03e01:scene:s002:maegor_dead_on_iron_throne:reading": 1,
+    "house_of_dragon_s03e01:scene:s002:jaehaerys_and_alysanne_restoration:reading": 1,
+    "house-of-the-dragon:rel:19:2": 0,
+    "house-of-the-dragon:rel:8:1": 0,
+    "house-of-the-dragon:recap:12": 1,
+    "house-of-the-dragon:recap:23": 0,
+    "house-of-the-dragon:char:rhea_royce:state:1": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r035",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 249,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 0,
+    "house-of-the-dragon:rel:20:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:recap:4": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r036",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 0,
+    "house-of-the-dragon:rel:20:1": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:recap:4": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r037",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_motivation",
+   "query": "奥托·海塔尔这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 0,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:rel:43:0": 0,
+    "house-of-the-dragon:recap:17": 1,
+    "house-of-the-dragon:recap:3": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r038",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 1,
+    "house-of-the-dragon:rel:1:0": 1,
+    "house-of-the-dragon:recap:2": 2,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:recap:6": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 2,
+    "house-of-the-dragon:char:laenor_velaryon:state:1": 1,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r039",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2538,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 1,
+    "house-of-the-dragon:char:corlys_velaryon:state:1": 2,
+    "house-of-the-dragon:char:corlys_velaryon:state:0": 1,
+    "house-of-the-dragon:rel:55:0": 0,
+    "house-of-the-dragon:recap:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:recap:3": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r040",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1802,
+   "knowledge_type": "character_motivation",
+   "query": "奥托·海塔尔这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:4:0": 1,
+    "house-of-the-dragon:char:otto_hightower:state:0": 1,
+    "house-of-the-dragon:char:otto_hightower:state:1": 1,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 1,
+    "house-of-the-dragon:rel:43:0": 0,
+    "house-of-the-dragon:recap:17": 2,
+    "house-of-the-dragon:recap:3": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r041",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 837,
+   "knowledge_type": "character_motivation",
+   "query": "戴蒙·坦格利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:recap:18": 1,
+    "house-of-the-dragon:rel:6:0": 1,
+    "house-of-the-dragon:char:daemon_targaryen:state:2": 1,
+    "house-of-the-dragon:char:daemon_targaryen:state:0": 1,
+    "house-of-the-dragon:rel:12:0": 0,
+    "house-of-the-dragon:recap:5": 2,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r042",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3035,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 1,
+    "house-of-the-dragon:char:corlys_velaryon:state:1": 1,
+    "house-of-the-dragon:char:corlys_velaryon:state:0": 0,
+    "house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading": 0,
+    "house-of-the-dragon:rel:55:0": 0,
+    "house-of-the-dragon:recap:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:recap:3": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r043",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 1,
+    "house-of-the-dragon:rel:1:0": 1,
+    "house-of-the-dragon:recap:2": 2,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:recap:6": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 2,
+    "house-of-the-dragon:char:laenor_velaryon:state:1": 1,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r044",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1497,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 1,
+    "house-of-the-dragon:rel:55:0": 0,
+    "house-of-the-dragon:char:corlys_velaryon:state:1": 2,
+    "house-of-the-dragon:char:corlys_velaryon:state:0": 1,
+    "house-of-the-dragon:recap:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:recap:3": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r045",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3733,
+   "knowledge_type": "character_motivation",
+   "query": "贝妮拉·坦格利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:char:baela_targaryen:state:0": 1,
+    "house-of-the-dragon:rel:50:0": 1,
+    "house-of-the-dragon:char:rhaena_targaryen:state:0": 0,
+    "house-of-the-dragon:rel:51:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:recap:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r046",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2253,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:1:0": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 1,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 2,
+    "house-of-the-dragon:recap:2": 2,
+    "house-of-the-dragon:recap:3": 1,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r047",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3233,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:rel:10:0": 1,
+    "house-of-the-dragon:char:corlys_velaryon:state:1": 1,
+    "house-of-the-dragon:char:corlys_velaryon:state:0": 0,
+    "house_of_dragon_s03e01:scene:s059:lohar_follows_sea_snake_into_narrows:reading": 0,
+    "house-of-the-dragon:rel:55:0": 0,
+    "house-of-the-dragon:recap:2": 0,
+    "house_of_dragon_s03e01:scene:s002:daenys_dream_and_doom_of_valyria:reading": 0,
+    "house-of-the-dragon:recap:3": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r048",
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1891,
+   "knowledge_type": "character_motivation",
+   "query": "拉里斯·斯壮这么做的动机是什么？",
+   "labels": {
+    "house-of-the-dragon:char:larys_strong:state:1": 2,
+    "house-of-the-dragon:char:larys_strong:state:0": 1,
+    "house-of-the-dragon:rel:14:0": 0,
+    "house-of-the-dragon:rel:15:0": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0,
+    "house-of-the-dragon:recap:18": 0,
+    "house_of_dragon_s03e01:scene:s002:vhagar_kills_arrax:reading": 0,
+    "house-of-the-dragon:recap:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r049",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "坦格利安家族的龙是从哪来的？",
+   "labels": {
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:rel:36:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:lore:4": 1,
+    "house-of-the-dragon:lore:0": 1
+   },
+   "done": true
+  },
+  {
+   "id": "r050",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "铁王座象征着什么？",
+   "labels": {
+    "house-of-the-dragon:recap:20": 2,
+    "house-of-the-dragon:recap:19": 1,
+    "house-of-the-dragon:rel:3:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:1": 0,
+    "house-of-the-dragon:rel:41:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:2": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r051",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "瓦雷利亚是个什么样的地方？",
+   "labels": {
+    "house-of-the-dragon:lore:3": 2,
+    "house-of-the-dragon:rel:0:0": 0,
+    "house-of-the-dragon:rel:3:1": 0,
+    "house-of-the-dragon:lore:5": 1,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:0": 0,
+    "house-of-the-dragon:recap:18": 0,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r052",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "绿党和黑党的分裂是怎么来的？",
+   "labels": {
+    "house-of-the-dragon:rel:40:0": 0,
+    "house-of-the-dragon:recap:12": 0,
+    "house-of-the-dragon:rel:20:1": 1,
+    "house-of-the-dragon:char:criston_cole:motive:0": 1,
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:char:alicent_hightower:state:2": 2,
+    "house-of-the-dragon:char:otto_hightower:state:1": 1,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r053",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "为什么王位继承会引发这么大争端？",
+   "labels": {
+    "house-of-the-dragon:rel:8:0": 2,
+    "house-of-the-dragon:recap:5": 1,
+    "house-of-the-dragon:rel:40:0": 0,
+    "house-of-the-dragon:recap:9": 0,
+    "house-of-the-dragon:char:daemon_targaryen:state:0": 1,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 1,
+    "house-of-the-dragon:char:alicent_hightower:motive:0": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:1": 0
+   },
+   "done": true
+  },
+  {
+   "id": "r054",
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "坦格利安家族的家训和信仰是什么？",
+   "labels": {
+    "house-of-the-dragon:recap:21": 0,
+    "house-of-the-dragon:rel:8:1": 0,
+    "house-of-the-dragon:rel:41:0": 0,
+    "house-of-the-dragon:char:viserys_targaryen:state:0": 0,
+    "house-of-the-dragon:lore:1": 2,
+    "house-of-the-dragon:char:rhaenyra_targaryen:state:2": 0,
+    "house-of-the-dragon:char:rhaenyra_targaryen:motive:0": 0,
+    "house-of-the-dragon:char:criston_cole:motive:0": 0
+   },
+   "done": true
+  }
+ ],
+ "answers": [
+  {
+   "id": "a001",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 3471,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "minor",
+   "helpfulness": "hi",
+   "note": "贝妮拉不是戴蒙的女儿，其他信息无明显问题。"
+  },
+  {
+   "id": "a002",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2747,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a003",
+   "videoId": "house_of_dragon_05",
+   "t": 2701,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a004",
+   "videoId": "house_of_dragon_05",
+   "t": 249,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "回答解释了戴蒙的行为风格，但未深入分析镜头中城堡的象征意义。"
+  },
+  {
+   "id": "a005",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2257,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a006",
+   "videoId": "house_of_dragon_05",
+   "t": 2253,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a007",
+   "videoId": "house_of_dragon_05",
+   "t": 3370,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a008",
+   "videoId": "house_of_dragon_05",
+   "t": 3158,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a009",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1011,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "minor",
+   "helpfulness": "mid",
+   "note": "误将'龙之女王'解读为'雷妮拉女王'，但整体意思大体正确。"
+  },
+  {
+   "id": "a010",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1891,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "bad",
+   "helpfulness": "no",
+   "note": "拉里斯·斯壮的角色描述与参考资料不符，且伊蒙德的口信内容被错误解读。"
+  },
+  {
+   "id": "a011",
+   "videoId": "house_of_dragon_05",
+   "t": 1574,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a012",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1497,
+   "prompt_kind": "explain_shot",
+   "question": "解释这个镜头",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a013",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2257,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "回答准确描述了亚莉·河文的出现和她的警告，但未深入解释其对剧情的具体影响。"
+  },
+  {
+   "id": "a014",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1011,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a015",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1497,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "minor",
+   "helpfulness": "mid",
+   "note": "未提及分享美酒表达信任和友好，未具体解释家族线索。"
+  },
+  {
+   "id": "a016",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1891,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a017",
+   "videoId": "house_of_dragon_05",
+   "t": 1361,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a018",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 617,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "minor",
+   "helpfulness": "mid",
+   "note": "阿莉森的目的是通过谈判来结束战争，这一说法没有明确的支持。"
+  },
+  {
+   "id": "a019",
+   "videoId": "house_of_dragon_05",
+   "t": 1802,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "回答准确描述了画面中的人物和服装，但未深入解释两人谈话的背景和意义。"
+  },
+  {
+   "id": "a020",
+   "videoId": "house_of_dragon_05",
+   "t": 3,
+   "prompt_kind": "whats_happening",
+   "question": "这段剧情在讲什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a021",
+   "videoId": "house_of_dragon_05",
+   "t": 1130,
+   "prompt_kind": "relationship",
+   "question": "雷尼拉·坦格利安和蕾妮丝·坦格利安是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a022",
+   "videoId": "house_of_dragon_05",
+   "t": 1574,
+   "prompt_kind": "relationship",
+   "question": "雷尼拉·坦格利安和克里斯顿·科尔是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a023",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 271,
+   "prompt_kind": "relationship",
+   "question": "艾蒙德·坦格利安和拉里斯·斯壮是什么关系？",
+   "factuality": "minor",
+   "helpfulness": "mid",
+   "note": "未明确说明两人具体关系，且未提及拉里斯被判死刑的情节。"
+  },
+  {
+   "id": "a024",
+   "videoId": "house_of_dragon_05",
+   "t": 3158,
+   "prompt_kind": "relationship",
+   "question": "海拉娜·坦格利安和奥托·海塔尔是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a025",
+   "videoId": "house_of_dragon_05",
+   "t": 2474,
+   "prompt_kind": "relationship",
+   "question": "奥托·海塔尔和克里斯顿·科尔是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a026",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1497,
+   "prompt_kind": "relationship",
+   "question": "科利斯·瓦列利安和亚林·胡尔是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a027",
+   "videoId": "house_of_dragon_05",
+   "t": 1361,
+   "prompt_kind": "relationship",
+   "question": "雷尼拉·坦格利安和伊耿二世·坦格利安是什么关系？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a028",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1497,
+   "prompt_kind": "motivation",
+   "question": "科利斯·瓦列利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a029",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1891,
+   "prompt_kind": "motivation",
+   "question": "拉里斯·斯壮为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a030",
+   "videoId": "house_of_dragon_05",
+   "t": 3158,
+   "prompt_kind": "motivation",
+   "question": "海拉娜·坦格利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a031",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 271,
+   "prompt_kind": "motivation",
+   "question": "艾蒙德·坦格利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a032",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2538,
+   "prompt_kind": "motivation",
+   "question": "科利斯·瓦列利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "回答解释了科利斯的反应与其职责和才能有关，但未具体说明反应的情感或动机。"
+  },
+  {
+   "id": "a033",
+   "videoId": "house_of_dragon_05",
+   "t": 2923,
+   "prompt_kind": "motivation",
+   "question": "海拉娜·坦格利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a034",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2747,
+   "prompt_kind": "motivation",
+   "question": "雷尼拉·坦格利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a035",
+   "videoId": "house_of_dragon_05",
+   "t": 1130,
+   "prompt_kind": "motivation",
+   "question": "雷尼拉·坦格利安为什么会有这样的反应？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a036",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 3035,
+   "prompt_kind": "recap",
+   "question": "我刚才错过了什么？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "信息准确但缺乏对剧情紧张感的具体分析。"
+  },
+  {
+   "id": "a037",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 271,
+   "prompt_kind": "recap",
+   "question": "我刚才错过了什么？",
+   "factuality": "ok",
+   "helpfulness": "mid",
+   "note": "回答准确但缺乏背景信息和细节解释。"
+  },
+  {
+   "id": "a038",
+   "videoId": "house_of_dragon_05",
+   "t": 1802,
+   "prompt_kind": "recap",
+   "question": "我刚才错过了什么？",
+   "factuality": "ok",
+   "helpfulness": "no",
+   "note": "回答与观众问题不直接相关，未解释当前场景内容。"
+  },
+  {
+   "id": "a039",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 2538,
+   "prompt_kind": "recap",
+   "question": "我刚才错过了什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  },
+  {
+   "id": "a040",
+   "videoId": "house_of_dragon_s03e01",
+   "t": 1497,
+   "prompt_kind": "recap",
+   "question": "我刚才错过了什么？",
+   "factuality": "ok",
+   "helpfulness": "hi",
+   "note": "无明显问题"
+  }
+ ]
+}

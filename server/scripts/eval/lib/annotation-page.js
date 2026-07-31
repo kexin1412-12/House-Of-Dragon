@@ -77,6 +77,7 @@ function render(data) {
       <h1>评测标注</h1>
       <div class="prog"><div class="pbar"><div class="pfill" id="pfill"></div></div><div class="pnum" id="pnum">0 / 0</div></div>
       <button class="primary" id="export">导出标注 JSON</button>
+      <button id="reseed" title="丢弃你的修改，重置为 LLM 预标">重置为LLM预标</button>
       <button id="reset" title="清空本机所有标注">清空</button>
     </div>
     <div class="tabs" style="margin-top:10px">
@@ -107,14 +108,28 @@ window.__DATA__ = JSON.parse(${jsLiteral});
   const DATA = window.__DATA__;
   const KEY = 'hotd_annot_v1';
   const state = load();
+  function seedFromPrelabels(){
+    // LLM pre-labels as the starting point — the user only corrects.
+    const s = { ret:{}, ans:{}, builtAt: DATA.generatedAt, seeded: true };
+    const pl = DATA.prelabels || { ret:{}, ans:{} };
+    for (const it of DATA.retrieval){
+      const labels = (pl.ret && pl.ret[it.id]) || {};
+      s.ret[it.id] = { labels: {...labels}, done: Object.keys(labels).length ? it.chunks.every(c=>labels[c.id]!=null) : false };
+    }
+    for (const it of DATA.answers){
+      const a = (pl.ans && pl.ans[it.id]) || {};
+      s.ans[it.id] = { factuality:a.factuality||null, helpfulness:a.helpfulness||null, note:a.note||'' };
+    }
+    return s;
+  }
   function load(){
-    let s; try{ s = JSON.parse(localStorage.getItem(KEY))||{ret:{},ans:{}}; }catch{ s = {ret:{},ans:{}}; }
+    const raw = localStorage.getItem(KEY);
+    if (!raw && DATA.prelabels){ setTimeout(()=>toast('已载入 LLM 预标，请逐条核对修正'), 400); return seedFromPrelabels(); }
+    let s; try{ s = JSON.parse(raw)||{ret:{},ans:{}}; }catch{ s = {ret:{},ans:{}}; }
     s.ret = s.ret||{}; s.ans = s.ans||{};
-    // If the answers were rebuilt (new prompt/model), the old answer labels judged different
-    // text — clear only those, keep retrieval labels, and tell the user.
     if (s.builtAt && s.builtAt !== DATA.generatedAt) {
       s.ans = {};
-      setTimeout(()=>toast('答案已用改进后的 prompt 重新生成，请重标「回答质量」；检索标注已保留'), 400);
+      setTimeout(()=>toast('答案已重新生成，请重标「回答质量」；检索标注已保留'), 400);
     }
     s.builtAt = DATA.generatedAt;
     return s;
@@ -230,6 +245,9 @@ window.__DATA__ = JSON.parse(${jsLiteral});
     toast('已导出 eval-annotations.json —— 发给我或放进仓库');
   };
   document.getElementById('reset').onclick=()=>{ if(confirm('清空本机所有标注？不可撤销。')){ localStorage.removeItem(KEY); location.reload(); } };
+  const reseedBtn=document.getElementById('reseed');
+  if(DATA.prelabels){ reseedBtn.onclick=()=>{ if(confirm('丢弃你的所有修改，重置为 LLM 预标？')){ localStorage.setItem(KEY, JSON.stringify(seedFromPrelabels())); location.reload(); } }; }
+  else { reseedBtn.style.display='none'; }
   let tt; function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2200); }
   updateProgress();
 })();
