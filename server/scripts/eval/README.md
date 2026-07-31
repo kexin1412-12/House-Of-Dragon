@@ -13,6 +13,21 @@ node scripts/eval/run_eval.js --out foo.html
 - `server/eval-report.html` —— 浏览器直接打开的可视化报告
 - `server/eval-report.json` —— 原始指标（便于 CI / diff）
 
+## 人工标注工作流（扩样本 + 事实性/相关性地面真值）
+
+自动指标之外，用人工标注建立更大、去单人偏差的地面真值。三个轴：检索**分级相关性**、回答**事实性**、回答**有用性**。
+
+```bash
+node scripts/eval/build_annotation.js         # 跑 54 检索 + 生成 40 回答 → server/eval-annotate.html
+# 浏览器打开 eval-annotate.html，逐条标注（localStorage 自动存），点「导出」下载 eval-annotations.json
+node scripts/eval/score_annotations.js <下载的 eval-annotations.json>   # → annotation-scores.json + 控制台汇总
+```
+
+- 题库：`datasets/annotate_retrieval.json`（54 题，5 类 × 两集）、`datasets/annotate_answers.json`（40 题，5 种 prompt × 两集）。
+- 检索相关性是**分级**的（核心=2 / 相关=1 / 无关=0），所以算的是 **nDCG@k + precision@k + 命中率**，不是单 gold recall——修掉了"我猜的单个正确答案"那种评测偏严。
+- 回答事实性给出**完全正确率**（事实准确率）和**编造/错误率**（幻觉率），是"忠于上下文"之外真正的事实校验；有用性单独一轴。
+- 构建器对代理抽风有韧性：向量预热 6 路并发 + 重试，失败的查询自动降级关键词检索；回答生成也带重试。已嵌入的向量持久化到 `.cache/query_embeddings.json`，重跑更快。
+
 ## 三个维度
 
 ### ① 检索召回 recall@k（确定性）

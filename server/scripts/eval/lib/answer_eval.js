@@ -220,4 +220,4 @@ async function run(dataset, opts = {}) {
   };
 }
 
-module.exports = { run };
+module.exports = { run, buildContext, generate };

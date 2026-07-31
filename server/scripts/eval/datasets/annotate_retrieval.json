@@ -1,0 +1,384 @@
+{
+ "showId": "house-of-the-dragon",
+ "k": 8,
+ "questions": [
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2084,
+   "knowledge_type": "character_state",
+   "query": "阿莉森特·海塔尔现在是什么处境？",
+   "id": "r001"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "id": "r002"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2474,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "id": "r003"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2701,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "id": "r004"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_state",
+   "query": "奥托·海塔尔现在是什么处境？",
+   "id": "r005"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 903,
+   "knowledge_type": "character_state",
+   "query": "韦赛里斯一世·坦格利安现在是什么处境？",
+   "id": "r006"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3733,
+   "knowledge_type": "character_state",
+   "query": "贝妮拉·坦格利安现在是什么处境？",
+   "id": "r007"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "id": "r008"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "character_state",
+   "query": "雷尼拉·坦格利安现在是什么处境？",
+   "id": "r009"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和阿莉森特·海塔尔现在是什么关系？",
+   "id": "r010"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2474,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和克里斯顿·科尔现在是什么关系？",
+   "id": "r011"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 837,
+   "knowledge_type": "character_relationship",
+   "query": "戴蒙·坦格利安和科利斯·瓦列利安现在是什么关系？",
+   "id": "r012"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1497,
+   "knowledge_type": "character_relationship",
+   "query": "科利斯·瓦列利安和亚林·胡尔现在是什么关系？",
+   "id": "r013"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2084,
+   "knowledge_type": "character_relationship",
+   "query": "阿莉森特·海塔尔和艾蒙德·坦格利安现在是什么关系？",
+   "id": "r014"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1574,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和克里斯顿·科尔现在是什么关系？",
+   "id": "r015"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和蕾妮丝·坦格利安现在是什么关系？",
+   "id": "r016"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3370,
+   "knowledge_type": "character_relationship",
+   "query": "海拉娜·坦格利安和奥托·海塔尔现在是什么关系？",
+   "id": "r017"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和伊耿二世·坦格利安现在是什么关系？",
+   "id": "r018"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2701,
+   "knowledge_type": "character_relationship",
+   "query": "奥托·海塔尔和蕾妮丝·坦格利安现在是什么关系？",
+   "id": "r019"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "character_relationship",
+   "query": "雷尼拉·坦格利安和杰卡里斯·瓦列利安现在是什么关系？",
+   "id": "r020"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 617,
+   "knowledge_type": "character_relationship",
+   "query": "阿莉森特·海塔尔和克里斯顿·科尔现在是什么关系？",
+   "id": "r021"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3158,
+   "knowledge_type": "character_relationship",
+   "query": "海拉娜·坦格利安和奥托·海塔尔现在是什么关系？",
+   "id": "r022"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 271,
+   "knowledge_type": "character_relationship",
+   "query": "艾蒙德·坦格利安和拉里斯·斯壮现在是什么关系？",
+   "id": "r023"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1802,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "id": "r024"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1574,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "id": "r025"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2257,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，亚莉·河文在做什么、想表达什么？",
+   "id": "r026"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2025,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，莱昂诺·斯壮在做什么、想表达什么？",
+   "id": "r027"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 903,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，韦赛里斯一世·坦格利安在做什么、想表达什么？",
+   "id": "r028"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3158,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，海拉娜·坦格利安在做什么、想表达什么？",
+   "id": "r029"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3035,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，科利斯·瓦列利安在做什么、想表达什么？",
+   "id": "r030"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2747,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "id": "r031"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1265,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，乌尔夫·怀特在做什么、想表达什么？",
+   "id": "r032"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2253,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，雷尼拉·坦格利安在做什么、想表达什么？",
+   "id": "r033"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 75,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕在做什么、想表达什么？",
+   "id": "r034"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 249,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "id": "r035"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 3,
+   "knowledge_type": "scene_reading",
+   "query": "这一幕里，奥托·海塔尔在做什么、想表达什么？",
+   "id": "r036"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 460,
+   "knowledge_type": "character_motivation",
+   "query": "奥托·海塔尔这么做的动机是什么？",
+   "id": "r037"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1130,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "id": "r038"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 2538,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "id": "r039"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1802,
+   "knowledge_type": "character_motivation",
+   "query": "奥托·海塔尔这么做的动机是什么？",
+   "id": "r040"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 837,
+   "knowledge_type": "character_motivation",
+   "query": "戴蒙·坦格利安这么做的动机是什么？",
+   "id": "r041"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3035,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "id": "r042"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 1361,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "id": "r043"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1497,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "id": "r044"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3733,
+   "knowledge_type": "character_motivation",
+   "query": "贝妮拉·坦格利安这么做的动机是什么？",
+   "id": "r045"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2253,
+   "knowledge_type": "character_motivation",
+   "query": "雷尼拉·坦格利安这么做的动机是什么？",
+   "id": "r046"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 3233,
+   "knowledge_type": "character_motivation",
+   "query": "科利斯·瓦列利安这么做的动机是什么？",
+   "id": "r047"
+  },
+  {
+   "videoId": "house_of_dragon_s03e01",
+   "cursorTime": 1891,
+   "knowledge_type": "character_motivation",
+   "query": "拉里斯·斯壮这么做的动机是什么？",
+   "id": "r048"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "坦格利安家族的龙是从哪来的？",
+   "id": "r049"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "铁王座象征着什么？",
+   "id": "r050"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "瓦雷利亚是个什么样的地方？",
+   "id": "r051"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "绿党和黑党的分裂是怎么来的？",
+   "id": "r052"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "为什么王位继承会引发这么大争端？",
+   "id": "r053"
+  },
+  {
+   "videoId": "house_of_dragon_05",
+   "cursorTime": 2135,
+   "knowledge_type": "lore_card",
+   "query": "坦格利安家族的家训和信仰是什么？",
+   "id": "r054"
+  }
+ ]
+}
