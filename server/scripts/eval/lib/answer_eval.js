@@ -115,8 +115,13 @@ async function withRetry(fn, tries = 3) {
 
 async function generate(context, question) {
   const userMessage = `Context:\n\`\`\`json\n${JSON.stringify(context, null, 2)}\n\`\`\`\n\n用户问题：${question}`;
+  // Use the production active-Q&A model. Production answers run on the vision_chat task
+  // (Gemini) via the streaming endpoint — NOT task 'chat' (gpt-4o). gpt-4o is a much weaker
+  // follower of the companion's Chinese style/concreteness rules and produced generic
+  // 3-paragraph essays that don't reflect what users actually get. Text-only here (no frame),
+  // but the model routing matches production so the eval is representative.
   const result = await withRetry(() => ai.chat({
-    task: 'chat', system: SYSTEM_PROMPT,
+    task: 'vision_chat', system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: userMessage }],
     maxTokens: 420, temperature: 0.4,
   }));

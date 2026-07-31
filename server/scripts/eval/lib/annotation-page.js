@@ -107,7 +107,18 @@ window.__DATA__ = JSON.parse(${jsLiteral});
   const DATA = window.__DATA__;
   const KEY = 'hotd_annot_v1';
   const state = load();
-  function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{ret:{},ans:{}}; }catch{ return {ret:{},ans:{}}; } }
+  function load(){
+    let s; try{ s = JSON.parse(localStorage.getItem(KEY))||{ret:{},ans:{}}; }catch{ s = {ret:{},ans:{}}; }
+    s.ret = s.ret||{}; s.ans = s.ans||{};
+    // If the answers were rebuilt (new prompt/model), the old answer labels judged different
+    // text — clear only those, keep retrieval labels, and tell the user.
+    if (s.builtAt && s.builtAt !== DATA.generatedAt) {
+      s.ans = {};
+      setTimeout(()=>toast('答案已用改进后的 prompt 重新生成，请重标「回答质量」；检索标注已保留'), 400);
+    }
+    s.builtAt = DATA.generatedAt;
+    return s;
+  }
   function save(){ localStorage.setItem(KEY, JSON.stringify(state)); updateProgress(); }
   function el(tag, cls, txt){ const e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
 

@@ -853,27 +853,27 @@
     "skipped": false,
     "n": 15,
     "judged": 15,
-    "avg_faithfulness": 5,
-    "avg_helpfulness": 4.933333333333334,
+    "avg_faithfulness": 4.666666666666667,
+    "avg_helpfulness": 4.533333333333333,
     "avg_no_spoiler": 5,
-    "avg_overall": 4.977777777777778,
+    "avg_overall": 4.733333333333333,
     "per_question": [
       {
         "id": "scene_s80_hand_badge",
         "judgment": {
-          "faithfulness": 5,
-          "helpfulness": 5,
+          "faithfulness": 3,
+          "helpfulness": 4,
           "no_spoiler": 5,
-          "rationale": "无明显问题"
+          "rationale": "回答错误地将徽章佩戴者认定为莱昂诺·斯壮，而CONTEXT中并未明确说明佩戴者身份。"
         }
       },
       {
         "id": "scene_s132_godswood",
         "judgment": {
-          "faithfulness": 5,
+          "faithfulness": 4,
           "helpfulness": 5,
           "no_spoiler": 5,
-          "rationale": "无明显问题"
+          "rationale": "回答中关于阿莉森特穿着绿衣的解释与CONTEXT中提供的信息一致，但具体提到的'祖母绿色'在当前场景中未明确提及。"
         }
       },
       {
@@ -889,7 +889,7 @@
         "id": "scene_s238_rhaenys",
         "judgment": {
           "faithfulness": 5,
-          "helpfulness": 5,
+          "helpfulness": 4,
           "no_spoiler": 5,
           "rationale": "无明显问题"
         }
@@ -906,17 +906,17 @@
       {
         "id": "scene_s320_rhaenyra_criston",
         "judgment": {
-          "faithfulness": 5,
-          "helpfulness": 5,
+          "faithfulness": 3,
+          "helpfulness": 2,
           "no_spoiler": 5,
-          "rationale": "无明显问题"
+          "rationale": "回答中提到奥托·海塔尔的背景信息与CONTEXT一致，但没有直接解释当前镜头中雷妮拉与克里斯顿的对话。"
         }
       },
       {
         "id": "scene_s353_viserys_sick",
         "judgment": {
           "faithfulness": 5,
-          "helpfulness": 5,
+          "helpfulness": 4,
           "no_spoiler": 5,
           "rationale": "无明显问题"
         }
@@ -934,7 +934,7 @@
         "id": "scene_s490_laena_daemon_dance",
         "judgment": {
           "faithfulness": 5,
-          "helpfulness": 5,
+          "helpfulness": 4,
           "no_spoiler": 5,
           "rationale": "无明显问题"
         }
@@ -979,7 +979,7 @@
         "id": "quick_who_is_this_s320",
         "judgment": {
           "faithfulness": 5,
-          "helpfulness": 4,
+          "helpfulness": 5,
           "no_spoiler": 5,
           "rationale": "无明显问题"
         }
@@ -1170,7 +1170,7 @@
         "verified": "laenor_velaryon",
         "predicted": "laenor_velaryon",
         "display_name": "莱诺·瓦列利安",
-        "confidence": 0.95,
+        "confidence": 0.9,
         "n_returned": 2
       },
       {
@@ -1332,7 +1332,7 @@
         "verified": "alicent_hightower",
         "predicted": "alicent_hightower",
         "display_name": "阿莉森特·海塔尔",
-        "confidence": 0.95,
+        "confidence": 0.9,
         "n_returned": 1
       },
       {
@@ -1413,7 +1413,7 @@
         "verified": "laena_velaryon",
         "predicted": "baela_targaryen",
         "display_name": "贝妮拉·坦格利安",
-        "confidence": 0.9,
+        "confidence": 0.85,
         "n_returned": 1
       },
       {
@@ -1449,7 +1449,7 @@
         "verified": "rhaenyra_targaryen",
         "predicted": "rhaenyra_targaryen",
         "display_name": "雷尼拉·坦格利安",
-        "confidence": 0.95,
+        "confidence": 0.9,
         "n_returned": 1
       },
       {
@@ -1476,7 +1476,7 @@
         "verified": "criston_cole",
         "predicted": "criston_cole",
         "display_name": "克里斯顿·科尔",
-        "confidence": 0.85,
+        "confidence": 0.95,
         "n_returned": 1
       },
       {
@@ -1501,7 +1501,7 @@
   },
   "meta": {
     "show": "house-of-the-dragon",
-    "generatedAt": "2026/7/30 06:14:46",
+    "generatedAt": "2026/7/31 06:15:36",
     "retrievalMode": "混合（向量 × 关键词）+ 时序过滤"
   }
 }
