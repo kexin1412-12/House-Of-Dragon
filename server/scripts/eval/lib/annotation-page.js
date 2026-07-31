@@ -107,6 +107,10 @@ window.__DATA__ = JSON.parse(${jsLiteral});
 (function(){
   const DATA = window.__DATA__;
   const KEY = 'hotd_annot_v1';
+  // Storage may throw in a sandboxed iframe (preview panes) — never let that break rendering.
+  function lsGet(){ try{ return localStorage.getItem(KEY); }catch{ return null; } }
+  function lsSet(v){ try{ localStorage.setItem(KEY, v); return true; }catch{ return false; } }
+  function lsDel(){ try{ localStorage.removeItem(KEY); }catch{} }
   const state = load();
   function seedFromPrelabels(){
     // LLM pre-labels as the starting point — the user only corrects.
@@ -123,7 +127,7 @@ window.__DATA__ = JSON.parse(${jsLiteral});
     return s;
   }
   function load(){
-    const raw = localStorage.getItem(KEY);
+    const raw = lsGet();
     if (!raw && DATA.prelabels){ setTimeout(()=>toast('已载入 LLM 预标，请逐条核对修正'), 400); return seedFromPrelabels(); }
     let s; try{ s = JSON.parse(raw)||{ret:{},ans:{}}; }catch{ s = {ret:{},ans:{}}; }
     s.ret = s.ret||{}; s.ans = s.ans||{};
@@ -134,7 +138,8 @@ window.__DATA__ = JSON.parse(${jsLiteral});
     s.builtAt = DATA.generatedAt;
     return s;
   }
-  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); updateProgress(); }
+  let warnedNoStore=false;
+  function save(){ if(!lsSet(JSON.stringify(state)) && !warnedNoStore){ warnedNoStore=true; toast('注意：此环境不能本地保存，改动不会留存——建议下载文件后用浏览器打开，或随时「导出」'); } updateProgress(); }
   function el(tag, cls, txt){ const e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
 
   // ---- retrieval ----
@@ -244,9 +249,9 @@ window.__DATA__ = JSON.parse(${jsLiteral});
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='eval-annotations.json'; a.click();
     toast('已导出 eval-annotations.json —— 发给我或放进仓库');
   };
-  document.getElementById('reset').onclick=()=>{ if(confirm('清空本机所有标注？不可撤销。')){ localStorage.removeItem(KEY); location.reload(); } };
+  document.getElementById('reset').onclick=()=>{ if(confirm('清空本机所有标注？不可撤销。')){ lsDel(); location.reload(); } };
   const reseedBtn=document.getElementById('reseed');
-  if(DATA.prelabels){ reseedBtn.onclick=()=>{ if(confirm('丢弃你的所有修改，重置为 LLM 预标？')){ localStorage.setItem(KEY, JSON.stringify(seedFromPrelabels())); location.reload(); } }; }
+  if(DATA.prelabels){ reseedBtn.onclick=()=>{ if(confirm('丢弃你的所有修改，重置为 LLM 预标？')){ lsSet(JSON.stringify(seedFromPrelabels())); location.reload(); } }; }
   else { reseedBtn.style.display='none'; }
   let tt; function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2200); }
   updateProgress();
