@@ -568,6 +568,7 @@ function TencentPlayer({
   const requestedVideoId = (playing.filename || '').replace(/\.[^.]+$/, '');
   const episodeConfig = getEpisodeConfig(aiKb || requestedVideoId);
   const [aiMessages, setAiMessages] = useState([]);
+  const [aiSessionId] = useState(() => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `s-${Date.now()}-${Math.random().toString(36).slice(2,8)}`);
   const [aiInput, setAiInput] = useState('');
   const [aiDepth, setAiDepth] = useState('brief'); // 'brief' | 'deep'
   // 立场推演会话：null = 未开启；活跃时 free-text + chip 都路由到 /continue 端点
@@ -1178,6 +1179,7 @@ function TencentPlayer({
         body: JSON.stringify({
           videoId: aiKb || null,
           videoFile: playing.filename,
+          sessionId: aiSessionId,
           t,
           question: q,
           mode: 'casual',

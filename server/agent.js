@@ -7,6 +7,8 @@ const seasonLib = require('./lib/season');
 const ai = require('./lib/ai');
 const { recognizeFaces } = require('./lib/face-recognition');
 const { retrieve: retrieveKnowledge } = require('./lib/retrieval');
+const workingMemory = require('./lib/working-memory');
+const { shouldGate, assessEvidence } = require('./lib/evidence-gate');
 const kbPaths = require('./lib/kb-paths');
 const { buildAnswerSpec } = require('./prompts/answer-spec');
 const { buildDialogueSystemPrompt } = require('./prompts/dialogue');
@@ -1172,7 +1174,7 @@ function register(app) {
   });
 
   app.post('/api/agent/chat/stream', async (req, res) => {
-    const { videoId } = req.body || {};
+    const { videoId, sessionId } = req.body || {};
 
     res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -1256,6 +1258,8 @@ function register(app) {
     const visualMode = hasImage || hasClip;
 
     let userContent;
+    let agentRound = 0;
+    let retrievedKnowledge = [];
     if (visualMode) {
       // 视觉模式：服务端 ffmpeg 抽 N 帧 + 前端单帧 + KB 字典 + wiki lore + 历史对话 + 分析方法
       const db = kb ? getCharacterDb(kb.show_id) : null;
@@ -1365,21 +1369,79 @@ function register(app) {
         if (entry.house) charAliases.push(entry.house);
         if (entry.short_identity_zh) charAliases.push(entry.short_identity_zh);
       }
-      const retrievedKnowledge = await retrieveKnowledge({
-        query: prepared.question || '',
+      // ─── Agent Loop: retrieve → evidence gate → optional re-retrieve ───
+      const wm = workingMemory.getOrCreate(sessionId, videoId);
+      const primaryIntent = prepared.context.tool_bundle?.primary;
+      const retrieveCursor = {
+        show_id: kb.show_id,
+        video_id: kb.video_id,
+        season: kb.season,
+        episode: charactersLib.cursorAtTime(kb, prepared.cursorTime),
+        cursorTime: prepared.cursorTime,
+        allowedSpoilerLevel: 0,
+      };
+      const baseRetrieveParams = {
         characterNames: charNames,
         characterAliases: charAliases,
-        k: retrievalKForIntent(prepared.context.tool_bundle?.primary),
-        cursor: {
-          show_id: kb.show_id,
-          video_id: kb.video_id,
-          season: kb.season,
-          episode: charactersLib.cursorAtTime(kb, prepared.cursorTime),
-          cursorTime: prepared.cursorTime,
-          allowedSpoilerLevel: 0,
-        },
+        cursor: retrieveCursor,
         currentScene: scene,
         characterIds: (scene && scene.characters) || [],
+      };
+
+      retrievedKnowledge = [];
+      agentRound = 0;
+      let supplementaryQuery = null;
+      const seenIds = workingMemory.getVerifiedIds(sessionId);
+
+      while (agentRound < 3) {
+        agentRound++;
+        const roundQuery = supplementaryQuery || prepared.question || '';
+        const roundK = agentRound === 1
+          ? retrievalKForIntent(primaryIntent)
+          : Math.ceil(retrievalKForIntent(primaryIntent) / 2);
+
+        const newEvidence = await retrieveKnowledge({
+          ...baseRetrieveParams,
+          query: roundQuery,
+          k: roundK,
+          excludeIds: seenIds,
+        });
+
+        for (const e of newEvidence) {
+          if (!seenIds.has(e.id)) {
+            retrievedKnowledge.push(e);
+            seenIds.add(e.id);
+          }
+        }
+
+        if (agentRound >= 3) break;
+        if (!shouldGate(primaryIntent, agentRound)) break;
+
+        try {
+          const gate = await assessEvidence(
+            prepared.question, retrievedKnowledge, primaryIntent, ai,
+          );
+          if (gate.sufficient) break;
+          supplementaryQuery = gate.supplementary_query;
+          send('thinking', {
+            round: agentRound,
+            missing: gate.missing,
+            supplementary_query: gate.supplementary_query,
+          });
+        } catch {
+          break;
+        }
+      }
+
+      // 把本轮检索到的证据存入 working memory
+      workingMemory.memorize(sessionId, {
+        evidence: retrievedKnowledge.map(e => ({
+          id: e.id,
+          summary: String(e.content || '').slice(0, 80),
+          round: agentRound,
+        })),
+        characters: [...sceneCharIds],
+        events: scene ? [scene.scene_id] : [],
       });
 
       const clipDescription = hasClip
@@ -1492,8 +1554,9 @@ function register(app) {
         character_dictionary: characterDictionary,
         identity_recovery_dictionary: identityRecoveryDictionary,
         mentioned_locations: prepared.context.tool_bundle?.location_matches || [],
-        // 用打分检索后的相关知识替换无脑 slice(0,12)
         retrieved_knowledge: retrievedKnowledge,
+        working_memory: workingMemory.getSummary(sessionId),
+        agent_loop: { rounds: agentRound, total_evidence: retrievedKnowledge.length },
       };
 
       // 图像顺序：clipFrames（按时间从早到晚）→ 前端 capture（如果还有的话作为"当前精确时刻"）
@@ -1579,6 +1642,7 @@ ${JSON.stringify(prepared.context, null, 2)}
         provider: providerInfo?.provider || null,
         model: providerInfo?.model || null,
         usage,
+        agent_loop: { rounds: agentRound, total_evidence: retrievedKnowledge.length },
       });
 
       res.end();

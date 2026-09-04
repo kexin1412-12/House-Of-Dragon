@@ -28,6 +28,7 @@ async function retrieve(params = {}) {
   const {
     query = '', characterNames = [], characterAliases = [], k = 8,
     cursor = null, characterIds = [], intent = null, currentScene = null,
+    excludeIds = null,
     _deps = {},
   } = params;
 
@@ -37,7 +38,10 @@ async function retrieve(params = {}) {
   const embedCache = _deps.embedCache || QUERY_EMBED_CACHE;
 
   const all = loadChunks(showId);
-  const eligible = filterEligible(all, cursor);
+  let eligible = filterEligible(all, cursor);
+  if (excludeIds && excludeIds.size) {
+    eligible = eligible.filter(c => !excludeIds.has(c.id));
+  }
   if (eligible.length === 0) return [];
 
   const byId = new Map(eligible.map(c => [c.id, c]));
