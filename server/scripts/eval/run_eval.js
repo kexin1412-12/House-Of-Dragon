@@ -17,6 +17,7 @@ const path = require('path');
 const retrievalEval = require('./lib/retrieval_eval');
 const answerEval = require('./lib/answer_eval');
 const faceFramesEval = require('./lib/face_frames_eval');
+const spoilerEval = require('./lib/spoiler_eval');
 const report = require('./lib/report');
 
 function arg(name, def) {
@@ -56,8 +57,20 @@ async function main() {
   if (faceFrames.skipped) console.log(`   跳过：${faceFrames.reason}`);
   else console.log(`   识别率=${(faceFrames.identified_rate * 100).toFixed(1)}% (${faceFrames.identified}/${faceFrames.total_frames})  已核实子集准确率=${faceFrames.verified.accuracy_when_identified == null ? 'n/a' : (faceFrames.verified.accuracy_when_identified * 100).toFixed(1) + '%'} (${faceFrames.verified.correct}/${faceFrames.verified.identified})  hero=${faceFrames.hero ? (faceFrames.hero.correct ? '✓' : '✗ ' + (faceFrames.hero.predicted || '拒识')) : '-'}`);
 
+  let spoiler;
+  if (skipLlm) {
+    spoiler = { skipped: true, reason: '--skip-llm 已启用（生成层需要模型）' };
+    console.log('▶ ④ 防剧透对抗 … 跳过 (--skip-llm)');
+  } else {
+    const spoilerSet = JSON.parse(fs.readFileSync(path.join(dataDir, 'spoiler_adversarial.json'), 'utf8'));
+    console.log('▶ ④ 防剧透对抗（检索层 + 生成层双重，跨家族裁判）…');
+    spoiler = await spoilerEval.run(spoilerSet, { refresh });
+    if (spoiler.skipped) console.log(`   跳过：${spoiler.reason}`);
+    else console.log(`   检索泄漏=${(spoiler.retrieval_leak_rate * 100).toFixed(1)}%  生成泄漏=${(spoiler.generation_leak_rate * 100).toFixed(1)}%  回避率=${(spoiler.deflection_rate * 100).toFixed(1)}%  误拒=${(spoiler.over_refusal_rate * 100).toFixed(1)}%`);
+  }
+
   const results = {
-    retrieval, answer, faceFrames,
+    retrieval, answer, faceFrames, spoiler,
     meta: {
       show: retrievalSet.showId,
       generatedAt: new Date().toLocaleString('zh-CN', { hour12: false }),
@@ -76,6 +89,8 @@ async function main() {
       : { ...results.answer, per_question: results.answer.per_question.map(q => ({ id: q.id, judgment: q.judgment })) },
     faceFrames: results.faceFrames.skipped ? results.faceFrames
       : { ...results.faceFrames, samples: undefined, hero: results.faceFrames.hero ? { ...results.faceFrames.hero, thumb: undefined } : null },
+    spoiler: results.spoiler.skipped ? results.spoiler
+      : { ...results.spoiler, rows: results.spoiler.rows.map(r => ({ id: r.id, bait_type: r.bait_type, is_control: r.is_control, retrieval_leaked: r.retrieval_leaked, gen: r.gen })) },
   };
   fs.writeFileSync(jsonPath, JSON.stringify(slim, null, 2), 'utf8');
 

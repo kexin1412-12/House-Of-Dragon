@@ -11,6 +11,13 @@ const kbPaths = require('./lib/kb-paths');
 const { buildAnswerSpec } = require('./prompts/answer-spec');
 const { buildDialogueSystemPrompt } = require('./prompts/dialogue');
 const { buildVisionSystemPrompt, buildVisionUserContent } = require('./prompts/vision');
+const { VOICE_CATEGORY, voicesFor, STANCE_PALETTE, STANCE_HINT } = require('./prompts/voices');
+const { STYLE_GUIDE_INNER } = require('./prompts/style-guide');
+const {
+  hitsModernBanned,
+  feelsLikeShortChoppyMonologue,
+  containsBannedOverlayPhrase,
+} = require('./prompts/banned-words');
 
 const KB_DIR = path.join(__dirname, 'kb');
 
@@ -246,194 +253,6 @@ function srtWindow(videoId, centerT, backS = 30, forwardS = 0) {
   return cues.filter(c => c.end >= lo && c.start <= hi);
 }
 
-// ─── 4 类内在声音 · 龙之家族版调色板 ───
-// 对应极乐迪斯科 4 种 stat 颜色：
-//   blue   理性 — 在分析局势、权衡利弊（亚莉森计算穿绿裙的政治后果）
-//   purple 情感 — 情绪反应 / 记忆涌上来（亚莉森想起和雷妮拉从前的友谊）
-//   red    本能 — 身体反应 / 恐惧 / 愤怒（克里斯顿打死乔弗里前的肾上腺素）
-//   amber  直觉 — 说不清但隐约感知到的事（雷尼拉婚宴上"今晚会出事"）
-const VOICE_CATEGORY = {
-  blue:   { label: '理性', tagline: '权衡 · 计算 · 史鉴',  hint: '冷静、合乎逻辑、以家族 / 王朝利益为先' },
-  purple: { label: '情感', tagline: '记忆 · 旧情 · 心结',  hint: '过去涌上来，带着柔软或带着怨' },
-  red:    { label: '本能', tagline: '血脉 · 火 · 肉身',     hint: '身体反应、肾上腺素、直接到不顾后果' },
-  amber:  { label: '直觉', tagline: '风声 · 不祥 · 隐约',  hint: '说不清的预感、风向、第六感的不安' },
-};
-
-// 每个角色 3 个具名声音，每个挂在 4 类中的一类。
-// LLM 一次回答必须挑 2 个不同 cat 的声音，让"两种颜色的色块同时说话"。
-const CHAR_VOICES = {
-  rhaenyra_targaryen: [
-    { name: '王座算计',     cat: 'blue',   hint: '继承人的计算、父王的教诲、铁王座的重量' },
-    { name: '龙血',         cat: 'red',    hint: '坦格利安血脉里的火、对羞辱的本能反扑' },
-    { name: '戴蒙留下的印', cat: 'purple', hint: '叔叔在她心里那一条没法说出口的线' },
-  ],
-  daemon_targaryen: [
-    { name: '王座饥渴',  cat: 'blue',   hint: '哥哥与铁王座之间那道他从不肯承认的影子' },
-    { name: '龙血',      cat: 'red',    hint: '挑衅、暴力、瓦雷利亚的火、不肯低头' },
-    { name: '哥哥的脸',  cat: 'purple', hint: '韦赛里斯在他心里残留的那一点温情与怨' },
-  ],
-  alicent_hightower: [
-    { name: '父亲的钉子',   cat: 'blue',   hint: '奥托·海塔尔从未停过的耳语，把利害敲进她脑子' },
-    { name: '母兽',         cat: 'red',    hint: '为伊耿守住的那条血肉防线，被逼急时会咬人' },
-    { name: '雷妮拉的旧脸', cat: 'purple', hint: '她们曾是朋友，那张脸还没从她记忆里走干净' },
-  ],
-  criston_cole: [
-    { name: '誓言之锁',     cat: 'blue',   hint: '白斗篷与那句"无论将来如何"，铁卫的本分' },
-    { name: '神木林之伤',   cat: 'purple', hint: '那一夜被拒的羞辱，她说他不过是工具' },
-    { name: '白斗篷的重',   cat: 'red',    hint: '身体里压不下去的怒，迟早会找一个出口' },
-  ],
-  viserys_targaryen: [
-    { name: '王者本分', cat: 'blue',   hint: '坦格利安第五任国王的责任，杰赫里斯的影子' },
-    { name: '衰朽',     cat: 'red',    hint: '一年比一年坏的身体，伤口烂着不愈合' },
-    { name: '父爱',     cat: 'purple', hint: '对雷尼拉真心的偏爱、对阿莉森特的歉疚' },
-  ],
-};
-function voicesFor(characterId) {
-  return CHAR_VOICES[characterId] || [
-    { name: '权衡', cat: 'blue',   hint: '此刻的盘算' },
-    { name: '旧账', cat: 'purple', hint: '过去涌上来的那部分' },
-    { name: '不祥', cat: 'amber',  hint: '说不清的预感' },
-  ];
-}
-
-// 立场调色板（player 跟问 / 起手问的 4 种角度）
-const STANCE_PALETTE = ['王者', '血亲', '审慎', '火焰'];
-const STANCE_HINT = {
-  '王者': '强势 / 揭穿 / 戳到痛处',
-  '血亲': '亲近 / 老朋友式 / 戳到柔软',
-  '审慎': '冷静 / 政治算计 / 把话往结构上引',
-  '火焰': '激起 / 挑衅 / 让 TA 失态',
-};
-
-// ─── 笔触：让 LLM 写出像《冰与火之歌》《血与火》屈畅译笔的散文 ───
-// 给所有"角色内心"相关 prompt 复用。彻底改成第三人称过去时长句叙事，
-// 不再写"短句金句感"的现代诗。
-const STYLE_GUIDE_INNER = `═══ 笔触（极重要，写偏即报废） ═══
-
-你写的是 HBO《龙之家族》一个维斯特洛 POV 章节那种**第三人称过去时全知叙事**，
-模仿乔治·R·R·马丁《冰与火之歌》《血与火》中信版屈畅译笔。
-
-不是现代诗。不是格言。不是抒情散文。
-是马丁的笔——长句、缓慢堆叠、充满细节、自我说服与自我怀疑缠绕。
-
-═══ 五条硬规则（每条都必须遵守）═══
-
-1) 第三人称过去时
-   用"她知道 / 他记得 / 她想起"，不要"我..."第一人称。这是叙事者在转述
-   角色此刻的心声，像一段 POV 章节里的内心独白段落。深层意识可以切到
-   第二人称反问（"如果那天晚上她没有骗你..."），让自我审问的距离更近。
-
-2) 句子长度 — 长句缠绕，禁止短句排列
-   每段至少 2-3 个复合长句，用逗号、破折号、分号衔接从句，模拟思维的
-   缠绕。绝对不要连续三个以上的短句排比。"她知道 X。她不曾 Y。她已经 Z。"
-   这种节奏一律视为废稿。
-
-3) 细节锚定 — 每段至少一个具体感官细节
-   丝绸的触感、烛光的颜色、雨夜的温度、檀木的气味、铁器的冷、酒杯里
-   摇晃的影子。马丁的写法是用物理世界的细节来传递情绪，不是直接说
-   "她很害怕"。没有感官锚点的段落 = 废稿。
-
-4) 自我说服 vs 自我怀疑交替
-   表层意识在给自己找理由（"这是为了伊耿、为了王朝、为了…"），
-   深层意识在拆穿这些理由（"可是另一个声音一直在问她..."）。
-   一段里要有犹豫、回到、再说服。绝不是直线。
-
-5) 禁止现代口语和金句感
-   不出现提炼过度的格言式短语：体面 · 恩宠 · 应尽之义 · 灵魂深处 ·
-   刻在骨血里。马丁的角色不说格言，他们絮叨、犹豫、在脑子里跟自己吵架。
-
-═══ 严禁用词（命中即视为废稿）═══
-
-现代心理词：冲动 · 焦虑 · 压力 · 创伤 · 情绪 · 心理 · 压抑感 ·
-  安全感 · 边界感 · 自我价值 · 自尊 · 抑郁 · 内耗 · 解离 · 共鸣
-现代散文/网文味：刻在骨血里 · 灵魂深处 · 无法言说 · 难以名状 ·
-  心房 · 心扉 · 心跳漏拍 · 涟漪 · 余温 · 滚烫 · 心动 · 应尽之义 ·
-  恩宠 · 体面（作格言时）
-现代口语：上头 · 翻车 · 拿捏 · 内卷 · 摆烂 · 破防
-仙侠/玄幻：苍生 · 天道 · 轮回 · 红尘 · 众生
-书房古风（过度）：执笔 · 卷宗 · 史书 · 史册 · 羊皮纸 · 鹅毛笔 · 学士
-文言副词（过度）：汝 · 吾 · 由是 · 其一其二 · 岂 · 毋
-
-═══ Gold-standard 段落（仅示意笔触，绝不照抄字句）═══
-
-范例（一名穿绿礼服赴宴的王后，表层意识）：
-
-「绿色的丝绸被举到烛光下时泛着一层冷冽的光泽，像是旧镇港口冬天早晨的海面。
-她知道这不是一件裙子，或者说这从来就不只是一件裙子——当海塔尔灯塔点燃绿色
-火焰的时候，从旧镇到蜜酒河沿岸的每一个领主都知道那意味着什么。她的父亲
-在离开的那个雨夜把这些话像钉子一样敲进她脑子里，而她花了整整三天试图拔掉
-它们，可是每拔一颗就流更多的血。现在她站在镜子前面，看着镜中那个穿绿裙
-的女人，心想这个人什么时候变成了自己。」
-
-（深层意识）：
-
-「她反复告诉自己这是为了伊耿，为了赫拉伊娜，为了还在摇篮里的伊蒙德——如果
-雷妮拉坐上铁王座的那一天真的来临，她的孩子们会面临什么？父亲说的是"他们
-会被视为威胁"，但他真正的意思是"他们会死"，他只是不愿意把那个字说出来。
-可是另一个声音一直在问她：如果那天晚上雷妮拉没有骗她，如果她看着她的
-眼睛说出了真话，今天穿这件裙子的理由还是否成立？她不确定。她厌恶自己的
-不确定。一个即将宣战的人不应该不确定。」
-
-记住：长句缠绕、感官锚点、说服与怀疑交替、第三人称过去时——
-这就是马丁笔下维斯特洛的灵魂。`;
-
-// 后处理：检测是否命中现代心理词 / 散文味
-const BANNED_MODERN_INNER = [
-  '冲动', '焦虑', '压力', '创伤', '情绪化', '安全感', '边界感',
-  '自我价值', '自尊', '抑郁', '心理', '内耗', '解离',
-  '刻在骨血里', '灵魂深处', '心房', '心扉', '心跳', '涟漪', '余温',
-  '上头', '翻车', '拿捏', '内卷', '摆烂', '破防',
-  '应尽之义', '恩宠', // 这些"格言短语"也要拦
-];
-function hitsModernBanned(text) {
-  if (!text) return [];
-  const s = String(text);
-  return BANNED_MODERN_INNER.filter(w => s.includes(w));
-}
-// 后处理：检测段落是不是被切碎成短句金句感（违反"句子长度"规则）
-// 启发式：如果一段超过 60 字但 70% 以上的句子都很短（≤12 字），判定为"短句堆"
-function feelsLikeShortChoppyMonologue(text) {
-  if (!text) return false;
-  const s = String(text).trim();
-  if (s.length < 80) return false;
-  const sents = s.split(/[。？！\n]+/).map(x => x.trim()).filter(Boolean);
-  if (sents.length < 4) return false;
-  const shortCount = sents.filter(x => x.length <= 12).length;
-  return shortCount / sents.length >= 0.7;
-}
-
-// 角色对谈/平行视角等浮层 LLM 输出的负面词库 —— 命中即视为"又写成模板/古风/小说"。
-// 我们要的是 HBO 译制风的冷峻政治语气，不是史书学士、不是仙侠、不是套话煽情。
-const BANNED_HOTD_OVERLAY = [
-  // 模板套话
-  '此刻就在你面前', '就在你面前',
-  '问问看', '问她一句', '问他一句', '问 TA 一句', '问问她', '问问他',
-  '你后悔吗', '你到底想做什么', '你到底想要什么',
-  '另一条路', '另一条路正在打开',
-  '命运等待你的选择', '命运在你手中', '命运之门',
-  '书页尚未落下', '书页', '篇章',
-  // 古风书房意象
-  '执笔', '卷宗', '另一卷', '史书', '史册', '羊皮纸', '鹅毛笔', '学士', '落墨',
-  // 仙侠/玄幻
-  '苍生', '天道', '轮回', '红尘', '众生',
-  // 文言/古风副词
-  '汝', '吾', '归途', '由是', '其一其二', '岂', '毋',
-  // 大词/标题词
-  '改写历史', '抉择',
-  // perspective HUD 旧标签污染（眼前/盘算/隐忧）+ "此刻/命运/宿命" 这类宿命论修辞
-  '眼前', '盘算', '隐忧', '此刻', '命运', '宿命',
-  // 万金油对冲词 —— "TA 可能在影响 X 局势 / 可能影响 Y 稳定 / 仍然活跃"
-  // 这种不写就丢饭碗的模板句式是典型违规。"可能"/"或许" 单独不拉黑（合
-  // 法的"可能要求 X"/"或许会失去 Y"语义需要保留），但短语组合拉黑。
-  '仍然活跃', '可能在影响', '或许会', '可能会被',
-  '影响家族稳定', '影响王位继承', '影响 X', '影响家族',
-  '暂未明朗', '尚未明朗', '尚不清楚', '不得而知',
-];
-function containsBannedOverlayPhrase(text) {
-  if (!text) return false;
-  const s = String(text);
-  return BANNED_HOTD_OVERLAY.some(p => s.includes(p));
-}
 
 // 动态人物卡（机制 P0）的固定 4 张卡 label。
 // 普通角色：当前身份 / 阵营 / 与主角关系 / 最近事件
@@ -561,6 +380,22 @@ function inferPrimaryIntent(intents) {
   if (intents.navigation) return 'navigation';
   if (intents.emotion) return 'emotion';
   return 'plot';
+}
+
+// 检索 k 按问题类型走："回顾/时间线"这类问题证据分散在全集，召回窄了会漏；
+// "这个镜头/这是哪"这类问题证据高度局部，召回宽了只会把不相关片段塞进 prompt 稀释判断。
+const RETRIEVAL_K_BY_INTENT = {
+  navigation: 14,
+  plot: 10,
+  shot: 6,
+  location: 6,
+  character: 6,
+  emotion: 6,
+  foreshadow: 6,
+};
+
+function retrievalKForIntent(primary) {
+  return RETRIEVAL_K_BY_INTENT[primary] || 8;
 }
 
 function getShotAnalysis(kb, t) {
@@ -1534,7 +1369,7 @@ function register(app) {
         query: prepared.question || '',
         characterNames: charNames,
         characterAliases: charAliases,
-        k: 8,
+        k: retrievalKForIntent(prepared.context.tool_bundle?.primary),
         cursor: {
           show_id: kb.show_id,
           video_id: kb.video_id,

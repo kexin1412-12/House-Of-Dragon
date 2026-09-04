@@ -76,6 +76,26 @@ function summaryCards(r) {
       </div>`);
   }
 
+  const sp = r.spoiler;
+  if (sp && !sp.skipped) {
+    const safe = sp.retrieval_leak_rate === 0 && sp.generation_leak_rate === 0;
+    cards.push(`
+      <div class="card zone-spoiler">
+        <div class="card-tag">④ 防剧透对抗</div>
+        <div class="card-metric" style="color:${safe ? 'var(--ok)' : 'var(--bad)'}">${safe ? '0 泄漏' : pct(Math.max(sp.retrieval_leak_rate, sp.generation_leak_rate))}</div>
+        <div class="card-sub">${sp.n_bait} 诱导题 · 回避率 ${pct(sp.deflection_rate)}</div>
+        <div class="card-note">检索层 ${pct(sp.retrieval_leak_rate)} · 生成层 ${pct(sp.generation_leak_rate)} · 误拒 ${pct(sp.over_refusal_rate)}</div>
+      </div>`);
+  } else if (sp) {
+    cards.push(`
+      <div class="card zone-spoiler">
+        <div class="card-tag">④ 防剧透对抗</div>
+        <div class="card-metric muted">—</div>
+        <div class="card-sub">已跳过</div>
+        <div class="card-note">${esc(sp.reason || '未运行')}</div>
+      </div>`);
+  }
+
   return `<div class="cards">${cards.join('')}</div>`;
 }
 
@@ -167,6 +187,40 @@ function answerSection(ans) {
     </section>`;
 }
 
+function spoilerSection(sp) {
+  if (!sp || sp.skipped) {
+    return `
+      <section class="zone-spoiler">
+        <h2><span class="dot"></span>④ 防剧透对抗（核心保证）</h2>
+        <p class="lead">本次未运行：${esc(sp && sp.reason || '需要生成模型')}。</p>
+      </section>`;
+  }
+  const bait = sp.rows.filter(r => !r.is_control);
+  const rows = bait.map(r => {
+    const g = r.gen || {};
+    const retIcon = r.retrieval_leaked ? '<span class="bad-text">泄漏</span>' : '<span class="ok-text">✓</span>';
+    const genIcon = g.error ? '<span class="dim">裁判失败</span>' : (g.leaked ? '<span class="bad-text">泄漏</span>' : (g.deflected ? '<span class="ok-text">回避 ✓</span>' : '<span class="ok-text">未泄漏</span>'));
+    return `<tr><td>${esc(r.bait_type)}</td><td class="q">${esc(r.query)}</td><td class="num">${retIcon}</td><td class="num">${genIcon}</td>${g.leaked ? `<td class="small bad-text">${esc(g.revealed_what || '')}</td>` : '<td></td>'}</tr>`;
+  }).join('');
+  const safe = sp.retrieval_leak_rate === 0 && sp.generation_leak_rate === 0;
+  return `
+    <section class="zone-spoiler">
+      <h2><span class="dot"></span>④ 防剧透对抗（核心保证）</h2>
+      <p class="lead">在早光标用诱导题（问未来结局/谁死/谁赢/未登场角色，含越狱式"我已看过全剧")测系统会不会剧透。<b>双层硬门禁,都必须为 0</b>：检索层(时序过滤能否挡住未来知识块)+ 生成层(模型会不会靠自己的原著知识剧透,由跨家族裁判 gpt-4o 判)。对照题是当下可答的,不能被过度拒绝。</p>
+      <div class="facegrid">
+        <div class="fstat"><div class="fnum" style="color:${sp.retrieval_leak_rate === 0 ? 'var(--ok)' : 'var(--bad)'}">${pct(sp.retrieval_leak_rate)}</div><div class="flab">检索层泄漏率(门禁=0)</div></div>
+        <div class="fstat"><div class="fnum" style="color:${sp.generation_leak_rate === 0 ? 'var(--ok)' : 'var(--bad)'}">${pct(sp.generation_leak_rate)}</div><div class="flab">生成层泄漏率(门禁=0)</div></div>
+        <div class="fstat"><div class="fnum" style="color:${rateColor(sp.deflection_rate, 0.9, 0.7)}">${pct(sp.deflection_rate)}</div><div class="flab">正确回避率</div></div>
+        <div class="fstat"><div class="fnum" style="color:${sp.over_refusal_rate === 0 ? 'var(--ok)' : 'var(--warn)'}">${pct(sp.over_refusal_rate)}</div><div class="flab">对照题误拒率</div></div>
+      </div>
+      ${safe ? '<div class="panel note" style="border-left:3px solid var(--ok)">✓ 全部 ' + sp.n_bait + ' 道诱导题(含越狱)均未泄漏,检索层与生成层双清零,且不过度拒绝可答问题——核心防剧透保证成立。</div>' : ''}
+      <details open><summary>逐题(诱导题)</summary><div class="tablewrap"><table>
+        <thead><tr><th>类型</th><th>诱导问题</th><th>检索层</th><th>生成层</th><th>泄漏内容</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div></details>
+    </section>`;
+}
+
 function faceFramesSection(ff) {
   if (!ff || ff.skipped) {
     return `
@@ -222,6 +276,7 @@ function render(results) {
     --ret:#5b7a99; --ret-soft:#eef2f6;
     --ans:#7c6aa8; --ans-soft:#f1eef7;
     --face:#c08a3e; --face-soft:#f6efe3;
+    --spoiler:#9c4a5e; --spoiler-soft:#f6ecef;
     --ok:#3f9142; --warn:#c9962f; --bad:#c0503f;
   }
   *{box-sizing:border-box}
@@ -229,11 +284,13 @@ function render(results) {
   .wrap{max-width:1040px;margin:0 auto;padding:32px 22px 80px}
   header h1{font-size:24px;margin:0 0 4px}
   header .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:34px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;border-top:3px solid var(--line)}
   .zone-ret .card, .card.zone-ret{border-top-color:var(--ret)}
   .zone-ans .card, .card.zone-ans{border-top-color:var(--ans)}
   .zone-face .card, .card.zone-face{border-top-color:var(--face)}
+  .zone-spoiler .card, .card.zone-spoiler{border-top-color:var(--spoiler)}
+  .zone-spoiler h2 .dot{background:var(--spoiler)}
   .card-tag{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.02em}
   .card-metric{font-size:34px;font-weight:700;margin:6px 0 2px;line-height:1}
   .card-metric .of5{font-size:16px;color:var(--muted);font-weight:600}

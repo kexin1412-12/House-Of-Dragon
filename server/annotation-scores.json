@@ -1,0 +1,54 @@
+{
+  "scoredAt": "2026-07-31T12:00:27.873Z",
+  "source": "eval-annotations-llm.json",
+  "retrieval": {
+    "n_annotated": 54,
+    "n_total": 54,
+    "ndcg_at_k": 0.8161068181453071,
+    "precision_at_k": 0.3309082892416226,
+    "any_relevant_rate": 0.9074074074074074,
+    "core_hit_rate": 0.7037037037037037,
+    "mrr": 0.716225749559083,
+    "per_type_ndcg": {
+      "character_state": {
+        "ndcg": 0.81042825446652,
+        "n": 9
+      },
+      "character_relationship": {
+        "ndcg": 0.9397334188638861,
+        "n": 14
+      },
+      "scene_reading": {
+        "ndcg": 0.6960883357636776,
+        "n": 13
+      },
+      "character_motivation": {
+        "ndcg": 0.8633086324698622,
+        "n": 12
+      },
+      "lore_card": {
+        "ndcg": 0.7017990118312257,
+        "n": 6
+      }
+    }
+  },
+  "answers": {
+    "n_annotated": 40,
+    "n_total": 40,
+    "factuality": {
+      "ok": 34,
+      "minor": 5,
+      "bad": 1,
+      "na": 0
+    },
+    "factual_accuracy": 0.85,
+    "hallucination_rate": 0.025,
+    "helpfulness": {
+      "hi": 25,
+      "mid": 13,
+      "no": 2,
+      "none": 0
+    },
+    "helpful_rate": 0.625
+  }
+}
