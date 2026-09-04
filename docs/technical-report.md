@@ -25,7 +25,7 @@
 ## 二、系统架构总览
 
 ```
-用户提问 + 当前播放时间(cursor) + 画面截图(可选)
+用户提问 + 当前播放时间(cursor) + 画面截图(可选) + sessionId
           ↓
     ┌─────────────────┐
     │  Intent Router   │  detectIntents() → 7 类意图
@@ -33,15 +33,28 @@
     └────────┬────────┘
              ↓
     ┌─────────────────┐
-    │  Tool Bundle     │  按意图组装上下文：镜头分析 / 剧情回顾 / 角色状态 / 地点 / 伏笔 / 情绪 / 导航
+    │  Tool Bundle     │  按意图组装上下文 + 读取 Working Memory（上轮已验证的证据）
     │  (上下文编排)     │
     └────────┬────────┘
              ↓
-    ┌─────────────────┐
-    │  Hybrid RAG      │  向量检索 + 关键词检索 + 时序硬过滤 → RRF 融合 → 上下文重排 → 类型配额
-    │  (混合检索)       │
-    └────────┬────────┘
-             ↓
+    ┌─────────────────────────────────────── Agent Loop（最多 3 轮）───┐
+    │                                                                  │
+    │   ┌─────────────────┐                                            │
+    │   │  Retrieve        │  混合检索（排除 Working Memory 已有的知识块） │
+    │   │  (混合检索)       │                                            │
+    │   └────────┬────────┘                                            │
+    │            ↓                                                     │
+    │   ┌─────────────────┐       ┌──────────────────┐                 │
+    │   │  Evidence Gate   │──No──→│  补充检索          │──→ 回到 Retrieve│
+    │   │  (证据充分吗？)   │       │  自动生成补充 query │                 │
+    │   └────────┬────────┘       └──────────────────┘                 │
+    │            │ Yes                                                  │
+    │            ↓                                                     │
+    │   ┌─────────────────┐                                            │
+    │   │  Memorize        │  验证过的证据 + 人物 + 事件 → Working Memory │
+    │   └────────┬────────┘                                            │
+    └────────────┼─────────────────────────────────────────────────────┘
+                 ↓
     ┌─────────────────┐
     │  LLM/VLM 生成    │  Gemini Flash(视觉+对话) / GPT-4o(推理+裁判) / Gemini Pro(人脸+深挖)
     │  (多模型路由)     │  分层 Prompt：角色设定 → 防剧透 → 证据优先级 → 权力潜台词 → 反废话
@@ -629,7 +642,198 @@ const DEFAULT_QUOTAS = {
 
 ---
 
-## 六、多模型路由系统（AI Router）
+## 六、Agent Loop：从 Workflow 到 Conversational Agent
+
+### 6.1 架构演进动机
+
+**之前（Workflow 模式）**：每次用户提问 → 固定管线（意图分类 → 检索 K 条 → 生成回答）→ 完毕。下一次提问从零开始，不复用上一轮已经找到的证据。
+
+这有两个问题：
+
+| 问题 | 具体表现 |
+|------|----------|
+| **无会话记忆** | 用户先问"Daemon 为什么离开君临"，系统找到 E01-E02 的证据；紧接着问"这对他和 Viserys 的关系有什么影响"，系统又从头检索，可能找到完全不同的片段，丢失了上一轮已验证的因果链 |
+| **证据不足不补** | 用户问"为什么 Alicent 后来敌视 Rhaenyra"，检索到绿裙事件（结果），但缺少前因（花街夜出事件 → 信任破裂）。系统不会判断"因果链不完整"，直接用不充分的证据生成回答 |
+
+**现在（Agent Loop 模式）**：检索不再是一次性动作，而是一个**自主循环**——检索 → 判断证据够不够 → 不够就自动补充检索 → 够了才回答。同时跨轮复用已验证的证据。
+
+这个设计参考了 Route2Look（arXiv 2608.20805）论文的 **Memorize**（Working Memory）和 **Continue-or-Stop**（Evidence Sufficiency Gate）机制。
+
+### 6.2 Working Memory（会话记忆）
+
+**实现**：服务端内存 `Map<sessionId, WorkingMemory>`，前端每次挂载生成一个 UUID 作为 `sessionId`，随请求发送。
+
+```javascript
+// 每个 session 的 Working Memory 结构
+{
+  sessionId: 'a1b2c3d4-...',
+  videoId: 'hotd-s1e5',
+  lastActiveAt: 1725436800000,
+
+  // 已验证的知识块（下一轮检索时跳过这些 ID，不重复拉取）
+  verified_evidence: [
+    { id: 'hotd:char:daemon:state:2', summary: 'Daemon 被驱逐离开君临', round: 1 },
+    { id: 'hotd:rel:3:1', summary: 'Daemon-Viserys 兄弟关系紧张', round: 2 },
+  ],
+
+  // 已确认的人物（跨轮复用身份判定结果）
+  identified_characters: ['daemon_targaryen', 'viserys_targaryen'],
+
+  // 已定位的事件（跨轮复用事件锚点）
+  resolved_events: ['s01e01_sc08_daemon_expelled'],
+
+  // 本轮提取的实体（用于下一轮补充检索的 query 构造）
+  conversation_entities: ['Daemon', '君临', '驱逐'],
+}
+```
+
+**关键设计决策**：
+
+| 决策 | 原因 |
+|------|------|
+| TTL 10 分钟自动过期 | 用户可能切换视频或长时间离开，过期的记忆不应该干扰新的对话。10 分钟覆盖了"连续追剧"的典型窗口 |
+| 切换 videoId 时清空 | 不同视频的知识块 ID 不兼容，保留会导致 excludeIds 过滤掉不该过滤的块 |
+| 上限 40 条 evidence | 防止长对话积累过多记忆，导致 excludeIds 集合太大影响检索覆盖率 |
+| 存服务端内存而非 Redis | 单实例部署，不需要分布式存储。内存 Map 读写 <1μs，零依赖 |
+
+**多轮对话的实际效果**：
+
+```
+用户问①："Daemon 为什么离开 King's Landing？"
+  → 第 1 轮检索：找到 6 条证据（Daemon 被驱逐、与 Viserys 冲突）
+  → 存入 Working Memory：verified_evidence=[6 条], identified_characters=[daemon, viserys]
+  → 回答
+
+用户问②："这对他和 Viserys 的关系有什么影响？"
+  → Working Memory 已有 6 条证据 → excludeIds 排除它们
+  → 第 1 轮检索：只检索关系变化相关的 新 知识块（不重复拉已有的）
+  → 合并：Working Memory 的 6 条 + 新检索的 3 条 = 9 条
+  → 回答时上下文更完整，且省了重复检索的 token 消耗
+```
+
+### 6.3 Evidence Gate（证据充分性判断）
+
+**实现**：每次检索后，用一个轻量 LLM 调用（GPT-4o-mini，maxTokens=200，temperature=0）判断 4 个维度：
+
+```javascript
+// Evidence Gate 的输出（JSON）
+{
+  "sufficient": false,                              // 总判断
+  "character_identified": true,                      // 问题涉及的人物是否在证据中出现
+  "event_identified": true,                          // 事件是否有具体描述
+  "causal_evidence": false,                          // 因果链是否完整
+  "temporal_grounded": true,                         // 时间/顺序是否清楚
+  "missing": "缺少 Alicent 从闺蜜变敌人的前因事件",    // 一句话描述缺什么
+  "supplementary_query": "Alicent Rhaenyra 花街 欺骗 信任破裂"  // 自动生成的补充检索 query
+}
+```
+
+**只对 3 种意图启用**：`character` / `plot` / `foreshadow`。其他意图（`shot` / `location` / `emotion` / `navigation`）的证据天然局部集中，不需要多轮补充。
+
+**具体流程举例**：
+
+```
+用户问："为什么 Alicent 后来开始敌视 Rhaenyra？"
+主意图：character
+
+第 1 轮检索（K=6）→ 找到：
+  [1] 绿裙事件 S01E05（事件证据 ✓）
+  [2] Alicent 状态：王后（人物 ✓）
+  [3] Alicent-Rhaenyra 关系：政敌（关系 ✓）
+
+Evidence Gate 判断：
+  character_identified: ✓（Alicent 在证据中）
+  event_identified: ✓（绿裙事件）
+  causal_evidence: ✗（只有"敌视"的结果，没有"为什么"的前因）
+  temporal_grounded: ✓
+  → sufficient: false
+  → supplementary_query: "Rhaenyra Alicent 花街夜出 欺骗 信任破裂"
+
+第 2 轮补充检索（K=3，排除已有 3 条）→ 找到：
+  [4] S01E04 花街夜出事件
+  [5] Rhaenyra 向 Alicent 撒谎
+  [6] Alicent 动机：被欺骗后的愤怒
+
+Evidence Gate 判断：
+  causal_evidence: ✓（有前因了）
+  → sufficient: true → 停止，进入生成阶段
+
+最终上下文：6 条证据（事件 + 前因 + 人物状态 + 关系），因果链完整
+```
+
+### 6.4 Agent Loop 完整流程
+
+```javascript
+// 简化后的核心逻辑
+const wm = workingMemory.getOrCreate(sessionId, videoId);
+const seenIds = workingMemory.getVerifiedIds(sessionId);  // 上一轮已有的
+
+let retrievedKnowledge = [];
+let agentRound = 0;
+let supplementaryQuery = null;
+
+while (agentRound < 3) {                           // 最多 3 轮（1 初始 + 2 补充）
+  agentRound++;
+
+  const query = supplementaryQuery || question;     // 第 1 轮用原始问题，后续用补充 query
+  const k = agentRound === 1
+    ? retrievalKForIntent(primaryIntent)            // 第 1 轮：按意图给 K
+    : Math.ceil(retrievalKForIntent(primaryIntent) / 2);  // 补充轮：K 减半
+
+  const newEvidence = await retrieve({
+    query,
+    k,
+    excludeIds: seenIds,                            // 排除已验证的知识块
+    cursor, currentScene, characterNames, ...
+  });
+
+  retrievedKnowledge.push(...newEvidence);
+  for (const e of newEvidence) seenIds.add(e.id);
+
+  // 不需要多轮的意图 → 直接跳出
+  if (!shouldGate(primaryIntent, agentRound)) break;
+
+  // Evidence Gate 判断
+  const gate = await assessEvidence(question, retrievedKnowledge, primaryIntent, ai);
+  if (gate.sufficient) break;
+
+  supplementaryQuery = gate.supplementary_query;
+  send('thinking', { round: agentRound, missing: gate.missing });  // 通知前端"在补充检索"
+}
+
+// 存入 Working Memory
+workingMemory.memorize(sessionId, {
+  evidence: retrievedKnowledge.map(e => ({ id: e.id, summary: e.content?.slice(0,80) })),
+  characters: [...sceneCharIds],
+  events: scene ? [scene.scene_id] : [],
+});
+```
+
+### 6.5 延迟与成本分析
+
+| 路径 | 延迟 | 额外成本 |
+|------|------|----------|
+| 第 1 轮即通过（shot/location/emotion 意图） | +0ms | +0 |
+| 第 1 轮即通过（character/plot/foreshadow，证据充分） | +~200ms（Evidence Gate 调用） | +~100 token（GPT-4o-mini） |
+| 需要 1 次补充检索 | +~500ms（Gate + 补充检索） | +~200 token |
+| 需要 2 次补充检索（最大） | +~800ms（2×Gate + 2×补充检索） | +~300 token |
+
+**大多数请求（>80%）在第 1 轮就通过**——只有"为什么""怎么变成这样的"这类需要因果链的追问才会触发补充检索。
+
+### 6.6 Workflow vs Agent 的本质区别
+
+| 维度 | Workflow（之前） | Agent Loop（现在） |
+|------|------------------|-------------------|
+| 检索轮数 | 固定 1 轮 | 自适应 1-3 轮 |
+| 跨轮记忆 | 无（每次请求独立） | 有（Working Memory 跨轮复用） |
+| 证据判断 | 不判断，检索多少给多少 | 自主判断是否充分，不足则补 |
+| 补充检索 | 不会 | 自动生成补充 query，换角度再检索 |
+| 前端感知 | 无 | SSE `thinking` 事件通知"正在补充检索" |
+| 系统定位 | Video QA System | Long-video Conversational Agent |
+
+---
+
+## 七、多模型路由系统（AI Router）
 
 ### 6.1 路由表
 
@@ -754,7 +958,7 @@ function generateTemplate(context, question) {
 
 ---
 
-## 七、Prompt 工程详解
+## 八、Prompt 工程详解
 
 ### 7.1 分层 Prompt 架构
 
@@ -1013,7 +1217,7 @@ const BANNED_HOTD_OVERLAY = [
 
 ---
 
-## 八、防剧透机制（三层防线）
+## 九、防剧透机制（三层防线）
 
 防剧透是本系统的**核心保证**（core guarantee），不是"尽量不剧透"，而是"必须 0 泄漏"。
 
@@ -1027,7 +1231,7 @@ const BANNED_HOTD_OVERLAY = [
 
 ---
 
-## 九、评测体系（四维评测）
+## 十、评测体系（四维评测）
 
 ### 维度 ① 检索召回 Recall@K
 
@@ -1124,7 +1328,7 @@ no_spoiler：只在透露了当前进度之后才会发生的具体剧情时才�
 
 ---
 
-## 十、前端交互组件
+## 十一、前端交互组件
 
 | 组件 | 功能 | 技术要点 |
 |------|------|----------|
@@ -1141,7 +1345,7 @@ no_spoiler：只在透露了当前进度之后才会发生的具体剧情时才�
 
 ---
 
-## 十一、关键调参决策汇总
+## 十二、关键调参决策汇总
 
 | 模块 | 参数 | 值 | 选择原因 / 踩过的坑 |
 |------|------|-----|---------------------|
@@ -1170,18 +1374,25 @@ no_spoiler：只在透露了当前进度之后才会发生的具体剧情时才�
 | 角色字典 | 候选池范围 | cursor ± 45 秒内的场景 | 太窄容忍不了切镜边界误差，太宽高知名度角色"抢答" |
 | 字幕窗口 | 范围 | cursor ± 8 秒 | 覆盖当前对白 + 一点前后文 |
 | 剧情纵深 | 回顾场景数 | 12 段 | **从 5 提升**——5 段对 70 分钟视频太短，回答飘成百科 |
+| Agent Loop | 最大轮数 | 3（1 初始 + 2 补充） | 3 轮以上收益递减，且延迟不可接受 |
+| Agent Loop | 补充轮 K | 原始 K 的一半 | 只补缺，不重复拉 |
+| Agent Loop | Gate 启用意图 | character / plot / foreshadow | shot/location/emotion 证据天然局部，不需要多轮 |
+| Agent Loop | Gate 模型 | GPT-4o-mini | 快（~200ms）+ 便宜，只做 JSON 判断 |
+| Agent Loop | Gate 温度 | 0.0 | 判断必须确定性 |
+| Working Memory | TTL | 10 分钟 | 覆盖"连续追剧"窗口，过期自动清理 |
+| Working Memory | 最大证据数 | 40 条 | 防 excludeIds 集合过大影响检索覆盖率 |
 
 ---
 
-## 十二、面试 Q&A 要点
+## 十三、面试 Q&A 要点
 
 ### Q1："你的 RAG 跟普通 RAG 的区别？"
 
-三个核心区别：时序维度（每个知识块有 available_from_episode/time 标签，检索前物理过滤）、混合检索 + RRF 融合（关键词 + 向量并行，解决"角色名精确匹配 vs 语义相似性"的互补）、意图感知（按问题类型动态调整检索量和上下文组装）。
+四个核心区别：①时序维度（每个知识块有 available_from_episode/time 标签，检索前物理过滤，防剧透）；②混合检索 + RRF 融合（关键词 + 向量并行，解决"角色名精确匹配 vs 语义相似性"的互补）；③意图感知（按问题类型动态调整检索量和上下文组装）；④Agent Loop（检索不是一次性动作，而是自主循环——检索 → 判断证据充分性 → 不足则自动补充检索，同时跨轮复用 Working Memory 里已验证的证据）。
 
 ### Q2："TopK 怎么选的？"
 
-不是固定值。按 intent 动态给 K（navigation=14, plot=10, 局部意图=6）。下一步计划：参考 Route2Look 论文的动态阈值（均值 + λ × 标准差），根据当前 query 的 score 分布自适应裁剪候选集。
+不是固定值。按 intent 动态给 K（navigation=14, plot=10, 局部意图=6）。补充检索轮 K 减半（只补缺，不重复拉）。下一步计划：参考 Route2Look 论文的动态阈值（均值 + λ × 标准差），根据当前 query 的 score 分布自适应裁剪候选集。
 
 ### Q3："怎么防止幻觉？"
 
@@ -1189,7 +1400,7 @@ no_spoiler：只在透露了当前进度之后才会发生的具体剧情时才�
 
 ### Q4："为什么用多个模型？"
 
-不同任务对模型能力需求不同：人脸识别要最高准确率 → Pro；实时对话要低延迟 → Flash；评测裁判要跨家族 → 生成用 Gemini、裁判用 GPT-4o；离线分析要 1M 上下文 → Gemini。Router 让业务代码只说任务名，不关心模型。
+不同任务对模型能力需求不同：人脸识别要最高准确率 → Pro；实时对话要低延迟 → Flash；评测裁判要跨家族 → 生成用 Gemini、裁判用 GPT-4o；离线分析要 1M 上下文 → Gemini；Evidence Gate 要快要便宜 → GPT-4o-mini。Router 让业务代码只说任务名，不关心模型。
 
 ### Q5："评测体系怎么设计的？"
 
@@ -1199,13 +1410,17 @@ no_spoiler：只在透露了当前进度之后才会发生的具体剧情时才�
 
 不是写一个大 prompt 调措辞，而是模块化分层（6 基础 + 5 视觉专用 + 1 对话专用 + 3 后处理）+ 迭代对抗（每条规则对应真实失败 case）。最有价值的是 GROUNDING_LAYER 的身份门槛 7 条规则——每条规则背后都是一种具体的 LLM 误认模式。
 
-### Q7："重做这个项目会怎么改？"
+### Q7："Agent Loop 是怎么工作的？为什么不是一次检索就回答？"
 
-参考 Route2Look：Query Router 从正则升级为 LLM 分类器（Global / Explicit Temporal / Implicit Temporal / Character-centric / Cross-temporal 五类）→ 动态阈值 → VLM Verification（检索候选过一轮轻量校验）→ Continue-or-stop 循环 → Working Memory（多轮对话不重复检索）。
+因为不同问题的"证据密度"差异巨大。"这是谁"只需要当前帧，一轮检索足够；但"为什么 Alicent 敌视 Rhaenyra"需要因果链（花街夜出 → 欺骗 → 信任破裂 → 绿裙事件），一轮检索可能只找到结果而缺少前因。Agent Loop 的做法是：每轮检索后用 GPT-4o-mini（~200ms）判断 4 个维度（人物/事件/因果/时间）是否充分，不足时自动生成补充 query 换角度再检索，最多 3 轮。同时 Working Memory 跨轮复用已验证证据，避免连续追问时重复检索。这让系统从"视频问答工具"变成"有记忆的长视频对话 Agent"。参考 Route2Look（arXiv 2608.20805）的 Memorize + Continue-or-Stop 机制。
+
+### Q8："重做这个项目会怎么改？"
+
+在已实现的 Agent Loop 基础上继续深化：Query Router 从正则升级为 LLM 分类器（Global / Explicit Temporal / Implicit Temporal / Character-centric / Cross-temporal 五类）→ 动态阈值（均值 + λ × 标准差自适应裁剪候选集）→ VLM Verification（检索候选过一轮轻量视觉校验）→ Working Memory 持久化到 Redis（支持多实例部署）→ 前端展示 Agent Loop 的思考过程（类似 Deep Research 的"正在搜索…"UI）。
 
 ---
 
-## 十三、技术栈
+## 十四、技术栈
 
 | 层 | 技术 |
 |----|------|
